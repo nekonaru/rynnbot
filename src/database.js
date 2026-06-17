@@ -57,7 +57,7 @@ class MongoDB {
 	}
 	
 	read = async () => {
-		if (mongoose.connection.readyState !== 1 && !this.isConnecting) {
+		if (mongoose.connection.readyState !== 1 || !this._model) {
 			await this.connect();
 		}
 		let doc = await this._model.findOne({});
