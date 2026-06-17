@@ -8,7 +8,7 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 
 class MongoDB {
-	constructor(url = global.tempatDB, options = { useNewUrlParser: true, useUnifiedTopology: true, serverSelectionTimeoutMS: 5000 }) {
+	constructor(url = global.tempatDB, options = { serverSelectionTimeoutMS: 5000 }) {
 		this.url = url
 		this._model = null
 		this.options = options
