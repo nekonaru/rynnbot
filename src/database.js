@@ -25,10 +25,11 @@ class MongoDB {
 	}
 	
 	connect = async (retries = 5, delay = 2000) => {
-		if (mongoose.connection.readyState === 1 || this.isConnecting) {
-			console.log('✅ MongoDB is already connected.');
-			return;
-		}
+    if (mongoose.connection.readyState === 1 && this._model) {
+        console.log('✅ MongoDB is already connected.');
+        return;
+    }
+    if (this.isConnecting) return;
 		this.isConnecting = true;
 		while (retries > 0) {
 			try {
