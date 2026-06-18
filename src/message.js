@@ -193,11 +193,13 @@ async function LoadDataBase(naze, m) {
 		const botNumber = await naze.decodeJid(naze.user.id);
 		let game = global.db.game || {};
 		let premium = global.db.premium || [];
-		let user = global.db.users[m.sender] || {};
-		let setBot = global.db.set[botNumber] || {};
+		let user = (global.db.users || {})[m.sender] || {};
+		let setBot = (global.db.set || {})[botNumber] || {};
 		
 		global.db.game = game;
+		if (!global.db.set) global.db.set = {};
 		global.db.set[botNumber] = setBot;
+		if (!global.db.users) global.db.users = {};
 		if (!m.sender.endsWith('@g.us')) global.db.users[m.sender] = user;
 		
 		const defaultSetBot = {
