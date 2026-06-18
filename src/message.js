@@ -980,8 +980,8 @@ async function Solving(naze, store) {
 	
 	if (naze.user && naze.user.id) {
 		const botNumber = naze.decodeJid(naze.user.id);
-		if (global.db?.set[botNumber]) {
-			naze.public = global.db.set[botNumber].public
+		if (global.db?.set?.[botNumber]) {
+    		naze.public = global.db.set?.[botNumber]?.public
 		} else naze.public = true
 	} else naze.public = true
 

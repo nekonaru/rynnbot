@@ -87,7 +87,7 @@ class MongoDB {
 			}
 			return value;
 		});
-		await this._model.findOneAndUpdate({}, { data: safeData }, { upsert: true, new: true, setDefaultsOnInsert: true });
+		await this._model.findOneAndUpdate({}, { data: safeData }, { upsert: true, returnDocument: 'after', setDefaultsOnInsert: true });
 	}
 }
 
