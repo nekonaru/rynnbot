@@ -180,17 +180,15 @@ const dataBase = (source) => {
 }
 
 const cmdAdd = (hit) => {
-	if (hit && !hit.totalcmd) {
-		hit.totalcmd = 0;
-	}
-	if (hit && !hit.todaycmd) {
-		hit.todaycmd = 0;
-	}
+	if (!hit) return;
+	if (!hit.totalcmd) hit.totalcmd = 0;
+	if (!hit.todaycmd) hit.todaycmd = 0;
 	hit.totalcmd++;
 	hit.todaycmd++;
 }
 const cmdDel = (hit) => {
-	hit.todaycmd = 0
+	if (!hit) return;
+	hit.todaycmd = 0;
 }
 
 const cmdAddHit = (hit, feature) => {

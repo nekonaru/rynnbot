@@ -4958,7 +4958,7 @@ Select Bot Settings:
 			}
 			if ((!isCmd || isCreator) && budy.toLowerCase() != undefined) {
 				if (m.chat.endsWith('broadcast')) return
-				if (!(budy.toLowerCase() in db.database)) return
+				if (!db.database || !(budy.toLowerCase() in db.database)) return
 				await naze.relayMessage(m.chat, db.database[budy.toLowerCase()], {})
 			}
 		}
