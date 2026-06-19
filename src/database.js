@@ -213,7 +213,7 @@ const getExpired = (id, _dir) => _dir.find(a => a.id === id || a.url === id)?.ex
 
 const getStatus = (id, _dir) => _dir.find(a => a.id === id || a.url === id);
 
-const checkStatus = (id, _dir) => _dir.some(a => a.id === id || a.url === id);
+const checkStatus = (id, _dir) => Array.isArray(_dir) && _dir.some(a => a.id === id || a.url === id);
 
 const getAllExpired = (_dir) => _dir.map(a => a.id);
 

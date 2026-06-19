@@ -1874,8 +1874,8 @@ const naze = async (naze, m, msg, store) => {
 			}
 			break
 			case 'profile': case 'cek': {
-				const user = Object.keys(db.users)
-				const infoUser = db.users[m.sender]
+				const user = Object.keys(db.users || {})
+				const infoUser = db.users?.[m.sender] || {}
 				await m.reply(`*👤Profile @${m.sender.split('@')[0]} :*\n🐋User Bot : ${user.includes(m.sender) ? 'True' : 'False'}\n🔥User : ${isVip ? 'VIP' : isPremium ? 'PREMIUM' : 'FREE'}${isPremium ? `\n⏳Expired : ${checkStatus(m.sender, premium) ? formatDate(getExpired(m.sender, db.premium)) : '-'}` : ''}\n🎫Limit : ${infoUser.limit}\n💰Uang : ${infoUser ? infoUser.money.toLocaleString('id-ID') : '0'}`)
 			}
 			break
