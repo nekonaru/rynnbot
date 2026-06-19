@@ -199,6 +199,7 @@ const cmdAddHit = (hit, feature) => {
 }
 
 const addExpired = ({ id, expired, ...options }, _dir) => {
+	if (!Array.isArray(_dir)) return;
 	const _cek = _dir.find((a) => a.id == id);
 	if (_cek) {
 		_cek.expired = _cek.expired + toMs(expired);
