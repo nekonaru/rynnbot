@@ -152,7 +152,7 @@ const naze = async (naze, m, msg, store) => {
 		const isBan = isCreator || (db.users[m.sender] ? db.users[m.sender].ban : false)
 		const isLimit = isCreator || (db.users[m.sender] ? (db.users[m.sender].limit > 0) : false)
 		const isPremium = isCreator || checkStatus(m.sender, premium) || false
-		const isNsfw = m.isGroup ? db.groups[m.chat].nsfw : false
+		const isNsfw = m.isGroup ? (db.groups[m.chat]?.nsfw || false) : false
 		
 		// Fake
 		const fkontak = {
@@ -204,6 +204,8 @@ const naze = async (naze, m, msg, store) => {
 		
 		// Group Settings
 		if (m.isGroup) {
+			if (!db.groups) db.groups = {};
+			if (!db.groups[m.chat]) db.groups[m.chat] = {};
 			// Mute
 			if (db.groups[m.chat].mute && !isCreator) {
 				return
@@ -4350,6 +4352,8 @@ Select Bot Settings:
 ├ *Date* : ${date}
 ├ *Day* : ${locale_day}
 ├ *Time* : ${date_time}
+├ *Instagram* : @nekonaruuu
+├ *TikTok* : @nekonaruuu
 ╰──────❍
 ╭──❍「 *BOT* 」❍
 │${setv} ${prefix}profile

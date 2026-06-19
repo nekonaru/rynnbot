@@ -80,7 +80,7 @@ global.APIs = {
 }
 global.APIKeys = {
 	'https://api.naze.biz.id': '***REMOVED***',
-	'https://api.neosantara.xyz/v1': 'nsk_mcp_83fdd03eb9a34ec5b0265892a16942f7',
+	'https://api.neosantara.xyz/v1': '***REMOVED***',
 }
 
 // Lainnya

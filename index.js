@@ -307,7 +307,7 @@ async function startNazeBot() {
 		if (connection == 'open') {
 			console.log('Connected to : ' + JSON.stringify(naze.user, null, 2));
 			let botNumber = await naze.decodeJid(naze.user.id);
-			if (global.db?.set[botNumber] && !global.db?.set[botNumber]?.join) {
+			if (global.db?.set?.[botNumber] && !global.db?.set?.[botNumber]?.join) {
 				if (my.ch.length > 0 && my.ch.includes('@newsletter')) {
 					if (my.ch) await naze.newsletterMsg(my.ch, { type: 'follow' }).catch(e => {})
 					db.set[botNumber].join = true
