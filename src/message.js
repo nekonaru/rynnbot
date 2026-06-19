@@ -255,6 +255,7 @@ async function LoadDataBase(naze, m) {
 		}
 		
 		if (m.isGroup) {
+			if (!global.db.groups) global.db.groups = {};
 			let group = global.db.groups[m.chat] || {};
 			global.db.groups[m.chat] = group;
 			
