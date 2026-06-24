@@ -164,6 +164,17 @@ async function startNazeBot() {
 			await database.write(global.db)
 		} else {
 			global.db = loadData
+			// Pastikan semua key penting ada meskipun database lama tidak punya
+			global.db.groups   = global.db.groups   || {}
+			global.db.users    = global.db.users    || {}
+			global.db.hit      = global.db.hit      || {}
+			global.db.set      = global.db.set      || {}
+			global.db.cmd      = global.db.cmd      || {}
+			global.db.store    = global.db.store    || {}
+			global.db.game     = global.db.game     || {}
+			global.db.database = global.db.database || {}
+			global.db.premium  = global.db.premium  || []
+			global.db.sewa     = global.db.sewa     || []
 		}
 		if (!storeLoadData || Object.keys(storeLoadData).length === 0) {
 			global.store = {
@@ -361,7 +372,7 @@ async function startNazeBot() {
 	
 	// Ucapan Pagi/Siang/Malam
 	cron.schedule('0 5 * * *', async () => {
-		for (const [idnya, settings] of Object.entries(global.db.groups)) {
+		for (const [idnya, settings] of Object.entries(global.db?.groups || {})) {
 			if (settings.detect) {
 				await naze.sendMessage(idnya, { text: `☀️ *Selamat Pagi!*\n\nSemangat menjalani hari ini ya! Jangan lupa sarapan dan tetap produktif 🌸` }).catch(e => {})
 			}
@@ -369,7 +380,7 @@ async function startNazeBot() {
 	}, { scheduled: true, timezone: global.timezone });
 
 	cron.schedule('0 12 * * *', async () => {
-		for (const [idnya, settings] of Object.entries(global.db.groups)) {
+		for (const [idnya, settings] of Object.entries(global.db?.groups || {})) {
 			if (settings.detect) {
 				await naze.sendMessage(idnya, { text: `🌤️ *Selamat Siang!*\n\nJangan lupa istirahat dan makan siang ya! 😊` }).catch(e => {})
 			}
@@ -377,7 +388,7 @@ async function startNazeBot() {
 	}, { scheduled: true, timezone: global.timezone });
 
 	cron.schedule('0 21 * * *', async () => {
-		for (const [idnya, settings] of Object.entries(global.db.groups)) {
+		for (const [idnya, settings] of Object.entries(global.db?.groups || {})) {
 			if (settings.detect) {
 				await naze.sendMessage(idnya, { text: `🌙 *Selamat Malam!*\n\nIstirahat yang cukup ya, besok semangat lagi! 💤` }).catch(e => {})
 			}
@@ -428,7 +439,7 @@ async function startNazeBot() {
 			for (const [sholat, waktu] of Object.entries(global.jadwalSholat)) {
 				if (jamSholat === waktu && global.waktusholat[sholat] !== hariIni) {
 					global.waktusholat[sholat] = hariIni
-					for (const [idnya, settings] of Object.entries(global.db.groups)) {
+					for (const [idnya, settings] of Object.entries(global.db?.groups || {})) {
 						if (settings.waktusholat) {
 							await naze.sendMessage(idnya, { text: `Waktu *${sholat}* telah tiba, ambilah air wudhu dan segeralah shalat🙂.\n\n*${waktu.slice(0, 5)}*\n_untuk wilayah ${global.timezone} dan sekitarnya._` }, { ephemeralExpiration: store?.messages[idnya]?.array?.slice(-1)[0]?.metadata?.ephemeralDuration || 0 }).catch(e => {})
 						}
