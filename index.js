@@ -337,7 +337,7 @@ async function startNazeBot() {
 	
 	naze.ev.on('call', async (call) => {
 		let botNumber = await naze.decodeJid(naze.user.id);
-		if (global.db?.set[botNumber]?.anticall) {
+		if (global.db?.set?.[botNumber]?.anticall) {
 			for (let id of call) {
 				if (id.status === 'offer') {
 					let msg = await naze.sendMessage(id.from, { text: `Saat Ini, Kami Tidak Dapat Menerima Panggilan ${id.isVideo ? 'Video' : 'Suara'}.\nJika @${id.from.split('@')[0]} Memerlukan Bantuan, Silakan Hubungi Owner :)`, mentions: [id.from]});
@@ -405,7 +405,7 @@ async function startNazeBot() {
 			const limitUser = global.db.users[jid].vip ? global.limit.vip : checkStatus(jid, global.db.premium) ? global.limit.premium : global.limit.free
 			if (global.db.users[jid].limit < limitUser) global.db.users[jid].limit = limitUser
 		}
-		if (global.db?.set[botNumber].autobackup) {
+		if (global.db?.set?.[botNumber]?.autobackup) {
 			let datanya = './database/' + global.tempatDB;
 			if (global.tempatDB.startsWith('mongodb')) {
 				datanya = './database/backup_database.json';
