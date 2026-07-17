@@ -2376,15 +2376,38 @@ Select Bot Settings:
 				m.react('⏳')
 				let media = await naze.downloadAndSaveMediaMessage(qmsg)
 				let ran = `./database/temp/${getRandom('.png')}`;
-				exec(`ffmpeg -y -i "${media}" -vframes 1 "${ran}"`, async (err) => {
-					try {
-						if (err) return m.reply(global.mess.fail);
-						await m.reply({ image: { url: ran }, caption: global.mess.done })
-					} finally {
-						if (fs.existsSync(media)) fs.unlinkSync(media)
-						if (fs.existsSync(ran)) fs.unlinkSync(ran)
+				const runFfmpeg = () => new Promise((resolve, reject) => {
+					exec(`ffmpeg -y -i "${media}" -vframes 1 "${ran}"`, (err, stdout, stderr) => {
+						if (err) return reject(new Error(stderr ? stderr.slice(-500) : err.message));
+						resolve();
+					});
+				});
+				try {
+					let done = false;
+					// WhatsApp stiker sering berformat animated/extended WebP (chunk ANIM/ANMF)
+					// yang gagal didekode oleh decoder webp bawaan ffmpeg ("Nothing was written
+					// into output file"). Coba decode pakai canvas dulu, baru fallback ke ffmpeg.
+					if (/webp|image/.test(mime) && canvasModule) {
+						try {
+							const { createCanvas, loadImage } = canvasModule;
+							const image = await loadImage(media);
+							const canvas = createCanvas(image.width, image.height);
+							canvas.getContext('2d').drawImage(image, 0, 0);
+							fs.writeFileSync(ran, await canvas.encode('png'));
+							done = true;
+						} catch (canvasErr) {
+							console.error(chalk.redBright('[TOIMG] Canvas gagal, fallback ke ffmpeg:'), canvasErr.message);
+						}
 					}
-				})
+					if (!done) await runFfmpeg();
+					await m.reply({ image: { url: ran }, caption: global.mess.done })
+				} catch (e) {
+					console.error(chalk.redBright('[TOIMG ERROR]'), e);
+					m.reply(global.mess.fail);
+				} finally {
+					if (fs.existsSync(media)) fs.unlinkSync(media)
+					if (fs.existsSync(ran)) fs.unlinkSync(ran)
+				}
 			}
 			break
 			case 'toptv': {
@@ -2974,8 +2997,10 @@ Select Bot Settings:
 				if (!text) return m.reply(`Example: ${prefix + command} query`)
 				try {
 					let hasil = await fetchApi('/ai/gemini-flash-lite', { query: text });
+					if (!hasil?.result?.text) throw new Error('Format respons API tidak sesuai: ' + JSON.stringify(hasil).slice(0, 300));
 					m.reply(hasil.result.text)
 				} catch (e) {
+					console.error(chalk.redBright('[AI ERROR]'), e.response ? `HTTP ${e.response.status} - ${JSON.stringify(e.response.data).slice(0, 300)}` : e.message);
 					m.reply(pickRandom(['Fitur Ai sedang bermasalah!','Tidak dapat terhubung ke ai!','Sistem Ai sedang sibuk sekarang!','Fitur sedang tidak dapat digunakan!']))
 				}
 			}
