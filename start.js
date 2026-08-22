@@ -6,8 +6,10 @@ import { watchFile, unwatchFile } from 'fs'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
+let isRunning = true;
+
 function start() {
-	let args = [path.join(__dirname, 'index.js'), ...process.argv.slice(2)]
+	let args = ['--expose-gc', path.join(__dirname, 'index.js'), ...process.argv.slice(2)]
 	let p = spawn(process.argv[0], args, {
 		stdio: ['inherit', 'inherit', 'inherit', 'ipc']
 	}).on('message', data => {
@@ -23,7 +25,10 @@ function start() {
 			process.exit(0)
 		}
 	}).on('exit', code => {
-		if (code !== 0) {
+		if (!isRunning) {
+			console.log(chalk.green.bold('[BOT] Process exited cleanly. Goodbye!'))
+			process.exit(0)
+		} else if (code !== 0) {
 			console.error(chalk.red.bold(`[BOT] Exited with code: ${code}`));
 			setTimeout(() => {
 				start()
@@ -35,3 +40,8 @@ function start() {
 	})
 }
 start()
+
+process.on('SIGINT', () => {
+	isRunning = false;
+	console.log(chalk.yellow('[BOT] Waiting for system to shutdown gracefully...'))
+});

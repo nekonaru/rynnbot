@@ -1,35 +1,35 @@
-import '../settings.js';
-import pino from 'pino';
-import chalk from 'chalk';
-import { fileURLToPath } from 'url';
-import { Boom } from '@hapi/boom';
-import NodeCache from 'node-cache';
-import { exec } from 'child_process';
-import WAConnection, { useMultiFileAuthState, Browsers, DisconnectReason, makeCacheableSignalKeyStore, fetchLatestWaWebVersion } from 'baileys';
+import "../settings.js";
 
-import { GroupParticipantsUpdate, MessagesUpsert, Solving } from './message.js';
+import fs from "fs";
+import pino from "pino";
+import chalk from "chalk";
+import { Boom } from "@hapi/boom";
+import NodeCache from "node-cache";
+import baileys, { useMultiFileAuthState, Browsers, DisconnectReason, makeCacheableSignalKeyStore, fetchLatestWaWebVersion } from "baileys";
+
+import { GroupParticipantsUpdate, MessagesUpsert, Solving } from "./message.js";
 
 global.client = {};
-
 const msgRetryCounterCache = new NodeCache();
+const WAConnection = baileys.default || baileys.makeWASocket || baileys;
 
-async function JadiBot(conn, from, m, store) {
+async function JadiBot(sock, from, m, store) {
 	async function startJadiBot() {
 		try {
 			const { version } = await fetchLatestWaWebVersion();
-			const { state, saveCreds } = await useMultiFileAuthState(`./database/jadibot/${from}`);
-			const level = pino({ level: 'silent' })
-			
+			const { state, saveCreds } = await useMultiFileAuthState(`./database/JadiBot/${from}`);
+			const level = pino({ level: "silent" });
+
 			const getMessage = async (key) => {
 				if (store) {
 					const msg = await store.loadMessage(key.remoteJid, key.id);
-					return msg?.message || ''
+					return msg?.message || "";
 				}
 				return {
-					conversation: 'Halo Saya Adalah Bot'
-				}
-			}
-			
+					conversation: "Halo Saya Adalah Bot",
+				};
+			};
+
 			client[from] = WAConnection({
 				version,
 				logger: level,
@@ -41,7 +41,7 @@ async function JadiBot(conn, from, m, store) {
 				defaultQueryTimeoutMs: 0,
 				connectTimeoutMs: 60000,
 				keepAliveIntervalMs: 30000,
-				browser: Browsers.ubuntu('Chrome'),
+				browser: Browsers.ubuntu("Chrome"),
 				generateHighQualityLinkPreview: false,
 				transactionOpts: {
 					maxCommitRetries: 10,
@@ -55,116 +55,131 @@ async function JadiBot(conn, from, m, store) {
 					creds: state.creds,
 					keys: makeCacheableSignalKeyStore(state.keys, level),
 				},
-			})
-			
-			await Solving(client[from], store)
-			
+			});
+
+			await Solving(client[from], store);
+
 			client[from].pairingStarted = false;
-			
-			client[from].ev.on('creds.update', saveCreds)
-			
-			client[from].ev.on('connection.update', async (update) => {
-				const { connection, lastDisconnect, receivedPendingNotifications } = update
-				if (connection === 'connecting' && !client[from].authState.creds.registered && !client[from].pairingStarted) {
+
+			client[from].ev.on("creds.update", saveCreds);
+
+			client[from].ev.on("connection.update", async (update) => {
+				const { connection, lastDisconnect, receivedPendingNotifications } = update;
+				if (connection === "connecting" && !client[from].authState.creds.registered && !client[from].pairingStarted) {
 					setTimeout(async () => {
 						if (!client[from]) return;
 						client[from].pairingStarted = true;
-						exec('rm -rf ./database/jadibot/' + from + '/*');
-						let code = await client[from].requestPairingCode(from.replace(/[^0-9]/g, ''));
+						fs.rmSync("./database/JadiBot/" + from, { recursive: true, force: true });
+						const randomPart = Math.random().toString(36).substring(2, 6).toUpperCase();
+						let code = await client[from].requestPairingCode(from.replace(/[^0-9]/g, ""), "NAZE" + randomPart);
 						if (!client[from]) return;
-						m.reply(`Your Pairing Code : ${code?.match(/.{1,4}/g)?.join('-') || code}`);
+						m.reply(`Your Pairing Code : ${code?.match(/.{1,4}/g)?.join("-") || code}`);
 					}, 3000);
 				}
-				if (connection === 'close') {
+				if (connection === "close") {
 					if (!client[from]) return;
-					const reason = new Boom(lastDisconnect?.error)?.output.statusCode
-					console.log(reason)
+					const reason = new Boom(lastDisconnect?.error)?.output.statusCode;
+					console.log(reason);
 					if ([DisconnectReason.connectionLost, DisconnectReason.connectionClosed, DisconnectReason.restartRequired, DisconnectReason.timedOut, DisconnectReason.badSession, DisconnectReason.connectionReplaced].includes(reason)) {
-						JadiBot(conn, from, m, store)
+						JadiBot(sock, from, m, store);
 					} else if (reason === DisconnectReason.loggedOut) {
-						m.reply('Scan again and Run...');
-						StopJadiBot(conn, from, m)
-					} else if (reason === DisconnectReason.Multidevicemismatch) {
-						m.reply('Scan again...');
-						StopJadiBot(conn, from, m)
+						m.reply("Scan again and Run...");
+						StopJadiBot(sock, from, m);
+					} else if (reason === DisconnectReason.forbidden) {
+						m.reply("Connection Failure, Scan again and Run...");
+						StopJadiBot(sock, from, m);
+					} else if (reason === DisconnectReason.multideviceMismatch) {
+						m.reply("Scan again...");
+						StopJadiBot(sock, from, m);
 					} else {
-						m.reply('Anda Sudah Tidak Lagi Menjadi Bot!')
+						m.reply("Anda Sudah Tidak Lagi Menjadi Bot!");
 					}
 				}
-				if (connection == 'open') {
+				if (connection == "open") {
 					let botNumber = await client[from].decodeJid(client[from].user.id);
-					if (db.set[botNumber] && !db.set[botNumber]?.join) {
-						db.set[botNumber].original = false
-						if (my.ch.length > 0 && my.ch.includes('@newsletter')) {
-							if (my.ch) await client[from].newsletterMsg(my.ch, { type: 'follow' }).catch(e => {})
-							db.set[botNumber].join = true
+					if (global.db?.set[botNumber] && !global.db?.set[botNumber]?.join) {
+						global.db.set[botNumber].original = false;
+						if (global.my?.ch?.length > 0 && global.my.ch.includes("@newsletter")) {
+							if (global.my.ch) await client[from].newsletterMsg(global.my.ch, { type: "follow" }).catch((e) => {});
+							global.db.set[botNumber].join = true;
 						}
 					}
 				}
-				if (receivedPendingNotifications == 'true') {
-					client[from].ev.flush()
+				if (receivedPendingNotifications == "true") {
+					client[from].ev.flush();
 				}
 			});
-			
-			client[from].ev.on('call', async (call) => {
+
+			client[from].ev.on("call", async (call) => {
 				let botNumber = await client[from].decodeJid(client[from].user.id);
-				if (db.set[botNumber].anticall) {
+				if (global.db?.set[botNumber]?.anticall) {
 					for (let id of call) {
-						if (id.status === 'offer') {
-							let msg = await client[from].sendMessage(id.from, { text: `Saat Ini, Kami Tidak Dapat Menerima Panggilan ${id.isVideo ? 'Video' : 'Suara'}.\nJika @${id.from.split('@')[0]} Memerlukan Bantuan, Silakan Hubungi Owner :)`, mentions: [id.from]});
+						if (id.status === "offer") {
+							let msg = await client[from].sendMessage(id.from, { text: `Saat Ini, Kami Tidak Dapat Menerima Panggilan ${id.isVideo ? "Video" : "Suara"}.\nJika @${id.from.split("@")[0]} Memerlukan Bantuan, Silakan Hubungi Owner :)`, mentions: [id.from] });
 							await client[from].sendContact(id.from, global.owner, msg);
-							await client[from].rejectCall(id.id, id.from)
+							await client[from].rejectCall(id.id, id.from);
 						}
 					}
 				}
 			});
-			
-			client[from].ev.on('groups.update', (update) => {
+
+			client[from].ev.on("groups.update", (update) => {
 				for (let n of update) {
 					if (store.groupMetadata[n.id]) {
 						Object.assign(store.groupMetadata[n.id], n);
 					} else store.groupMetadata[n.id] = n;
 				}
 			});
-			
-			client[from].ev.on('group-participants.update', async (update) => {
+
+			client[from].ev.on("presence.update", (update) => {
+				const { id, presences } = update;
+				if (store) {
+					store.presences[id] = store.presences?.[id] || {};
+					for (const jid in presences) {
+						presences[jid].timestamp = Date.now();
+					}
+					Object.assign(store.presences[id], presences);
+				}
+			});
+
+			client[from].ev.on("group-participants.update", async (update) => {
 				await GroupParticipantsUpdate(client[from], update, store);
 			});
-			
-			client[from].ev.on('messages.upsert', async (message) => {
+
+			client[from].ev.on("messages.upsert", async (message) => {
 				await MessagesUpsert(client[from], message, store);
 			});
-		
-			return client[from]
+
+			return client[from];
 		} catch (e) {
-			console.log(chalk.redBright(`[ERROR] ${e}`))
+			console.log(chalk.redBright(`[ERROR] ${e}`));
 		}
 	}
-	return startJadiBot()
+	return startJadiBot();
 }
 
-async function StopJadiBot(conn, from, m) {
+async function StopJadiBot(sock, from, m) {
 	if (!Object.keys(client).includes(from)) {
-		return conn.sendMessage(m.chat, { text: 'Anda Tidak Sedang jadibot!' }, { quoted: m })
+		return sock.sendMessage(m.chat, { text: "Anda Tidak Sedang clonebot!" }, { quoted: m });
 	}
 	try {
-		client[from].ev.removeAllListeners()
-		if (client[from].ws) client[from].ws.close()
-		client[from].end('Stop')
+		client[from].ev.removeAllListeners();
+		if (client[from].ws) client[from].ws.close();
+		client[from].end("Stop");
 	} catch (e) {
-		console.log(chalk.redBright(`[ERROR] ${e}`))
+		console.log(chalk.redBright(`[ERROR] ${e}`));
 	}
-	delete client[from]
-	exec(`rm -rf ./database/jadibot/${from}`)
-	return m.reply('Sukses Keluar Dari Sessi Jadi bot')
+	delete client[from];
+	fs.rmSync(`./database/JadiBot/${from}`, { recursive: true, force: true });
+	return m.reply("Sukses Keluar Dari Sessi Jadi bot");
 }
 
-async function ListJadiBot(conn, m) {
-	let teks = 'List Jadi Bot :\n\n'
-	for (let jadibot of Object.values(client)) {
-		teks += (jadibot.user?.id ? `- @${conn.decodeJid(jadibot.user.id).split('@')[0]}\n` : '')
+async function ListJadiBot(sock, m) {
+	let teks = "List Clone Bot :\n\n";
+	for (let JadiBot of Object.values(client)) {
+		teks += JadiBot.user?.id ? `- @${sock.decodeJid(JadiBot.user.id).split("@")[0]}\n` : "";
 	}
-	return m.reply(teks)
+	return m.reply(teks);
 }
 
 export { JadiBot, StopJadiBot, ListJadiBot };

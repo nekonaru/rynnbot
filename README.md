@@ -1,291 +1,709 @@
-## Information
-
 <div align="center">
-<a href="https://github.com/nazedev/hitori/watchers"><img title="Watchers" src="https://img.shields.io/github/watchers/nazedev/hitori?label=Watchers&color=green&style=flat-square"></a>
-<a href="https://github.com/nazedev/hitori/network/members"><img title="Forks" src="https://img.shields.io/github/forks/nazedev/hitori?label=Forks&color=blue&style=flat-square"></a>
-<a href="https://github.com/nazedev/hitori/stargazers"><img title="Stars" src="https://img.shields.io/github/stars/nazedev/hitori?label=Stars&color=yellow&style=flat-square"></a>
-<a href="https://github.com/nazedev/hitori/issues"><img title="Issues" src="https://img.shields.io/github/issues/nazedev/hitori?label=Issues&color=success&style=flat-square"></a>
-<a href="https://github.com/nazedev/hitori/issues?q=is%3Aissue+is%3Aclosed"><img title="Issues" src="https://img.shields.io/github/issues-closed/nazedev/hitori?label=Issues&color=red&style=flat-square"></a>
-<a href="https://github.com/nazedev/hitori/pulls"><img title="Pull Request" src="https://img.shields.io/github/issues-pr/nazedev/hitori?label=PullRequest&color=success&style=flat-square"></a>
-<a href="https://github.com/nazedev/hitori/pulls?q=is%3Apr+is%3Aclosed"><img title="Pull Request" src="https://img.shields.io/github/issues-pr-closed/nazedev/hitori?label=PullRequest&color=red&style=flat-square"></a>
+  <img src="src/media/naze.png" alt="Rynn" width="180" />
+  <h1>Rynn</h1>
+  <p>A feature-rich WhatsApp bot built with Node.js and <a href="https://github.com/WhiskeySockets/Baileys">Baileys</a>.<br/>
+  Comes with an interactive CLI, web dashboard, and a full suite of commands out of the box.</p>
+
+  <a href="https://github.com/nekonaru/rynn/stargazers"><img src="https://img.shields.io/github/stars/nazedev/rynn?style=flat-square&color=yellow" alt="Stars" /></a>
+  <a href="https://github.com/nekonaru/rynn/network/members"><img src="https://img.shields.io/github/forks/nazedev/rynn?style=flat-square&color=blue" alt="Forks" /></a>
+  <a href="https://github.com/nekonaru/rynn/issues"><img src="https://img.shields.io/github/issues/nazedev/rynn?style=flat-square&color=green" alt="Issues" /></a>
+  <a href="https://github.com/nekonaru/rynn/pulls"><img src="https://img.shields.io/github/issues-pr/nazedev/rynn?style=flat-square&color=orange" alt="Pull Requests" /></a>
 </div>
 
-This script is created by [Nazedev](https://github.com/nazedev) using Node.js and the [WhiskeySocket/Baileys](https://github.com/WhiskeySockets/Baileys) library. The script is currently in the development phase (BETA), so there may still be some errors that can be ignored. If errors persist even after debugging, please contact the owner for assistance. ~ By Naze
+<br />
 
-#### Join Group
-[![Grup WhatsApp](https://img.shields.io/badge/WhatsApp%20Group-25D366?style=for-the-badge&logo=whatsapp&logoColor=white)](https://chat.whatsapp.com/EApQZ65s9wF1UG5nD6Pinm?mode=gi_t) 
+> [!CAUTION]
+> **UNOFFICIAL API & ACCOUNT SANCTIONS RISK (DISCLAIMER)**  
+> This project uses `@whiskeysockets/baileys`, an unofficial WhatsApp Web API. Automated bots and unofficial third-party clients violate **WhatsApp's Terms of Service**.  
+> - **Account Sanctions & Restrictions:** Your WhatsApp account/number may face **sanctions, feature restrictions, or bans (temporary/permanent)** by Meta's automated anti-spam systems.  
+> - **Zero Liability:** The author and maintainers of **Rynn (`Nekonaruu`)** assume **no liability or responsibility** for any account sanctions, banned numbers, data loss, or damages resulting from the use of this software. **USE AT YOUR OWN RISK.**
+
+> [!WARNING]
+> **COMMON CAUSES OF WHATSAPP BANS:**  
+> 1. **New / Fresh SIM Cards:** Never use newly registered numbers immediately for bots or `jadibot`. WhatsApp's AI flags fresh numbers immediately.  
+> 2. **Public Spam & User Reports:** Adding the bot to multiple public groups or allowing unverified users to spam will lead to user blocks/reports (`Report/Block`), triggering instant permanent bans.  
+> 3. **Datacenter VPS / IP Blacklisting:** Even in *"Self Mode"* with an old number, running on flagged cloud VPS IP ranges (AWS, DigitalOcean, Heroku, Railway) or frequent socket reconnections can trigger automated integrity bans.  
+> 4. **Read our full [Disclaimer & Anti-Ban Guide](#disclaimer--anti-ban-guide) before deploying!**
+
+[![WhatsApp Group](https://img.shields.io/badge/Join_Community-25D366?style=for-the-badge&logo=whatsapp&logoColor=white)](https://chat.whatsapp.com/DCEHKeGRbE5F349Kj0tNYn?s=cl&p=a&mlu=0)
 
 ---
-## 📦 Requirements
 
-Minimum requirements:
-- **Node.js** v20 or higher
-- **Git**
+## Table of Contents
 
-System dependencies (handled automatically by `install.sh`):
-- ffmpeg
-- imagemagick
-- yarn / npm
+- [Disclaimer & Anti-Ban Guide](#disclaimer--anti-ban-guide)
+- [Requirements](#requirements)
+- [Installation](#installation)
+- [CLI Interface](#cli-interface)
+- [Running the Bot](#running-the-bot)
+- [Web Dashboard](#web-dashboard)
+- [API Integration](#api-integration)
+- [Configuration](#configuration)
+- [Adding Features](#adding-features)
+- [Core Architecture](#core-architecture)
+- [Project Structure](#project-structure)
+- [Deployment](#deployment)
+- [Features](#features)
+- [Contributors](#contributors)
 
 ---
-## 🚀 Installation
-### 1️⃣ Clone Repository
+
+## Requirements
+
+| Dependency | Minimum Version | Notes |
+|------------|-----------------|-------|
+| **Node.js** | v20+ | Required |
+| **Git** | any | Required |
+| **FFmpeg** | any | Auto-installed by `install.sh` / `install.bat` |
+| **PM2** | any | Auto-installed — used for process management |
+| **yarn** or **npm** | any | yarn is recommended for Termux |
+
+> [!TIP]
+> You don't need to install FFmpeg or PM2 manually. The install scripts handle everything for you.
+
+---
+
+## Installation
+
+### 1. Clone the repository
+
 ```bash
-git clone https://github.com/nazedev/hitori
-cd hitori
+git clone https://github.com/nekonaru/rynn
+cd rynn
 ```
----
-### 2️⃣ Automatic Installation (Recommended)
 
+### 2. Automatic setup (recommended)
+
+**Linux / Termux:**
 ```bash
 bash install.sh
 ```
 
-This script will:
-- Detect your package manager (`pkg`, `apt`, `dnf`, etc.)
-- Install required system dependencies
-- Install Node.js packages
-- Start the bot automatically
+**Windows:**
+```bat
+install.bat
+```
+
+Both scripts will:
+- Detect your package manager and install system dependencies
+- Install PM2 globally for process management
+- Run `npm install` to set up Node.js packages
+- Register the global `rynn` command via `npm link`
+- Launch the first-time setup wizard automatically
+
+> [!IMPORTANT]
+> After running the install script, the `rynn` command becomes available globally.
+> You can run it from any directory — no need to `cd` into the project folder each time.
 
 ---
-## 📱 Termux (Android)
+
+## Platform-Specific Guides
+
+### Termux (Android)
+
 ```bash
 pkg update && pkg upgrade
-pkg install git
-pkg install nodejs
-pkg install ffmpeg
-pkg install imagemagick
-git clone https://github.com/nazedev/hitori
-cd hitori
-npm install
-```
-[ RECOMMENDED INSTALL ON TERMUX ]
-```bash
-pkg install yarn
-yarn
-```
-Use **yarn**:
-
-```bash
+pkg install git nodejs ffmpeg yarn
+git clone https://github.com/nekonaru/rynn
+cd rynn
 yarn install
-yarn start
 ```
 
-> Make sure `nodejs` and `yarn` are installed. The `install.sh` script already handles this.
+> [!TIP]
+> Using **yarn** on Termux is recommended over npm for better compatibility and faster installs.
 
----
-## 💻 Laptop / Ubuntu / VPS / SSH
-* Download And Install Git [`Click Here`](https://git-scm.com/downloads)
-* Download And Install NodeJS [`Click Here`](https://nodejs.org/en/download)
-* Download And Install FFmpeg [`Click Here`](https://ffmpeg.org/download.html) (**Don't Forget Add FFmpeg to PATH enviroment variables**)
-* Download And Install ImageMagick [`Click Here`](https://imagemagick.org/script/download.php)
+### Desktop / Ubuntu / VPS
 
-Use **npm**:
+1. Install [Git](https://git-scm.com/downloads)
+2. Install [Node.js](https://nodejs.org/en/download) (v20 or higher)
+3. Install [FFmpeg](https://ffmpeg.org/download.html)
+
+> [!WARNING]
+> On Windows, make sure FFmpeg is added to your **system PATH** environment variable.
+> Without this, media processing commands will fail silently.
+
+Then run:
 
 ```bash
 npm install
 npm start
 ```
----
-## ▶️ Running the Bot
 
-```bash
-npm start
-# or
-yarn start
+---
+
+## CLI Interface
+
+Rynn includes a full interactive CLI tool for managing the bot without editing files manually.
+
+### Usage
+
+```
+rynn                    Open the interactive main menu
+rynn start              Start the bot directly
+rynn settings           Open the settings manager
+rynn status             Show system health dashboard
+rynn report             View logs and diagnostics
+rynn --setup            Run the first-time setup wizard
+rynn --help, -h         Show help
 ```
 
-Scan the QR Code or use Pairing Code, and the bot is ready to use.
+### Interactive Main Menu
+
+Running `rynn` without arguments opens the main menu with the following options:
+
+| Option | Description |
+|--------|-------------|
+| **Start Bot** | Launch the WhatsApp bot process |
+| **Settings** | Open the interactive settings manager |
+| **Status / Health** | View system readiness and bot process info |
+| **Report** | Access logs, error reports, and diagnostics |
+| **Exit** | Close the CLI |
+
+### Setup Wizard
+
+On first run, the CLI automatically launches a guided setup wizard that walks you through:
+
+- **Owner number(s)** — phone number(s) with admin privileges
+- **Author name** — displayed in bot info and stickers
+- **Bot name** — the display name for your bot
+- **Naze API Key** — required for API-powered features
+- **Bot WhatsApp number** — used for pairing code
+
+> [!NOTE]
+> You can re-run the setup wizard at any time with `rynn --setup`.
+> All values can also be changed individually via `rynn settings`.
+
+### Settings Manager
+
+The settings menu provides an organized interface divided into categories:
+
+| Category | What you can configure |
+|----------|----------------------|
+| **General** | Bot name, bot number, author, pack name, timezone, locale, prefix |
+| **Owner** | Add or remove owner phone numbers |
+| **API Keys** | View and update API keys (masked for security) |
+| **Limits** | Free, premium, and VIP usage limits |
+
+All changes are written directly to `settings.js` and take effect immediately (hot-reloaded).
+
+### Status Dashboard
+
+The `rynn status` command displays a health overview:
+
+- **System dependencies** — Node.js, npm, FFmpeg, PM2, Git (with version checks)
+- **Bot process** — PM2 status, uptime, memory usage, CPU, restart count
+- **Database** — File size and last modified time
+- **System resources** — Platform, CPU model, memory usage, hostname
+
+### Report Viewer
+
+The `rynn report` command provides access to diagnostics:
+
+| Report | Description |
+|--------|-------------|
+| **Recent Logs** | Last 30 lines of bot output from PM2 |
+| **Error Logs** | Filtered error lines from recent logs |
+| **Database Check** | JSON integrity validation for `database.json` and `baileys_store.json` |
+| **Dependency Audit** | Runs `npm audit` to check for known vulnerabilities |
 
 ---
 
-## 🌐 API Integration
+## Running the Bot
 
-This bot is fully integrated with the **Naze API Service**:
+There are several ways to start the bot:
 
-🔗 https://naze.biz.id
+```bash
+# Via the CLI (recommended)
+rynn start
 
-Many features (such as downloader, AI tools, utilities, and media processing) rely on this external API.
+# Via npm
+npm start
 
-### API Key Requirement
+# Via yarn
+yarn start
 
-To use all features properly, you **must provide your own API key**.
+# Development mode with auto-reload
+npm run dev
+```
 
-The API key is configured in:
+Once started, scan the QR code or use the pairing code to connect your WhatsApp account.
 
-📁 **[settings.js](https://github.com/nazedev/hitori/blob/master/settings.js)**  
+> [!CAUTION]
+> The bot will auto-restart on crashes when started through `start.js`.
+> If the bot keeps crashing in a loop, check your logs with `rynn report` to diagnose the issue.
 
-Example configuration:
+---
 
+## Web Dashboard
+
+Rynn connects to a relay-based web dashboard at `bot.naze.biz.id` via Socket.IO. Once connected, the bot automatically registers itself and provides a dashboard URL in the console output.
+
+The dashboard allows you to:
+- View real-time bot stats (uptime, memory, CPU)
+- Browse and edit database entries (users, groups, premium, etc.)
+- Modify settings remotely
+- Send messages and commands through the panel
+
+> [!NOTE]
+> The dashboard is secured with an auto-generated admin key.
+> The access URL (including the key) is printed in the console when the bot starts.
+
+---
+
+## API Integration
+
+Many bot features rely on the **Naze API Service** for downloaders, AI tools, utilities, and media processing.
+
+**API endpoint:** https://naze.biz.id
+
+### Setting up your API key
+
+You can set the API key in two ways:
+
+**Option A — via CLI (recommended):**
+```bash
+rynn --setup
+# or navigate to: rynn > Settings > API Keys
+```
+
+**Option B — manual edit in `settings.js`:**
 ```js
 global.APIKeys = {
-  'https://api.naze.biz.id': 'YOUR_API_KEY_HERE'
+  "https://api.naze.biz.id": "YOUR_API_KEY_HERE",
+  "https://api.neosantara.xyz/v1": "API_KEY_NEOSANTARA_AI",
+};
+```
+
+> [!WARNING]
+> Without a valid API key, commands that depend on external APIs will fail or return errors.
+> Register at the official website to obtain your key before using the bot.
+
+### Using the `fetchApi` Helper (GET & POST Methods)
+
+Rynn Bot provides a built-in, globally available helper function—`global.fetchApi(endpoint, data, options)`—defined in `index.js`. This helper automatically handles endpoint resolution, API key injection, header formatting, and JSON parsing according to the official [Naze API Documentation](https://api.naze.biz.id/docs/json).
+
+#### Function Signature & Parameters
+```ts
+await global.fetchApi(endpoint: string, data?: Object | FormData, options?: FetchOptions)
+```
+- **`endpoint`**: The API route starting with `/` (e.g., `/ai/chat` or `/tools/translate`).
+- **`data`**: An object containing your request parameters or payload.
+  - For **GET** requests: Transformed into URL query string parameters (`?key=value&apikey=...`).
+  - For **POST** requests: Serialized as a JSON body (`application/json`) or sent as `FormData` (when `options.form = true`).
+- **`options`**: Additional configuration options:
+  - `method`: HTTP method (`"GET"` by default, or `"POST"`).
+  - `stream`: Set to `true` to save audio/video/image responses directly to a temporary file path.
+  - `buffer`: Set to `true` to return raw Buffer data (e.g., for media processing).
+  - `api`: Target API provider index (`1` for default Naze API, `2` for Neosantara AI, etc.).
+
+---
+
+#### Complete Example: Implementing a Feature with GET and POST
+Many endpoints on `https://api.naze.biz.id` support both **GET** (query parameters) and **POST** (JSON body / Form payload). Below is a practical implementation of an **AI Chat Feature** demonstrating how to call the same endpoint using either method inside `handler.js`:
+
+##### 1. Using GET Method (Default Query Parameters)
+When using **GET**, `fetchApi` automatically encodes the `data` object into the URL query string along with your API key:
+
+```js
+case 'aichat-get': {
+	if (!text) return m.reply(`Example: ${prefix + command} Hello bot, who are you?`);
+	try {
+		// Method defaults to "GET" — parameters are appended as ?query=...&apikey=YOUR_KEY
+		const response = await global.fetchApi("/ai/chat", {
+			query: text
+		});
+
+		// The Naze API returns a standardized JSON structure: { status: true, result: { message: "..." } }
+		await m.reply(response.result.message);
+	} catch (err) {
+		await m.reply(`[API Error] Failed to fetch response: ${err.message}`);
+	}
 }
+break;
 ```
 
-⚠️ If the API key is invalid or not set:
-- Some commands will not work
-- API-based features may return errors
+##### 2. Using POST Method (JSON Payload)
+When sending longer prompts, structured data, or complex payloads, using **POST** with `application/json` is recommended:
 
-Make sure you register and obtain a valid API key from the official website before using the bot.
-
----
-## ⚙️ Bot Configuration
-
-All main configurations are located in:
-
-📁 **[settings.js](https://github.com/nazedev/hitori/blob/master/settings.js)**
-
-### Editable Settings
-
-#### Owner Number
 ```js
-global.owner = ['628xxxxxxxxxx']
+case 'aichat-post': {
+	if (!text) return m.reply(`Example: ${prefix + command} Write a poem about coding.`);
+	try {
+		// Explicitly specify { method: "POST" } in the third argument
+		const response = await global.fetchApi(
+			"/ai/chat",
+			{
+				query: text,
+				model: "default" // Optional additional POST body parameters
+			},
+			{
+				method: "POST"
+			}
+		);
+
+		await m.reply(response.result.message);
+	} catch (err) {
+		await m.reply(`[API Error] Failed to fetch response: ${err.message}`);
+	}
+}
+break;
 ```
 
-#### Bot Identity
-```js
-global.botname = 'Hitori Bot'
-global.author = 'Nazedev'
-```
-
-#### Command Prefix
-```js
-global.listprefix = ['!', '.', '+']
-```
-
-#### User Limits & Balance
-```js
-global.limit.free = 20
-global.money.free = 10000
-```
-
-#### Pairing Code / Bot Number
-```js
-global.pairing_code = true
-global.number_bot = '628xxxxxxxxxx'
-```
-
-> Any change in [settings.js](https://github.com/nazedev/hitori/blob/master/settings.js) will be **auto-reloaded** without restarting the bot.
+> [!TIP]
+> **Handling Media Streams (TTS / Images):**  
+> If an endpoint returns audio or image bytes (such as `/tools/tts` or `/create/qc`), pass `{ stream: true }` in `options`. The function will save the stream to a temporary file and return its local file path ready for sending via `sock.sendMessage()`.
 
 ---
 
-## 🧩 Editing & Adding Features
+## Configuration
 
-All bot features are implemented in:
+All bot settings are managed in [`settings.js`](https://github.com/nekonaru/rynn/blob/master/settings.js). Changes are **hot-reloaded** automatically — no restart needed.
 
-📁 **[naze.js](https://github.com/nazedev/hitori/blob/master/naze.js)**
+> [!TIP]
+> Use `rynn settings` for a guided, menu-driven way to edit configuration
+> instead of modifying `settings.js` by hand.
 
-Look for the **[switch (command)](https://github.com/nazedev/hitori/blob/61052a01ea8e8975a99f0db7f5d40bad5ee39a5b/naze.js#L742)** section.
+### Key options
 
-### Where to Add New Features
+**Owner number**
+```js
+global.owner = ["628xxxxxxxxxx"];
+```
 
-Add or edit commands inside the [switch (command)](https://github.com/nazedev/hitori/blob/61052a01ea8e8975a99f0db7f5d40bad5ee39a5b/naze.js#L742) block.
+**Bot identity**
+```js
+global.botname = "Rynn Bot";
+global.author = "Nazedev";
+global.packname = "Bot WhatsApp";
+```
 
-### Example: Adding a New Command
+**Command prefixes**
+```js
+global.listprefix = ["+", "!", "."];
+```
+
+**Timezone and locale**
+```js
+global.timezone = "Asia/Jakarta";
+global.locale = "en";
+```
+
+**User limits and balance**
+```js
+global.limit = { free: 20, premium: 999, vip: 900 };
+global.money = { free: 10000, premium: 1000000, vip: 10000000 };
+```
+
+**Pairing code and bot number**
+```js
+global.pairing_code = true;
+global.number_bot = "628xxxxxxxxxx";
+```
+
+---
+
+## Database & Storage
+
+Rynn Bot features a highly flexible, enterprise-grade database architecture. The system divides data into three distinct layers, each of which can be configured independently to use a different database engine, local filesystem path, or cloud endpoint.
+
+### 1. The Three Data Layers
+- **Session Auth (`global.database.path`)**: Stores cryptographic signal keys, pre-keys, and WhatsApp credentials required to maintain an authenticated connection. This layer writes almost in real-time via an asynchronous FIFO queue (`writeQueue`) backed by an in-memory LRU cache (`keyCache`).
+- **Message Store (`global.database.options.store`)**: Stores Baileys' internal caching for messages, contacts, group metadata, and WhatsApp state.
+- **Bot Database (`global.database.options.database`)**: Stores bot-specific user data, economy (RPG stats), limits, prefixes, and custom group settings.
+
+### 2. Supported Database Engines & SSL Configuration
+The bot dynamically detects the connection URL prefix and automatically routes traffic to the appropriate database driver. All SQL and MongoDB implementations use isolated **Connection Pools** with automatic reconnection and zero-downtime hot-reloading.
+
+| Engine | Prefix | SSL Support | Notes |
+|---|---|---|---|
+| **Local JSON** | *(Default / Folder Name)* | N/A | Best for low-traffic bots or saving cloud bandwidth. Files are stored as local `.json` files. |
+| **MongoDB** | `mongodb://` or `mongodb+srv://` | Auto-detected / `ssl: true` | Excellent for scalable NoSQL document storage (e.g., MongoDB Atlas). |
+| **PostgreSQL** | `postgres://` or `postgresql://` | Auto-detected / `sslmode=require` | Advanced relational database (e.g., Aiven, Supabase, Neon, RDS). |
+| **MySQL** | `mysql://` | Auto-detected / `ssl: true` | High-performance relational database (e.g., TiDB Cloud, PlanetScale, AWS RDS). |
+
+#### SSL / TLS Security
+When connecting to managed cloud providers (such as **Aiven**, **MongoDB Atlas**, **Supabase**, **TiDB Cloud**, or **Neon**), SSL is automatically detected and configured securely.
+- For **PostgreSQL**, you can include `?sslmode=require` directly in your URL. The connection pool automatically handles SSL negotiation (`rejectUnauthorized: false`) without requiring manual CA certificate downloads.
+- For **MongoDB** or **MySQL**, you can pass `ssl: true` in the layer options or include SSL query parameters in the connection string.
+
+---
+
+### 3. Comprehensive Configuration Examples
+
+All database configurations are managed inside `settings.js` under the `global.database` object. Below are four production-ready patterns:
+
+#### Example 1: Single Connector (All-in-One Cloud or All-Local)
+If you want all three layers (Session Auth, Store, and Bot Database) to share a single database server or local folder, set `store` and `database` to `true`. They will automatically inherit the connection URL from `path`.
+
+**All-in-One Cloud (PostgreSQL on Aiven):**
+```js
+global.database = {
+	// Primary Connection URL (PostgreSQL with SSL enabled)
+	path: "postgres://avnadmin:password@pg-xxx.aivencloud.com:16474/defaultdb?sslmode=require",
+	options: {
+		// Setting to 'true' automatically shares the primary PostgreSQL connection pool
+		store: true,
+		database: true,
+		ssl: true
+	}
+};
+```
+
+**All-in-One Local Filesystem (JSON):**
+```js
+global.database = {
+	// Saves all data inside a local folder named 'nazedev'
+	path: "nazedev",
+	options: {
+		store: true,     // -> Saves to nazedev/bot_store.json
+		database: true   // -> Saves to nazedev/bot_database.json
+	}
+};
+```
+
+---
+
+#### Example 2: Hybrid Combo (Cloud Database + Local Store)
+To save cloud storage and bandwidth, a common best practice is to store high-priority data (Session Auth and User Database) in the cloud, while keeping the high-frequency Message Store locally on your server's disk.
+
+```js
+global.database = {
+	// Session Auth stored securely in PostgreSQL Cloud
+	path: "postgres://avnadmin:password@pg-xxx.aivencloud.com:16474/defaultdb?sslmode=require",
+	options: {
+		// Store high-frequency message caching locally as a JSON file
+		store: {
+			path: "local_store.json"
+		},
+		// Bot Database inherits the PostgreSQL Cloud connection from 'path'
+		database: true,
+		ssl: true
+	}
+};
+```
+
+---
+
+#### Example 3: Multi-Cloud / Dedicated Engines (Different Cloud Providers)
+For enterprise workloads, you can assign different database engines to different layers. Each engine operates its own independent connection pool.
+
+```js
+global.database = {
+	// Session Auth on PostgreSQL (Aiven) for fast, transactional upserts
+	path: "postgres://avnadmin:password@pg-xxx.aivencloud.com:16474/defaultdb?sslmode=require",
+	options: {
+		// Message Store on MongoDB Atlas for large-scale document caching
+		store: {
+			path: "mongodb+srv://db_user:password@cluster0.mongodb.net/?appName=Cluster0",
+			ssl: true
+		},
+		// Bot Database on a separate MySQL / TiDB Cloud instance
+		database: {
+			path: "mysql://root:password@gateway01.ap-southeast-1.prod.aws.tidbcloud.com:4000/rynn",
+			ssl: true
+		}
+	}
+};
+```
+
+---
+
+#### Example 4: Custom Object Configuration per Layer
+You can also specify explicit database names, SSL overrides, or custom folder paths for each individual layer:
+
+```js
+global.database = {
+	path: "postgres://user:pass@cloud-host:5432/primary_db?sslmode=require",
+	options: {
+		store: {
+			path: "mongodb+srv://user:pass@atlas-host/store_db",
+			ssl: true
+		},
+		database: {
+			path: "postgres://user:pass@cloud-host:5432/analytics_db?sslmode=require",
+			ssl: true
+		}
+	}
+};
+```
+
+---
+
+## Adding Features
+
+All bot commands live in [`handler.js`](https://github.com/nekonaru/rynn/blob/master/handler.js), inside the `switch (command)` block.
+
+To add a new command, insert a new `case`:
 
 ```js
 case 'ping': {
-  reply('pong 🏓')
+  reply('pong')
 }
 break
 ```
 
-Guidelines:
-- Always add new commands using `case`
-- Do not remove the main switch structure
-- Place feature logic inside each `case`
+> [!CAUTION]
+> Do not remove or restructure the main `switch` block.
+> Always add new commands as `case` entries within the existing structure.
 
 ---
 
-## 🔌 Connector & Core Handler
+## Core Architecture
 
-To understand the WhatsApp connection flow and event handling, see:
+| File | Role |
+|------|------|
+| `start.js` | Entry point — spawns `index.js` as a child process with IPC. Handles auto-restart on crash and graceful shutdown. |
+| `index.js` | Core connector — initializes Baileys, handles WhatsApp events, loads `settings.js`, dispatches messages to `handler.js`. |
+| `handler.js` | Command handler — contains all bot commands inside a `switch (command)` block. |
+| `settings.js` | Configuration — all global settings, hot-reloaded on save. |
+| `cli.js` | CLI entry point — interactive menu, routes to setup, settings, status, and report modules. |
 
-📁 **[index.js](https://github.com/nazedev/hitori/blob/master/index.js)**
-This file is responsible for:
-- Initializing Baileys connection
-- Handling WhatsApp events
-- Loading [settings.js](https://github.com/nazedev/hitori/blob/master/settings.js)
-- Dispatching messages to [naze.js](https://github.com/nazedev/hitori/blob/master/naze.js)
-
-⚠️ **Editing [index.js](https://github.com/nazedev/hitori/blob/master/index.js) is not recommended unless you fully understand the bot flow.**
+> [!WARNING]
+> Modifying `index.js` or `start.js` is not recommended unless you fully understand the bot's internal flow.
+> Incorrect changes can break the auto-restart mechanism or WhatsApp connection.
 
 ---
-## 🗂 Structure Project
+
+## Project Structure
+
 ```
+rynn/
+├── index.js                  # Core connector and event handler
+├── handler.js                # All bot commands and features
+├── settings.js               # Bot configuration (hot-reloaded)
+├── start.js                  # Entry point with auto-restart
+├── cli.js                    # CLI entry point
+├── install.sh                # Auto-installer (Linux/Termux)
+├── install.bat               # Auto-installer (Windows)
+├── lib/
+│   ├── converter.js          # Media conversion utilities
+│   ├── exif.js               # EXIF metadata handling
+│   ├── function.js           # Shared helper functions
+│   ├── game.js               # Game logic (chess, quiz, etc.)
+│   ├── math.js               # Math quiz generator
+│   ├── scraper.js            # Web scraping utilities
+│   ├── template_menu.js      # Menu templates
+│   ├── tictactoe.js          # Tic-tac-toe game
+│   └── uploader.js           # File upload utilities
+├── src/
+│   ├── auth.js               # Baileys custom authentication adapter
+│   ├── database.js           # Database adapter (JSON / MongoDB / SQL)
+│   ├── clonebot.js           # Sub-bot (clonebot) handler
+│   ├── message.js            # Message parser and serializer
+│   ├── server.js             # Web dashboard (Socket.IO relay)
+│   ├── cli/
+│   │   ├── helpers.js        # CLI theme, banners, logging
+│   │   ├── setup.js          # First-time setup wizard
+│   │   ├── settings-menu.js  # Interactive settings manager
+│   │   ├── settings-parser.js # Read/write settings.js programmatically
+│   │   ├── status.js         # System health dashboard
+│   │   └── report.js         # Log viewer and diagnostics
+│   ├── media/                # Static assets (images, fonts)
+│   └── nulis/                # Handwriting image generator assets
+├── database/                 # Runtime data storage
 ├── Dockerfile
-├── LICENSE
-├── Procfile
-├── README.md
-├── app.json
-├── database
-│   ├── jadibot
-│   │   └── Naze
-│   └── temp
-│       └── A
 ├── docker-compose.yml
+├── Procfile
 ├── heroku.yml
-├── index.js
-├── install.sh
-├── lib
-│   ├── converter.js
-│   ├── exif.js
-│   ├── function.js
-│   ├── game.js
-│   ├── math.js
-│   ├── template_menu.js
-│   ├── tictactoe.js
-│   └── uploader.js
-├── naze.js
-├── nodemon.json
-├── package.json
+├── app.json
 ├── railway.json
-├── replit.nix
-├── settings.js
-├── speed.py
-├── src
-│   ├── antispam.js
-│   ├── database.js
-│   ├── jadibot.js
-│   ├── media
-│   │   ├── fake.pdf
-│   │   └── naze.png
-│   ├── message.js
-│   └── server.js
-└── start.js
+└── package.json
 ```
----
-#### Deploy to Heroku
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/nazedev/hitori)
-
-#### Heroku Buildpack
-| Build Pack | LINK |
-|--------|--------|
-| **NODEJS** | heroku/nodejs |
-| **FFMPEG** | [here](https://github.com/jonathanong/heroku-buildpack-ffmpeg-latest) |
-| **IMAGEMAGICK** | [here](https://github.com/DuckyTeam/heroku-buildpack-imagemagick) |
 
 ---
-### Features
-| Menu     | Bot | Group | Search | Download | Tools | Ai | Game | Fun | Owner |
-| -------- | --- | ----- | ------ | -------- | ----- | -- | ---- | --- | ----- |
-| Work     |  ✅  |   ✅   |    ✅    |     ✅     |   ✅   | ✅ |   ✅   |  ✅  |    ✅    |
 
+## Deployment
 
-License: [MIT](https://choosealicense.com/licenses/mit/)
+### Heroku
 
-#### Support Me
+[![Deploy to Heroku](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/nekonaru/rynn)
+
+**Required buildpacks:**
+
+| Buildpack | Value |
+|-----------|-------|
+| Node.js | `heroku/nodejs` |
+| FFmpeg | [heroku-buildpack-ffmpeg-latest](https://github.com/jonathanong/heroku-buildpack-ffmpeg-latest) |
+
+### Railway / Docker
+
+Deployment configs for Railway (`railway.json`) and Docker (`Dockerfile`, `docker-compose.yml`) are included in the repository. No additional setup is required — just deploy and set your environment variables.
+
+---
+
+## Features
+
+| Category | Status | Description |
+|----------|--------|-------------|
+| Menu & Help | Available | Command list, help text, info display |
+| Bot Management | Available | Restart, broadcast, join/leave groups |
+| Group Tools | Available | Kick, promote, demote, mute, anti-spam |
+| Search | Available | Google, YouTube, Wikipedia, and more |
+| Downloader | Available | YouTube, TikTok, Instagram, Facebook |
+| Utilities | Available | Stickers, QR codes, translate, TTS |
+| AI Tools | Available | ChatGPT, image generation, and others |
+| Games | Available | Tic-tac-toe, chess, math quiz, trivia |
+| Fun | Available | Memes, quotes, random media |
+| Owner Commands | Available | Eval, exec, ban, settings control |
+
+---
+
+## Contributors
+
+| [![NazeDev](https://github.com/nazedev.png?size=80)](https://github.com/nazedev) | [![Zaynn](https://github.com/ZaynRcK.png?size=80)](https://github.com/ZaynRcK) | [![Dani](https://github.com/nazedev.png?size=80)](https://github.com/nazedev) | [![WhiskeySockets](https://github.com/WhiskeySockets.png?size=80)](https://github.com/WhiskeySockets) |
+|:---:|:---:|:---:|:---:|
+| **NazeDev** | **Zaynn** | **Dani** | **WhiskeySockets** |
+| Creator | API Service Provider | Code Contributor | Baileys Library |
+
+---
+
+## Support
+
+If you find this project useful, consider supporting the development:
+
 - [Saweria](https://saweria.co/naze)
 
-## Contributor
+---
 
-- [NazeDev](https://github.com/nazedev) (Pembuat)
-- [Zaynn](https://github.com/ZaynRcK) (Penyedia Layanan API)
-- [Dani](https://github.com/nazedev) (Penyumbang Code)
+## Disclaimer & Anti-Ban Guide
 
-## Thanks to
+> [!CAUTION]
+> **PLEASE READ CAREFULLY BEFORE DEPLOYING OR USING THIS SCRIPT**
 
-| [![Nazedev](https://github.com/nazedev.png?size=100)](https://github.com/nazedev) | [![Zaynn](https://github.com/ZaynRcK.png?size=100)](https://github.com/ZaynRcK) | [![Dani](https://github.com/nazedev.png?size=100)](https://github.com/nazedev) | [![WhiskeySockets](https://github.com/WhiskeySockets.png?size=100)](https://github.com/WhiskeySockets) |
-| --- | --- | --- | --- |
-| [NazeDev](https://github.com/nazedev) | [Zaynn](https://github.com/ZaynRcK) | [Dani](https://github.com/dani) | [WhiskeySockets](https://github.com/WhiskeySockets) |
+### 1. Unofficial API Notice & Legal Disclaimer
+**Rynn Bot** is an independent open-source project built on top of `@whiskeysockets/baileys`, which implements an **unofficial WhatsApp Web Multi-Device protocol**.
+- **Not Affiliated with Meta / WhatsApp:** This project is **not** endorsed, certified, or authorized by WhatsApp Inc., Meta Platforms, Inc., or any of their affiliates.
+- **Terms of Service Violation:** Using third-party clients, automation scripts, or bots is a violation of WhatsApp's Terms of Service.
+- **Zero Liability Clause:** By downloading, installing, or running **Rynn Bot**, **you explicitly acknowledge and accept all risks**. The creator (`Nazedev`), contributors, and maintainers **SHALL NOT BE HELD LIABLE OR RESPONSIBLE** for:
+  - Any **temporarily or permanently banned WhatsApp numbers/accounts**.
+  - Any loss of personal or business messages, contacts, or data.
+  - Any damages, complaints, or legal actions arising from automated messaging.
+
+---
+
+### 2. Why WhatsApp Accounts Get Banned (Technical Explanation)
+Many users blame the script when their account gets banned, but bans are almost always caused by WhatsApp/Meta's automated **Integrity & AI Anti-Spam Systems** detecting anomalous usage patterns:
+
+1. **Fresh / Newly Registered SIM Cards (`#1 Ban Cause`)**
+   - **Why it happens:** Meta's anti-spam algorithms flag new numbers with zero or low normal chat history. If a newly registered SIM card immediately connects via an unofficial Web API or spawns a `jadibot` session, it is instantly classified as a spam bot and banned permanently.
+   - **Solution:** Never use fresh numbers. Always warm up an account for at least 2–4 weeks with normal human messaging on a physical phone before connecting it to a bot.
+
+2. **User Reports & Public Group Spam**
+   - **Why it happens:** If your bot is added to multiple public groups or allows strangers in private chats to trigger commands, even **2–3 users clicking "Report & Block"** will trigger an automatic instant ban by Meta's servers.
+   - **Solution:** Restrict bot usage to private/trusted groups, enable anti-spam command cooldowns, and never broadcast unsolicited messages.
+
+3. **Datacenter VPS IP Flagging & ASN Reputation (*"Why Self-Mode / Old Numbers Get Banned"*)**
+   - **Why it happens:** Some users report that even an old number used in *"Self Mode"* by only 1 person in a private group gets banned. **Why?** Because Meta's security engine monitors the **IP Address ASN (Autonomous System Number)**. Traffic originating from commercial Cloud/VPS datacenter ranges (AWS, DigitalOcean, Heroku, Railway, Linode) is treated with high suspicion compared to residential Wi-Fi or mobile carrier IPs. Furthermore, frequent WebSocket reconnects or handshake resets on a headless session increase the risk score until an automated ban occurs.
+   - **Solution:** Avoid frequent restarting/reconnecting, use stable residential proxies if hosting on cloud VPS, and keep messaging volume realistic.
+
+---
+
+### 3. Maintainer Policy for GitHub Issues
+- **No Ban Support:** Any GitHub Issues, Pull Requests, or community tickets complaining about *"banned numbers"*, *"number blocked"*, or asking *"why did my number get banned?"* will be **immediately closed without action**.
+- **User Responsibility:** Account safety is **100% the responsibility of the user operating the bot**.
+
+---
+
+## License
+
+This project is licensed under the [MIT License](https://choosealicense.com/licenses/mit/).

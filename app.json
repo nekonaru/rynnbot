@@ -1,7 +1,16 @@
 {
-	"name": "Rynn",
+	"name": "hitori",
 	"description": "WhatsApp Bot Using Lib Baileys",
 	"repository": "https://github.com/nazedev/hitori",
-	"logo": "https://node-js-sample.herokuapp.com/node.png",
-	"keywords": ["whatsapp-bot", "multi-device", "bot", "whatsapp"]
+	"keywords": ["whatsapp-bot", "multi-device", "bot", "whatsapp"],
+	"formation": {
+		"worker": {
+			"quantity": 1
+		}
+	},
+	"buildpacks": [
+		{
+			"url": "heroku/nodejs"
+		}
+	]
 }

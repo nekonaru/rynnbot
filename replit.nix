@@ -1,13 +1,11 @@
 { pkgs }: {
     deps = [
         pkgs.nodejs_22
-        pkgs.nodePackages.typescript
+        pkgs.python3
         pkgs.ffmpeg
         pkgs.git
-        pkgs.neofetch
         pkgs.speedtest-cli
         pkgs.wget
-        pkgs.yarn
         pkgs.libuuid
     ];
     env = {

@@ -1,15 +1,7 @@
-version: "3.9" 
 services:
-  web:
+  bot:
     build: .
-    ports:
-      - "8000:5000"
     volumes:
-      - .:/code
-      - logvolume01:/var/log
-    links:
-      - redis
-  redis:
-    image: redis
-volumes:
-  logvolume01: {}
+      - ./database:/app/database
+      - ./nazedev:/app/nazedev
+    restart: on-failure
