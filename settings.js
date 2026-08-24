@@ -59,7 +59,7 @@ global.my = {
 	yt: "https://youtube.com",
 	gh: "https://github.com/nekonaru",
 	gc: "https://web.whatsapp.com/",
-	ch: "-",
+	ch: "https://whatsapp.com/channel/0029VbD5pRH8qIzlIWSMQf0j",
 };
 
 global.limit = {
