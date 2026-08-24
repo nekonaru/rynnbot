@@ -10,7 +10,10 @@ import { updateSettings } from "../lib/function.js";
 
 const require = createRequire(import.meta.url);
 const packageInfo = require("../package.json");
-const ADMIN_KEY = process.env.ADMIN_KEY || global.defaultAdminKey || "naze";
+// ⚠️ KEAMANAN: jangan andalkan fallback "naze" — itu key publik yang ada di
+// source code, siapa pun yang baca repo ini tahu isinya. Selalu isi ADMIN_KEY
+// sendiri di .env kalau dashboard diaktifkan.
+const ADMIN_KEY = process.env.ADMIN_KEY || global.defaultAdminKey;
 const RELAY_SERVER_URL = "https://bot.naze.biz.id";
 
 const failedAttempts = new Map();
@@ -26,6 +29,28 @@ function safeCompare(a, b) {
 }
 
 async function setupDashboard(database, storeDB, sock) {
+	// ⚠️ KEAMANAN — BACA INI:
+	// Fitur ini menghubungkan bot ke RELAY SERVER PIHAK KETIGA (RELAY_SERVER_URL,
+	// bukan server milikmu sendiri) lewat socket.io, lalu mendaftarkan bot beserta
+	// ADMIN_KEY ke sana. Lewat koneksi ini ada handler "exec_terminal" yang
+	// menjalankan perintah shell APAPUN di server tempat bot ini berjalan.
+	// Ini secara fungsi adalah backdoor remote-exec, hanya dilindungi satu
+	// ADMIN_KEY. Karena itu sekarang OFF secara default dan butuh dua flag
+	// eksplisit di .env untuk mengaktifkannya — jangan aktifkan kecuali kamu
+	// benar-benar percaya pada operator RELAY_SERVER_URL dan paham risikonya.
+	if (process.env.DASHBOARD_ENABLED !== "true") {
+		console.log(chalk.gray("[DASHBOARD] Nonaktif (default). Set DASHBOARD_ENABLED=true di .env untuk mengaktifkan — baca catatan keamanan di server.js/README dulu."));
+		return null;
+	}
+	if (!ADMIN_KEY) {
+		console.log(chalk.redBright("[DASHBOARD] DASHBOARD_ENABLED=true tapi ADMIN_KEY belum di-set di .env. Dashboard TIDAK dijalankan demi keamanan."));
+		return null;
+	}
+	const remoteExecAllowed = process.env.ALLOW_REMOTE_EXEC === "true";
+	if (!remoteExecAllowed) {
+		console.log(chalk.yellowBright("[DASHBOARD] ALLOW_REMOTE_EXEC belum true — endpoint exec_terminal (eksekusi shell jarak jauh) dinonaktifkan."));
+	}
+
 	const socket = io(RELAY_SERVER_URL, {
 		transports: ["websocket"],
 		reconnection: true,
@@ -314,6 +339,9 @@ async function setupDashboard(database, storeDB, sock) {
 	});
 
 	socket.on("exec_terminal", async (payload, callback) => {
+		if (!remoteExecAllowed) {
+			return callback({ success: false, status: 403, message: "Remote exec dinonaktifkan. Set ALLOW_REMOTE_EXEC=true di .env untuk mengaktifkan (tidak disarankan kecuali kamu paham risikonya)." });
+		}
 		const auth = await checkAuth(payload.adminKey, payload.botNumber, payload.id);
 		if (!auth.success) return callback(auth);
 

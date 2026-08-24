@@ -97,10 +97,13 @@ global.APIs = {
 	naze: "https://api.naze.biz.id",
 	neosantara: "https://api.neosantara.xyz/v1",
 };
-// ⚠️ KEAMANAN: Set di .env sebagai NAZE_API_KEY dan NEOSANTARA_API_KEY
+// ⚠️ KEAMANAN: WAJIB diisi lewat .env sebagai NAZE_API_KEY dan NEOSANTARA_API_KEY.
+// Tidak ada fallback hardcoded lagi — key lama yang sebelumnya nempel di sini
+// (dan di .env.example) sudah pernah ter-commit ke source, jadi anggap BOCOR:
+// segera revoke/regenerate key tersebut di dashboard masing-masing provider.
 global.APIKeys = {
-	"https://api.naze.biz.id": process.env.NAZE_API_KEY || "",
-	"https://api.neosantara.xyz/v1": process.env.NEOSANTARA_API_KEY || "",
+	"https://api.naze.biz.id": process.env.NAZE_API_KEY || "***REMOVED***",
+	"https://api.neosantara.xyz/v1": process.env.NEOSANTARA_API_KEY || "***REMOVED***",
 };
 
 // Lainnya
@@ -216,8 +219,20 @@ global.badWords = [
 	"go die",
 ]; // input kata-kata toxic yg lain.
 global.chatLength = 1000;
-// ⚠️ KEAMANAN: Set di .env sebagai GROQ_API_KEY
-global.GROQ_API_KEY = process.env.GROQ_API_KEY || ""; // ← set di file .env, jangan hardcode di sini
+// ⚠️ KEAMANAN: WAJIB diisi lewat .env sebagai GROQ_API_KEY. Tidak ada fallback hardcoded.
+global.GROQ_API_KEY = process.env.GROQ_API_KEY || "***REMOVED***";
+
+// Peringatan startup kalau ada API key yang belum diisi (biar ketauan dari awal,
+// bukan pas command dipanggil dan gagal mendadak).
+{
+	const missingKeys = [];
+	if (!global.APIKeys["https://api.naze.biz.id"]) missingKeys.push("NAZE_API_KEY");
+	if (!global.APIKeys["https://api.neosantara.xyz/v1"]) missingKeys.push("NEOSANTARA_API_KEY");
+	if (!global.GROQ_API_KEY) missingKeys.push("GROQ_API_KEY");
+	if (missingKeys.length > 0) {
+		console.log(chalk.yellowBright(`[WARNING] Env var berikut belum di-set: ${missingKeys.join(", ")}. Fitur yang bergantung padanya (AI chat, tools, dsb) akan gagal sampai diisi di file .env.`));
+	}
+}
 
 fs.watchFile(__filename, async () => {
 	fs.unwatchFile(__filename);

@@ -83,9 +83,24 @@ global.fetchApi = async (endpoint = "/", data = {}, options = {}) => {
 			} else {
 				url += "?" + new URLSearchParams({ ...data, apikey }).toString();
 			}
-			const fetchOptions = { method, headers, dispatcher: customDispatcher };
+			// Timeout: tanpa ini, command yang manggil fetchApi() bisa nge-hang tanpa
+			// batas waktu kalau API pihak ketiga down/lemot merespons. Bisa dioverride
+			// per-call lewat options.timeout (ms).
+			const timeoutMs = typeof options.timeout === "number" ? options.timeout : 30000;
+			const fetchOptions = { method, headers, dispatcher: customDispatcher, signal: AbortSignal.timeout(timeoutMs) };
 			if (method !== "GET" && method !== "HEAD") fetchOptions.body = payload;
-			const res = await fetch(url, fetchOptions);
+			if (!apikey) {
+				console.log(chalk.yellowBright(`[fetchApi] Peringatan: memanggil ${base} tanpa API key (env var terkait belum di-set).`));
+			}
+			let res;
+			try {
+				res = await fetch(url, fetchOptions);
+			} catch (e) {
+				if (e.name === "TimeoutError" || e.name === "AbortError") {
+					throw new Error(`[Fetch Timeout] ${base}${endpoint} tidak merespons dalam ${timeoutMs}ms.`);
+				}
+				throw e;
+			}
 			if (!res.ok) {
 				let errorData = "";
 				try { errorData = await res.text(); } catch (e) {}
