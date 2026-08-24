@@ -299,7 +299,7 @@ await global.fetchApi(endpoint: string, data?: Object | FormData, options?: Fetc
 ---
 
 #### Complete Example: Implementing a Feature with GET and POST
-Many endpoints on `https://api.naze.biz.id` support both **GET** (query parameters) and **POST** (JSON body / Form payload). Below is a practical implementation of an **AI Chat Feature** demonstrating how to call the same endpoint using either method inside `handler.js`:
+Many endpoints on `https://api.naze.biz.id` support both **GET** (query parameters) and **POST** (JSON body / Form payload). Below is a practical implementation of an **AI Chat Feature** demonstrating how to call the same endpoint using either method inside `naze.js`:
 
 ##### 1. Using GET Method (Default Query Parameters)
 When using **GET**, `fetchApi` automatically encodes the `data` object into the URL query string along with your API key:
@@ -531,7 +531,7 @@ global.database = {
 
 ## Adding Features
 
-All bot commands live in [`handler.js`](https://github.com/nekonaru/rynn/blob/master/handler.js), inside the `switch (command)` block.
+All bot commands live in [`naze.js`](./naze.js), inside the `switch (command)` block.
 
 To add a new command, insert a new `case`:
 
@@ -553,8 +553,8 @@ break
 | File | Role |
 |------|------|
 | `start.js` | Entry point — spawns `index.js` as a child process with IPC. Handles auto-restart on crash and graceful shutdown. |
-| `index.js` | Core connector — initializes Baileys, handles WhatsApp events, loads `settings.js`, dispatches messages to `handler.js`. |
-| `handler.js` | Command handler — contains all bot commands inside a `switch (command)` block. |
+| `index.js` | Core connector — initializes Baileys, handles WhatsApp events, loads `settings.js`, dispatches messages to `naze.js`. |
+| `naze.js` | Command handler — contains all bot commands inside a `switch (command)` block. |
 | `settings.js` | Configuration — all global settings, hot-reloaded on save. |
 | `cli.js` | CLI entry point — interactive menu, routes to setup, settings, status, and report modules. |
 
@@ -569,7 +569,7 @@ break
 ```
 rynn/
 ├── index.js                  # Core connector and event handler
-├── handler.js                # All bot commands and features
+├── naze.js                   # All bot commands and features
 ├── settings.js               # Bot configuration (hot-reloaded)
 ├── start.js                  # Entry point with auto-restart
 ├── cli.js                    # CLI entry point

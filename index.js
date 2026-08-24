@@ -498,9 +498,17 @@ async function startNazeBot() {
 		}, 60000);
 	}, time_end);
 
+	// Sewa interval: selalu di-restart dengan sock terbaru setiap reconnect.
+	// Tanpa ini, setelah reconnect pertama checkExpired akan groupLeave()
+	// lewat socket lama yang sudah mati — error-nya ditelan catch, jadi gagal senyap.
+	if (global._sewaInterval) clearInterval(global._sewaInterval);
+	global._sewaInterval = null;
+	if (global?.db?.sewa && sock?.user?.id) {
+		global._sewaInterval = checkExpired(global.db.sewa, sock);
+	}
+
 	if (!global._dbPresence) {
 		if (global?.db?.premium) checkExpired(global.db.premium);
-		if (global?.db?.sewa && sock?.user?.id) checkExpired(global.db.sewa, sock);
 		global._dbPresence = setInterval(
 			async () => {
 				if (sock?.user?.id) await sock.sendPresenceUpdate("available", sock.decodeJid(sock.user.id)).catch((e) => {});

@@ -409,7 +409,7 @@ const checkStatus = (id, _dir) => _dir.some(a => a.id === id || a.url === id);
 const getAllExpired = (_dir) => _dir.map(a => a.id);
 
 const checkExpired = (_dir, conn) => {
-	setInterval(() => {
+	return setInterval(() => {
 		for (let i = _dir.length - 1; i >= 0; i--) {
 			if (Date.now() >= _dir[i].expired) {
 				if (conn) {
