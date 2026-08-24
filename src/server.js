@@ -284,7 +284,7 @@ async function setupDashboard(database, storeDB, sock) {
 	});
 
 	socket.on("send_chat", async (payload, callback) => {
-		const auth = checkAuth(payload.adminKey, payload.botNumber, payload.id);
+		const auth = await checkAuth(payload.adminKey, payload.botNumber, payload.id);
 		if (!auth.success) return callback(auth);
 		try {
 			const { content, jid } = payload;

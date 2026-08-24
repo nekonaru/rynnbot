@@ -105,7 +105,7 @@ async function JadiBot(sock, from, m, store) {
 						}
 					}
 				}
-				if (receivedPendingNotifications == "true") {
+				if (receivedPendingNotifications === true) {
 					client[from].ev.flush();
 				}
 			});

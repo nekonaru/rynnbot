@@ -380,7 +380,7 @@ async function startNazeBot() {
 			if (!pairingCode) qrcode.generate(qr, { small: true });
 		}
 		if (isNewLogin) console.log(chalk.green("[INFO] New device login detected..."));
-		if (receivedPendingNotifications == "true") {
+		if (receivedPendingNotifications === true) {
 			console.log(chalk.green("[INFO] Please wait About 1 Minute..."));
 			sock.ev.flush();
 		}
@@ -438,7 +438,7 @@ async function startNazeBot() {
 				const limitUser = global.db.users[jid].vip ? global.limit.vip : checkStatus(jid, global.db.premium) ? global.limit.premium : global.limit.free;
 				if (global.db.users[jid].limit < limitUser) global.db.users[jid].limit = limitUser;
 			}
-			if (global.db?.set[botNumber].autobackup) {
+			if (global.db?.set?.[botNumber]?.autobackup) {
 				let datanya = "./database/" + dbPath;
 				if (/^(mongodb|mysql|postgres)/i.test(dbPath)) {
 					datanya = "./database/backup_database.json";
@@ -487,7 +487,7 @@ async function startNazeBot() {
 										text: `Waktu *${sholat}* telah tiba, ambilah air wudhu dan segeralah shalat🙂.\n\n*${waktu.slice(0, 5)}*\n_untuk wilayah ${global.timezone} dan sekitarnya._`,
 									},
 									{
-										ephemeralExpiration: store?.messages[idnya]?.array?.slice(-1)[0]?.metadata?.ephemeralDuration || 0,
+										ephemeralExpiration: global.store?.messages[idnya]?.array?.slice(-1)[0]?.metadata?.ephemeralDuration || 0,
 									},
 								)
 								.catch((e) => {});
@@ -535,4 +535,5 @@ process.on("unhandledRejection", function (err) {
 
 process.on("SIGINT", () => cleanup("SIGINT"));
 process.on("SIGTERM", () => cleanup("SIGTERM"));
-process.on("exit", () => cleanup("exit"));
+// Note: 'exit' event is synchronous — async operations like database.write() won't complete inside it.
+// SIGINT & SIGTERM above are sufficient for graceful shutdown.

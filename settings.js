@@ -33,8 +33,12 @@ global.dns_use = "custom"; // custom / default
 // Mendukung MongoDB, MySQL, PostgreSQL, atau folder lokal.
 // `path` bisa berupa connection string (mongodb://, mysql://, postgres://) atau nama folder lokal.
 // `options.store` / `options.database` = true artinya ikut `path` di atas (satu koneksi untuk store & database, seperti setup lama).
+// ⚠️ KEAMANAN: Jangan hardcode credential di sini!
+// Simpan di file .env di root project, lalu set di env sebelum menjalankan bot.
+// Contoh .env:
+//   MONGODB_URL=mongodb+srv://user:password@cluster.mongodb.net/rynn?appName=Cluster0
 global.database = {
-	path: "mongodb+srv://bersiha03:nikolasdwidharma12@cluster0.iqesdvw.mongodb.net/rynn?appName=Cluster0",
+	path: process.env.MONGODB_URL || "rynn-session", // fallback ke local jika env tidak di-set
 	options: {
 		store: true, // jika true ikut path di atas. jika false, otomatis local. jika { path: 'url_or_name.json' } menjadi terpisah
 		database: true, // jika true ikut path di atas. jika false, otomatis local. jika { path: 'url_or_name.json' } menjadi terpisah
@@ -93,9 +97,10 @@ global.APIs = {
 	naze: "https://api.naze.biz.id",
 	neosantara: "https://api.neosantara.xyz/v1",
 };
+// ⚠️ KEAMANAN: Set di .env sebagai NAZE_API_KEY dan NEOSANTARA_API_KEY
 global.APIKeys = {
-	"https://api.naze.biz.id": "***REMOVED***",
-	"https://api.neosantara.xyz/v1": "***REMOVED***",
+	"https://api.naze.biz.id": process.env.NAZE_API_KEY || "",
+	"https://api.neosantara.xyz/v1": process.env.NEOSANTARA_API_KEY || "",
 };
 
 // Lainnya
@@ -211,7 +216,8 @@ global.badWords = [
 	"go die",
 ]; // input kata-kata toxic yg lain.
 global.chatLength = 1000;
-global.GROQ_API_KEY = "***REMOVED***"; // ← paste API key Groq kamu di sini
+// ⚠️ KEAMANAN: Set di .env sebagai GROQ_API_KEY
+global.GROQ_API_KEY = process.env.GROQ_API_KEY || ""; // ← set di file .env, jangan hardcode di sini
 
 fs.watchFile(__filename, async () => {
 	fs.unwatchFile(__filename);

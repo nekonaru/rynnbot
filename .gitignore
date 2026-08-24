@@ -1,0 +1,7 @@
+node_modules/
+.env
+rynn-session/
+database/*.json
+database/temp/
+database/backup_database.json
+database/JadiBot/
