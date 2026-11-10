@@ -30,4 +30,4 @@ Seluruh project ini berbahasa Indonesia: kode, komentar, pesan yang tampil ke pe
 
 ## Aset brand
 
-Logo Rynn: mascot oranye melambai (`assets/rynn-mascot.jpg`, 1024x1024, dipakai README) dan `src/media/rynn.png` (768x768, thumbnail bot di adReply).
+Logo Rynn: mascot oranye melambai (`assets/rynn-mascot.png`, 512x512 dengan background transparan, dipakai README) dan `src/media/rynn.png` (768x768, thumbnail bot di adReply).

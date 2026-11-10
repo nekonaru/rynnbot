@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="assets/rynn-mascot.jpg" alt="Maskot Rynn" width="160" />
+  <img src="assets/rynn-mascot.png" alt="Maskot Rynn" width="160" />
   <h1>Rynn: Bot WhatsApp Self-Hosted</h1>
   <p><b>Jalankan bot WhatsApp milikmu sendiri dengan ratusan perintah, game, perkakas AI,<br/>CLI interaktif, dan penyimpanan multi-database.</b></p>
 
