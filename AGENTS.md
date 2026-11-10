@@ -30,4 +30,4 @@ Seluruh project ini berbahasa Indonesia: kode, komentar, pesan yang tampil ke pe
 
 ## Aset brand
 
-Logo Rynn: `assets/ryn-symbol.svg` (primer, hitam), `assets/ryn-symbol-white.svg` (putih, untuk latar gelap), `assets/ryn-symbol-accent.svg` (kaki slash dengan aksen cyan `#06B6D4`), dan `assets/ryn-mark.png` (512x512, dipakai README dan `src/media/rynn.png`).
+Logo Rynn: mascot oranye melambai (`assets/rynn-mascot.jpg`, 1024x1024, dipakai README) dan `src/media/rynn.png` (768x768, thumbnail bot di adReply).

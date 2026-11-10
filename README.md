@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="assets/ryn-mark.png" alt="Rynn" width="140" />
+  <img src="assets/rynn-mascot.jpg" alt="Maskot Rynn" width="160" />
   <h1>Rynn: Bot WhatsApp Self-Hosted</h1>
   <p><b>Jalankan bot WhatsApp milikmu sendiri dengan ratusan perintah, game, perkakas AI,<br/>CLI interaktif, dan penyimpanan multi-database.</b></p>
 
@@ -23,10 +23,14 @@
 - [Kebutuhan](#kebutuhan)
 - [Instalasi](#instalasi)
 - [Konfigurasi](#konfigurasi)
+- [Menjalankan Pertama Kali](#menjalankan-pertama-kali)
+- [CLI](#cli)
 - [Integrasi API](#integrasi-api)
 - [Database & Penyimpanan](#database--penyimpanan)
 - [Web Dashboard](#web-dashboard)
-- [CLI](#cli)
+- [Operasi Harian](#operasi-harian)
+- [Perintah Populer](#perintah-populer)
+- [Pemecahan Masalah](#pemecahan-masalah)
 - [Struktur Proyek](#struktur-proyek)
 - [Pengembangan](#pengembangan)
 - [Pengujian](#pengujian)
@@ -212,6 +216,50 @@ Wizard ini memandu kamu mengisi nomor owner, author, nama bot, Naze API key, dan
 
 ---
 
+## Menjalankan Pertama Kali
+
+1. Pastikan sudah instalasi dan `.env` terisi ([Instalasi](#instalasi), [Konfigurasi](#konfigurasi)).
+2. Jalankan:
+
+```bash
+npm start
+```
+
+3. Kalau pairing code aktif dan `NUMBER_BOT` terisi, bot mencetak **pairing code** 8 digit di terminal. Buka WhatsApp di ponsel kamu: **Pengaturan > Perangkat tertaut > Tautkan perangkat**, lalu masukkan kode tersebut.
+   - Kalau `NUMBER_BOT` kosong, bot akan menanyakan nomor di terminal. Isi dengan nomor yang akan dipakai sebagai nomor bot (format `628xx`).
+4. Tunggu sampai bot login (sekitar 30-120 detik). Bot online jika koneksi terbuka terlihat di log.
+5. Dari nomor kamu, kirim pesan ke nomor bot:
+
+```text
+.ping
+```
+
+6. Tambahkan bot ke grup (opsional), lalu jalankan `.menu` di grup.
+7. Pastikan kamu terdaftar sebagai owner: owner adalah nomor di `OWNER_NUMBER` (`.env`) atau `global.owner` di `settings.js`. Untuk menambah owner tanpa restart, owner bisa menjalankan `.addowner 628xxxxxxxxxx`.
+
+> [!NOTE]
+> Pairing hanya perlu sekali. Kredensial sesi tersimpan di `rynn-session/` (atau di database kalau kamu pakai MongoDB/PostgreSQL). Folder itu di-gitignore dan tidak pernah di-commit.
+
+---
+
+## CLI
+
+Rynn membawa CLI lengkap (terdaftar global sebagai `rynn` oleh installer):
+
+```text
+rynn                  Buka menu utama interaktif
+rynn start            Jalankan bot
+rynn settings         Buka manajer pengaturan
+rynn status           Dashboard kesehatan sistem
+rynn report           Log dan diagnostik
+rynn --setup          Ulangi wizard setup pertama
+rynn --help           Bantuan
+```
+
+Manajer pengaturan mengedit `settings.js` (dan `.env` untuk Naze API key) lewat menu terarah. Status menampilkan cek dependensi, info proses PM2, info file database, dan resource sistem. Report menampilkan log PM2 terakhir, error terfilter, cek integritas JSON, dan `npm audit`.
+
+---
+
 ## Integrasi API
 
 Rynn berbicara dengan **Naze API** (`https://naze.dev/api/v1`) untuk downloader, perkakas AI, dan utilitas media, serta **Neosantara AI** untuk beberapa model AI. Ambil key kamu di [naze.dev](https://naze.dev) dan [app.neosantara.xyz](https://app.neosantara.xyz).
@@ -316,21 +364,87 @@ Lihat bagian [Catatan keamanan](#catatan-keamanan) di bawah untuk cara otorisasi
 
 ---
 
-## CLI
+## Operasi Harian
 
-Rynn membawa CLI lengkap (terdaftar global sebagai `rynn` oleh installer):
+**Start / stop.**
 
-```text
-rynn                  Buka menu utama interaktif
-rynn start            Jalankan bot
-rynn settings         Buka manajer pengaturan
-rynn status           Dashboard kesehatan sistem
-rynn report           Log dan diagnostik
-rynn --setup          Ulangi wizard setup pertama
-rynn --help           Bantuan
+```bash
+npm start          # atau: rynn start
 ```
 
-Manajer pengaturan mengedit `settings.js` (dan `.env` untuk Naze API key) lewat menu terarah. Status menampilkan cek dependensi, info proses PM2, info file database, dan resource sistem. Report menampilkan log PM2 terakhir, error terfilter, cek integritas JSON, dan `npm audit`.
+Tekan `Ctrl + C` untuk berhenti. `start.js` me-restart bot otomatis kalau crash (jeda 3 detik).
+
+**Jalankan di background dengan PM2 (opsional).**
+
+```bash
+pm2 start start.js --name rynn
+pm2 logs rynn       # lihat log
+pm2 restart rynn    # restart
+pm2 stop rynn       # berhenti
+```
+
+**Lihat log dan diagnostik.**
+
+```bash
+rynn report         # log PM2, error, cek integritas JSON, npm audit
+rynn status         # kesehatan sistem & proses bot
+```
+
+**Update bot.**
+
+```bash
+git pull && npm install
+# atau di WhatsApp (sebagai owner): .update
+```
+
+`settings.js` di-hot-reload otomatis saat disimpan; perubahan konfigurasi langsung berlaku tanpa restart. Untuk update kode, restart bot setelah pull/install.
+
+**Backup database.** Owner bisa menjalankan `.backup` di WhatsApp. Kalau auto-backup diaktifkan di pengaturan, database dicadangkan otomatis **setiap hari** (cron jam 00:00) dan dikirim ke owner; arsip backup dirotasi, maksimal 5 arsip di folder `backup/`.
+
+**Dimana data disimpan.**
+
+- Sesi WhatsApp: `rynn-session/` (atau `MONGODB_URL` kalau kamu pakai database)
+- Database bot: `database/database.json` (atau `MONGODB_URL`)
+- Temp media: `database/temp/`
+
+Semua di-gitignore; tidak pernah ikut ter-commit.
+
+---
+
+## Perintah Populer
+
+Semua perintah memakai prefix default `.` `!` atau `+` (atur di `settings.js`).
+
+| Perintah | Fungsi |
+|----------|--------|
+| `.menu` | Tampilkan menu semua perintah |
+| `.ping` | Cek bot hidup |
+| `.sticker` (reply gambar/video) | Buat stiker |
+| `.ytmp3` / `.ytmp4` <url> | Download audio/video YouTube |
+| `.tiktok` <url> | Download TikTok |
+| `.ig` <url> | Download Instagram |
+| `.ai` <teks> | Chat dengan AI |
+| `.tts` <teks> | Ubah teks jadi suara |
+| `.translate` <teks> | Terjemahkan teks |
+| `.daily` | Klaim limit harian |
+| `.mode public` / `.mode self` | Mode publik / khusus owner |
+
+Daftar lengkap: jalankan `.menu` di WhatsApp.
+
+---
+
+## Pemecahan Masalah
+
+| Masalah | Solusi |
+|---------|--------|
+| Bot tidak mau connect / pairing gagal | Pastikan `NUMBER_BOT` benar dan nomor itu tidak dipakai di tempat lain. Hapus `rynn-session/`, jalankan ulang, pairing ulang. |
+| Bot restart terus-menerus | Jalankan `rynn report` dan baca log error. Biasanya karena ffmpeg belum terpasang atau `.env` salah isi. |
+| Perintah media (stiker/video/audio) gagal | Pasang ffmpeg (`bash install.sh` mengurusnya) dan cek `ffmpeg -version`. |
+| Perintah tidak direspons di grup | Cek `.antispam` (cooldown per user), prefix di `settings.js`, dan apakah bot di-mute (`.mute`). |
+| `API Error` saat download/AI | `NAZE_API_KEY` belum diisi atau limit API habis. Isi di `.env` atau jalankan `.setapikey`. |
+| Gambar/thumbnail tidak muncul | Pastikan `src/media/rynn.png` ada. Bot tetap jalan tanpanya. |
+| `npm ci` gagal di Termux | Pakai `bash install.sh`, jangan di `/storage/...`; clone ke `~/rynnbot`. |
+| Dependensi native gagal dibangun | Tidak masalah; `@napi-rs/canvas` bersifat opsional dan render gambar otomatis fallback ke PureImage. |
 
 ---
 
@@ -471,13 +585,12 @@ Pesan di-cache lokal di folder sesi/store supaya Baileys bisa bekerja, dan data 
 
 <div align="center">
 
-| [![Nekonaruu](https://github.com/nekonaru.png?size=100)](https://github.com/nekonaru) |
-|:---:|
-| **[Nekonaruu](https://github.com/nekonaru)** |
+<img src="https://github.com/nekonaru.png?size=120" width="120" alt="Nekonaruu" /><br />
+<b><a href="https://github.com/nekonaru">Nekonaruu</a></b><br />
+Pembuat &amp; maintainer<br />
+Berbasis Hitori Bot karya <a href="https://github.com/nazedev/hitori">Nazedev</a>
 
 </div>
-
-Berbasis Hitori Bot karya [Nazedev](https://github.com/nazedev/hitori).
 
 
 ---
