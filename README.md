@@ -124,6 +124,23 @@ bash install.sh
 
 Both scripts detect your package manager, install system dependencies, install PM2, run `npm install`, register the global `rynn` command via `npm link`, and launch the first-time setup wizard.
 
+### Termux (Android)
+
+Works on a stock Termux install. Install Termux from F-Droid (not the Play Store build), then:
+
+```bash
+pkg update && pkg upgrade
+pkg install git nodejs-lts ffmpeg python
+git clone https://github.com/nekonaru/rynnbot.git
+cd rynnbot
+npm install
+```
+
+- Do not clone into `/storage/...`; that filesystem does not support symlinks and Node.js needs them. Clone into your home directory instead (for example `~/rynnbot`). `bash install.sh` detects this and stops with instructions.
+- `@napi-rs/canvas` is an optional dependency. If it cannot build on your device, image rendering falls back to PureImage automatically; nothing else is affected.
+- `ffmpeg` is required for media commands (stickers, video conversion). `python` is needed for the `.speed` command.
+- `bash install.sh` works on Termux too (it uses `pkg`, installs the same dependencies, and registers the global `rynn` command).
+
 ### Option B: Manual (build from source)
 
 <details><summary><b>I have Git installed</b></summary>

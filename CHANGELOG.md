@@ -1,5 +1,17 @@
 # Changelog
 
+## v3.0.1
+
+Rynn v3.0.1 makes the bot install and run on Termux (Android) and fixes the CLI banner.
+
+### Improvements
+
+- **Termux support.** `@napi-rs/canvas` is now an optional dependency, so `npm install` no longer fails on devices without prebuilt binaries or system libraries; image rendering falls back to PureImage automatically. The Termux installer path uses `pkg` + `npm install`, both READMEs include a Termux (Android) setup, and the installer stays working on Termux.
+
+### Bug fixes
+
+- **CLI banner art.** Fixed the corrupted banner art and a stray character shown at the CLI startup banner.
+
 ## v3.0.0
 
 RynnBot v3.0.0 is rebuilt on the latest upstream codebase and reworked as the Rynn project: identity moved fully to Rynn/Nekonaruu, secrets moved to `.env`, and the documentation is now bilingual.

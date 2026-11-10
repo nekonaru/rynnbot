@@ -143,7 +143,7 @@ main() {
     if ! command -v node >/dev/null 2>&1; then NEED_INSTALL=true; fi
     if ! command -v ffmpeg >/dev/null 2>&1; then NEED_INSTALL=true; fi
     if [ "$PKG" = "pkg" ] || [ "$PKG" = "pacman" ] || [ "$PKG" = "dnf" ]; then
-        if ! command -v yarn >/dev/null 2>&1; then NEED_INSTALL=true; fi
+        if ! command -v npm >/dev/null 2>&1 && ! command -v yarn >/dev/null 2>&1; then NEED_INSTALL=true; fi
     else
         if ! command -v npm >/dev/null 2>&1; then NEED_INSTALL=true; fi
     fi
@@ -151,7 +151,7 @@ main() {
     if [ "$NEED_INSTALL" = true ]; then
         local cmd=""
         case "$PKG" in
-          pkg) cmd="pkg update -y && pkg install -y git nodejs-lts ffmpeg yarn" ;;
+          pkg) cmd="pkg update -y && pkg install -y git nodejs-lts ffmpeg python" ;;
           apt|apt-get) cmd="$SUDO_CMD $PKG update -y && $SUDO_CMD $PKG install -y git nodejs npm ffmpeg" ;;
           pacman) cmd="$SUDO_CMD pacman -Syu --noconfirm && $SUDO_CMD pacman -S --noconfirm git nodejs npm ffmpeg yarn" ;;
           dnf) cmd="$SUDO_CMD dnf install -y git nodejs npm ffmpeg yarn" ;;
@@ -163,36 +163,21 @@ main() {
     fi
 
     if ! command -v pm2 >/dev/null 2>&1; then
-        local pm2_cmd=""
-        if [ "$PKG" = "pkg" ]; then
-            pm2_cmd="yarn global add pm2"
-        else
-            pm2_cmd="$SUDO_CMD npm install -g pm2"
-        fi
+        local pm2_cmd="$SUDO_CMD npm install -g pm2"
         run_with_spinner "Installing PM2" "$pm2_cmd"
     else
         echo -e "  ${GREEN}✔${NC} ${DIM}PM2 already installed.${NC}"
     fi
 
     if [ -f "package.json" ]; then
-        local install_cmd=""
-        if [ "$PKG" = "pkg" ]; then
-            install_cmd="yarn install"
-        else
-            install_cmd="npm install"
-        fi
+        local install_cmd="npm install"
         run_with_spinner "Installing project dependencies" "$install_cmd"
     else
         echo -e "  ${YELLOW}⚠${NC} ${DIM}No package.json found. Skipping project dependency installation.${NC}"
     fi
 
     chmod +x cli.js 2>/dev/null || true
-    local link_cmd=""
-    if [ "$PKG" = "pkg" ]; then
-        link_cmd="yarn link 2>/dev/null || true"
-    else
-        link_cmd="$SUDO_CMD npm link 2>/dev/null || true"
-    fi
+    local link_cmd="$SUDO_CMD npm link 2>/dev/null || true"
     run_with_spinner "Registering global 'rynn'" "$link_cmd"
 
     echo -e "\n  ${GREEN}✔${NC} ${BOLD}All dependencies have been installed successfully!${NC}"

@@ -124,6 +124,23 @@ bash install.sh
 
 Kedua script mendeteksi package manager, memasang dependensi sistem, memasang PM2, menjalankan `npm install`, mendaftarkan command global `rynn` lewat `npm link`, lalu membuka wizard setup pertama.
 
+### Termux (Android)
+
+Berjalan di instalasi Termux standar. Pasang Termux dari F-Droid (bukan build Play Store), lalu:
+
+```bash
+pkg update && pkg upgrade
+pkg install git nodejs-lts ffmpeg python
+git clone https://github.com/nekonaru/rynnbot.git
+cd rynnbot
+npm install
+```
+
+- Jangan clone ke `/storage/...`; filesystem itu tidak mendukung symlink dan Node.js membutuhkannya. Clone ke home directory (misalnya `~/rynnbot`). `bash install.sh` mendeteksi ini dan berhenti dengan petunjuk.
+- `@napi-rs/canvas` adalah optional dependency. Jika gagal dibangun di perangkatmu, render gambar otomatis fallback ke PureImage; tidak ada yang terpengaruh selainnya.
+- `ffmpeg` wajib untuk perintah media (stiker, konversi video). `python` dibutuhkan untuk perintah `.speed`.
+- `bash install.sh` juga berjalan di Termux (memakai `pkg`, memasang dependensi yang sama, dan mendaftarkan command global `rynn`).
+
 ### Opsi B: Manual (build from source)
 
 <details><summary><b>Saya sudah punya Git</b></summary>
