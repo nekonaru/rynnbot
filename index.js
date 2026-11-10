@@ -18,8 +18,10 @@ import { setupDashboard } from "./src/server.js";
 import { useCustomAuthState } from "./src/auth.js";
 import { showBanner, logSuccess, logInfo } from "./src/cli/helpers.js";
 import { dataBase, cmdDel, checkStatus, checkExpired } from "./src/database.js";
-import { GroupParticipantsUpdate, MessagesUpsert, Solving } from "./src/message.js";
-import { assertInstalled, customDispatcher, compressMessage, decompressMessage } from "./lib/function.js";
+import { GroupParticipantsUpdate, MessagesUpsert, Solving, updateLidMapping } from "./src/message.js";
+import { assertInstalled, customDispatcher, compressMessage, decompressMessage, rotateBackups } from "./lib/function.js";
+
+rotateBackups("./backup", 5);
 
 const WAConnection = baileys.default || baileys.makeWASocket || baileys;
 
@@ -32,11 +34,11 @@ const rl = readline.createInterface({
 });
 const question = (text) => new Promise((resolve) => rl.question(text, resolve));
 const tempDir = path.join(__dirname, "database/temp");
-const time_now = new Date();
-const time_end = 60000 - (time_now.getSeconds() * 1000 + time_now.getMilliseconds());
 let pairingStarted = false;
 let setupServer = null;
 let phoneNumber;
+let reconnectAttempts = 0;
+let reconnectTimeout = null;
 
 if (global.dns_use === "custom") {
 	try {
@@ -47,7 +49,6 @@ if (global.dns_use === "custom") {
 	}
 }
 
-// Fetch Api
 global.fetchApi = async (endpoint = "/", data = {}, options = {}) => {
 	return new Promise(async (resolve, reject) => {
 		try {
@@ -61,7 +62,9 @@ global.fetchApi = async (endpoint = "/", data = {}, options = {}) => {
 			const base = apiName ? global.APIs[apiName] || apiName : global.APIs.naze;
 			const apikey = global.APIKeys[base] || "";
 			let method = (options.method || "GET").toUpperCase();
-			let url = base + endpoint;
+			const cleanBase = base.replace(/\/+$/, "");
+			const cleanEndpoint = endpoint.startsWith("/") ? endpoint : "/" + endpoint;
+			let url = cleanBase + cleanEndpoint;
 			let payload = null;
 			let headers = options.headers || {
 				"user-agent": "Mozilla/5.0 (Linux; Android 15)",
@@ -83,27 +86,14 @@ global.fetchApi = async (endpoint = "/", data = {}, options = {}) => {
 			} else {
 				url += "?" + new URLSearchParams({ ...data, apikey }).toString();
 			}
-			// Timeout: tanpa ini, command yang manggil fetchApi() bisa nge-hang tanpa
-			// batas waktu kalau API pihak ketiga down/lemot merespons. Bisa dioverride
-			// per-call lewat options.timeout (ms).
-			const timeoutMs = typeof options.timeout === "number" ? options.timeout : 30000;
-			const fetchOptions = { method, headers, dispatcher: customDispatcher, signal: AbortSignal.timeout(timeoutMs) };
+			const fetchOptions = { method, headers, dispatcher: customDispatcher };
 			if (method !== "GET" && method !== "HEAD") fetchOptions.body = payload;
-			if (!apikey) {
-				console.log(chalk.yellowBright(`[fetchApi] Peringatan: memanggil ${base} tanpa API key (env var terkait belum di-set).`));
-			}
-			let res;
-			try {
-				res = await fetch(url, fetchOptions);
-			} catch (e) {
-				if (e.name === "TimeoutError" || e.name === "AbortError") {
-					throw new Error(`[Fetch Timeout] ${base}${endpoint} tidak merespons dalam ${timeoutMs}ms.`);
-				}
-				throw e;
-			}
+			const res = await fetch(url, fetchOptions);
 			if (!res.ok) {
 				let errorData = "";
-				try { errorData = await res.text(); } catch (e) {}
+				try {
+					errorData = await res.text();
+				} catch (e) {}
 				throw new Error(`API Request Failed!\nURL: ${url}\nStatus: ${res.status} ${res.statusText}\nResponse: ${errorData || "No error message provided by server."}`);
 			}
 
@@ -175,13 +165,43 @@ const msgRetryCounterCache = new NodeCache({
 	useClones: false,
 });
 
+function cleanTempFolder(maxAgeMs = 15 * 60 * 1000) {
+	try {
+		if (!fs.existsSync(tempDir)) return;
+		const now = Date.now();
+		const files = fs.readdirSync(tempDir);
+		for (const file of files) {
+			const filePath = path.join(tempDir, file);
+			try {
+				const stats = fs.statSync(filePath);
+				if (now - stats.mtimeMs > maxAgeMs) {
+					fs.unlinkSync(filePath);
+				}
+			} catch {}
+		}
+	} catch {}
+}
+
 if (fs.existsSync(tempDir)) {
-	fs.readdirSync(tempDir).forEach((file) => {
-		fs.unlinkSync(path.join(tempDir, file));
-	});
-	logSuccess("Temp folder cleared successfully!");
+	try {
+		fs.readdirSync(tempDir).forEach((file) => {
+			try {
+				fs.unlinkSync(path.join(tempDir, file));
+			} catch {}
+		});
+		logSuccess("Temp folder cleared successfully!");
+	} catch {}
 } else {
 	fs.mkdirSync(tempDir, { recursive: true });
+}
+
+if (!global._tempCleanupInterval) {
+	global._tempCleanupInterval = setInterval(
+		() => {
+			cleanTempFolder(15 * 60 * 1000);
+		},
+		15 * 60 * 1000,
+	).unref();
 }
 
 assertInstalled(process.platform === "win32" ? "where ffmpeg" : "command -v ffmpeg", "FFmpeg", 0);
@@ -189,7 +209,7 @@ logSuccess("All external dependencies are satisfied");
 
 showBanner();
 
-async function startNazeBot() {
+async function startRynnBot() {
 	try {
 		const loadData = await database.read();
 		const storeLoadData = await storeDB.read();
@@ -219,12 +239,36 @@ async function startNazeBot() {
 		if (!storeLoadData || Object.keys(storeLoadData).length === 0) {
 			await storeDB.write(global.store);
 		}
+		if (global.store.groupMetadata) {
+			for (const g of Object.values(global.store.groupMetadata)) {
+				updateLidMapping(g);
+			}
+		}
+		if (global.store.contacts) {
+			for (const c of Object.values(global.store.contacts)) {
+				updateLidMapping(c);
+			}
+		}
 		if (global.store.messages) {
-			for (const jid in global.store.messages) {
-				if (Array.isArray(global.store.messages[jid]?.array)) {
-					global.store.messages[jid].array = global.store.messages[jid].array.map((m) => decompressMessage(m)).filter(Boolean);
+			const maxChats = global.maxStoreChats || 200;
+			const maxPerChat = global.chatLength || 200;
+			const jids = Object.keys(global.store.messages);
+			if (jids.length > maxChats) {
+				const toRemove = jids.slice(0, jids.length - maxChats);
+				for (const jid of toRemove) {
+					delete global.store.messages[jid];
 				}
 			}
+			for (const jid in global.store.messages) {
+				if (Array.isArray(global.store.messages[jid]?.array)) {
+					if (global.store.messages[jid].array.length > maxPerChat) {
+						global.store.messages[jid].array = global.store.messages[jid].array.slice(-maxPerChat);
+					}
+					global.store.messages[jid].array = global.store.messages[jid].array.map((m) => decompressMessage(m)).filter(Boolean);
+					global.store.messages[jid].keyId = new Set(global.store.messages[jid].array.map((m) => m?.key?.id).filter(Boolean));
+				}
+			}
+			global.store._chatAccessOrder = Object.keys(global.store.messages);
 		}
 
 		global.loadMessage = function (remoteJid, id) {
@@ -246,17 +290,17 @@ async function startNazeBot() {
 					}
 				},
 				5 * 60 * 1000,
-			); // 5 menit
+			);
 		}
 
 		if (!global._dbInterval) {
 			global._dbInterval = setInterval(
 				async () => {
-					if (global.db) await database.write(global.db);
-					if (global.store) await storeDB.write(global.store);
+					if (global.db) await database.write(global.db, { debounce: true, delay: 2000, maxWait: 10000 });
+					if (global.store) await storeDB.write(global.store, { debounce: true, delay: 2000, maxWait: 10000 });
 				},
-				3 * 60 * 1000,
-			); // 3 Menit
+				5 * 60 * 1000,
+			);
 		}
 	} catch (e) {
 		console.log(e);
@@ -285,15 +329,20 @@ async function startNazeBot() {
 			return msg?.message || "";
 		}
 		return {
-			conversation: "Halo Saya Naze Bot",
+			conversation: "Halo, saya Rynn",
 		};
 	};
 
-	// Connector
 	const sock = WAConnection({
 		version,
 		logger: level,
 		getMessage,
+		cachedGroupMetadata: async (jid) => {
+			if (!jid || typeof jid !== "string") return undefined;
+			const id = jid.includes(":") ? jid.replace(/:.*@/, "@") : jid;
+			const match = global.store?.groupMetadata?.[id] || global.store?.groupMetadata?.[jid];
+			return match && Array.isArray(match.participants) && match.participants.length > 0 ? match : undefined;
+		},
 		syncFullHistory: false,
 		maxMsgRetryCount: 15,
 		msgRetryCounterCache,
@@ -317,7 +366,57 @@ async function startNazeBot() {
 		},
 	});
 
-	await Solving(sock, global.store);
+	global.sock = sock;
+	await Solving(sock, global.store, sessionPath);
+
+	global.nodeMap = global.nodeMap || new Map();
+	const NODE_MAP_TTL = 60 * 1000;
+	if (!global._nodeMapInterval) {
+		global._nodeMapInterval = setInterval(() => {
+			const now = Date.now();
+			for (const [id, node] of global.nodeMap) {
+				if (now - (node?._ts || 0) > NODE_MAP_TTL) {
+					global.nodeMap.delete(id);
+				}
+			}
+		}, 30 * 1000).unref();
+	}
+
+	if (sock.ws) {
+		sock.ws.on("CB:message", (node) => {
+			if (node?.attrs?.id) {
+				global.nodeMap.set(node.attrs.id, {
+					...node,
+					content: Array.isArray(node.content) ? node.content.filter((v) => v?.tag !== "enc") : node.content,
+					_ts: Date.now(),
+				});
+				if (global.nodeMap.size > 2000) {
+					const oldestKey = global.nodeMap.keys().next().value;
+					if (oldestKey) global.nodeMap.delete(oldestKey);
+				}
+			}
+		});
+		sock.ws.on("CB:status", async (node) => {
+			try {
+				if (typeof sock.sendMessageAck === "function") {
+					await sock.sendMessageAck(node).catch(() => {});
+				} else if (node?.attrs?.id) {
+					await sock
+						.sendNode?.({
+							tag: "ack",
+							attrs: {
+								id: node.attrs.id,
+								to: node.attrs.from || "status@broadcast",
+								class: "status",
+								type: node.attrs.type || "media",
+								...(node.attrs.participant ? { participant: node.attrs.participant } : {}),
+							},
+						})
+						.catch(() => {});
+				}
+			} catch {}
+		});
+	}
 
 	sock.ev.on("creds.update", saveCreds);
 
@@ -329,7 +428,7 @@ async function startNazeBot() {
 				try {
 					console.log("Requesting Pairing Code...");
 					const randomPart = Math.random().toString(36).substring(2, 6).toUpperCase();
-					let code = await sock.requestPairingCode(phoneNumber, "NAZE" + randomPart);
+					let code = await sock.requestPairingCode(phoneNumber, "RYNN" + randomPart);
 					code = code?.match(/.{1,4}/g)?.join("-") || code;
 					console.log(chalk.blue("Your Pairing Code :"), chalk.green(code), "\n", chalk.yellow("Expires in 15 second"));
 				} catch (err) {
@@ -343,9 +442,22 @@ async function startNazeBot() {
 			const reason = new Boom(lastDisconnect?.error)?.output.statusCode;
 
 			const reconnect = () => {
-				setTimeout(() => {
-					startNazeBot();
-				}, 3000);
+				if (reconnectTimeout) clearTimeout(reconnectTimeout);
+				try {
+					sock?.ev?.removeAllListeners?.();
+				} catch {}
+				try {
+					sock?.ws?.removeAllListeners?.();
+				} catch {}
+				try {
+					sock?.end?.();
+				} catch {}
+				const delay = Math.min(30000, 3000 * Math.pow(1.5, reconnectAttempts)) + Math.floor(Math.random() * 1000);
+				reconnectAttempts++;
+				console.log(chalk.yellow(`[RECONNECT] Reconnecting in ${(delay / 1000).toFixed(1)}s (attempt ${reconnectAttempts})...`));
+				reconnectTimeout = setTimeout(() => {
+					startRynnBot();
+				}, delay);
 			};
 
 			if (reason === DisconnectReason.connectionLost) {
@@ -367,35 +479,53 @@ async function startNazeBot() {
 				console.log("Close current Session first...");
 			} else if (reason === DisconnectReason.loggedOut) {
 				console.log("Scan again and Run...");
-				fs.rmSync("./rynn-session", { recursive: true, force: true });
+				if (!isUrl) fs.rmSync(sessionPath, { recursive: true, force: true });
 				process.exit(0);
 			} else if (reason === DisconnectReason.forbidden) {
 				console.log("Connection Failure, Scan again and Run...");
-				fs.rmSync("./rynn-session", { recursive: true, force: true });
+				if (!isUrl) fs.rmSync(sessionPath, { recursive: true, force: true });
 				process.exit(1);
 			} else if (reason === DisconnectReason.multideviceMismatch) {
 				console.log("Scan again...");
-				fs.rmSync("./rynn-session", { recursive: true, force: true });
+				if (!isUrl) fs.rmSync(sessionPath, { recursive: true, force: true });
 				process.exit(0);
 			} else {
-				sock.end(`Unknown DisconnectReason : ${reason}|${connection}`);
+				console.log(chalk.yellow(`[DISCONNECT] Unexpected disconnect (code: ${reason || "unknown"}), attempting auto-recovery...`));
+				reconnect();
 			}
 		}
 		if (connection == "open") {
+			reconnectAttempts = 0;
+			if (reconnectTimeout) {
+				clearTimeout(reconnectTimeout);
+				reconnectTimeout = null;
+			}
 			console.log("Connected to : " + JSON.stringify(sock.user, null, 2));
+			if (sock.user?.lid && sock.user?.id) {
+				updateLidMapping({ lid: sock.user.lid, pn: sock.user.id });
+			}
 			let botNumber = await sock.decodeJid(sock.user.id);
-			if (global.db?.set[botNumber] && !global.db?.set[botNumber]?.join) {
+			if (global.db?.set?.[botNumber] && !global.db?.set?.[botNumber]?.join) {
 				if (global.my.ch.length > 0 && global.my.ch.includes("@newsletter")) {
 					if (global.my.ch) await sock.newsletterMsg(global.my.ch, { type: "follow" }).catch((e) => {});
 					global.db.set[botNumber].join = true;
 				}
 			}
+			if (global?.db?.premium) checkExpired(global.db.premium);
+			if (global?.db?.sewa && sock?.user?.id) checkExpired(global.db.sewa, sock);
+			if (global._dbPresence) clearInterval(global._dbPresence);
+			global._dbPresence = setInterval(
+				async () => {
+					if (sock?.user?.id) await sock.sendPresenceUpdate("available", sock.decodeJid(sock.user.id)).catch((e) => {});
+				},
+				60 * 60 * 1000,
+			);
 		}
 		if (qr) {
 			if (!pairingCode) qrcode.generate(qr, { small: true });
 		}
 		if (isNewLogin) console.log(chalk.green("[INFO] New device login detected..."));
-		if (receivedPendingNotifications === true) {
+		if (receivedPendingNotifications == "true") {
 			console.log(chalk.green("[INFO] Please wait About 1 Minute..."));
 			sock.ev.flush();
 		}
@@ -403,7 +533,7 @@ async function startNazeBot() {
 
 	sock.ev.on("call", async (call) => {
 		let botNumber = await sock.decodeJid(sock.user.id);
-		if (global.db?.set[botNumber]?.anticall) {
+		if (global.db?.set?.[botNumber]?.anticall) {
 			for (let id of call) {
 				if (id.status === "offer") {
 					let msg = await sock.sendMessage(id.from, {
@@ -424,11 +554,53 @@ async function startNazeBot() {
 	sock.ev.on("group-participants.update", async (update) => {
 		await GroupParticipantsUpdate(sock, update, global.store);
 	});
+	sock.ev.on("groups.upsert", (groups) => {
+		for (const n of groups) {
+			if (global.store?.groupMetadata) {
+				if (global.store.groupMetadata[n.id]) {
+					Object.assign(global.store.groupMetadata[n.id], n);
+				} else global.store.groupMetadata[n.id] = n;
+			}
+			updateLidMapping(n);
+		}
+	});
+
 	sock.ev.on("groups.update", (update) => {
 		for (const n of update) {
-			if (global.store.groupMetadata[n.id]) {
-				Object.assign(global.store.groupMetadata[n.id], n);
-			} else global.store.groupMetadata[n.id] = n;
+			if (global.store?.groupMetadata) {
+				if (global.store.groupMetadata[n.id]) {
+					Object.assign(global.store.groupMetadata[n.id], n);
+				} else global.store.groupMetadata[n.id] = n;
+			}
+			updateLidMapping(n);
+		}
+	});
+
+	sock.ev.on("lid-mapping.update", (update) => {
+		updateLidMapping(update);
+	});
+
+	sock.ev.on("contacts.upsert", (contacts) => {
+		for (const contact of contacts) {
+			if (global.store?.contacts) global.store.contacts[contact.id] = Object.assign(global.store.contacts[contact.id] || {}, contact);
+			updateLidMapping(contact);
+		}
+		if (global.store?.contacts && Object.keys(global.store.contacts).length > 5000) {
+			Object.keys(global.store.contacts)
+				.slice(0, 500)
+				.forEach((k) => delete global.store.contacts[k]);
+		}
+	});
+
+	sock.ev.on("contacts.update", (contacts) => {
+		for (const contact of contacts) {
+			if (global.store?.contacts) Object.assign(global.store.contacts[contact.id] || {}, contact);
+			updateLidMapping(contact);
+		}
+		if (global.store?.contacts && Object.keys(global.store.contacts).length > 5000) {
+			Object.keys(global.store.contacts)
+				.slice(0, 500)
+				.forEach((k) => delete global.store.contacts[k]);
 		}
 	});
 
@@ -439,70 +611,81 @@ async function startNazeBot() {
 			presences[jid].timestamp = Date.now();
 		}
 		Object.assign(global.store.presences[id], presences);
+		if (global.store?.presences && Object.keys(global.store.presences).length > 500) {
+			Object.keys(global.store.presences)
+				.slice(0, 50)
+				.forEach((k) => delete global.store.presences[k]);
+		}
 	});
 
-	// Reset Limit & Backup
-	cron.schedule(
-		"00 00 * * *",
-		async () => {
-			cmdDel(global.db.hit);
-			console.log(chalk.cyan("[INFO] Reseted Limit Users"));
-			let user = Object.keys(global.db.users);
-			let botNumber = await sock.decodeJid(sock.user.id);
-			for (let jid of user) {
-				const limitUser = global.db.users[jid].vip ? global.limit.vip : checkStatus(jid, global.db.premium) ? global.limit.premium : global.limit.free;
-				if (global.db.users[jid].limit < limitUser) global.db.users[jid].limit = limitUser;
-			}
-			if (global.db?.set?.[botNumber]?.autobackup) {
-				let datanya = "./database/" + dbPath;
-				if (/^(mongodb|mysql|postgres)/i.test(dbPath)) {
-					datanya = "./database/backup_database.json";
-					fs.writeFileSync(datanya, JSON.stringify(global.db, null, 2), "utf-8");
+	if (!global._cronScheduled) {
+		global._cronScheduled = true;
+		cron.schedule(
+			"00 00 * * *",
+			async () => {
+				cmdDel(global.db.hit);
+				console.log(chalk.cyan("[INFO] Reseted Limit Users"));
+				const activeSock = global.sock || sock;
+				let user = Object.keys(global.db.users);
+				let botNumber = activeSock.user?.id ? await activeSock.decodeJid(activeSock.user.id) : "";
+				for (let jid of user) {
+					const limitUser = global.db.users[jid].vip ? global.limit.vip : checkStatus(jid, global.db.premium) ? global.limit.premium : global.limit.free;
+					if (global.db?.users[jid].limit < limitUser) global.db.users[jid].limit = limitUser;
 				}
-				for (let o of global.owner) {
-					try {
-						await sock.sendMessage(o, {
-							document: fs.readFileSync(datanya),
-							mimetype: "application/json",
-							fileName: new Date().toISOString().replace(/[:.]/g, "-") + "_database.json",
-						});
-						console.log(chalk.cyanBright(`[AUTO BACKUP] Backup success send to ${o}`));
-					} catch (error) {
-						console.error(chalk.cyanBright(`[AUTO BACKUP] Failed to Sending Backup ${o}:`, error));
+				rotateBackups("./backup", 5);
+				if (global.db?.set?.[botNumber]?.autobackup) {
+					let datanya = "./database/" + dbPath;
+					if (/^(mongodb|mysql|postgres)/i.test(dbPath)) {
+						datanya = "./database/backup_database.json";
+						fs.writeFileSync(datanya, JSON.stringify(global.db, null, 2), "utf-8");
+					}
+					for (let o of global.owner) {
+						try {
+							await activeSock.sendMessage(o, {
+								document: fs.readFileSync(datanya),
+								mimetype: "application/json",
+								fileName: new Date().toISOString().replace(/[:.]/g, "-") + "_database.json",
+							});
+							console.log(chalk.cyanBright(`[AUTO BACKUP] Backup success send to ${o}`));
+							await new Promise((r) => setTimeout(r, 2000 + Math.floor(Math.random() * 1500)));
+						} catch (error) {
+							console.error(chalk.cyanBright(`[AUTO BACKUP] Failed to Sending Backup ${o}:`, error));
+						}
 					}
 				}
-			}
-		},
-		{
-			scheduled: true,
-			timezone: global.timezone,
-		},
-	);
+			},
+			{
+				scheduled: true,
+				timezone: global.timezone,
+			},
+		);
+	}
 
-	// Waktu Sholat
 	if (!global.intervalSholat) global.intervalSholat = null;
 	if (!global.waktusholat) global.waktusholat = {};
 	if (global.intervalSholat) clearInterval(global.intervalSholat);
-	setTimeout(() => {
+	if (global._sholatTimeout) clearTimeout(global._sholatTimeout);
+	const now = new Date();
+	const msUntilNext = 60000 - (now.getSeconds() * 1000 + now.getMilliseconds());
+	global._sholatTimeout = setTimeout(() => {
 		global.intervalSholat = setInterval(async () => {
 			const sekarang = new Date();
 			const jamSholat = sekarang.toLocaleTimeString("en-GB", { timeZone: global.timezone, hour: "2-digit", minute: "2-digit" });
 			const hariIni = sekarang.toLocaleDateString("en-CA", { timeZone: global.timezone });
-			const detik = sekarang.toLocaleTimeString("en-GB", { timeZone: global.timezone, hour12: false }).split(":")[2];
-			if (detik !== "00") return;
+			const currentSock = global.sock || sock;
 			for (const [sholat, waktu] of Object.entries(global.jadwalSholat)) {
 				if (jamSholat === waktu && global.waktusholat[sholat] !== hariIni) {
 					global.waktusholat[sholat] = hariIni;
 					for (const [idnya, settings] of Object.entries(global.db.groups)) {
 						if (settings.waktusholat) {
-							await sock
+							await currentSock
 								.sendMessage(
 									idnya,
 									{
 										text: `Waktu *${sholat}* telah tiba, ambilah air wudhu dan segeralah shalat🙂.\n\n*${waktu.slice(0, 5)}*\n_untuk wilayah ${global.timezone} dan sekitarnya._`,
 									},
 									{
-										ephemeralExpiration: global.store?.messages[idnya]?.array?.slice(-1)[0]?.metadata?.ephemeralDuration || 0,
+										ephemeralExpiration: store?.messages[idnya]?.array?.slice(-1)[0]?.metadata?.ephemeralDuration || 0,
 									},
 								)
 								.catch((e) => {});
@@ -511,40 +694,28 @@ async function startNazeBot() {
 				}
 			}
 		}, 60000);
-	}, time_end);
+	}, msUntilNext);
 
-	// Sewa interval: selalu di-restart dengan sock terbaru setiap reconnect.
-	// Tanpa ini, setelah reconnect pertama checkExpired akan groupLeave()
-	// lewat socket lama yang sudah mati — error-nya ditelan catch, jadi gagal senyap.
-	if (global._sewaInterval) clearInterval(global._sewaInterval);
-	global._sewaInterval = null;
-	if (global?.db?.sewa && sock?.user?.id) {
-		global._sewaInterval = checkExpired(global.db.sewa, sock);
-	}
-
-	if (!global._dbPresence) {
-		if (global?.db?.premium) checkExpired(global.db.premium);
-		global._dbPresence = setInterval(
-			async () => {
-				if (sock?.user?.id) await sock.sendPresenceUpdate("available", sock.decodeJid(sock.user.id)).catch((e) => {});
-			},
-			60 * 60 * 1000,
-		);
-	}
-
-	if (!setupServer && database && sock) {
+	if (!setupServer && database && sock && process.env.DASHBOARD_ENABLED === "true") {
 		setupServer = await setupDashboard(database, storeDB, sock);
 	}
 
 	return sock;
 }
 
-startNazeBot();
+startRynnBot();
 
+let isCleaningUp = false;
 const cleanup = async (signal) => {
+	if (isCleaningUp) return;
+	isCleaningUp = true;
 	console.log(chalk.greenBright(`[SYSTEM] Received ${signal}. Menyimpan database...`));
-	if (global.db) await database.write(global.db);
-	if (global.store) await storeDB.write(global.store);
+	try {
+		if (global.db) await database.write(global.db, { immediate: true });
+		if (global.store) await storeDB.write(global.store, { immediate: true });
+	} catch (e) {
+		console.error(chalk.redBright(`[SYSTEM] Failed to write database during cleanup:`, e));
+	}
 	process.exit(0);
 };
 
@@ -556,7 +727,9 @@ process.on("unhandledRejection", function (err) {
 	console.error(chalk.redBright("[UNHANDLED REJECTION]"), err);
 });
 
-process.on("SIGINT", () => cleanup("SIGINT"));
-process.on("SIGTERM", () => cleanup("SIGTERM"));
-// Note: 'exit' event is synchronous — async operations like database.write() won't complete inside it.
-// SIGINT & SIGTERM above are sufficient for graceful shutdown.
+process.on("SIGINT", () => {
+	cleanup("SIGINT").catch(() => process.exit(1));
+});
+process.on("SIGTERM", () => {
+	cleanup("SIGTERM").catch(() => process.exit(1));
+});

@@ -29,28 +29,300 @@ import baileys, {
 import { writeExif } from "../lib/exif.js";
 import { checkStatus } from "./database.js";
 import { getBuffer, getStream, fixBytes, compressMessage, decompressMessage } from "../lib/function.js";
+import { InteractiveMessage, normalizeNativeFlowButton, extractNativeFlowResponseId, extractNativeFlowResponseText, createThumbnailLink } from "./helper/interactive-message.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const nazePath = fileURLToPath(new URL("../naze.js", import.meta.url));
+const handlerPath = fileURLToPath(new URL("../handler.js", import.meta.url));
 
-let nazeHandler = null;
+let sockHandler = null;
 const groupMetadataTimers = {};
 const botStartTime = Date.now();
 const thumbMediaCache = new Map();
+class BoundedLidMap extends Map {
+	constructor(maxEntries = 5000, defaultNegativeTtl = 300000) {
+		super();
+		this.maxEntries = maxEntries;
+		this.defaultNegativeTtl = defaultNegativeTtl;
+	}
+
+	get(key) {
+		const item = super.get(key);
+		if (!item) return undefined;
+		if (item.exp && Date.now() > item.exp) {
+			super.delete(key);
+			return undefined;
+		}
+		super.delete(key);
+		super.set(key, item);
+		return item.val;
+	}
+
+	has(key) {
+		const item = super.get(key);
+		if (!item) return false;
+		if (item.exp && Date.now() > item.exp) {
+			super.delete(key);
+			return false;
+		}
+		return true;
+	}
+
+	set(key, val, ttl = null) {
+		if (super.has(key)) {
+			super.delete(key);
+		} else if (this.size >= this.maxEntries) {
+			const rawOldest = super.keys().next().value;
+			if (rawOldest !== undefined) super.delete(rawOldest);
+		}
+		const exp = val === null ? Date.now() + (ttl || this.defaultNegativeTtl) : null;
+		return super.set(key, { val, exp });
+	}
+
+	*keys() {
+		const now = Date.now();
+		for (const [k, item] of super.entries()) {
+			if (item.exp && now > item.exp) continue;
+			yield k;
+		}
+	}
+
+	*values() {
+		const now = Date.now();
+		for (const [k, item] of super.entries()) {
+			if (item.exp && now > item.exp) continue;
+			yield item.val;
+		}
+	}
+
+	*entries() {
+		const now = Date.now();
+		for (const [k, item] of super.entries()) {
+			if (item.exp && now > item.exp) continue;
+			yield [k, item.val];
+		}
+	}
+
+	[Symbol.iterator]() {
+		return this.entries();
+	}
+
+	forEach(callback, thisArg) {
+		for (const [k, v] of this.entries()) {
+			callback.call(thisArg, v, k, this);
+		}
+	}
+}
+
+const lidMap = new BoundedLidMap(5000, 300000);
+const usernameMap = new BoundedLidMap(2000, 600000);
+
+let _currentSessionPath = null;
+const _lidPersistQueue = new Map();
+let _lidPersistTimer = null;
+let _lidPersistMaxTimer = null;
+
+function _flushLidPersistQueue() {
+	if (_lidPersistTimer) {
+		clearTimeout(_lidPersistTimer);
+		_lidPersistTimer = null;
+	}
+	if (_lidPersistMaxTimer) {
+		clearTimeout(_lidPersistMaxTimer);
+		_lidPersistMaxTimer = null;
+	}
+	if (!_lidPersistQueue.size) return;
+
+	const items = [..._lidPersistQueue.values()];
+	_lidPersistQueue.clear();
+
+	import("./auth.js")
+		.then(({ saveLidMapping }) => {
+			for (const { sessionPath: targetSession, lid, pn } of items) {
+				const finalPath = targetSession || _currentSessionPath || "./rynn-session";
+				saveLidMapping(finalPath, lid, pn).catch(() => {});
+			}
+		})
+		.catch(() => {});
+}
+
+function _scheduleLidPersist(lid, pn, sessionPath = _currentSessionPath) {
+	const targetSession = sessionPath || _currentSessionPath;
+	if (!targetSession) return;
+	const lidUser = String(lid)
+		.split("@")[0]
+		.replace(/[^0-9]/g, "");
+	const pnUser = String(pn)
+		.split("@")[0]
+		.replace(/[^0-9]/g, "");
+	if (!lidUser || !pnUser || lidUser === pnUser) return;
+	_lidPersistQueue.set(`${targetSession}|${lidUser}|${pnUser}`, { sessionPath: targetSession, lid, pn });
+
+	if (_lidPersistTimer) clearTimeout(_lidPersistTimer);
+	_lidPersistTimer = setTimeout(_flushLidPersistQueue, 5000);
+
+	if (!_lidPersistMaxTimer) {
+		_lidPersistMaxTimer = setTimeout(_flushLidPersistQueue, 10000);
+	}
+}
+
+function registerLidPair(lid, phoneNumber, sessionPath = _currentSessionPath) {
+	if (!lid || !phoneNumber) return;
+	const lidStr = String(lid).trim();
+	const pnStr = String(phoneNumber).trim();
+	if (!lidStr || !pnStr || lidStr === pnStr) return;
+
+	if (lidStr.endsWith("@g.us") || lidStr.endsWith("@newsletter") || pnStr.endsWith("@g.us") || pnStr.endsWith("@newsletter")) return;
+
+	const clean1 = lidStr.includes(":") ? lidStr.replace(/:.*@/, "@") : lidStr;
+	const clean2 = pnStr.includes(":") ? pnStr.replace(/:.*@/, "@") : pnStr;
+
+	let actualLid = clean1;
+	let actualPn = clean2;
+
+	if (clean2.endsWith("@lid") || clean1.endsWith("@s.whatsapp.net")) {
+		actualLid = clean2;
+		actualPn = clean1;
+	}
+
+	if (actualLid.endsWith("@s.whatsapp.net") && actualPn.endsWith("@s.whatsapp.net")) return;
+	if (actualLid.endsWith("@lid") && actualPn.endsWith("@lid")) return;
+
+	const lidUser = actualLid.split("@")[0].replace(/[^0-9]/g, "");
+	if (!lidUser) return;
+	const lidJid = lidUser + "@lid";
+
+	const pnUser = actualPn.split("@")[0].replace(/[^0-9]/g, "");
+	if (!pnUser) return;
+	const pnJid = pnUser + "@s.whatsapp.net";
+
+	if (lidUser === pnUser) return;
+
+	const isNewPair = !lidMap.has(lidJid);
+	lidMap.set(lidJid, pnJid);
+	lidMap.set(lidUser, pnJid);
+
+	if (isNewPair) _scheduleLidPersist(lidJid, pnJid, sessionPath);
+}
+
+function updateLidMapping(update) {
+	if (!update) return;
+
+	if (Array.isArray(update)) {
+		for (const item of update) {
+			updateLidMapping(item);
+		}
+		return;
+	}
+
+	if (update instanceof Map) {
+		for (const [key, val] of update.entries()) {
+			registerLidPair(key, val);
+		}
+		return;
+	}
+
+	if (typeof update !== "object") return;
+
+	if (Array.isArray(update.mappings)) {
+		for (const item of update.mappings) {
+			updateLidMapping(item);
+		}
+	}
+
+	if (Array.isArray(update.participants)) {
+		for (const item of update.participants) {
+			updateLidMapping(item);
+		}
+	}
+
+	if (update.owner && update.ownerPn) registerLidPair(update.owner, update.ownerPn);
+	if (update.subjectOwner && update.subjectOwnerPn) registerLidPair(update.subjectOwner, update.subjectOwnerPn);
+	if (update.descOwner && update.descOwnerPn) registerLidPair(update.descOwner, update.descOwnerPn);
+
+	if (update.lid && (update.pn || update.phoneNumber || update.jid)) {
+		registerLidPair(update.lid, update.pn || update.phoneNumber || update.jid);
+		return;
+	}
+
+	if (update.id && (update.phoneNumber || update.pn)) {
+		registerLidPair(update.id, update.phoneNumber || update.pn);
+		return;
+	}
+
+	if (update.id && update.lid) {
+		registerLidPair(update.lid, update.id);
+		return;
+	}
+
+	for (const [key, val] of Object.entries(update)) {
+		if (["lid", "pn", "phoneNumber", "id", "jid", "name", "mappings", "participants"].includes(key)) continue;
+
+		if (typeof val === "string") {
+			registerLidPair(key, val);
+		} else if (val && typeof val === "object") {
+			updateLidMapping(val);
+		}
+	}
+}
+
+async function loadSessionLidMappings(sessionPath = "./rynn-session") {
+	try {
+		if (!sessionPath) return;
+
+		const isRemoteDb = /^(mongodb(\+srv)?|mysql|postgres(ql)?):\/\//i.test(sessionPath);
+		if (isRemoteDb) {
+			const { fetchSessionLidMappings } = await import("./auth.js");
+			const pairs = await fetchSessionLidMappings(sessionPath).catch(() => []);
+			if (Array.isArray(pairs)) {
+				for (const item of pairs) {
+					if (item?.lid && item?.pn) registerLidPair(item.lid, item.pn);
+				}
+			}
+			return;
+		}
+
+		const folder = sessionPath === "database.json" || !sessionPath ? "rynn-session" : sessionPath;
+		if (!fs.existsSync(folder)) return;
+		const files = await fs.promises.readdir(folder).catch(() => []);
+		for (const f of files) {
+			if (!f.startsWith("lid-mapping-") || !f.endsWith(".json")) continue;
+			const fullPath = path.join(folder, f);
+			try {
+				if (f.endsWith("_reverse.json")) {
+					const lid = f.slice("lid-mapping-".length, -"_reverse.json".length);
+					const raw = await fs.promises.readFile(fullPath, "utf-8");
+					const pn = JSON.parse(raw);
+					if (lid && pn) registerLidPair(lid, pn);
+				} else {
+					const pn = f.slice("lid-mapping-".length, -".json".length);
+					const raw = await fs.promises.readFile(fullPath, "utf-8");
+					const lid = JSON.parse(raw);
+					if (lid && pn) registerLidPair(lid, pn);
+				}
+			} catch {}
+		}
+	} catch {}
+}
 
 /*
- * Create By Naze
- * Follow https://github.com/nazedev
- * Whatsapp : https://whatsapp.com/channel/0029VaWOkNm7DAWtkvkJBK43
+ * Based on Hitori Bot by Nazedev (https://github.com/nazedev/hitori)
+ * Reworked for Rynn (https://github.com/nekonaru/rynnbot)
  */
 
+let _reloadTimer = null;
 const reloadHandler = async () => {
-	try {
-		nazeHandler = (await import(`../naze.js?update=${Date.now()}`)).default;
-	} catch (err) {
-		console.error(chalk.redBright(`[ERROR] ${err}`));
-	}
+	if (_reloadTimer) clearTimeout(_reloadTimer);
+	return new Promise((resolve) => {
+		_reloadTimer = setTimeout(async () => {
+			try {
+				sockHandler = (await import(`../handler.js?update=${Date.now()}`)).default;
+			} catch (err) {
+				console.error(chalk.redBright(`[ERROR] ${err}`));
+			}
+			resolve(sockHandler);
+		}, 300);
+	});
 };
 
 reloadHandler();
@@ -65,9 +337,17 @@ async function GroupUpdate(sock, m, store) {
 	}
 	if (!m.messageStubType || !m.isGroup) return;
 	if (global.db?.groups?.[m.chat] && store?.groupMetadata?.[m.chat]) {
-		const admin = `@${m.sender.split("@")[0]}`;
+		const senderPn = sock.findJidByLid?.(m.sender) || m.sender;
+		const admin = `@${senderPn.split("@")[0]}`;
 		const metadata = store.groupMetadata[m.chat];
-		const normalizedTarget = clearParse(m.messageStubParameters[0]);
+		const normalizedTarget = clearParse(m.messageStubParameters?.[0]);
+
+		const resolveDisplayId = (rawId) => {
+			if (!rawId) return rawId;
+			const r = sock.findJidByLid?.(rawId);
+			return r && r.endsWith("@s.whatsapp.net") ? r : rawId;
+		};
+
 		const type = m.messageStubType;
 		const messages = {
 			1: "mereset link grup!",
@@ -77,24 +357,32 @@ async function GroupUpdate(sock, m, store) {
 			24: `mengubah deskripsi grup.\n\n${normalizedTarget}`,
 			25: `telah mengatur agar *${normalizedTarget == "on" ? "hanya admin" : "semua peserta"}* yang dapat mengedit info grup.`,
 			26: `telah *${normalizedTarget == "on" ? "menutup" : "membuka"}* grup!\nSekarang ${normalizedTarget == "on" ? "hanya admin yang" : "semua peserta"} dapat mengirim pesan.`,
-			29: `telah menjadikan @${normalizedTarget?.id?.split("@")?.[0]} sebagai admin.`,
-			30: `telah memberhentikan @${normalizedTarget?.id?.split("@")?.[0]} dari admin.`,
+			29: `telah menjadikan @${resolveDisplayId(normalizedTarget?.id)?.split("@")?.[0]} sebagai admin.`,
+			30: `telah memberhentikan @${resolveDisplayId(normalizedTarget?.id)?.split("@")?.[0]} dari admin.`,
 			72: `mengubah durasi pesan sementara menjadi *@${normalizedTarget}*`,
 			123: "menonaktifkan pesan sementara.",
 			132: "mereset link grup!",
 			172: `@${normalizedTarget?.pn?.split("@")?.[0]} meminta bergabung`,
 		};
 		if (sock.public && global.db?.groups?.[m.chat]?.setinfo && messages[type]) {
-			await sock.sendMessage(
-				m.chat,
-				{ text: `${admin} ${messages[type]}`, mentions: [m.sender, ...((normalizedTarget?.id || normalizedTarget)?.includes("@") ? [`${normalizedTarget.id || normalizedTarget}`] : [])].filter(Boolean) },
-				{ ephemeralExpiration: m.expiration || m?.metadata?.ephemeralDuration || store?.messages[m.chat]?.array?.slice(-1)[0]?.metadata?.ephemeralDuration || 0 },
-			);
+			if (!((type === 29 && global.db?.groups?.[m.chat]?.promote) || (type === 30 && global.db?.groups?.[m.chat]?.demote))) {
+				const rawTargetId = normalizedTarget?.id || normalizedTarget;
+				const resolvedTargetId = resolveDisplayId(String(rawTargetId || ""));
+				await sock.sendMessage(
+					m.chat,
+					{
+						text: `${admin} ${messages[type]}`,
+						mentions: [...new Set([m.sender, senderPn, ...(String(rawTargetId).includes("@") ? [rawTargetId, resolvedTargetId] : [])].filter(Boolean))],
+					},
+					{ ephemeralExpiration: m.expiration || m?.metadata?.ephemeralDuration || store?.messages[m.chat]?.array?.slice(-1)[0]?.metadata?.ephemeralDuration || 0 },
+				);
+			}
 		}
 		if (type === 20) {
 			clearTimeout(groupMetadataTimers[m.chat]);
 			groupMetadataTimers[m.chat] = setTimeout(async () => {
 				store.groupMetadata[m.chat] = await sock.groupMetadata(m.chat).catch((e) => ({ ...store.groupMetadata[m.chat] }));
+				if (store.groupMetadata[m.chat]?.participants) updateLidMapping(store.groupMetadata[m.chat].participants);
 				delete groupMetadataTimers[m.chat];
 			}, 5000);
 		} else if (type === 29 || type === 30) {
@@ -110,10 +398,11 @@ async function GroupUpdate(sock, m, store) {
 				});
 			}
 		} else if (type === 27) {
-			if (!metadata.participants.some((a) => a.id === (normalizedTarget.id || normalizedTarget) || a.phoneNumber === (normalizedTarget.id || normalizedTarget))) {
+			if (!metadata?.participants?.some((a) => a.id === (normalizedTarget?.id || normalizedTarget) || a.phoneNumber === (normalizedTarget?.id || normalizedTarget))) {
 				clearTimeout(groupMetadataTimers[m.chat]);
 				groupMetadataTimers[m.chat] = setTimeout(async () => {
 					store.groupMetadata[m.chat] = await sock.groupMetadata(m.chat).catch((e) => ({ ...store.groupMetadata[m.chat] }));
+					if (store.groupMetadata[m.chat]?.participants) updateLidMapping(store.groupMetadata[m.chat].participants);
 					delete groupMetadataTimers[m.chat];
 				}, 5000);
 			}
@@ -152,17 +441,35 @@ async function GroupParticipantsUpdate(sock, update, store) {
 		if (global.db?.groups?.[id] && store?.groupMetadata?.[id]) {
 			const metadata = store.groupMetadata[id];
 			const jids = participants.map((n) => (typeof n === "string" ? n : n?.phoneNumber || n?.id || ""));
-			const mentionsString = jids.map((jid) => `@${jid.split("@")[0]}`).join(", ");
+
+			const displayJids = participants.map((n) => {
+				const raw = typeof n === "string" ? n : n?.phoneNumber || n?.id || "";
+				if (!raw) return raw;
+				if (raw.endsWith("@s.whatsapp.net")) return raw;
+				const resolved = sock.findJidByLid?.(raw);
+				if (resolved && resolved.endsWith("@s.whatsapp.net")) return resolved;
+				const pn = typeof n === "object" && n?.phoneNumber;
+				if (pn && pn.endsWith("@s.whatsapp.net")) return pn;
+				return raw;
+			});
+			const mentionsString = displayJids.map((jid) => `@${jid.split("@")[0]}`).join(", ");
 			let profile;
 			try {
 				if (participants.length > 1) {
 					profile = await sock.profilePictureUrl(id, "image");
 				} else {
-					profile = await sock.profilePictureUrl(jids[0], "image");
+					profile = await sock.profilePictureUrl(displayJids[0] || jids[0], "image");
 				}
 			} catch {
 				profile = "https://telegra.ph/file/95670d63378f7f4210f03.png";
 			}
+
+			const authorDisplay = author
+				? (() => {
+						const resolved = sock.findJidByLid?.(author);
+						return resolved && resolved.endsWith("@s.whatsapp.net") ? resolved : author;
+					})()
+				: null;
 
 			let messageText;
 			if (action === "add") {
@@ -172,6 +479,7 @@ async function GroupParticipantsUpdate(sock, update, store) {
 					clearTimeout(groupMetadataTimers[id]);
 					groupMetadataTimers[id] = setTimeout(async () => {
 						store.groupMetadata[id] = await sock.groupMetadata(id).catch((e) => ({ ...store.groupMetadata[id] }));
+						if (store.groupMetadata[id]?.participants) updateLidMapping(store.groupMetadata[id].participants);
 						delete groupMetadataTimers[id];
 					}, 5000);
 				}
@@ -197,13 +505,13 @@ async function GroupParticipantsUpdate(sock, update, store) {
 					{
 						text: messageText
 							.replace("@subject", metadata.subject)
-							.replace("@admin", author ? `@${author.split("@")[0]}` : "@admin")
+							.replace("@admin", authorDisplay ? `@${authorDisplay.split("@")[0]}` : "@admin")
 							.replace(/(?<=\s|^)@(?!\w)/g, mentionsString),
 						title: action == "add" ? "Welcome" : action == "remove" ? "Leaving" : action.charAt(0).toUpperCase() + action.slice(1),
 						description: metadata.subject,
 						thumbnailUrl: profile,
 						sourceUrl: global.my.gh,
-						mentions: [...jids, author].filter(Boolean),
+						mentions: [...new Set([...jids, ...displayJids, author, authorDisplay].filter(Boolean))],
 						contextInfo: {
 							forwardingScore: 1,
 							isForwarded: true,
@@ -225,15 +533,21 @@ async function GroupParticipantsUpdate(sock, update, store) {
 
 async function LoadDataBase(sock, m) {
 	try {
-		const botNumber = await sock.decodeJid(sock.user.id);
-		let game = global.db.game || {};
-		let premium = global.db.premium || [];
-		let user = global.db.users[m.sender] || {};
-		let setBot = global.db.set[botNumber] || {};
+		const botNumber = sock.user?.id ? await sock.decodeJid(sock.user.id) : "";
+		global.db = global.db || {};
+		global.db.game = global.db.game || {};
+		global.db.premium = global.db.premium || [];
+		global.db.users = global.db.users || {};
+		global.db.groups = global.db.groups || {};
+		global.db.set = global.db.set || {};
 
-		global.db.game = game;
-		global.db.set[botNumber] = setBot;
-		if (!m.sender.endsWith("@g.us")) global.db.users[m.sender] = user;
+		let game = global.db.game;
+		let premium = global.db.premium;
+		let user = (m?.sender && global.db.users[m.sender]) || {};
+		let setBot = (botNumber && global.db.set[botNumber]) || {};
+
+		if (botNumber) global.db.set[botNumber] = setBot;
+		if (m?.sender && !m.sender.endsWith("@g.us")) global.db.users[m.sender] = user;
 
 		const defaultSetBot = {
 			lang: "id",
@@ -255,10 +569,10 @@ async function LoadDataBase(sock, m) {
 			privateonly: true,
 			whitelistonly: false,
 			didyoumean: false,
-			author: global.author || "Nazedev",
+			author: global.author || "Nekonaruu",
 			authorPrefix: "",
 			autobackup: false,
-			botname: global.botname || "Hitori Bot",
+			botname: global.botname || "Rynn",
 			packname: global.packname || "Bot WhatsApp",
 			template: "documentMessage",
 			owner: global.owner,
@@ -328,32 +642,32 @@ async function LoadDataBase(sock, m) {
 			}
 		}
 
-		const defaultGame = {
-			suit: {},
-			chess: {},
-			chat_ai: {},
-			menfes: {},
-			tekateki: {},
-			tictactoe: {},
-			tebaklirik: {},
-			kuismath: {},
-			cangkulan: {},
-			werewolf: {},
-			tebaklagu: {},
-			tebakkata: {},
-			family100: {},
-			susunkata: {},
-			tebakbom: {},
-			ulartangga: {},
-			tebakkimia: {},
-			caklontong: {},
-			tebakangka: {},
-			tebaknegara: {},
-			tebakgambar: {},
-			tebakbendera: {},
-		};
-		for (let key in defaultGame) {
-			if (!(key in game)) game[key] = defaultGame[key];
+		const defaultGameKeys = [
+			"suit",
+			"chess",
+			"chat_ai",
+			"menfes",
+			"tekateki",
+			"tictactoe",
+			"tebaklirik",
+			"kuismath",
+			"cangkulan",
+			"werewolf",
+			"tebaklagu",
+			"tebakkata",
+			"family100",
+			"susunkata",
+			"tebakbom",
+			"ulartangga",
+			"tebakkimia",
+			"caklontong",
+			"tebakangka",
+			"tebaknegara",
+			"tebakgambar",
+			"tebakbendera",
+		];
+		for (const key of defaultGameKeys) {
+			if (!game[key]) game[key] = {};
 		}
 	} catch (e) {
 		throw e;
@@ -362,51 +676,129 @@ async function LoadDataBase(sock, m) {
 
 async function MessagesUpsert(sock, message, store) {
 	try {
-		let botNumber = await sock.decodeJid(sock.user.id);
-		const msg = message.messages[0];
-		if (msg?.messageTimestamp * 1000 < botStartTime) return;
-		const remoteJid = msg.key.remoteJid;
-		(store.messages ??= {})[remoteJid] ??= {};
-		store.messages[remoteJid].array ??= [];
-		store.messages[remoteJid].keyId ??= new Set();
-		if (!(store.messages[remoteJid].keyId instanceof Set)) {
-			store.messages[remoteJid].keyId = new Set(store.messages[remoteJid].array.map((m) => m?.key?.id || decompressMessage(m)?.key?.id).filter(Boolean));
+		if (!message?.messages || !Array.isArray(message.messages)) {
+			if (message?.key) message = { messages: [message], type: message?.type || "notify" };
+			else return;
 		}
-		if (store.messages[remoteJid].keyId.has(msg.key.id)) return;
-		store.messages[remoteJid].array.push(msg);
-		store.messages[remoteJid].keyId.add(msg.key.id);
-		if (store.messages[remoteJid].array.length > (global.chatLength || 1000)) {
-			const lastChat = store.messages[remoteJid].array.shift();
-			const lastId = lastChat?.key?.id || decompressMessage(lastChat)?.key?.id;
-			if (lastId) store.messages[remoteJid].keyId.delete(lastId);
+		store = store || global.store || {};
+		const upsertType = message.type || "notify";
+		let botNumber = sock.user?.id ? (sock.decodeJid ? await sock.decodeJid(sock.user.id) : sock.user.id) : "";
+		if (!store.groupMetadata || Object.keys(store.groupMetadata).length === 0) {
+			store.groupMetadata ??= await sock.groupFetchAllParticipating?.().catch(() => ({}));
 		}
-		if (!store.groupMetadata || Object.keys(store.groupMetadata).length === 0) store.groupMetadata ??= await sock.groupFetchAllParticipating().catch((e) => ({}));
-		const type = msg.message ? getContentType(msg.message) || Object.keys(msg.message)[0] : "";
-		const m = await Serialize(sock, msg, store);
-		if (m) {
-			m.eventType = message.type;
-			if (nazeHandler) {
-				nazeHandler(sock, m, store);
-			} else {
-				await reloadHandler();
-				if (nazeHandler) nazeHandler(sock, m, store);
-			}
-		}
-		if (global.db?.set?.[botNumber]?.readsw && msg.key.remoteJid === "status@broadcast") {
-			await sock.readMessages([msg.key]);
-			if (/protocolMessage/i.test(type)) await sock.sendFromOwner(global.db?.set?.[botNumber]?.owner || global.owner, "Status dari @" + msg.key.participant.split("@")[0] + " Telah dihapus", msg, { mentions: [msg.key.participant] });
-			if (/(audioMessage|imageMessage|videoMessage|extendedTextMessage)/i.test(type)) {
-				let keke =
-					type == "extendedTextMessage"
-						? `Story Teks Berisi : ${msg.message.extendedTextMessage.text ? msg.message.extendedTextMessage.text : ""}`
-						: type == "imageMessage"
-							? `Story Gambar ${msg.message.imageMessage.caption ? "dengan Caption : " + msg.message.imageMessage.caption : ""}`
-							: type == "videoMessage"
-								? `Story Video ${msg.message.videoMessage.caption ? "dengan Caption : " + msg.message.videoMessage.caption : ""}`
-								: type == "audioMessage"
-									? "Story Audio"
-									: "\nTidak diketahui cek saja langsung";
-				await sock.sendFromOwner(global.db?.set?.[botNumber]?.owner || global.owner, `Melihat story dari @${msg.key.participant.split("@")[0]}\n${keke}`, msg, { mentions: [msg.key.participant] });
+		for (const msg of message.messages) {
+			try {
+				if (!msg?.key) continue;
+				if (msg.category === "peer" || msg.key?.category === "peer") {
+					if (msg.key?.id && global.nodeMap) global.nodeMap.delete(msg.key.id);
+					continue;
+				}
+				const msgTimestamp = typeof msg?.messageTimestamp === "number" ? msg.messageTimestamp : msg?.messageTimestamp?.low ? msg.messageTimestamp.low : Number(msg?.messageTimestamp) || 0;
+
+				if (upsertType === "notify" && msgTimestamp > 0 && msgTimestamp * 1000 < botStartTime - 5000) continue;
+
+				const remoteJid = msg.key.remoteJid;
+				if (!remoteJid) continue;
+				if (remoteJid.endsWith("@bot") || msg.key?.participant?.endsWith("@bot")) continue;
+
+				(store.messages ??= {})[remoteJid] ??= {};
+				store.messages[remoteJid].array ??= [];
+				store.messages[remoteJid].keyId ??= new Set();
+				if (!(store.messages[remoteJid].keyId instanceof Set)) {
+					store.messages[remoteJid].keyId = new Set(store.messages[remoteJid].array.map((m) => m?.key?.id || decompressMessage(m)?.key?.id).filter(Boolean));
+				}
+				if (msg.key.id && store.messages[remoteJid].keyId.has(msg.key.id)) continue;
+				store.messages[remoteJid].array.push(msg);
+				if (msg.key.id) store.messages[remoteJid].keyId.add(msg.key.id);
+
+				const maxChatLen = global.chatLength || 200;
+				while (store.messages[remoteJid].array.length > maxChatLen) {
+					const lastChat = store.messages[remoteJid].array.shift();
+					const lastId = lastChat?.key?.id || decompressMessage(lastChat)?.key?.id;
+					if (lastId) store.messages[remoteJid].keyId.delete(lastId);
+				}
+
+				store._chatAccessOrder ??= Object.keys(store.messages || {});
+				store._chatAccessOrder = store._chatAccessOrder.filter((id) => id !== remoteJid);
+				store._chatAccessOrder.push(remoteJid);
+				const maxStoreChats = global.maxStoreChats || 200;
+				while (store._chatAccessOrder.length > maxStoreChats) {
+					const oldestJid = store._chatAccessOrder.shift();
+					if (oldestJid && oldestJid !== remoteJid && store.messages[oldestJid]) {
+						delete store.messages[oldestJid];
+					}
+				}
+
+				const rawProto = msg?.message?.protocolMessage || (typeof extractMessageContent === "function" ? extractMessageContent(msg?.message)?.protocolMessage : null) || msg?.msg?.protocolMessage;
+				const isMemberLabelChange = rawProto?.type === proto.Message?.ProtocolMessage?.Type?.GROUP_MEMBER_LABEL_CHANGE || rawProto?.type === "GROUP_MEMBER_LABEL_CHANGE" || !!rawProto?.memberLabel;
+				if (isMemberLabelChange) {
+					const memberLabelBase = memberLabelSerialize(msg);
+					if (memberLabelBase?.groupJid) {
+						const storesToUpdate = [store, global.store].filter(Boolean);
+						for (const s of storesToUpdate) {
+							s.groupMetadata ??= {};
+							const gm = (s.groupMetadata[memberLabelBase.groupJid] ??= { id: memberLabelBase.groupJid, participants: [] });
+							gm.memberLabels ??= {};
+							if (memberLabelBase.authorLid) {
+								if (memberLabelBase.label) gm.memberLabels[memberLabelBase.authorLid] = memberLabelBase.label;
+								else delete gm.memberLabels[memberLabelBase.authorLid];
+							}
+							if (memberLabelBase.authorPn) {
+								if (memberLabelBase.label) gm.memberLabels[memberLabelBase.authorPn] = memberLabelBase.label;
+								else delete gm.memberLabels[memberLabelBase.authorPn];
+							}
+							if (Array.isArray(gm.participants)) {
+								const p = gm.participants.find(
+									(x) =>
+										(memberLabelBase.authorLid && (x.id === memberLabelBase.authorLid || areJidsSameUser(x.id, memberLabelBase.authorLid))) ||
+										(memberLabelBase.authorPn && (x.phoneNumber === memberLabelBase.authorPn || x.id === memberLabelBase.authorPn || areJidsSameUser(x.id, memberLabelBase.authorPn))),
+								);
+								if (p) {
+									p.label = memberLabelBase.label || null;
+									p.labelTimestamp = memberLabelBase.timestamp;
+								}
+							}
+						}
+					}
+				}
+
+				const type = msg.message ? getContentType(msg.message) || Object.keys(msg.message)[0] : "";
+				const m = await Serialize(sock, msg, store);
+				if (m) {
+					m.eventType = upsertType;
+
+					if (upsertType === "append") {
+						continue;
+					}
+
+					if (sockHandler) {
+						sockHandler(sock, m, store).catch((e) => console.error("Error in sockHandler:", e));
+					} else {
+						await reloadHandler();
+						if (sockHandler) sockHandler(sock, m, store).catch((e) => console.error("Error in sockHandler:", e));
+					}
+				}
+
+				if (upsertType !== "append" && botNumber && global.db?.set?.[botNumber]?.readsw && msg.key.remoteJid === "status@broadcast") {
+					await sock.readMessages?.([msg.key]);
+					const participantNumber = msg.key.participant ? msg.key.participant.split("@")[0] : "";
+					if (/protocolMessage/i.test(type)) await sock.sendFromOwner?.(global.db?.set?.[botNumber]?.owner || global.owner, "Status dari @" + participantNumber + " Telah dihapus", msg, { mentions: msg.key.participant ? [msg.key.participant] : [] });
+					if (/(audioMessage|imageMessage|videoMessage|extendedTextMessage)/i.test(type)) {
+						let keke =
+							type == "extendedTextMessage"
+								? `Story Teks Berisi : ${msg.message?.extendedTextMessage?.text ? msg.message.extendedTextMessage.text : ""}`
+								: type == "imageMessage"
+									? `Story Gambar ${msg.message?.imageMessage?.caption ? "dengan Caption : " + msg.message.imageMessage.caption : ""}`
+									: type == "videoMessage"
+										? `Story Video ${msg.message?.videoMessage?.caption ? "dengan Caption : " + msg.message.videoMessage.caption : ""}`
+										: type == "audioMessage"
+											? "Story Audio"
+											: "\nTidak diketahui cek saja langsung";
+						await sock.sendFromOwner?.(global.db?.set?.[botNumber]?.owner || global.owner, `Melihat story dari @${participantNumber}\n${keke}`, msg, { mentions: msg.key.participant ? [msg.key.participant] : [] });
+					}
+				}
+			} catch (err) {
+				console.error("Error processing message in MessagesUpsert loop:", err);
 			}
 		}
 	} catch (e) {
@@ -415,7 +807,139 @@ async function MessagesUpsert(sock, message, store) {
 	}
 }
 
-async function Solving(sock, store) {
+async function resolveUsername(sock, username) {
+	if (!username || typeof username !== "string") return null;
+	let clean = username
+		.trim()
+		.toLowerCase()
+		.replace(/^(?:https?:\/\/)?(?:(?:www\.)?wa\.me\/(?:m\/)?)?@?/, "")
+		.split(/[/?#]/)[0]
+		.trim();
+	if (!clean) return null;
+
+	if (clean.endsWith("@s.whatsapp.net") || clean.endsWith("@lid") || clean.endsWith("@g.us") || clean.endsWith("@newsletter")) {
+		return clean.includes(":") ? clean.replace(/:.*@/, "@") : clean;
+	}
+	if (/^\d{5,16}$/.test(clean)) {
+		return clean + "@s.whatsapp.net";
+	}
+
+	const cached = usernameMap.get(clean);
+	if (cached !== undefined) return cached;
+
+	let resolvedJid = null;
+	try {
+		const USyncQuery = baileys.USyncQuery;
+		const USyncUser = baileys.USyncUser;
+		const USyncUsernameProtocol = baileys.USyncUsernameProtocol;
+		if (USyncQuery && USyncUser && typeof sock?.executeUSyncQuery === "function") {
+			const user = new USyncUser().withUsername(clean);
+			const uQuery = new USyncQuery().withContext("interactive").withMode("query").withUser(user);
+			if (typeof uQuery.withUsernameProtocol === "function") {
+				uQuery.withUsernameProtocol();
+			} else if (USyncUsernameProtocol) {
+				uQuery.protocols.push(new USyncUsernameProtocol());
+			}
+			const res = await sock.executeUSyncQuery(uQuery);
+			const entry = res?.list?.[0];
+			if (entry?.id) {
+				resolvedJid = entry.id;
+			}
+		}
+	} catch {}
+
+	if (!resolvedJid && typeof sock?.query === "function") {
+		try {
+			const sid = typeof sock.generateMessageTag === "function" ? sock.generateMessageTag() : String(Date.now());
+			const iqNode = {
+				tag: "iq",
+				attrs: {
+					to: "s.whatsapp.net",
+					type: "get",
+					xmlns: "usync",
+				},
+				content: [
+					{
+						tag: "usync",
+						attrs: {
+							context: "interactive",
+							mode: "query",
+							sid,
+							last: "true",
+							index: "0",
+						},
+						content: [
+							{
+								tag: "query",
+								attrs: {},
+								content: [{ tag: "username", attrs: {} }],
+							},
+							{
+								tag: "list",
+								attrs: {},
+								content: [
+									{
+										tag: "user",
+										attrs: {},
+										content: [
+											{
+												tag: "username",
+												attrs: {},
+												content: clean,
+											},
+										],
+									},
+								],
+							},
+						],
+					},
+				],
+			};
+			const response = await sock.query(iqNode);
+			const usyncNode = getBinaryNodeChild(response, "usync");
+			const listNode = usyncNode ? getBinaryNodeChild(usyncNode, "list") : null;
+			const userNode = listNode ? getBinaryNodeChild(listNode, "user") : null;
+			if (userNode?.attrs?.jid) {
+				resolvedJid = userNode.attrs.jid;
+			}
+		} catch {}
+	}
+
+	if (resolvedJid) {
+		if (resolvedJid.includes(":")) resolvedJid = resolvedJid.replace(/:.*@/, "@");
+		usernameMap.set(clean, resolvedJid);
+		return resolvedJid;
+	}
+
+	usernameMap.set(clean, null);
+	return null;
+}
+
+async function Solving(sock, store, sessionPath = "./rynn-session") {
+	sock.lidMap = lidMap;
+	sock.usernameMap = usernameMap;
+	sock.updateLidMapping = updateLidMapping;
+	sock.resolveUsername = (username) => resolveUsername(sock, username);
+
+	_currentSessionPath = sessionPath;
+
+	loadSessionLidMappings(sessionPath).catch(() => {});
+
+	if (sock.user?.lid && sock.user?.id) {
+		registerLidPair(sock.user.lid, sock.user.id);
+	}
+
+	if (store?.groupMetadata) {
+		for (const g of Object.values(store.groupMetadata)) {
+			updateLidMapping(g);
+		}
+	}
+	if (store?.contacts) {
+		for (const c of Object.values(store.contacts)) {
+			updateLidMapping(c);
+		}
+	}
+
 	sock.serializeM = (m) => MessagesUpsert(sock, m, store);
 
 	sock.decodeJid = (jid) => {
@@ -427,25 +951,91 @@ async function Solving(sock, store) {
 	};
 
 	sock.findJidByLid = (lid, store, resolve = false) => {
-		const groupMeta = store?.groupMetadata;
-		if (groupMeta) {
-			for (const g of Object.values(groupMeta)) {
-				if (!g?.participants) continue;
-				for (const contact of g.participants) {
-					if ((contact?.id?.includes(lid) || contact?.phoneNumber?.includes(lid)) && contact?.phoneNumber) {
-						return contact.phoneNumber;
+		if (!lid) return resolve ? lid : null;
+
+		const str = typeof lid === "string" ? lid.trim() : String(lid).trim();
+		if (!str) return resolve ? lid : null;
+
+		const clean = str.includes(":") ? str.replace(/:.*@/, "@") : str;
+
+		if (clean.endsWith("@s.whatsapp.net")) {
+			return clean;
+		}
+
+		if (clean.endsWith("@g.us") || clean.endsWith("@newsletter") || clean.endsWith("@broadcast")) {
+			return resolve ? lid : null;
+		}
+
+		if (/^\d+$/.test(clean)) {
+			return clean + "@s.whatsapp.net";
+		}
+
+		if (!clean.endsWith("@lid")) {
+			return resolve ? lid : null;
+		}
+
+		const resClean = lidMap.get(clean);
+		if (resClean !== undefined) {
+			if (resClean) return resClean;
+			if (resClean === null) return resolve ? lid : null;
+		}
+
+		const user = clean.split("@")[0].replace(/[^0-9]/g, "");
+		if (user) {
+			const resUser = lidMap.get(user);
+			if (resUser !== undefined) {
+				if (resUser) return resUser;
+				if (resUser === null) return resolve ? lid : null;
+			}
+			const asLid = user + "@lid";
+			const resAsLid = lidMap.get(asLid);
+			if (resAsLid !== undefined) {
+				if (resAsLid) return resAsLid;
+				if (resAsLid === null) return resolve ? lid : null;
+			}
+		}
+
+		if (store) {
+			const groupMeta = store.groupMetadata;
+			if (groupMeta) {
+				for (const g of Object.values(groupMeta)) {
+					if (!g?.participants) continue;
+					for (const contact of g.participants) {
+						if (!contact) continue;
+						const cId = contact.id ? (contact.id.includes(":") ? contact.id.replace(/:.*@/, "@") : contact.id) : "";
+						const cLid = contact.lid ? (contact.lid.includes(":") ? contact.lid.replace(/:.*@/, "@") : contact.lid) : "";
+						const cPn = contact.phoneNumber || contact.jid || (cId.endsWith("@s.whatsapp.net") ? cId : "");
+
+						const isMatch = cId === clean || cLid === clean || (user && (cId.startsWith(user + "@") || cLid.startsWith(user + "@")));
+						if (isMatch && cPn) {
+							const matchedLid = cLid || (cId.endsWith("@lid") ? cId : clean);
+							registerLidPair(matchedLid, cPn);
+							return cPn.includes("@s.whatsapp.net") ? cPn : cPn + "@s.whatsapp.net";
+						}
+					}
+				}
+			}
+			const contacts = store.contacts;
+			if (contacts) {
+				for (const [key, contact] of Object.entries(contacts)) {
+					if (!contact) continue;
+					const cId = contact.id ? (contact.id.includes(":") ? contact.id.replace(/:.*@/, "@") : contact.id) : key.includes(":") ? key.replace(/:.*@/, "@") : key;
+					const cLid = contact.lid ? (contact.lid.includes(":") ? contact.lid.replace(/:.*@/, "@") : contact.lid) : "";
+					const cPn = contact.phoneNumber || contact.jid || (cId.endsWith("@s.whatsapp.net") ? cId : key.endsWith("@s.whatsapp.net") ? key : "");
+
+					const isMatch = cId === clean || cLid === clean || (user && (cId.startsWith(user + "@") || cLid.startsWith(user + "@")));
+					if (isMatch && cPn) {
+						const matchedLid = cLid || (cId.endsWith("@lid") ? cId : clean);
+						registerLidPair(matchedLid, cPn);
+						return cPn.includes("@s.whatsapp.net") ? cPn : cPn + "@s.whatsapp.net";
 					}
 				}
 			}
 		}
-		const contacts = store?.contacts;
-		if (contacts) {
-			for (const contact of Object.values(contacts)) {
-				if ((contact?.id?.includes(lid) || contact?.phoneNumber?.includes(lid)) && contact?.phoneNumber) {
-					return contact.phoneNumber;
-				}
-			}
-		}
+
+		lidMap.set(clean, null);
+		if (user && user !== clean) lidMap.set(user, null);
+
 		if (resolve) return lid;
 		return null;
 	};
@@ -665,12 +1255,19 @@ async function Solving(sock, store) {
 		const stream = await downloadContentFromMessage(msg, messageType);
 		return new Promise((resolve, reject) => {
 			const writeStream = fs.createWriteStream(trueFileName);
-			stream.pipe(writeStream);
-			writeStream.on("finish", () => resolve(trueFileName));
-			writeStream.on("error", (err) => {
-				if (fs.existsSync(trueFileName)) fs.unlinkSync(trueFileName);
+			const cleanup = (err) => {
+				try {
+					writeStream.destroy();
+				} catch {}
+				try {
+					if (fs.existsSync(trueFileName)) fs.unlinkSync(trueFileName);
+				} catch {}
 				reject(err);
-			});
+			};
+			stream.on("error", cleanup);
+			writeStream.on("error", cleanup);
+			writeStream.on("finish", () => resolve(trueFileName));
+			stream.pipe(writeStream);
 		});
 	};
 
@@ -702,15 +1299,27 @@ async function Solving(sock, store) {
 			isTemp = true;
 		} else if (typeof PATH === "string" && /^https?:\/\//.test(PATH)) {
 			const res = await fetch(PATH);
+			if (!res.ok) throw new Error(`HTTP ${res.status} ${res.statusText}`);
 			mime = res.headers.get("content-type") || "application/octet-stream";
 			ext = mime.split("/")[1]?.split(";")[0] || "tmp";
 			if (ext === "jpeg") ext = "jpg";
 			filename = path.join(dir, `${randomName}.${ext}`);
 			const writeStream = fs.createWriteStream(filename);
-			Readable.fromWeb(res.body).pipe(writeStream);
+			const webStream = Readable.fromWeb(res.body);
 			await new Promise((resolve, reject) => {
+				const cleanup = (err) => {
+					try {
+						writeStream.destroy();
+					} catch {}
+					try {
+						if (fs.existsSync(filename)) fs.unlinkSync(filename);
+					} catch {}
+					reject(err);
+				};
+				webStream.on("error", cleanup);
+				writeStream.on("error", cleanup);
 				writeStream.on("finish", resolve);
-				writeStream.on("error", reject);
+				webStream.pipe(writeStream);
 			});
 			isTemp = true;
 		} else if (typeof PATH === "string" && fs.existsSync(PATH)) {
@@ -738,7 +1347,7 @@ async function Solving(sock, store) {
 		return sock.ev.emit("messages.upsert", {
 			...m,
 			messages: [proto.WebMessageInfo.create(apb)],
-			type: "append",
+			type: "notify",
 		});
 	};
 
@@ -746,7 +1355,7 @@ async function Solving(sock, store) {
 		let msg = await generateWAMessage(jid, content, { userJid: sock.user.id, ephemeralExpiration: store?.messages[jid]?.array?.slice(-1)[0]?.metadata?.ephemeralDuration || 0 });
 		msg.key.fromMe = areJidsSameUser(jid, sock.user.id);
 		msg.key.id = [...Array(32)].map(() => "0123456789ABCDEF"[Math.floor(Math.random() * 16)]).join("");
-		return sock.ev.emit("messages.upsert", { type: "append", messages: [proto.WebMessageInfo.create(msg)] });
+		return sock.ev.emit("messages.upsert", { type: "notify", messages: [proto.WebMessageInfo.create(msg)] });
 	};
 
 	sock.sendMedia = async (jid, pathMedia, fileName = "", caption = "", quoted = "", options = {}) => {
@@ -762,7 +1371,7 @@ async function Solving(sock, store) {
 			if (isWebpSticker) {
 				pathFile = await writeExif(filename, {
 					packname: options.packname || global.db?.set?.[botNumber]?.packname || "Bot WhatsApp",
-					author: options.author || global.db?.set?.[botNumber]?.author || "Nazedev",
+					author: options.author || global.db?.set?.[botNumber]?.author || "Nekonaruu",
 					categories: options.categories || [],
 				});
 				filesToDelete.push(pathFile);
@@ -873,7 +1482,7 @@ async function Solving(sock, store) {
 			additionalNodes: [
 				{
 					tag: "biz",
-					attrs: {},
+					attrs: { type: "native_flow", v: "1" },
 					content: [
 						{
 							tag: "interactive",
@@ -894,82 +1503,97 @@ async function Solving(sock, store) {
 					],
 				},
 				...(ai ? [{ attrs: { biz_bot: "1" }, tag: "bot" }] : []),
+				...(options.additionalNodes || []),
 			],
+			...options,
 		});
 		return hasil;
 	};
 
 	sock.sendButtonMsg = async (jid, content = {}, options = {}) => {
-		const { text, caption, footer = "", headerType = 1, ai, contextInfo = {}, buttons = [], mentions = [], ...media } = content;
-		const msg = await generateWAMessageFromContent(
-			jid,
-			{
-				viewOnceMessage: {
-					message: {
-						messageContextInfo: {
-							deviceListMetadata: {},
-							deviceListMetadataVersion: 2,
-						},
-						buttonsMessage: {
-							...(media && typeof media === "object" && Object.keys(media).length > 0
-								? await generateWAMessageContent(media, {
-										upload: sock.waUploadToServer,
-									})
-								: {}),
-							contentText: text || caption || "",
-							footerText: footer,
-							buttons,
-							headerType: media && Object.keys(media).length > 0 ? Math.max(...Object.keys(media).map((a) => ({ document: 3, image: 4, video: 5, location: 6 })[a] || headerType)) : headerType,
-							contextInfo: {
-								...contextInfo,
-								...options.contextInfo,
-								mentionedJid: options.mentions || mentions,
-								...(options.quoted
-									? {
-											stanzaId: options.quoted.key.id,
-											remoteJid: options.quoted.key.remoteJid,
-											participant: options.quoted.key.participant || options.quoted.key.remoteJid,
-											fromMe: options.quoted.key.fromMe,
-											quotedMessage: options.quoted.message,
-										}
-									: {}),
-							},
-						},
-					},
-				},
-			},
-			{},
-		);
-		const hasil = await sock.relayMessage(msg.key.remoteJid, msg.message, {
-			messageId: msg.key.id,
-			additionalNodes: [
-				{
-					tag: "biz",
-					attrs: {},
-					content: [
-						{
-							tag: "interactive",
-							attrs: {
-								type: "native_flow",
-								v: "1",
-							},
-							content: [
-								{
-									tag: "native_flow",
-									attrs: {
-										v: "9",
-										name: "mixed",
-									},
-								},
-							],
-						},
-					],
-				},
-				...(ai ? [{ attrs: { biz_bot: "1" }, tag: "bot" }] : []),
-			],
+		const {
+			text,
+			caption,
+			footer = "",
+			title,
+			subtitle,
+			headerType = 1,
+			ai,
+			contextInfo = {},
+			buttons = [],
+			mentions = [],
+			buttonLimit,
+			button_limit,
+			listTitle,
+			list_title,
+			buttonTitle,
+			button_title,
+			dividerIndices,
+			divider_indices,
+			messageParamsJson,
+			viewOnce,
+			additionalNodes,
+			...media
+		} = content;
+
+		const im = new InteractiveMessage(sock);
+
+		if (title) im.setTitle(title);
+		if (subtitle) im.setSubtitle(subtitle);
+		const bodyText = text || caption || "";
+		if (bodyText) im.setBody(bodyText);
+		if (footer) im.setFooter(footer);
+
+		if (media && typeof media === "object" && Object.keys(media).length > 0) {
+			im.setMedia(media);
+		}
+
+		const formattedButtons = buttons.map(normalizeNativeFlowButton).filter(Boolean);
+		for (const btn of formattedButtons) {
+			im.addButtonRaw(btn);
+		}
+
+		const limitConfig = buttonLimit ?? button_limit ?? options.buttonLimit ?? options.button_limit ?? content.in_thread_buttons_limit ?? options.in_thread_buttons_limit;
+		if (limitConfig !== undefined && limitConfig !== null) {
+			const bListTitle = listTitle || list_title || options.listTitle || options.list_title || "action list";
+			const bBtnTitle = buttonTitle || button_title || options.buttonTitle || options.button_title || "choose action";
+			const bDividers = dividerIndices || divider_indices || options.dividerIndices || options.divider_indices || [];
+
+			if (typeof limitConfig === "object") {
+				im.setButtonLimit(limitConfig.limit ?? limitConfig.in_thread_buttons_limit ?? 1, {
+					listTitle: limitConfig.list_title || limitConfig.listTitle || bListTitle,
+					buttonTitle: limitConfig.button_title || limitConfig.buttonTitle || bBtnTitle,
+					dividerIndices: limitConfig.divider_indices || limitConfig.dividerIndices || bDividers,
+				});
+			} else {
+				im.setButtonLimit(Number(limitConfig) || 1, {
+					listTitle: bListTitle,
+					buttonTitle: bBtnTitle,
+					dividerIndices: bDividers,
+				});
+			}
+		} else if (messageParamsJson || options.messageParamsJson) {
+			im.setMessageParamsJson(messageParamsJson || options.messageParamsJson);
+		}
+
+		const mergedContextInfo = {
+			...contextInfo,
+			...options.contextInfo,
+		};
+
+		return await im.sendTo(jid, {
+			quoted: options.quoted,
+			mentions: options.mentions || mentions,
+			contextInfo: mergedContextInfo,
+			ai: ai ?? options.ai,
+			viewOnce: viewOnce ?? options.viewOnce,
+			additionalNodes: additionalNodes || options.additionalNodes,
+			messageId: options.messageId,
 		});
-		return hasil;
 	};
+
+	sock.sendButton = sock.sendButtonMsg;
+	sock.InteractiveMessage = InteractiveMessage;
 
 	sock.newsletterMsg = async (key, content = {}, timeout = 5000) => {
 		const { type: rawType = "INFO", name, description = "", picture = null, react, id, newsletter_id = key, ...media } = content;
@@ -1039,15 +1663,18 @@ async function Solving(sock, store) {
 				},
 				timeout,
 			);
-			const res =
-				JSON.parse(_query.content[0].content)?.data?.xwa2_newsletter ||
-				JSON.parse(_query.content[0].content)?.data?.xwa2_newsletter_join_v2 ||
-				JSON.parse(_query.content[0].content)?.data?.xwa2_newsletter_leave_v2 ||
-				JSON.parse(_query.content[0].content)?.data?.xwa2_newsletter_create ||
-				JSON.parse(_query.content[0].content)?.data?.xwa2_newsletter_delete_v2 ||
-				JSON.parse(_query.content[0].content)?.errors ||
-				JSON.parse(_query.content[0].content);
-			res.thread_metadata ? (res.thread_metadata.host = "https://mmg.whatsapp.net") : null;
+			let parsed = null;
+			try {
+				const rawContent = _query?.content?.[0]?.content;
+				const text = rawContent instanceof Uint8Array || Buffer.isBuffer(rawContent) ? new TextDecoder().decode(rawContent) : String(rawContent || "{}");
+				parsed = JSON.parse(text);
+			} catch {
+				parsed = {};
+			}
+			const res = parsed?.data?.xwa2_newsletter || parsed?.data?.xwa2_newsletter_join_v2 || parsed?.data?.xwa2_newsletter_leave_v2 || parsed?.data?.xwa2_newsletter_create || parsed?.data?.xwa2_newsletter_delete_v2 || parsed?.errors || parsed;
+			if (res?.thread_metadata) {
+				res.thread_metadata.host = "https://mmg.whatsapp.net";
+			}
 			return res;
 		}
 	};
@@ -1098,74 +1725,128 @@ async function Solving(sock, store) {
 			},
 			{},
 		);
-		const hasil = await sock.relayMessage(msg.key.remoteJid, msg.message, { messageId: msg.key.id });
+		const hasil = await sock.relayMessage(msg.key.remoteJid, msg.message, {
+			messageId: msg.key.id,
+			additionalNodes: [
+				{
+					tag: "biz",
+					attrs: { type: "native_flow", v: "1" },
+					content: [
+						{
+							tag: "interactive",
+							attrs: { type: "native_flow", v: "1" },
+							content: [
+								{
+									tag: "native_flow",
+									attrs: { v: "9", name: "mixed" },
+								},
+							],
+						},
+					],
+				},
+				...(options.additionalNodes || []),
+			],
+			...options,
+		});
 		return hasil;
 	};
 
 	sock.sendMessageV3 = async (jid, content = {}, options = {}) => {
-		const { text, title = "", description = "", thumbnail, thumbnailUrl, sourceUrl, contextInfo = {}, mentions = [] } = content;
+		const { text, title = "", description = "", thumbnail, thumbnailUrl, sourceUrl, favicon, faviconMMSMetadata, contextInfo = {}, mentions = [] } = content;
 		if ((thumbnailUrl || thumbnail) && text) {
-			let compressedMedia;
-			let meta = { width: 1024, height: 576 };
-			const cacheKey = Buffer.isBuffer(thumbnail) ? crypto.createHash("md5").update(thumbnail).digest("hex") : thumbnailUrl || (typeof thumbnail === "string" ? thumbnail : null);
-			if (cacheKey && thumbMediaCache.has(cacheKey)) {
-				const cached = thumbMediaCache.get(cacheKey);
-				compressedMedia = cached.compressedMedia;
-				meta = cached.meta;
-			} else {
-				try {
-					const image = await Jimp.read(thumbnailUrl || thumbnail);
-					meta.width = image.bitmap.width;
-					meta.height = image.bitmap.height;
-					compressedMedia = await image.quality(90).getBuffer(Jimp.MIME_JPEG || "image/jpeg");
-				} catch (error) {
-					compressedMedia = thumbnailUrl ? { url: thumbnailUrl } : thumbnail;
+			try {
+				let compressedMedia;
+				let meta = { width: 1024, height: 576 };
+				const cacheKey = Buffer.isBuffer(thumbnail) ? crypto.createHash("md5").update(thumbnail).digest("hex") : thumbnailUrl || (typeof thumbnail === "string" ? thumbnail : null);
+				if (cacheKey && thumbMediaCache.has(cacheKey)) {
+					const cached = thumbMediaCache.get(cacheKey);
+					compressedMedia = cached.compressedMedia;
+					meta = cached.meta;
+				} else {
+					try {
+						const image = await Jimp.read(thumbnailUrl || thumbnail);
+						meta.width = image.bitmap.width;
+						meta.height = image.bitmap.height;
+						compressedMedia = await image.quality(90).getBuffer(Jimp.MIME_JPEG || "image/jpeg");
+					} catch (error) {
+						compressedMedia = thumbnailUrl ? { url: thumbnailUrl } : thumbnail;
+					}
+					if (cacheKey) {
+						if (thumbMediaCache.size >= 50) thumbMediaCache.delete(thumbMediaCache.keys().next().value);
+						thumbMediaCache.set(cacheKey, { compressedMedia, meta });
+					}
 				}
-				if (cacheKey) {
-					if (thumbMediaCache.size >= 50) thumbMediaCache.delete(thumbMediaCache.keys().next().value);
-					thumbMediaCache.set(cacheKey, { compressedMedia, meta });
-				}
-			}
-			const { imageMessage: img } = await prepareWAMessageMedia({ image: compressedMedia }, { upload: sock.waUploadToServer, mediaTypeOverride: "thumbnail-link" });
-			const linkUrl = sourceUrl || thumbnailUrl;
-			const customContextInfo = {
-				...contextInfo,
-				...options.contextInfo,
-				mentionedJid: options.mentions || mentions,
-				...(options.quoted
-					? {
-							stanzaId: options.quoted.key.id,
-							remoteJid: options.quoted.key.remoteJid,
-							participant: options.quoted.key.participant || options.quoted.key.remoteJid,
-							fromMe: options.quoted.key.fromMe,
-							quotedMessage: options.quoted.message,
+				const mediaPayload = Buffer.isBuffer(compressedMedia) ? { image: compressedMedia } : compressedMedia?.url || typeof compressedMedia === "string" ? { image: typeof compressedMedia === "string" ? { url: compressedMedia } : compressedMedia } : { image: compressedMedia };
+				const { imageMessage: img } = await prepareWAMessageMedia(mediaPayload, { upload: sock.waUploadToServer, mediaTypeOverride: "thumbnail-link" });
+				if (!img) throw new Error("prepareWAMessageMedia returned no imageMessage");
+				let resolvedFaviconMMS = faviconMMSMetadata || options.faviconMMSMetadata;
+				const favInput = favicon || options.favicon;
+				if (!resolvedFaviconMMS && favInput) {
+					try {
+						const favMedia = Buffer.isBuffer(favInput) ? { image: favInput } : typeof favInput === "string" ? { image: { url: favInput } } : favInput;
+						const { imageMessage: fav } = await prepareWAMessageMedia(favMedia, { upload: sock.waUploadToServer, mediaTypeOverride: "thumbnail-link" });
+						if (fav) {
+							resolvedFaviconMMS = {
+								thumbnailDirectPath: fav.directPath,
+								thumbnailSha256: fav.fileSha256,
+								thumbnailEncSha256: fav.fileEncSha256,
+								mediaKey: fav.mediaKey,
+								mediaKeyTimestamp: fav.mediaKeyTimestamp,
+								thumbnailHeight: fav.height || 48,
+								thumbnailWidth: fav.width || 48,
+							};
 						}
-					: {}),
-			};
-			const payloadMessage = {
-				extendedTextMessage: {
-					text: `${linkUrl}\n\n${text}`.trim(),
-					matchedText: linkUrl,
-					title,
-					description,
-					previewType: 0,
-					renderLargerThumbnail: true,
-					jpegThumbnail: img.jpegThumbnail,
-					thumbnailDirectPath: img.directPath,
-					thumbnailSha256: img.fileSha256,
-					thumbnailEncSha256: img.fileEncSha256,
-					mediaKey: img.mediaKey,
-					mediaKeyTimestamp: img.mediaKeyTimestamp,
-					thumbnailHeight: meta.height,
-					thumbnailWidth: meta.width,
-					contextInfo: customContextInfo,
-				},
-			};
-			const hasil = await sock.relayMessage(jid, payloadMessage, { messageId: generateMessageID() });
-			return hasil;
+					} catch {}
+				}
+				const linkUrl = sourceUrl || thumbnailUrl;
+				const customContextInfo = {
+					...contextInfo,
+					...options.contextInfo,
+					mentionedJid: options.mentions || mentions,
+					...(options.quoted
+						? {
+								stanzaId: options.quoted.key?.id || options.quoted.id,
+								remoteJid: options.quoted.key?.remoteJid || options.quoted.chat,
+								participant: options.quoted.key?.participant || options.quoted.sender || options.quoted.key?.remoteJid || options.quoted.chat,
+								fromMe: options.quoted.key?.fromMe ?? options.quoted.fromMe,
+								quotedMessage: options.quoted.message || options.quoted.msg,
+							}
+						: {}),
+				};
+				const payloadMessage = {
+					extendedTextMessage: {
+						text: `${linkUrl}\n\n${text}`.trim(),
+						matchedText: linkUrl,
+						title,
+						description,
+						previewType: 0,
+						renderLargerThumbnail: true,
+						jpegThumbnail: img.jpegThumbnail,
+						thumbnailDirectPath: img.directPath,
+						thumbnailSha256: img.fileSha256,
+						thumbnailEncSha256: img.fileEncSha256,
+						mediaKey: img.mediaKey,
+						mediaKeyTimestamp: img.mediaKeyTimestamp,
+						thumbnailHeight: meta.height,
+						thumbnailWidth: meta.width,
+						...(resolvedFaviconMMS ? { faviconMMSMetadata: resolvedFaviconMMS } : {}),
+						contextInfo: customContextInfo,
+					},
+				};
+				const hasil = await sock.relayMessage(jid, payloadMessage, { messageId: generateMessageID(), ...options });
+				return hasil;
+			} catch {
+				return await sock.sendMessage(jid, content, options);
+			}
 		} else {
 			return await sock.sendMessage(jid, content, options);
 		}
+	};
+
+	sock.createThumbnailLink = (anyMediaMessageContent, thumbnailContent = {}) => createThumbnailLink(sock, anyMediaMessageContent, thumbnailContent);
+	sock.sendThumbnailLink = async (jid, anyMediaMessageContent, thumbnailContent = {}, options = {}) => {
+		const msg = await createThumbnailLink(sock, anyMediaMessageContent, { ...thumbnailContent, ...options });
+		return await sock.relayMessage(jid, msg, { messageId: options.messageId || generateMessageID(), ...options });
 	};
 
 	if (sock.user && sock.user.id) {
@@ -1179,9 +1860,8 @@ async function Solving(sock, store) {
 }
 
 /*
- * Create By Naze
- * Follow https://github.com/nazedev
- * Whatsapp : https://whatsapp.com/channel/0029VaWOkNm7DAWtkvkJBK43
+ * Based on Hitori Bot by Nazedev (https://github.com/nazedev/hitori)
+ * Reworked for Rynn (https://github.com/nekonaru/rynnbot)
  */
 
 const BOT_MESSAGE_TYPES = new Set(["templateMessage", "buttonsMessage", "listMessage", "interactiveMessage", "highlyStructuredMessage", "botInvokeMessage", "botTaskMessage", "botForwardedMessage", "richResponseMessage", "bcallMessage"]);
@@ -1228,9 +1908,90 @@ const isProtobufAnomaly = (msgInfo) => {
 	}
 	return false;
 };
+function buttonSerialize(WAM) {
+	if (!WAM) return undefined;
+	let kind;
+	let id;
+	let displayText;
+	let description;
+	let index;
+
+	const rawMsg = WAM?.message || WAM?.msg || WAM;
+	const unwrapped = (typeof extractMessageContent === "function" ? extractMessageContent(rawMsg) : null) || rawMsg;
+	const msgObj = unwrapped?.message ? (typeof extractMessageContent === "function" ? extractMessageContent(unwrapped.message) : null) || unwrapped.message : unwrapped;
+	const msg = WAM?.msg || msgObj;
+
+	const nativeFlowParams =
+		msgObj?.interactiveResponseMessage?.nativeFlowResponseMessage?.paramsJson ||
+		msg?.nativeFlowResponseMessage?.paramsJson ||
+		msgObj?.nativeFlowResponseMessage?.paramsJson ||
+		rawMsg?.viewOnceMessage?.message?.interactiveResponseMessage?.nativeFlowResponseMessage?.paramsJson ||
+		rawMsg?.viewOnceMessageV2?.message?.interactiveResponseMessage?.nativeFlowResponseMessage?.paramsJson;
+
+	if (msgObj?.buttonsResponseMessage || msg?.selectedButtonId) {
+		kind = "buttonsResponseMessage";
+		id = msgObj?.buttonsResponseMessage?.selectedButtonId || msg?.selectedButtonId;
+		displayText = msgObj?.buttonsResponseMessage?.selectedDisplayText || msg?.selectedDisplayText;
+	} else if (msgObj?.templateButtonReplyMessage || msg?.selectedId) {
+		kind = "templateButtonReplyMessage";
+		id = msgObj?.templateButtonReplyMessage?.selectedId || msg?.selectedId;
+		displayText = msgObj?.templateButtonReplyMessage?.selectedDisplayText || msg?.selectedDisplayText;
+		index = msgObj?.templateButtonReplyMessage?.selectedIndex || msg?.selectedIndex;
+	} else if (nativeFlowParams) {
+		try {
+			const json = typeof nativeFlowParams === "object" ? nativeFlowParams : JSON.parse(nativeFlowParams);
+			kind = "nativeFlowResponseMessage";
+			id = json?.id || json?.selected_id || json?.selectedId || "";
+			displayText = msgObj?.interactiveResponseMessage?.body?.text || msg?.body?.text || json?.display_text || "";
+			description = json?.description;
+		} catch {}
+	} else if (msgObj?.listResponseMessage || msg?.singleSelectReply?.selectedRowId) {
+		kind = "listResponseMessage";
+		id = msgObj?.listResponseMessage?.singleSelectReply?.selectedRowId || msg?.singleSelectReply?.selectedRowId;
+		displayText = msgObj?.listResponseMessage?.title || msg?.title;
+		description = msgObj?.listResponseMessage?.description || msg?.description;
+	}
+
+	if (!id) {
+		id = extractNativeFlowResponseId(msg, rawMsg) || extractNativeFlowResponseId(msg, msgObj);
+		if (id) {
+			kind = "nativeFlowResponseMessage";
+			displayText = extractNativeFlowResponseText(msg, rawMsg) || extractNativeFlowResponseText(msg, msgObj);
+		}
+	}
+
+	if (!id) return undefined;
+	return { kind, id, displayText, description, index };
+}
+
+function memberLabelSerialize(WAM) {
+	if (!WAM) return undefined;
+	const groupJid = WAM?.key?.remoteJid;
+	const p1 = WAM?.key?.participant;
+	const p2 = WAM?.key?.participantAlt;
+	let authorLid = p1?.endsWith("@lid") ? p1 : p2?.endsWith("@lid") ? p2 : undefined;
+	let authorPn = p1?.endsWith("@s.whatsapp.net") ? p1 : p2?.endsWith("@s.whatsapp.net") ? p2 : undefined;
+	if (!authorLid && !authorPn) {
+		authorLid = p1;
+		authorPn = p2;
+	}
+	const rawProto = WAM?.message?.protocolMessage || (typeof extractMessageContent === "function" ? extractMessageContent(WAM?.message)?.protocolMessage : null) || WAM?.msg?.protocolMessage;
+	const labelTimestamp = rawProto?.memberLabel?.labelTimestamp;
+	const timestamp = typeof labelTimestamp?.toInt === "function" ? labelTimestamp.toInt() : typeof labelTimestamp?.low === "number" ? labelTimestamp.low : typeof labelTimestamp === "number" ? labelTimestamp : labelTimestamp ? Number(labelTimestamp) || undefined : undefined;
+	const label = rawProto?.memberLabel?.label || undefined;
+
+	return {
+		groupJid,
+		authorLid,
+		authorPn,
+		timestamp,
+		label,
+	};
+}
+
 async function Serialize(sock, msg, store) {
-	const botLid = sock.decodeJid(sock.user.lid);
-	const botNumber = sock.decodeJid(sock.user.id);
+	const botLid = sock.user?.lid ? sock.decodeJid(sock.user.lid) : "";
+	const botNumber = sock.user?.id ? sock.decodeJid(sock.user.id) : "";
 	const m = { ...msg };
 	if (!m) return m;
 	if (m.key) {
@@ -1238,8 +1999,10 @@ async function Serialize(sock, msg, store) {
 		m.chat = m.key.remoteJidAlt || m.key.remoteJid;
 		m.fromMe = m.key.fromMe;
 		m.isGroup = m.chat.endsWith("@g.us");
+		if (m.key.participant && m.key.participantAlt) registerLidPair(m.key.participant, m.key.participantAlt);
+		if (m.key.remoteJid && m.key.remoteJidAlt) registerLidPair(m.key.remoteJid, m.key.remoteJidAlt);
 		if (!m.isGroup && m.chat.endsWith("@lid")) m.chat = sock.findJidByLid(m.chat, store) || m.chat;
-		m.sender = sock.decodeJid((m.fromMe && sock.user.id) || m.key.participantAlt || m.key.participant || m.chat || "");
+		m.sender = sock.decodeJid((m.fromMe && sock.user?.id) || m.key.participantAlt || m.key.participant || m.chat || "");
 		if (m.isGroup) {
 			if (!store.groupMetadata) store.groupMetadata = await sock.groupFetchAllParticipating().catch((e) => ({}));
 			let metadata = store.groupMetadata[m.chat] ? store.groupMetadata[m.chat] : (store.groupMetadata[m.chat] = await sock.groupMetadata(m.chat).catch((e) => ({ ...store.groupMetadata[m.chat] })));
@@ -1254,33 +2017,135 @@ async function Serialize(sock, msg, store) {
 				m.sender = participant?.phoneNumber || m.key.participantAlt || m.sender;
 				m.metadata.owner = m.metadata?.participants?.find((p) => p.id === m.metadata.owner)?.id || m.metadata.owner;
 				m.metadata.subjectOwner = m.metadata?.participants?.find((p) => p.id === m.metadata.subjectOwner)?.id || m.metadata.subjectOwner;
-				if (!m.sender.endsWith("@g.us"))
+				if (!m.sender.endsWith("@g.us")) {
+					store.contacts ??= {};
 					store.contacts[m.sender] = {
 						...(store.contacts[m.sender] || {}),
-						id: jidNormalizedUser((m.fromMe && sock.user.lid) || participant?.id || store.contacts[m.sender]?.id || m.sender),
-						phoneNumber: jidNormalizedUser((m.fromMe && sock.user.id) || participant?.phoneNumber || store.contacts[m.sender]?.phoneNumber || m.sender),
-						name: (m.fromMe && sock.user.name) || m.pushName,
+						id: jidNormalizedUser((m.fromMe && sock.user?.lid) || participant?.id || store.contacts[m.sender]?.id || m.sender),
+						phoneNumber: jidNormalizedUser((m.fromMe && sock.user?.id) || participant?.phoneNumber || store.contacts[m.sender]?.phoneNumber || m.sender),
+						name: (m.fromMe && sock.user?.name) || m.pushName,
 					};
+					if (store.contacts[m.sender].id && store.contacts[m.sender].phoneNumber) {
+						registerLidPair(store.contacts[m.sender].id, store.contacts[m.sender].phoneNumber);
+					}
+				}
 			}
-			m.admins = m.metadata.participants ? m.metadata.participants.filter((p) => p.admin).map((p) => ({ id: p.id, phoneNumber: p.phoneNumber, admin: p.admin })) : [];
-			m.isAdmin = m.admins.some((a) => a.id === m.sender || a.phoneNumber === m.sender);
-			m.isBotAdmin = m.admins.some((a) => [botNumber, botLid].includes(a.id) || [botNumber, botLid].includes(a.phoneNumber));
+			let _admins;
+			Object.defineProperty(m, "admins", {
+				get() {
+					return (_admins ??= m.metadata?.participants ? m.metadata.participants.filter((p) => p.admin).map((p) => ({ id: p.id, phoneNumber: p.phoneNumber, admin: p.admin })) : []);
+				},
+				set(v) {
+					_admins = v;
+				},
+				configurable: true,
+				enumerable: true,
+			});
+			let _isAdmin;
+			Object.defineProperty(m, "isAdmin", {
+				get() {
+					return (_isAdmin ??= Boolean(m.admins.some((a) => a.id === m.sender || a.phoneNumber === m.sender)));
+				},
+				set(v) {
+					_isAdmin = v;
+				},
+				configurable: true,
+				enumerable: true,
+			});
+			let _isBotAdmin;
+			Object.defineProperty(m, "isBotAdmin", {
+				get() {
+					return (_isBotAdmin ??= Boolean(m.admins.some((a) => [botNumber, botLid].includes(a.id) || [botNumber, botLid].includes(a.phoneNumber))));
+				},
+				set(v) {
+					_isBotAdmin = v;
+				},
+				configurable: true,
+				enumerable: true,
+			});
+			let _group;
+			Object.defineProperty(m, "group", {
+				get() {
+					if (_group) return _group;
+					const p = m.metadata?.participants?.find((x) => x.id === m.sender || x.phoneNumber === m.sender || (m.key.participant && (x.id === m.key.participant || x.phoneNumber === m.key.participant)));
+					const lbl = p?.label || m.metadata?.memberLabels?.[m.key.participant] || m.metadata?.memberLabels?.[m.sender] || undefined;
+					return (_group = {
+						admin: m.admins.find((a) => a.id === m.sender || a.phoneNumber === m.sender)?.admin,
+						label: lbl,
+					});
+				},
+				set(v) {
+					_group = v;
+				},
+				configurable: true,
+				enumerable: true,
+			});
+			let _memberLabel;
+			Object.defineProperty(m, "memberLabel", {
+				get() {
+					if (_memberLabel !== undefined) return _memberLabel;
+					const p = m.metadata?.participants?.find((x) => x.id === m.sender || x.phoneNumber === m.sender || (m.key.participant && (x.id === m.key.participant || x.phoneNumber === m.key.participant)));
+					const lbl = p?.label || m.metadata?.memberLabels?.[m.key.participant] || m.metadata?.memberLabels?.[m.sender] || undefined;
+					if (!lbl) return (_memberLabel = null);
+					return (_memberLabel = {
+						groupJid: m.chat,
+						authorLid: m.key.participant,
+						authorPn: m.sender,
+						label: lbl,
+						timestamp: p?.labelTimestamp,
+					});
+				},
+				set(v) {
+					_memberLabel = v;
+				},
+				configurable: true,
+				enumerable: true,
+			});
+		} else {
+			m.admins = [];
+			m.isAdmin = false;
+			m.isBotAdmin = false;
+			m.group = {};
 		}
 		if (m.key.addressingMode === "lid") {
-			if (!m.sender.endsWith("@g.us"))
+			if (!m.sender.endsWith("@g.us")) {
+				store.contacts ??= {};
 				store.contacts[m.sender] = {
 					...(store.contacts[m.sender] || {}),
-					id: jidNormalizedUser((m.fromMe && sock.user.lid) || store.contacts[m.sender]?.id || m.key.remoteJid),
-					phoneNumber: jidNormalizedUser((m.fromMe && sock.user.id) || store.contacts[m.sender]?.phoneNumber || m.sender),
-					name: (m.fromMe && sock.user.name) || m.pushName,
+					id: jidNormalizedUser((m.fromMe && sock.user?.lid) || store.contacts[m.sender]?.id || m.key.remoteJid),
+					phoneNumber: jidNormalizedUser((m.fromMe && sock.user?.id) || store.contacts[m.sender]?.phoneNumber || m.sender),
+					name: (m.fromMe && sock.user?.name) || m.pushName,
 				};
+				if (store.contacts[m.sender].id && store.contacts[m.sender].phoneNumber) {
+					registerLidPair(store.contacts[m.sender].id, store.contacts[m.sender].phoneNumber);
+				}
+			}
 		}
-		m.isBaileys = m.id ? ["BAE", "B1E", "B24E"].some((a) => m.id.startsWith(a) && [12, 16, 20, 40].includes(m.id.length)) || /(.)\1{5,}|[^0-9A-F]/.test(m.id) : false;
+		let _isBaileys;
+		Object.defineProperty(m, "isBaileys", {
+			get() {
+				if (_isBaileys !== undefined) return _isBaileys;
+				return (_isBaileys = m.id ? ["BAE", "B1E", "B24E"].some((a) => m.id.startsWith(a) && [12, 16, 20, 40].includes(m.id.length)) || /(.)\1{5,}|[^0-9A-F]/.test(m.id) : false);
+			},
+			set(v) {
+				_isBaileys = v;
+			},
+			configurable: true,
+			enumerable: true,
+		});
+		if (m.key?.id) {
+			m.rawNode = global.nodeMap?.get(m.key.id) || null;
+			m.node = m.rawNode;
+		}
 	}
 	if (m.message) {
-		m.type = getContentType(m.message) || Object.keys(m.message)[0];
-		let inner = m.message[m.type];
+		const extracted = extractMessageContent(m.message) || m.message;
+		m.type = getContentType(extracted) || getContentType(m.message) || Object.keys(m.message)[0];
+		m.isViewOnce = Boolean(m.message.viewOnceMessage || m.message.viewOnceMessageV2 || m.message.viewOnceMessageV2Extension);
+		let inner = extracted[m.type] || m.message[m.type];
 		m.msg = inner?.message ? inner.message[getContentType(inner.message) || Object.keys(inner.message)[0]] : inner?.editedMessage ? inner.editedMessage : extractMessageContent(inner) || inner;
+		m.nativeFlowId = extractNativeFlowResponseId(m.msg, m.message);
+		m.nativeFlowText = extractNativeFlowResponseText(m.msg, m.message);
 		m.body =
 			m.message?.conversation ||
 			m.msg?.text ||
@@ -1289,14 +2154,37 @@ async function Serialize(sock, msg, store) {
 			m.msg?.selectedButtonId ||
 			m.msg?.singleSelectReply?.selectedRowId ||
 			m.msg?.selectedId ||
-			(m.type === "interactiveResponseMessage" && m.message.interactiveResponseMessage?.nativeFlowResponseMessage ? JSON.parse(m.message.interactiveResponseMessage.nativeFlowResponseMessage.paramsJson || "{}")?.id : "") ||
+			m.nativeFlowId ||
 			(m.type === "editedMessage" || m.type === "protocolMessage" ? m.message[m.type]?.editedMessage?.extendedTextMessage?.text || m.message[m.type]?.editedMessage?.conversation || "" : "") ||
 			m.msg?.contentText ||
 			m.msg?.title ||
 			m.msg?.name ||
 			"";
-		m.mentionedJid = m.msg?.contextInfo?.mentionedJid?.map((a) => sock.findJidByLid(a, store, true)) || [];
-		m.text = m.msg?.text || m.msg?.caption || m.message?.conversation || m.msg?.contentText || m.msg?.selectedDisplayText || m.msg?.title || "";
+		m.button = buttonSerialize(m);
+		if (m.button?.id) {
+			m.body = m.button.id;
+		}
+		const rawMsgProto = m.message?.protocolMessage || (typeof extractMessageContent === "function" ? extractMessageContent(m.message)?.protocolMessage : null) || m.msg?.protocolMessage;
+		if (rawMsgProto?.type === proto.Message.ProtocolMessage?.Type?.GROUP_MEMBER_LABEL_CHANGE || !!rawMsgProto?.memberLabel) {
+			const labelBase = memberLabelSerialize(msg);
+			m.memberLabel = labelBase;
+			m.group = m.group || {};
+			m.group.label = labelBase?.label;
+		}
+		let _mentionedJid;
+		Object.defineProperty(m, "mentionedJid", {
+			get() {
+				if (_mentionedJid) return _mentionedJid;
+				const raw = m.msg?.contextInfo?.mentionedJid;
+				return (_mentionedJid = raw?.map((a) => sock.findJidByLid(a, store, true)) || []);
+			},
+			set(v) {
+				_mentionedJid = v;
+			},
+			configurable: true,
+			enumerable: true,
+		});
+		m.text = m.msg?.text || m.msg?.caption || m.message?.conversation || m.msg?.contentText || m.msg?.selectedDisplayText || m.msg?.title || m.nativeFlowText || m.nativeFlowId || m.button?.displayText || m.button?.id || m.body || "";
 		m.prefix = /^[°•π÷×¶∆£¢€¥®™+✓_=|~!?@#$%^&.©^]/gi.test(m.body) ? m.body.match(/^[°•π÷×¶∆£¢€¥®™+✓_=|~!?@#$%^&.©^]/gi)[0] : /[\uD800-\uDBFF][\uDC00-\uDFFF]/gi.test(m.body) ? m.body.match(/[\uD800-\uDBFF][\uDC00-\uDFFF]/gi)[0] : "";
 		m.command = m.body && m.body.replace(m.prefix, "").trim().split(/ +/).shift();
 		m.args =
@@ -1306,31 +2194,48 @@ async function Serialize(sock, msg, store) {
 				.replace(m.command, "")
 				.split(/ +/)
 				.filter((a) => a) || [];
-		m.device = getDevice(m.id);
+		let _device;
+		Object.defineProperty(m, "device", {
+			get() {
+				return (_device ??= getDevice(m.id));
+			},
+			set(v) {
+				_device = v;
+			},
+			configurable: true,
+			enumerable: true,
+		});
 		m.expiration = m.msg?.contextInfo?.expiration || m?.metadata?.ephemeralDuration || store?.messages?.[m.chat]?.array?.slice(-1)[0]?.metadata?.ephemeralDuration || 0;
-		m.suspicionScore = 0;
-		if (m.isBaileys || isBotMessageType(m.message, m.type) || isProtobufAnomaly(msg)) {
-			m.suspicionScore = 100;
-		} else {
-			const context = m.msg?.contextInfo || {};
-			const extAd = context.externalAdReply;
-			const devMeta = context.deviceListMetadata;
-			const num = String(m.sender || "").replace(/[^0-9]/g, "");
-			if (context.isForwarded && context.forwardingScore >= 999) m.suspicionScore += 35;
-			else if (extAd && extAd.forwardingScore > 999) m.suspicionScore += 30;
-			else if (context.forwardingScore > 100) m.suspicionScore += 15;
-			if (devMeta && !(devMeta.senderKeyHash || devMeta.recipientKeyHash) && Object.keys(devMeta).length === 0) m.suspicionScore += 15;
-			if ((context.mentionedJid || []).length > 20) m.suspicionScore += 15;
-			if (extAd && (extAd.sourceType === "newsletter" || extAd.sourceUrl?.includes("newsletter"))) m.suspicionScore += 15;
-			if (m.msg?.interactiveResponseMessage || m.msg?.listResponseMessage) m.suspicionScore += 8;
-			const botSymbols = m.text?.match(/[^\x00-\x7F]/g) || [];
-			if (botSymbols.length > 10) m.suspicionScore += 10;
-			else if (botSymbols.length > 5) m.suspicionScore += 5;
-			m.suspicionScore = Math.min(100, m.suspicionScore);
-		}
-		if (m.suspicionScore >= 60 && !m.key?.fromMe) m.isBot = true;
-		m.timestamp = (typeof m.messageTimestamp === "number" ? m.messageTimestamp : m.messageTimestamp.low ? m.messageTimestamp.low : m.messageTimestamp.high) || m.msg.timestampMs * 1000;
-		m.isMedia = !!m.msg?.mimetype || !!m.msg?.thumbnailDirectPath;
+		let _suspicionScore;
+		Object.defineProperty(m, "suspicionScore", {
+			get() {
+				if (_suspicionScore !== undefined) return _suspicionScore;
+				if (m.isBaileys || isBotMessageType(m.message, m.type) || isProtobufAnomaly(msg)) {
+					return (_suspicionScore = 100);
+				}
+				let score = 0;
+				const context = m.msg?.contextInfo || {};
+				const extAd = context.externalAdReply;
+				const devMeta = context.deviceListMetadata;
+				if (context.isForwarded && context.forwardingScore >= 999) score += 35;
+				else if (extAd && extAd.forwardingScore > 999) score += 30;
+				else if (context.forwardingScore > 100) score += 15;
+				if (devMeta && !(devMeta.senderKeyHash || devMeta.recipientKeyHash) && Object.keys(devMeta).length === 0) score += 15;
+				if ((context.mentionedJid || []).length > 20) score += 15;
+				if (extAd && (extAd.sourceType === "newsletter" || extAd.sourceUrl?.includes("newsletter"))) score += 15;
+				if (m.msg?.interactiveResponseMessage || m.msg?.listResponseMessage) score += 8;
+				const botSymbols = m.text?.match(/[^\x00-\x7F]/g) || [];
+				if (botSymbols.length > 10) score += 10;
+				else if (botSymbols.length > 5) score += 5;
+				return (_suspicionScore = Math.min(100, score));
+			},
+			set(v) {
+				_suspicionScore = v;
+			},
+			configurable: true,
+			enumerable: true,
+		});
+		m.timestamp = (typeof m.messageTimestamp === "number" ? m.messageTimestamp : m.messageTimestamp?.low ? m.messageTimestamp.low : Number(m.messageTimestamp) || 0) || (m.msg?.timestampMs ? m.msg.timestampMs * 1000 : 0) || Math.floor(Date.now() / 1000);
 		if (m.isMedia) {
 			m.mime = m.msg?.mimetype;
 			m.size = m.msg?.fileLength;
@@ -1340,98 +2245,143 @@ async function Serialize(sock, msg, store) {
 				m.isAnimated = m.msg?.isAnimated;
 			}
 		}
-		m.quoted = m.msg?.contextInfo?.quotedMessage || null;
-		if (m.quoted) {
-			let qMsg = JSON.parse(JSON.stringify(m.msg?.contextInfo?.quotedMessage));
-			if (m.msg?.contextInfo?.participant?.endsWith("@lid")) m.msg.contextInfo.participant = m?.metadata?.participants?.find((a) => a.id === m.msg.contextInfo.participant)?.phoneNumber || m.msg.contextInfo.participant;
-			m.quoted = {
-				...qMsg,
-				message: extractMessageContent(qMsg) || qMsg,
-				type: getContentType(qMsg) || Object.keys(qMsg)[0],
-				id: m.msg.contextInfo.stanzaId,
-				chat: m.msg.contextInfo.remoteJid || m.chat,
-				sender: sock.decodeJid(m.msg.contextInfo.participant),
-				fromMe: sock.decodeJid(m.msg.contextInfo.participant) === sock.decodeJid(sock.user.id),
-				text: qMsg?.conversation || qMsg?.caption || "",
-			};
-			m.quoted.key = {
-				remoteJid: m.msg?.contextInfo?.remoteJid || m.chat,
-				participant: m.quoted.sender,
-				fromMe: areJidsSameUser(sock.decodeJid(m.msg?.contextInfo?.participant), sock.decodeJid(sock?.user?.id)),
-				id: m.msg?.contextInfo?.stanzaId,
-			};
-			m.quoted.msg = extractMessageContent(qMsg[m.quoted.type]) || qMsg[m.quoted.type];
-			m.quoted.device = getDevice(m.quoted.id);
-			m.quoted.fromMe = m.quoted.sender === sock.decodeJid(sock.user.id);
-			m.quoted.mentionedJid = m.quoted?.msg?.contextInfo?.mentionedJid?.map((a) => sock.findJidByLid(a, store, true)) || [];
-			m.quoted.body =
-				m.quoted.message?.conversation ||
-				m.quoted.msg?.text ||
-				m.quoted.msg?.conversation ||
-				m.quoted.msg?.caption ||
-				m.quoted.msg?.selectedButtonId ||
-				m.quoted.msg?.singleSelectReply?.selectedRowId ||
-				m.quoted.msg?.selectedId ||
-				(m.quoted.type === "interactiveResponseMessage" && m.quoted.message?.interactiveResponseMessage?.nativeFlowResponseMessage ? JSON.parse(m.quoted.message.interactiveResponseMessage.nativeFlowResponseMessage.paramsJson || "{}")?.id : "") ||
-				(m.quoted.type === "editedMessage" || m.quoted.type === "protocolMessage" ? m.quoted.message[m.quoted.type]?.editedMessage?.extendedTextMessage?.text || m.quoted.message[m.quoted.type]?.editedMessage?.conversation || "" : "") ||
-				m.quoted.msg?.contentText ||
-				m.quoted.msg?.title ||
-				m.quoted.msg?.name ||
-				"";
+		let _quoted;
+		Object.defineProperty(m, "quoted", {
+			get() {
+				if (_quoted !== undefined) return _quoted;
+				if (!m.msg?.contextInfo?.quotedMessage) {
+					return (_quoted = null);
+				}
+				let qMsg = JSON.parse(JSON.stringify(m.msg.contextInfo.quotedMessage));
+				const botPn = sock.user?.id ? sock.decodeJid(sock.user.id) : "";
+				const botLid = sock.user?.lid ? sock.decodeJid(sock.user.lid) : "";
+				const resolvedBotLid = botLid ? sock.findJidByLid(botLid, store, true) || botLid : "";
 
-			m.quoted.isBaileys = m.quoted.id ? ["BAE", "B1E", "B24E"].some((a) => m.quoted.id.startsWith(a) && [12, 16, 20, 40].includes(m.quoted.id.length)) || /(.)\1{5,}|[^0-9A-F]/.test(m.quoted.id) : false;
-			let qsScore = 0;
-			if (m.quoted.isBaileys || isBotMessageType(m.quoted.message, m.quoted.type) || isProtobufAnomaly(m.quoted)) {
-				qsScore = 100;
-			}
-			m.quoted.suspicionScore = qsScore;
-			m.quoted.isBot = qsScore >= 60 && !m.quoted.fromMe;
-			m.getQuotedObj = async () => {
-				if (!m.quoted.id) return null;
-				let q = await global.loadMessage(m.chat, m.quoted.id, sock);
-				if (q) {
-					return await Serialize(sock, q, store);
-				} else {
-					return null;
+				let rawQuotedParticipant = m.msg?.contextInfo?.participant || "";
+				if (!rawQuotedParticipant && !m.isGroup) {
+					rawQuotedParticipant = m.fromMe ? m.chat : botPn || botLid || "";
 				}
-			};
-			m.quoted.isGroup = m.quoted.chat.endsWith("@g.us");
-			m.quoted.mentions = m.quoted.msg?.contextInfo?.mentionedJid || [];
-			m.quoted.prefix = /^[°•π÷×¶∆£¢€¥®™+✓_=|~!?@#$%^&.©^]/gi.test(m.quoted.body) ? m.quoted.body.match(/^[°•π÷×¶∆£¢€¥®™+✓_=|~!?@#$%^&.©^]/gi)[0] : /[\uD800-\uDBFF][\uDC00-\uDFFF]/gi.test(m.quoted.body) ? m.quoted.body.match(/[\uD800-\uDBFF][\uDC00-\uDFFF]/gi)[0] : "";
-			m.quoted.command = m.quoted.body && m.quoted.body.replace(m.quoted.prefix, "").trim().split(/ +/).shift();
-			m.quoted.isMedia = !!m.quoted.msg?.mimetype || !!m.quoted.msg?.thumbnailDirectPath;
-			m.quoted.suspicionScore = qsScore;
-			if (m.quoted.isMedia) {
-				m.quoted.fileSha256 = m.quoted[m.quoted.type]?.fileSha256 || "";
-				m.quoted.mime = m.quoted.msg?.mimetype;
-				m.quoted.size = m.quoted.msg?.fileLength;
-				m.quoted.height = m.quoted.msg?.height || "";
-				m.quoted.width = m.quoted.msg?.width || "";
-				if (/webp/i.test(m.quoted.mime)) {
-					m.quoted.isAnimated = m?.quoted?.msg?.isAnimated || false;
+
+				const resolvedQuotedParticipant = rawQuotedParticipant && rawQuotedParticipant.endsWith("@lid") ? sock.findJidByLid(rawQuotedParticipant, store, true) || rawQuotedParticipant : rawQuotedParticipant;
+				if (rawQuotedParticipant && rawQuotedParticipant !== resolvedQuotedParticipant) {
+					m.msg.contextInfo.participant = resolvedQuotedParticipant;
 				}
-			}
-			m.quoted.fakeObj = () => ({
-				key: {
-					remoteJid: m.quoted.chat,
-					fromMe: m.quoted.fromMe,
-					id: m.quoted.id,
-				},
-				message: m.quoted,
-				...(m.isGroup ? { participant: m.quoted.sender } : {}),
-			});
-			m.quoted.download = () => sock.downloadMediaMessage(m.quoted);
-			m.quoted.delete = () => {
-				sock.sendMessage(m.quoted.chat, {
-					delete: {
-						remoteJid: m.quoted.chat,
-						fromMe: m.isBotAdmin ? false : true,
-						id: m.quoted.id,
-						participant: m.quoted.sender,
+
+				const isQuotedFromMe = Boolean(
+					m.msg?.contextInfo?.fromMe ||
+					m.msg?.contextInfo?.isFromMe ||
+					(!m.isGroup && !m.fromMe && !m.msg?.contextInfo?.participant) ||
+					(botPn && (areJidsSameUser(rawQuotedParticipant, botPn) || areJidsSameUser(resolvedQuotedParticipant, botPn) || (resolvedBotLid && areJidsSameUser(resolvedQuotedParticipant, resolvedBotLid)))) ||
+					(botLid && (areJidsSameUser(rawQuotedParticipant, botLid) || areJidsSameUser(resolvedQuotedParticipant, botLid))),
+				);
+
+				const quotedObj = {
+					...qMsg,
+					message: extractMessageContent(qMsg) || qMsg,
+					type: getContentType(qMsg) || Object.keys(qMsg)[0],
+					id: m.msg.contextInfo.stanzaId,
+					chat: m.msg.contextInfo.remoteJid || m.chat,
+					sender: sock.decodeJid(resolvedQuotedParticipant || rawQuotedParticipant),
+					fromMe: isQuotedFromMe,
+					text: qMsg?.conversation || qMsg?.caption || "",
+				};
+				quotedObj.key = {
+					remoteJid: m.msg?.contextInfo?.remoteJid || m.chat,
+					participant: quotedObj.sender,
+					fromMe: isQuotedFromMe,
+					id: m.msg?.contextInfo?.stanzaId,
+				};
+				quotedObj.msg = extractMessageContent(qMsg[quotedObj.type]) || qMsg[quotedObj.type];
+				quotedObj.device = getDevice(quotedObj.id);
+				quotedObj.fromMe = isQuotedFromMe;
+				quotedObj.mentionedJid = quotedObj?.msg?.contextInfo?.mentionedJid?.map((a) => sock.findJidByLid(a, store, true)) || [];
+				quotedObj.nativeFlowId = extractNativeFlowResponseId(quotedObj.msg, quotedObj.message);
+				quotedObj.nativeFlowText = extractNativeFlowResponseText(quotedObj.msg, quotedObj.message);
+				quotedObj.body =
+					quotedObj.message?.conversation ||
+					quotedObj.msg?.text ||
+					quotedObj.msg?.conversation ||
+					quotedObj.msg?.caption ||
+					quotedObj.msg?.selectedButtonId ||
+					quotedObj.msg?.singleSelectReply?.selectedRowId ||
+					quotedObj.msg?.selectedId ||
+					quotedObj.nativeFlowId ||
+					(quotedObj.type === "editedMessage" || quotedObj.type === "protocolMessage" ? quotedObj.message[quotedObj.type]?.editedMessage?.extendedTextMessage?.text || quotedObj.message[quotedObj.type]?.editedMessage?.conversation || "" : "") ||
+					quotedObj.msg?.contentText ||
+					quotedObj.msg?.title ||
+					quotedObj.msg?.name ||
+					"";
+
+				quotedObj.isBaileys = quotedObj.id ? ["BAE", "B1E", "B24E"].some((a) => quotedObj.id.startsWith(a) && [12, 16, 20, 40].includes(quotedObj.id.length)) || /(.)\1{5,}|[^0-9A-F]/.test(quotedObj.id) : false;
+				let qsScore = 0;
+				if (quotedObj.isBaileys || isBotMessageType(quotedObj.message, quotedObj.type) || isProtobufAnomaly(quotedObj)) {
+					qsScore = 100;
+				}
+				quotedObj.suspicionScore = qsScore;
+				quotedObj.isBot = qsScore >= 60 && !quotedObj.fromMe;
+				quotedObj.getQuotedObj = async () => {
+					if (!quotedObj.id) return null;
+					let q = await global.loadMessage(m.chat, quotedObj.id, sock);
+					if (q) {
+						return await Serialize(sock, q, store);
+					} else {
+						return null;
+					}
+				};
+				quotedObj.isGroup = quotedObj.chat.endsWith("@g.us");
+				if (quotedObj.isGroup) {
+					const qMeta = store?.groupMetadata?.[quotedObj.chat] || global.store?.groupMetadata?.[quotedObj.chat];
+					const qParticipant = qMeta?.participants?.find((p) => p.id === quotedObj.sender || p.phoneNumber === quotedObj.sender || (rawQuotedParticipant && (p.id === rawQuotedParticipant || p.phoneNumber === rawQuotedParticipant)));
+					const qLabel = qParticipant?.label || qMeta?.memberLabels?.[rawQuotedParticipant] || qMeta?.memberLabels?.[quotedObj.sender] || undefined;
+					quotedObj.group = {
+						admin: qParticipant?.admin || undefined,
+						label: qLabel,
+					};
+					quotedObj.memberLabel = qLabel;
+				}
+				quotedObj.mentions = quotedObj.msg?.contextInfo?.mentionedJid || [];
+				quotedObj.prefix = /^[°•π÷×¶∆£¢€¥®™+✓_=|~!?@#$%^&.©^]/gi.test(quotedObj.body) ? quotedObj.body.match(/^[°•π÷×¶∆£¢€¥®™+✓_=|~!?@#$%^&.©^]/gi)[0] : /[\uD800-\uDBFF][\uDC00-\uDFFF]/gi.test(quotedObj.body) ? quotedObj.body.match(/[\uD800-\uDBFF][\uDC00-\uDFFF]/gi)[0] : "";
+				quotedObj.command = quotedObj.body && quotedObj.body.replace(quotedObj.prefix, "").trim().split(/ +/).shift();
+				quotedObj.isMedia = !!quotedObj.msg?.mimetype || !!quotedObj.msg?.thumbnailDirectPath;
+				if (quotedObj.isMedia) {
+					quotedObj.fileSha256 = quotedObj[quotedObj.type]?.fileSha256 || "";
+					quotedObj.mime = quotedObj.msg?.mimetype;
+					quotedObj.size = quotedObj.msg?.fileLength;
+					quotedObj.height = quotedObj.msg?.height || "";
+					quotedObj.width = quotedObj.msg?.width || "";
+					if (/webp/i.test(quotedObj.mime)) {
+						quotedObj.isAnimated = quotedObj?.msg?.isAnimated || false;
+					}
+				}
+				quotedObj.fakeObj = () => ({
+					key: {
+						remoteJid: quotedObj.chat,
+						fromMe: quotedObj.fromMe,
+						id: quotedObj.id,
 					},
+					message: quotedObj,
+					...(m.isGroup ? { participant: quotedObj.sender } : {}),
 				});
-			};
-		}
+				quotedObj.download = () => sock.downloadMediaMessage(quotedObj);
+				quotedObj.delete = () => {
+					sock.sendMessage(quotedObj.chat, {
+						delete: {
+							remoteJid: quotedObj.chat,
+							fromMe: m.isBotAdmin ? false : true,
+							id: quotedObj.id,
+							participant: quotedObj.sender,
+						},
+					});
+				};
+
+				return (_quoted = quotedObj);
+			},
+			set(val) {
+				_quoted = val;
+			},
+			configurable: true,
+			enumerable: true,
+		});
 	}
 
 	m.download = () => sock.downloadMediaMessage(m);
@@ -1471,10 +2421,27 @@ async function Serialize(sock, msg, store) {
 	return m;
 }
 
-export { GroupUpdate, GroupParticipantsUpdate, LoadDataBase, MessagesUpsert, Solving };
+export {
+	GroupUpdate,
+	GroupParticipantsUpdate,
+	LoadDataBase,
+	MessagesUpsert,
+	Solving,
+	Serialize,
+	updateLidMapping,
+	lidMap,
+	InteractiveMessage,
+	normalizeNativeFlowButton,
+	extractNativeFlowResponseId,
+	extractNativeFlowResponseText,
+	buttonSerialize,
+	memberLabelSerialize,
+	createThumbnailLink,
+	resolveUsername,
+	usernameMap,
+};
 
-// Reload Handler
-const watcher = chokidar.watch(nazePath, {
+const watcher = chokidar.watch(handlerPath, {
 	ignored: /^\./,
 	persistent: true,
 	awaitWriteFinish: {

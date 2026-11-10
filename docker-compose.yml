@@ -1,7 +1,7 @@
 services:
-  bot:
-    build: .
-    volumes:
-      - ./database:/app/database
-      - ./nazedev:/app/nazedev
-    restart: on-failure
+    bot:
+        build: .
+        volumes:
+            - ./database:/app/database
+            - ./rynn-session:/app/rynn-session
+        restart: on-failure

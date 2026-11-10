@@ -6,8 +6,8 @@ RUN apt-get update && \
   rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
-COPY package.json .
-RUN npm install
+COPY package.json package-lock.json ./
+RUN npm ci --omit=dev
 COPY . .
 
 CMD ["npm", "start"]

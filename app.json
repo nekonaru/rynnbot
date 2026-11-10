@@ -1,7 +1,7 @@
 {
-	"name": "hitori",
-	"description": "WhatsApp Bot Using Lib Baileys",
-	"repository": "https://github.com/nazedev/hitori",
+	"name": "rynnbot",
+	"description": "Self-hosted WhatsApp bot with hundreds of commands, games, AI tools, an interactive CLI, and multi-database storage",
+	"repository": "https://github.com/nekonaru/rynnbot",
 	"keywords": ["whatsapp-bot", "multi-device", "bot", "whatsapp"],
 	"formation": {
 		"worker": {

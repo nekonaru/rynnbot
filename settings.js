@@ -1,56 +1,83 @@
 import fs from "fs";
+import path from "path";
 import chalk from "chalk";
 import crypto from "crypto";
 import { fileURLToPath } from "url";
 
 const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 /*
- * Create By Nekonaruu
- * Follow https://github.com/nekonaru
- * Instagram : https://instagram.com/nekonaruu
- *
- * Upgraded with features ported from Hitori Bot (nazedev)
+ * Rynn - self-hosted WhatsApp bot
+ * Originally based on Hitori Bot by Nazedev (https://github.com/nazedev/hitori),
+ * heavily reworked for the Rynn project.
+ * Maintainer: https://github.com/nekonaru
  */
+
+// Zero-dependency .env loader. Secrets (API keys, database URLs) live only in
+// .env, which is gitignored. Never hardcode keys in this file.
+(() => {
+	try {
+		const envPath = path.join(__dirname, ".env");
+		if (!fs.existsSync(envPath)) return;
+		for (const rawLine of fs.readFileSync(envPath, "utf8").split(/\r?\n/)) {
+			const line = rawLine.trim();
+			if (!line || line.startsWith("#")) continue;
+			const eq = line.indexOf("=");
+			if (eq === -1) continue;
+			const key = line.slice(0, eq).trim();
+			if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(key)) continue;
+			let value = line.slice(eq + 1).trim();
+			if ((value.startsWith('"') && value.endsWith('"')) || (value.startsWith("'") && value.endsWith("'"))) {
+				value = value.slice(1, -1);
+			}
+			if (!(key in process.env)) process.env[key] = value;
+		}
+	} catch {}
+})();
 
 //~~~~~~~~~~~~< GLOBAL SETTINGS >~~~~~~~~~~~~\\
 
-global.owner = ["6282173282591"]; // ['628','628'] 2 owner atau lebih
+global.owner = (process.env.OWNER_NUMBER || "6282173282591").split(",").map((v) => v.trim()).filter(Boolean); // ['628','628'] 2 owners or more
 global.author = "Nekonaruu";
 global.botname = "Rynn";
 global.packname = "Created By";
-global.timezone = "Asia/Jakarta"; // Ganti pakai command .settimezone
-global.locale = "en"; // Ganti pakai command .setlocale
+global.timezone = "Asia/Jakarta"; // Change with the .settimezone command
+global.locale = "en"; // Change with the .setlocale command
 global.listprefix = ["+", "!", "."];
 global.defaultAdminKey = crypto.randomBytes(32).toString("hex");
 
 global.pairing_code = true;
-global.number_bot = "6285764173508"; // Kalo pake panel bisa masukin nomer di sini, jika belum ambil session. Format : '628xx'
+global.number_bot = process.env.NUMBER_BOT || "6285764173508"; // Bot WhatsApp number, format '628xx'
 
 global.dns_use = "custom"; // custom / default
 
-// ── Unified database config (baru) ──
-// Mendukung MongoDB, MySQL, PostgreSQL, atau folder lokal.
-// `path` bisa berupa connection string (mongodb://, mysql://, postgres://) atau nama folder lokal.
-// `options.store` / `options.database` = true artinya ikut `path` di atas (satu koneksi untuk store & database, seperti setup lama).
-// ⚠️ KEAMANAN: Jangan hardcode credential di sini!
-// Simpan di file .env di root project, lalu set di env sebelum menjalankan bot.
-// Contoh .env:
-//   MONGODB_URL=mongodb+srv://user:password@cluster.mongodb.net/rynn?appName=Cluster0
+// Unified database config. Supports MongoDB, MySQL, PostgreSQL, or a local folder.
+// `path` is a connection string (mongodb://, mysql://, postgres://) or a local folder name.
+// `options.store` / `options.database` set to true means "use the connection from `path`".
+// SECURITY: never hardcode credentials. Put them in .env (see .env.example).
 global.database = {
-	path: process.env.MONGODB_URL || "rynn-session", // fallback ke local jika env tidak di-set
+	path: process.env.MONGODB_URL || "rynn-session", // fallback to local folder if env is not set
 	options: {
-		store: true, // jika true ikut path di atas. jika false, otomatis local. jika { path: 'url_or_name.json' } menjadi terpisah
-		database: true, // jika true ikut path di atas. jika false, otomatis local. jika { path: 'url_or_name.json' } menjadi terpisah
+		store: true, // true: use `path`. false: local files. { path: 'url_or_name.json' }: separate config
+		database: true, // true: use `path`. false: local files. { path: 'url_or_name.json' }: separate config
 	},
 };
 
-global.listv = ["•", "●", "■", "✿", "▲", "➩", "➢", "➣", "➤", "✦", "✧", "△", "❀", "○", "□", "♤", "♡", "◇", "♧", "々", "〆"];
+global.listv = ["•", "◦", "▸", "◆", "✦", "»", "›", "·", "+", "=", "*", "°", "○", "●", "◉", "◈", "▪", "➤", "❖", "∙"];
+
+// The thumbnail is optional: if src/media/rynn.png is absent the bot still runs.
+let thumbnail = null;
+try {
+	thumbnail = fs.readFileSync("./src/media/rynn.png");
+} catch {
+	console.warn("[WARNING] src/media/rynn.png not found. Quoted messages will be sent without a thumbnail image.");
+}
 
 global.fake = {
 	anonim: "https://telegra.ph/file/95670d63378f7f4210f03.png",
-	thumbnailUrl: "https://ibb.co.com/x8K6QFKk",
-	thumbnail: fs.readFileSync("./src/media/naze.png"),
+	thumbnailUrl: "https://raw.githubusercontent.com/nekonaru/rynnbot/main/src/media/rynn.png",
+	thumbnail,
 	docs: fs.readFileSync("./src/media/fake.pdf"),
 	listfakedocs: ["application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "application/vnd.openxmlformats-officedocument.presentationml.presentation", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "application/pdf"],
 };
@@ -75,7 +102,7 @@ global.money = {
 };
 
 global.mess = {
-	key: "Apikey limit! Silahkan Upgrade",
+	key: "Apikey limit! Silahkan upgrade: https://naze.dev",
 	owner: "Khusus Owner!",
 	admin: "Khusus Admin!",
 	botAdmin: "Bot harus Admin!",
@@ -93,17 +120,14 @@ global.mess = {
 	done: "Selesai!",
 };
 
+// Naze API (https://naze.dev/api/v1) is the default provider. Keys come from .env only.
 global.APIs = {
-	naze: "https://api.naze.biz.id",
+	naze: "https://naze.dev/api/v1",
 	neosantara: "https://api.neosantara.xyz/v1",
 };
-// ⚠️ KEAMANAN: WAJIB diisi lewat .env sebagai NAZE_API_KEY dan NEOSANTARA_API_KEY.
-// Tidak ada fallback hardcoded lagi — key lama yang sebelumnya nempel di sini
-// (dan di .env.example) sudah pernah ter-commit ke source, jadi anggap BOCOR:
-// segera revoke/regenerate key tersebut di dashboard masing-masing provider.
 global.APIKeys = {
-	"https://api.naze.biz.id": process.env.NAZE_API_KEY || "***REMOVED***",
-	"https://api.neosantara.xyz/v1": process.env.NEOSANTARA_API_KEY || "***REMOVED***",
+	"https://naze.dev/api/v1": process.env.NAZE_API_KEY || "",
+	"https://api.neosantara.xyz/v1": process.env.NEOSANTARA_API_KEY || "",
 };
 
 // Lainnya
@@ -146,7 +170,7 @@ global.badWords = [
 	"pepek", "p3p3k", "p3pek",
 	"pantat", "pntt", "p4ntat", "p@ntat",
 	"toket", "tokat", "t0ket", "t0k3t",
-	"jembut", "j3mbut", "j3mbut",
+	"jembut", "j3mbut",
 	"pelacur", "plcr", "p3lacur", "p3l4cur",
 	"lonte", "l0nte", "l0nt3", "l@nte",
 	"jalang", "j4lang",
@@ -217,20 +241,16 @@ global.badWords = [
 	"son of a bitch", "sob",
 	"go to hell",
 	"go die",
-]; // input kata-kata toxic yg lain.
+]; // Add more toxic words here.
 global.chatLength = 1000;
-// ⚠️ KEAMANAN: WAJIB diisi lewat .env sebagai GROQ_API_KEY. Tidak ada fallback hardcoded.
-global.GROQ_API_KEY = process.env.GROQ_API_KEY || "***REMOVED***";
 
-// Peringatan startup kalau ada API key yang belum diisi (biar ketauan dari awal,
-// bukan pas command dipanggil dan gagal mendadak).
+// Warn at startup if required API keys are missing (before any command fails at runtime).
 {
 	const missingKeys = [];
-	if (!global.APIKeys["https://api.naze.biz.id"]) missingKeys.push("NAZE_API_KEY");
+	if (!global.APIKeys["https://naze.dev/api/v1"]) missingKeys.push("NAZE_API_KEY");
 	if (!global.APIKeys["https://api.neosantara.xyz/v1"]) missingKeys.push("NEOSANTARA_API_KEY");
-	if (!global.GROQ_API_KEY) missingKeys.push("GROQ_API_KEY");
 	if (missingKeys.length > 0) {
-		console.log(chalk.yellowBright(`[WARNING] Env var berikut belum di-set: ${missingKeys.join(", ")}. Fitur yang bergantung padanya (AI chat, tools, dsb) akan gagal sampai diisi di file .env.`));
+		console.log(chalk.yellowBright(`[WARNING] The following env vars are not set: ${missingKeys.join(", ")}. Features that depend on them (AI chat, tools, and so on) will fail until you fill them in .env.`));
 	}
 }
 

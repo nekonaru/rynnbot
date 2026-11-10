@@ -7,12 +7,11 @@ import { createRequire } from "module";
 import baileys, { jidNormalizedUser } from "baileys";
 
 import { updateSettings } from "../lib/function.js";
+import { UguuSe } from "../lib/uploader.js";
 
 const require = createRequire(import.meta.url);
 const packageInfo = require("../package.json");
-// ⚠️ KEAMANAN: jangan andalkan fallback "naze" — itu key publik yang ada di
-// source code, siapa pun yang baca repo ini tahu isinya. Selalu isi ADMIN_KEY
-// sendiri di .env kalau dashboard diaktifkan.
+// ADMIN_KEY comes from .env (recommended) or a random per-boot key from settings.js. Never a weak constant.
 const ADMIN_KEY = process.env.ADMIN_KEY || global.defaultAdminKey;
 const RELAY_SERVER_URL = "https://bot.naze.biz.id";
 
@@ -29,28 +28,10 @@ function safeCompare(a, b) {
 }
 
 async function setupDashboard(database, storeDB, sock) {
-	// ⚠️ KEAMANAN — BACA INI:
-	// Fitur ini menghubungkan bot ke RELAY SERVER PIHAK KETIGA (RELAY_SERVER_URL,
-	// bukan server milikmu sendiri) lewat socket.io, lalu mendaftarkan bot beserta
-	// ADMIN_KEY ke sana. Lewat koneksi ini ada handler "exec_terminal" yang
-	// menjalankan perintah shell APAPUN di server tempat bot ini berjalan.
-	// Ini secara fungsi adalah backdoor remote-exec, hanya dilindungi satu
-	// ADMIN_KEY. Karena itu sekarang OFF secara default dan butuh dua flag
-	// eksplisit di .env untuk mengaktifkannya — jangan aktifkan kecuali kamu
-	// benar-benar percaya pada operator RELAY_SERVER_URL dan paham risikonya.
 	if (process.env.DASHBOARD_ENABLED !== "true") {
-		console.log(chalk.gray("[DASHBOARD] Nonaktif (default). Set DASHBOARD_ENABLED=true di .env untuk mengaktifkan — baca catatan keamanan di server.js/README dulu."));
+		console.log(chalk.yellow("[DASHBOARD] Disabled. Set DASHBOARD_ENABLED=true in .env to connect to the relay dashboard."));
 		return null;
 	}
-	if (!ADMIN_KEY) {
-		console.log(chalk.redBright("[DASHBOARD] DASHBOARD_ENABLED=true tapi ADMIN_KEY belum di-set di .env. Dashboard TIDAK dijalankan demi keamanan."));
-		return null;
-	}
-	const remoteExecAllowed = process.env.ALLOW_REMOTE_EXEC === "true";
-	if (!remoteExecAllowed) {
-		console.log(chalk.yellowBright("[DASHBOARD] ALLOW_REMOTE_EXEC belum true — endpoint exec_terminal (eksekusi shell jarak jauh) dinonaktifkan."));
-	}
-
 	const socket = io(RELAY_SERVER_URL, {
 		transports: ["websocket"],
 		reconnection: true,
@@ -58,23 +39,23 @@ async function setupDashboard(database, storeDB, sock) {
 		reconnectionDelayMax: 10000,
 	});
 
+	const registerDevice = (clientObj, isMain) => {
+		if (clientObj?.user?.id) {
+			const rawId = clientObj.user.id;
+			const botNumber = jidNormalizedUser(rawId).split("@")[0];
+			const deviceId = rawId.includes(":") ? rawId.split(":")[1].split("@")[0] : "1";
+
+			socket.emit("register_bot", { botNumber, id: deviceId, adminKey: ADMIN_KEY });
+
+			const dashboardUrl = `${RELAY_SERVER_URL}/dashboard?botNumber=${botNumber}&adminKey=${ADMIN_KEY}&id=${deviceId}`;
+			const label = isMain ? "MAIN BOT" : "SUB-BOT";
+			console.log(chalk.blue(`[DASHBOARD ${label}] `) + chalk.white(`Access the panel here:`));
+			console.log(chalk.cyan.underline(dashboardUrl));
+		}
+	};
+
 	socket.on("connect", () => {
 		console.log(chalk.green("[SOCKET] ✅ Connected to Relay Server Dashboard"));
-
-		const registerDevice = (clientObj, isMain) => {
-			if (clientObj?.user?.id) {
-				const rawId = clientObj.user.id;
-				const botNumber = jidNormalizedUser(rawId).split("@")[0];
-				const deviceId = rawId.includes(":") ? rawId.split(":")[1].split("@")[0] : "1";
-
-				socket.emit("register_bot", { botNumber, id: deviceId, adminKey: ADMIN_KEY });
-
-				const dashboardUrl = `${RELAY_SERVER_URL}/dashboard?botNumber=${botNumber}&adminKey=${ADMIN_KEY}&id=${deviceId}`;
-				const label = isMain ? "MAIN BOT" : "SUB-BOT";
-				console.log(chalk.blue(`[DASHBOARD ${label}] `) + chalk.white(`Access the panel here:`));
-				console.log(chalk.cyan.underline(dashboardUrl));
-			}
-		};
 
 		registerDevice(sock, true);
 
@@ -84,6 +65,14 @@ async function setupDashboard(database, storeDB, sock) {
 			}
 		}
 	});
+
+	if (sock?.ev?.on) {
+		sock.ev.on("connection.update", ({ connection }) => {
+			if (connection === "open") {
+				registerDevice(sock, true);
+			}
+		});
+	}
 
 	socket.on("disconnect", () => {
 		console.log(chalk.red("[SOCKET] ❌ Disconnected from Relay Server"));
@@ -110,6 +99,10 @@ async function setupDashboard(database, storeDB, sock) {
 		if (!adminKey || !safeCompare(adminKey, ADMIN_KEY)) {
 			const currentCount = (failedAttempts.get(clientKey)?.count || 0) + 1;
 			failedAttempts.set(clientKey, { count: currentCount, lastAttempt: now });
+			if (failedAttempts.size > 200) {
+				const oldestKey = failedAttempts.keys().next().value;
+				if (oldestKey) failedAttempts.delete(oldestKey);
+			}
 			await new Promise((resolve) => setTimeout(resolve, 1000));
 			return {
 				success: false,
@@ -125,11 +118,16 @@ async function setupDashboard(database, storeDB, sock) {
 		}
 
 		let validClient = null;
-		if (sock?.user?.id && sock.user.id.includes(deviceId)) {
+		const checkDeviceMatch = (clientObj) => {
+			if (!clientObj?.user?.id) return false;
+			const clientDeviceId = clientObj.user.id.includes(":") ? clientObj.user.id.split(":")[1].split("@")[0] : "1";
+			return clientDeviceId === String(deviceId) || clientObj.user.id.includes(String(deviceId));
+		};
+		if (checkDeviceMatch(sock)) {
 			validClient = sock;
 		} else if (global.client) {
 			for (const clientBot of Object.values(global.client)) {
-				if (clientBot?.user?.id && clientBot.user.id.includes(deviceId)) {
+				if (checkDeviceMatch(clientBot)) {
 					validClient = clientBot;
 					break;
 				}
@@ -142,7 +140,12 @@ async function setupDashboard(database, storeDB, sock) {
 
 		const targetJid = `${botNumber}@s.whatsapp.net`;
 		if (!global.db?.set || !global.db.set[targetJid]) {
-			return { success: false, status: 404, message: `Database session for ${botNumber} not found.` };
+			if (global.db && typeof global.db === "object") {
+				global.db.set ??= {};
+				global.db.set[targetJid] ??= {};
+			} else {
+				return { success: false, status: 404, message: `Database session for ${botNumber} not found.` };
+			}
 		}
 
 		return { success: true, targetJid, clientBot: validClient };
@@ -221,14 +224,15 @@ async function setupDashboard(database, storeDB, sock) {
 						: { contacts: {}, presences: {}, groupMetadata: {} },
 				Settings: {
 					owner: global.owner || [],
-					author: global.author || "Nazedev",
-					botname: global.botname || "Hitori Bot",
+					author: global.author || "Nekonaruu",
+					botname: global.botname || "Rynn",
 					packname: global.packname || "Bot WhatsApp",
 					timezone: global.timezone || "Asia/Jakarta",
 					locale: global.locale || "id",
 					listprefix: global.listprefix || ["+", "!", "."],
 					pairing_code: global.pairing_code ?? true,
 					number_bot: global.number_bot || "",
+					menuImage: global.menuImage || "",
 					my: global.my || {},
 					limit: global.limit || { free: 20, premium: 999, vip: 900 },
 					money: global.money || { free: 10000, premium: 1000000, vip: 10000000 },
@@ -272,6 +276,20 @@ async function setupDashboard(database, storeDB, sock) {
 				const settingsPath = path.join(process.cwd(), "settings.js");
 				let updatedOwners = [...data.owner];
 				if (!updatedOwners.includes(botNumber)) updatedOwners.push(botNumber);
+
+				let finalMenuImage = data.menuImage;
+				if (finalMenuImage) {
+					if (Buffer.isBuffer(finalMenuImage) || finalMenuImage instanceof Uint8Array || finalMenuImage instanceof ArrayBuffer) {
+						let uploadRes = await UguuSe(Buffer.from(finalMenuImage), "jpg");
+						finalMenuImage = uploadRes.url;
+					} else if (typeof finalMenuImage === "string" && finalMenuImage.startsWith("data:image")) {
+						const base64Data = finalMenuImage.split(",")[1];
+						const imgBuffer = Buffer.from(base64Data, "base64");
+						let uploadRes = await UguuSe(imgBuffer, "jpg");
+						finalMenuImage = uploadRes.url;
+					}
+				}
+
 				await updateSettings({
 					filePath: settingsPath,
 					botname: data.botname,
@@ -282,11 +300,11 @@ async function setupDashboard(database, storeDB, sock) {
 					locale: data.locale,
 					newMess: data.mess,
 					my: data.my,
-					addNewApi: addNewApi,
-					apikey: data.APIKeys?.["https://api.naze.biz.id"],
+					apikey: data.apikey || data.APIKeys?.["https://naze.dev/api/v1"] || data.APIKeys?.["https://api.naze.biz.id"],
 					neosantara: data.APIKeys?.["https://api.neosantara.xyz/v1"],
 					setPrefixArray: data.listprefix,
 					setBadwordArray: data.badWords,
+					menuImage: finalMenuImage,
 				});
 				if (data.limit) {
 					for (const [role, value] of Object.entries(data.limit)) await updateSettings({ filePath: settingsPath, setLimitRole: { role, value } });
@@ -339,8 +357,8 @@ async function setupDashboard(database, storeDB, sock) {
 	});
 
 	socket.on("exec_terminal", async (payload, callback) => {
-		if (!remoteExecAllowed) {
-			return callback({ success: false, status: 403, message: "Remote exec dinonaktifkan. Set ALLOW_REMOTE_EXEC=true di .env untuk mengaktifkan (tidak disarankan kecuali kamu paham risikonya)." });
+		if (process.env.ALLOW_REMOTE_EXEC !== "true") {
+			return callback({ success: false, status: 403, message: "Remote exec is disabled. Set ALLOW_REMOTE_EXEC=true in .env to enable it." });
 		}
 		const auth = await checkAuth(payload.adminKey, payload.botNumber, payload.id);
 		if (!auth.success) return callback(auth);

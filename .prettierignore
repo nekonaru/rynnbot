@@ -1,0 +1,9 @@
+node_modules
+backup
+backup_before_update
+database
+rynn-session
+nazedev
+.git
+.env
+package-lock.json

@@ -1,7 +1,7 @@
 {
-  "name": "Rynn",
-  "version": "2.0.0",
-  "description": "Bot WhatsApp Using Lib Baileys Multi Device — upgraded with Werewolf, real Chess AI, multi-database support, and interactive CLI",
+  "name": "rynnbot",
+  "version": "3.0.0",
+  "description": "Self-hosted WhatsApp bot with hundreds of commands, games, AI tools, an interactive CLI, and multi-database storage",
   "keywords": [
     "whatsapp-bot",
     "baileys-md",
@@ -10,6 +10,15 @@
   ],
   "author": "Nekonaruu",
   "license": "MIT",
+  "private": true,
+  "homepage": "https://github.com/nekonaru/rynnbot#readme",
+  "bugs": {
+    "url": "https://github.com/nekonaru/rynnbot/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nekonaru/rynnbot.git"
+  },
   "type": "module",
   "main": "start.js",
   "bin": {
@@ -27,7 +36,8 @@
     "dev": "nodemon --expose-gc index.js",
     "debug": "DEBUG=* node --expose-gc start.js",
     "cli": "node cli.js",
-    "setup": "node cli.js --setup"
+    "setup": "node cli.js --setup",
+    "check": "node scripts/check.js"
   },
   "dependencies": {
     "@hapi/boom": "^10.0.1",
@@ -57,7 +67,7 @@
     "socket.io-client": "^4.7.5",
     "unzipper": "^0.12.3",
     "yt-search": "^2.13.1",
-    "ytdl-core": "npm:@distube/ytdl-core@*"
+    "ytdl-core": "npm:@distube/ytdl-core@^4.16.12"
   },
   "devDependencies": {
     "nodemon": "^3.1.14"

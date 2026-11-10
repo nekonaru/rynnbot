@@ -2,6 +2,8 @@ import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 
+import { readEnvValue, writeEnvValue } from "../env.js";
+
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const SETTINGS_FILE = path.resolve(__dirname, "..", "..", "settings.js");
 
@@ -57,13 +59,13 @@ const FIELD_MAP = {
 		serialize: (val) => String(val),
 		section: "global.limit",
 	},
-	nazeApiKey: {
-		pattern: /^(\s*['"]https:\/\/api\.naze\.biz\.id['"]\s*:\s*)(['"].*?['"])/,
-		serialize: (val) => JSON.stringify(val),
-	},
+	// The Naze API key lives in .env (NAZE_API_KEY), never in settings.js.
+	// It is handled separately in readSetting/writeSetting/writeSettings.
+	nazeApiKey: null,
 };
 
 export function readSetting(key) {
+	if (key === "nazeApiKey") return readEnvValue("NAZE_API_KEY");
 	const field = FIELD_MAP[key];
 	if (!field) return undefined;
 
@@ -89,9 +91,12 @@ export function readSetting(key) {
 				try {
 					result = JSON.parse(raw);
 				} catch {
-					try {
-						result = new Function(`return ${raw};`)();
-					} catch {
+					if (raw.startsWith("[") && raw.endsWith("]")) {
+						result = raw
+							.slice(1, -1)
+							.split(",")
+							.map((v) => v.trim().replace(/^['"]|['"]$/g, ""));
+					} else {
 						result = raw.replace(/^['"]|['"]$/g, "");
 					}
 				}
@@ -116,6 +121,10 @@ export function readAllSettings() {
 }
 
 export function writeSetting(key, value) {
+	if (key === "nazeApiKey") {
+		writeEnvValue("NAZE_API_KEY", value.trim());
+		return;
+	}
 	const field = FIELD_MAP[key];
 	if (!field) throw new Error(`Unknown setting key: ${key}`);
 
@@ -167,6 +176,10 @@ export function writeSettings(config) {
 	let lines = content.split("\n");
 
 	for (const [key, value] of Object.entries(config)) {
+		if (key === "nazeApiKey") {
+			if (value && String(value).trim()) writeEnvValue("NAZE_API_KEY", String(value).trim());
+			continue;
+		}
 		const field = FIELD_MAP[key];
 		if (!field) continue;
 
@@ -209,7 +222,39 @@ export function readDatabaseConfig() {
 	const match = content.match(/global\.database\s*=\s*(\{[\s\S]*?\n\})/);
 	if (match) {
 		try {
-			const res = eval(`(${match[1]})`);
+			const raw = match[1];
+			const res = {};
+
+			const pathMatch = raw.match(/path\s*:\s*['"]([^'"]+)['"]/);
+			if (pathMatch) res.path = pathMatch[1];
+
+			const urlMatch = raw.match(/url\s*:\s*['"]([^'"]+)['"]/);
+			if (urlMatch) res.url = urlMatch[1];
+
+			const optionsMatch = raw.match(/options\s*:\s*\{([\s\S]*?)\}/);
+			if (optionsMatch) {
+				res.options = {};
+				const optsRaw = optionsMatch[1];
+
+				const parseOpt = (key) => {
+					const m = optsRaw.match(new RegExp(`${key}\\s*:\\s*([^,\\n}]+)`));
+					if (!m) return undefined;
+					let val = m[1].trim();
+					if (val === "true") return true;
+					if (val === "false") return false;
+					if (val.startsWith("{")) {
+						const pm = val.match(/path\s*:\s*['"]([^'"]+)['"]/);
+						const um = val.match(/url\s*:\s*['"]([^'"]+)['"]/);
+						if (pm) return { path: pm[1] };
+						if (um) return { url: um[1] };
+					}
+					return val.replace(/^['"]|['"]$/g, "");
+				};
+
+				res.options.store = parseOpt("store");
+				res.options.database = parseOpt("database");
+			}
+
 			if (res && !res.path && res.url) res.path = res.url;
 			if (res && res.options) {
 				if (typeof res.options.store === "object" && !res.options.store.path && res.options.store.url) res.options.store.path = res.options.store.url;

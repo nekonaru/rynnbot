@@ -1,0 +1,15 @@
+node_modules
+.git
+.env
+backup
+backup_before_update
+database
+rynn-session
+nazedev
+update.zip
+update_temp
+*.md
+.prettierrc.json
+nodemon.json
+install.sh
+.agents

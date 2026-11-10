@@ -1,6 +1,6 @@
+import fs from "fs";
+import path from "path";
 import baileys, { initAuthCreds, BufferJSON, proto } from "baileys";
-
-
 
 const isSslEnabled = (url) => {
 	const opt = global?.database?.options;
@@ -24,16 +24,15 @@ export const useCustomAuthState = async (sessionPath) => {
 		dialect = "sql";
 	}
 
-	const sessionName = "rynn_session"; // Default session identifier
+	const crypto = await import("node:crypto");
+	const sessionName = "rynn_" + crypto.createHash("md5").update(String(sessionPath)).digest("hex").slice(0, 8);
 
 	if (dialect === "local") {
 		const folder = sessionPath === "database.json" || !sessionPath ? "rynn-session" : sessionPath;
-		// Fallback to Baileys' native local auth
 		const { useMultiFileAuthState } = await import("baileys");
 		return await useMultiFileAuthState(folder);
 	}
 
-	// For MongoDB and SQL, we need read/write/remove adapters
 	let storeData, readData, removeData;
 
 	if (dialect === "mongodb") {
@@ -76,7 +75,6 @@ export const useCustomAuthState = async (sessionPath) => {
 			await AuthModel.deleteOne({ session: sessionName, identifier });
 		};
 	} else if (dialect === "sql") {
-		// Dynamic import for SQL depending on the driver
 		let executeQuery;
 
 		if (/^mysql:\/\//i.test(sessionPath)) {
@@ -91,6 +89,7 @@ export const useCustomAuthState = async (sessionPath) => {
 				typeof sessionPath === "string"
 					? {
 							uri: sessionPath,
+							connectTimeout: 3000,
 							...(useSsl ? { ssl: { minVersion: "TLSv1.2", rejectUnauthorized: true } } : {}),
 						}
 					: sessionPath;
@@ -130,9 +129,9 @@ export const useCustomAuthState = async (sessionPath) => {
 			const cleanUrl = typeof sessionPath === "string" ? sessionPath.replace(/([?&])sslmode=[^&]+(&|$)/i, "$1").replace(/[?&]$/, "") : sessionPath;
 			const pool = new Pool({
 				connectionString: cleanUrl,
-				...(useSsl ? { ssl: { rejectUnauthorized: false } } : {}),
+				...(useSsl ? { ssl: { rejectUnauthorized: true } } : {}),
 			});
-			await pool.query("SELECT 1"); // Test connection
+			await pool.query("SELECT 1");
 			await pool.query(`
 				CREATE TABLE IF NOT EXISTS baileys_auth (
 					session VARCHAR(40) NOT NULL,
@@ -231,4 +230,270 @@ export const useCustomAuthState = async (sessionPath) => {
 			return writeQueue;
 		},
 	};
+};
+
+/**
+ * fetchSessionLidMappings
+ * Retrieves persisted lid-mapping pairs from MongoDB, MySQL, Postgres, or Local folder
+ */
+export const fetchSessionLidMappings = async (sessionPath) => {
+	const pairs = [];
+	try {
+		if (!sessionPath) return pairs;
+
+		let dialect = "local";
+		if (/^mongodb(\+srv)?:\/\//i.test(sessionPath)) {
+			dialect = "mongodb";
+		} else if (/^(mysql|postgres|postgresql)(\+srv)?:\/\//i.test(sessionPath)) {
+			dialect = "sql";
+		}
+
+		const crypto = await import("node:crypto");
+		const sessionName = "rynn_" + crypto.createHash("md5").update(String(sessionPath)).digest("hex").slice(0, 8);
+
+		if (dialect === "mongodb") {
+			let mongoose;
+			try {
+				const mod = await import("mongoose");
+				mongoose = mod.default || mod;
+			} catch {
+				return pairs;
+			}
+			const useSsl = isSslEnabled(sessionPath);
+			const mongoConn = await mongoose
+				.createConnection(sessionPath, {
+					serverSelectionTimeoutMS: 3000,
+					...(useSsl ? { ssl: true, tls: true, tlsAllowInvalidCertificates: false } : {}),
+				})
+				.asPromise();
+
+			const schema = new mongoose.Schema({
+				identifier: { type: String, required: true },
+				session: { type: String, required: true },
+				value: { type: String, required: true },
+			});
+			const AuthModel = mongoConn.models.BaileysAuth || mongoConn.model("BaileysAuth", schema);
+			let docs = [];
+			try {
+				docs = await AuthModel.find({ session: sessionName, identifier: /^lid-mapping-/ })
+					.lean()
+					.exec();
+			} finally {
+				await mongoConn.close().catch(() => {});
+			}
+
+			for (const doc of docs) {
+				try {
+					const val = JSON.parse(doc.value, BufferJSON.reviver);
+					if (doc.identifier.endsWith("_reverse")) {
+						const lid = doc.identifier.slice("lid-mapping-".length, -"_reverse".length);
+						if (lid && val) pairs.push({ lid, pn: val });
+					} else {
+						const pn = doc.identifier.slice("lid-mapping-".length);
+						if (pn && val) pairs.push({ lid: val, pn });
+					}
+				} catch {}
+			}
+		} else if (dialect === "sql") {
+			if (/^mysql:\/\//i.test(sessionPath)) {
+				let mysql;
+				try {
+					mysql = await import("mysql2/promise");
+				} catch {
+					return pairs;
+				}
+				const useSsl = isSslEnabled(sessionPath);
+				const poolConfig =
+					typeof sessionPath === "string"
+						? {
+								uri: sessionPath,
+								connectTimeout: 3000,
+								...(useSsl ? { ssl: { minVersion: "TLSv1.2", rejectUnauthorized: true } } : {}),
+							}
+						: sessionPath;
+				const pool = mysql.createPool(poolConfig);
+				try {
+					const [rows] = await pool.execute("SELECT identifier, value FROM `baileys_auth` WHERE session = ? AND identifier LIKE 'lid-mapping-%'", [sessionName]);
+					for (const row of rows) {
+						try {
+							const val = JSON.parse(row.value, BufferJSON.reviver);
+							if (row.identifier.endsWith("_reverse")) {
+								const lid = row.identifier.slice("lid-mapping-".length, -"_reverse".length);
+								if (lid && val) pairs.push({ lid, pn: val });
+							} else {
+								const pn = row.identifier.slice("lid-mapping-".length);
+								if (pn && val) pairs.push({ lid: val, pn });
+							}
+						} catch {}
+					}
+				} finally {
+					await pool.end().catch(() => {});
+				}
+			} else if (/^postgres(ql)?:\/\//i.test(sessionPath)) {
+				let Pool;
+				try {
+					const pg = await import("pg");
+					Pool = pg.Pool;
+				} catch {
+					return pairs;
+				}
+				const useSsl = isSslEnabled(sessionPath);
+				const cleanUrl = typeof sessionPath === "string" ? sessionPath.replace(/([?&])sslmode=[^&]+(&|$)/i, "$1").replace(/[?&]$/, "") : sessionPath;
+				const pool = new Pool({
+					connectionString: cleanUrl,
+					connectionTimeoutMillis: 3000,
+					...(useSsl ? { ssl: { rejectUnauthorized: true } } : {}),
+				});
+				try {
+					const res = await pool.query("SELECT identifier, value FROM baileys_auth WHERE session = $1 AND identifier LIKE 'lid-mapping-%'", [sessionName]);
+					for (const row of res.rows) {
+						try {
+							const val = JSON.parse(row.value, BufferJSON.reviver);
+							if (row.identifier.endsWith("_reverse")) {
+								const lid = row.identifier.slice("lid-mapping-".length, -"_reverse".length);
+								if (lid && val) pairs.push({ lid, pn: val });
+							} else {
+								const pn = row.identifier.slice("lid-mapping-".length);
+								if (pn && val) pairs.push({ lid: val, pn });
+							}
+						} catch {}
+					}
+				} finally {
+					await pool.end().catch(() => {});
+				}
+			}
+		}
+	} catch {}
+	return pairs;
+};
+
+/**
+ * saveLidMapping
+ * Persists a single LID↔PN pair to the active session storage backend.
+ *
+ * Local  : writes ./session/lid-mapping-{pn}.json (value=lid)
+ *          and     ./session/lid-mapping-{pn}_reverse.json (value=pn)
+ * Remote : upserts two rows into the baileys_auth table with
+ *          identifiers  "lid-mapping-{pn}"  and  "lid-mapping-{pn}_reverse"
+ *
+ * Fails silently - never throws, never blocks startup.
+ */
+export const saveLidMapping = async (sessionPath, lid, pn) => {
+	if (!sessionPath || !lid || !pn) return;
+
+	const lidUser = String(lid)
+		.split("@")[0]
+		.replace(/[^0-9]/g, "");
+	const pnUser = String(pn)
+		.split("@")[0]
+		.replace(/[^0-9]/g, "");
+	if (!lidUser || !pnUser || lidUser === pnUser) return;
+
+	const lidJid = lidUser + "@lid";
+	const pnJid = pnUser + "@s.whatsapp.net";
+
+	let dialect = "local";
+	if (/^mongodb(\+srv)?:\/\//i.test(sessionPath)) dialect = "mongodb";
+	else if (/^(mysql|postgres|postgresql)(\+srv)?:\/\//i.test(sessionPath)) dialect = "sql";
+
+	const crypto = await import("node:crypto");
+	const sessionName = "rynn_" + crypto.createHash("md5").update(String(sessionPath)).digest("hex").slice(0, 8);
+
+	const serialize = (v) => JSON.stringify(v, BufferJSON.replacer);
+
+	if (dialect === "local") {
+		try {
+			const folder = sessionPath === "database.json" || !sessionPath ? "rynn-session" : sessionPath;
+			await fs.promises.mkdir(folder, { recursive: true });
+			await fs.promises.writeFile(path.join(folder, `lid-mapping-${pnUser}.json`), serialize(lidJid), "utf-8");
+			await fs.promises.writeFile(path.join(folder, `lid-mapping-${pnUser}_reverse.json`), serialize(pnJid), "utf-8");
+		} catch {
+			/* silent */
+		}
+		return;
+	}
+
+	if (dialect === "mongodb") {
+		let mongoose;
+		try {
+			const mod = await import("mongoose");
+			mongoose = mod.default || mod;
+		} catch {
+			return;
+		}
+		const useSsl = isSslEnabled(sessionPath);
+		let mongoConn;
+		try {
+			mongoConn = await mongoose
+				.createConnection(sessionPath, {
+					serverSelectionTimeoutMS: 3000,
+					...(useSsl ? { ssl: true, tls: true, tlsAllowInvalidCertificates: false } : {}),
+				})
+				.asPromise();
+
+			const schema = new mongoose.Schema({
+				identifier: { type: String, required: true },
+				session: { type: String, required: true },
+				value: { type: String, required: true },
+			});
+			schema.index({ session: 1, identifier: 1 }, { unique: true });
+			const AuthModel = mongoConn.models.BaileysAuth || mongoConn.model("BaileysAuth", schema);
+
+			await Promise.all([
+				AuthModel.updateOne({ session: sessionName, identifier: `lid-mapping-${pnUser}` }, { $set: { session: sessionName, identifier: `lid-mapping-${pnUser}`, value: serialize(lidJid) } }, { upsert: true }),
+				AuthModel.updateOne({ session: sessionName, identifier: `lid-mapping-${pnUser}_reverse` }, { $set: { session: sessionName, identifier: `lid-mapping-${pnUser}_reverse`, value: serialize(pnJid) } }, { upsert: true }),
+			]);
+		} catch {
+			/* silent */
+		} finally {
+			await mongoConn?.close().catch(() => {});
+		}
+		return;
+	}
+
+	if (dialect === "sql") {
+		if (/^mysql:\/\//i.test(sessionPath)) {
+			let mysql;
+			try {
+				mysql = await import("mysql2/promise");
+			} catch {
+				return;
+			}
+			const useSsl = isSslEnabled(sessionPath);
+			const pool = mysql.createPool(typeof sessionPath === "string" ? { uri: sessionPath, connectTimeout: 3000, ...(useSsl ? { ssl: { minVersion: "TLSv1.2", rejectUnauthorized: true } } : {}) } : sessionPath);
+			try {
+				const upsert = "INSERT INTO `baileys_auth` (session, identifier, value) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE value = ?";
+				await pool.execute(upsert, [sessionName, `lid-mapping-${pnUser}`, serialize(lidJid), serialize(lidJid)]);
+				await pool.execute(upsert, [sessionName, `lid-mapping-${pnUser}_reverse`, serialize(pnJid), serialize(pnJid)]);
+			} catch {
+				/* silent */
+			} finally {
+				await pool.end().catch(() => {});
+			}
+		} else if (/^postgres(ql)?:\/\//i.test(sessionPath)) {
+			let Pool;
+			try {
+				const pg = await import("pg");
+				Pool = pg.Pool;
+			} catch {
+				return;
+			}
+			const useSsl = isSslEnabled(sessionPath);
+			const cleanUrl = typeof sessionPath === "string" ? sessionPath.replace(/([?&])sslmode=[^&]+(&|$)/i, "$1").replace(/[?&]$/, "") : sessionPath;
+			const pool = new Pool({
+				connectionString: cleanUrl,
+				connectionTimeoutMillis: 3000,
+				...(useSsl ? { ssl: { rejectUnauthorized: true } } : {}),
+			});
+			try {
+				const upsert = "INSERT INTO baileys_auth (session, identifier, value) VALUES ($1, $2, $3) ON CONFLICT (session, identifier) DO UPDATE SET value = $3";
+				await pool.query(upsert, [sessionName, `lid-mapping-${pnUser}`, serialize(lidJid)]);
+				await pool.query(upsert, [sessionName, `lid-mapping-${pnUser}_reverse`, serialize(pnJid)]);
+			} catch {
+				/* silent */
+			} finally {
+				await pool.end().catch(() => {});
+			}
+		}
+	}
 };

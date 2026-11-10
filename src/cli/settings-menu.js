@@ -15,23 +15,23 @@ export async function settingsMenu() {
 			message: "Select a category:",
 			choices: [
 				{
-					name: `${theme.primary("⚙")}  General           ${theme.dim("— Name, timezone, locale, prefix")}`,
+					name: `${theme.primary("⚙")}  General           ${theme.dim("- Name, timezone, locale, prefix")}`,
 					value: "general",
 				},
 				{
-					name: `${theme.primary("👤")} Owner             ${theme.dim("— Manage owner phone numbers")}`,
+					name: `${theme.primary("👤")} Owner             ${theme.dim("- Manage owner phone numbers")}`,
 					value: "owner",
 				},
 				{
-					name: `${theme.primary("🔑")} API Keys          ${theme.dim("— View and edit API keys")}`,
+					name: `${theme.primary("🔑")} API Keys          ${theme.dim("- View and edit API keys")}`,
 					value: "apikeys",
 				},
 				{
-					name: `${theme.primary("🗄️")} Database          ${theme.dim("— Database connections (Local/Mongo/MySQL)")}`,
+					name: `${theme.primary("🗄️")} Database          ${theme.dim("- Database connections (Local/Mongo/MySQL)")}`,
 					value: "database",
 				},
 				{
-					name: `${theme.primary("📊")} Limits            ${theme.dim("— Free, premium, and VIP limits")}`,
+					name: `${theme.primary("📊")} Limits            ${theme.dim("- Free, premium, and VIP limits")}`,
 					value: "limits",
 				},
 				backChoice("Back to Main Menu"),
@@ -71,7 +71,7 @@ async function generalSettings() {
 		const fields = [
 			["Bot Name", readSetting("botname") || "Rynn"],
 			["Bot Number", readSetting("number_bot") || theme.muted("Not set (Prompt on start)")],
-			["Author", readSetting("author") || "Nazedev"],
+			["Author", readSetting("author") || "Nekonaruu"],
 			["Pack Name", readSetting("packname") || "Bot WhatsApp"],
 			["Timezone", readSetting("timezone") || "Asia/Jakarta"],
 			["Locale", readSetting("locale") || "en"],

@@ -20,19 +20,19 @@ export async function reportMenu() {
 			message: "Select a report:",
 			choices: [
 				{
-					name: `${theme.primary("📋")} Recent Logs        ${theme.dim("— Last 30 lines of bot output")}`,
+					name: `${theme.primary("📋")} Recent Logs        ${theme.dim("- Last 30 lines of bot output")}`,
 					value: "logs",
 				},
 				{
-					name: `${theme.primary("❌")} Error Logs         ${theme.dim("— Recent errors from PM2")}`,
+					name: `${theme.primary("❌")} Error Logs         ${theme.dim("- Recent errors from PM2")}`,
 					value: "errors",
 				},
 				{
-					name: `${theme.primary("🗄️")}  Database Check     ${theme.dim("— Verify database integrity")}`,
+					name: `${theme.primary("🗄️")}  Database Check     ${theme.dim("- Verify database integrity")}`,
 					value: "dbcheck",
 				},
 				{
-					name: `${theme.primary("📦")} Dependency Audit   ${theme.dim("— Check for outdated packages")}`,
+					name: `${theme.primary("📦")} Dependency Audit   ${theme.dim("- Check for outdated packages")}`,
 					value: "audit",
 				},
 				backChoice("Back to Main Menu"),
@@ -144,7 +144,7 @@ async function checkDatabase() {
 		console.log(`  ${theme.primary("›")} ${theme.bold(name)}`);
 
 		if (!fs.existsSync(filePath)) {
-			console.log(`    ${theme.muted("File not found — will be created on first run.")}\n`);
+			console.log(`    ${theme.muted("File not found - will be created on first run.")}\n`);
 			continue;
 		}
 

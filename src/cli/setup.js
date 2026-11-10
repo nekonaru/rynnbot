@@ -13,11 +13,11 @@ export async function runSetupWizard() {
 	showBanner();
 	sectionHeader("First-Time Setup");
 
-	console.log(`  ${theme.dim("Welcome! Let's configure the essentials.")}\n` + `  ${theme.dim("You can change any of these later with")} ${theme.accent("rynn settings")}\n`);
+	console.log(`  ${theme.dim("Welcome! Let's configure the essentials.")}\n` + `  ${theme.dim("You can change any of these later with")} ${theme.accent("Rynn settings")}\n`);
 
 	separator();
 
-	logInfo("Owner phone number(s) — used for bot admin privileges.");
+	logInfo("Owner phone number(s) - used for bot admin privileges.");
 	console.log(`  ${theme.dim("Format: country code + number, e.g. 628123456789")}`);
 	console.log(`  ${theme.dim("Separate multiple numbers with commas.")}\n`);
 
@@ -45,16 +45,16 @@ export async function runSetupWizard() {
 
 	separator();
 
-	logInfo("Author name — displayed in bot info and stickers.");
+	logInfo("Author name - displayed in bot info and stickers.");
 
 	const authorName = await input({
 		message: "Author name:",
-		default: readSetting("author") || "Nazedev",
+		default: readSetting("author") || "Nekonaruu",
 	});
 
 	separator();
 
-	logInfo("Bot name — the display name for your bot.");
+	logInfo("Bot name - the display name for your bot.");
 
 	const botName = await input({
 		message: "Bot name:",
@@ -63,24 +63,24 @@ export async function runSetupWizard() {
 
 	separator();
 
-	logInfo("Naze API Key — get yours at https://naze.biz.id");
+	logInfo("Naze API Key - get yours at https://naze.dev");
 	console.log(`  ${theme.dim("Press Enter to use the current key.")}\n`);
 
 	const currentKey = readSetting("nazeApiKey");
 	const apiKey = await input({
 		message: "Naze API Key:",
-		default: currentKey === "YOUR_API_KEY" ? "" : currentKey || "",
+		default: currentKey || "",
 	});
 
-	const finalApiKey = apiKey.trim() || "YOUR_API_KEY";
+	const finalApiKey = apiKey.trim();
 
-	if (finalApiKey === "YOUR_API_KEY") {
+	if (!finalApiKey) {
 		logWarning("API Key is missing! Certain bot features will encounter errors and will not function properly.");
 	}
 
 	separator();
 
-	logInfo("Bot WhatsApp Number — used for pairing code.");
+	logInfo("Bot WhatsApp Number - used for pairing code.");
 	console.log(`  ${theme.dim("Format: 628123456789. Leave empty to skip.")}\n`);
 
 	const currentBotNumber = readSetting("number_bot") || "";
@@ -108,7 +108,7 @@ export async function runSetupWizard() {
 		["Owner(s)", ownerNumbers.join(", ")],
 		["Author", authorName],
 		["Bot Name", botName],
-		["API Key", apiKey.startsWith("nz-") ? apiKey.slice(0, 6) + "••••••" : theme.error("YOUR_API_KEY")],
+		["API Key", finalApiKey ? finalApiKey.slice(0, 6) + "*****" : theme.error("Not set")],
 		["Bot Number", botNumber || theme.muted("Not set (Will prompt on start)")],
 	];
 
@@ -131,11 +131,11 @@ export async function runSetupWizard() {
 		owner: ownerNumbers,
 		author: authorName,
 		botname: botName,
-		nazeApiKey: finalApiKey,
+		...(finalApiKey ? { nazeApiKey: finalApiKey } : {}),
 		number_bot: botNumber,
 	});
 
-	logSuccess("Configuration saved to settings.js");
+	logSuccess("Configuration saved.");
 
 	const markerPath = path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "..", ".rynn_setup_done");
 	fs.writeFileSync(markerPath, "1", "utf-8");

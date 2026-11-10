@@ -121,8 +121,8 @@ main() {
         echo -e "  This filesystem does not support 'symlinks', which are strictly required by Node.js.\n"
         echo -e "  ${YELLOW}How to fix this:${NC}"
         echo -e "  Please run the command below to PERMANENTLY MOVE the bot to the native Termux environment."
-        echo -e "  (Note: In the future, you must use 'cd ~/rynn-bot' to access your bot)\n"
-        echo -e "  ${CYAN}mv \"$PWD\" ~/rynn-bot && cd ~/rynn-bot && bash install.sh${NC}\n"
+        echo -e "  (Note: In the future, clone the bot into your Termux home folder, for example '~/rynnbot')\n"
+        echo -e "  ${CYAN}mv \"$PWD\" ~/rynnbot && cd ~/rynnbot && bash install.sh${NC}\n"
         exit 1
     fi
 

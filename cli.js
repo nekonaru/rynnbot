@@ -15,17 +15,15 @@ import { reportMenu } from "./src/cli/report.js";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 /*
- * ┌──────────────────────────────────────────────────────────────┐
- * │  Rynn CLI — Main Entry Point                               │
- * │                                                              │
- * │  Usage:                                                      │
- * │    rynn              Open interactive menu                 │
- * │    rynn --setup      Run first-time setup wizard           │
- * │    rynn settings     Open settings menu directly           │
- * │    rynn start        Start the bot directly                │
- * │    rynn status       Show system health                    │
- * │    rynn report       Show reports                          │
- * └──────────────────────────────────────────────────────────────┘
+ * Rynn CLI - Main Entry Point
+ *
+ * Usage:
+ *   rynn              Open interactive menu
+ *   rynn --setup      Run first-time setup wizard
+ *   rynn settings     Open settings menu directly
+ *   rynn start        Start the bot directly
+ *   rynn status       Show system health
+ *   rynn report       Show reports
  */
 
 // ── Parse CLI Arguments ──────────────────────────────────────────────
@@ -36,32 +34,32 @@ async function main() {
 	try {
 		if (command === "--setup" || command === "setup") {
 			await runSetupWizard();
-			return;
+			process.exit(0);
 		}
 
 		if (command === "settings") {
 			await settingsMenu();
-			return;
+			process.exit(0);
 		}
 
 		if (command === "start" || command === "run") {
 			await startBot();
-			return;
+			process.exit(0);
 		}
 
 		if (command === "status") {
 			await statusDashboard();
-			return;
+			process.exit(0);
 		}
 
 		if (command === "report") {
 			await reportMenu();
-			return;
+			process.exit(0);
 		}
 
 		if (command === "--help" || command === "-h") {
 			showHelp();
-			return;
+			process.exit(0);
 		}
 
 		if (isFirstRun()) {
@@ -90,19 +88,19 @@ async function mainMenu() {
 			message: "What would you like to do?",
 			choices: [
 				{
-					name: `${theme.accent("▶")}  Start Bot          ${theme.dim("— Launch the WhatsApp bot")}`,
+					name: `${theme.accent("▶")}  Start Bot          ${theme.dim("- Launch the WhatsApp bot")}`,
 					value: "start",
 				},
 				{
-					name: `${theme.primary("⚙")}  Settings           ${theme.dim("— Configure bot options")}`,
+					name: `${theme.primary("⚙")}  Settings           ${theme.dim("- Configure bot options")}`,
 					value: "settings",
 				},
 				{
-					name: `${theme.primary("💚")} Status / Health    ${theme.dim("— Check system readiness")}`,
+					name: `${theme.primary("💚")} Status / Health    ${theme.dim("- Check system readiness")}`,
 					value: "status",
 				},
 				{
-					name: `${theme.primary("📋")} Report             ${theme.dim("— View logs and diagnostics")}`,
+					name: `${theme.primary("📋")} Report             ${theme.dim("- View logs and diagnostics")}`,
 					value: "report",
 				},
 				{
