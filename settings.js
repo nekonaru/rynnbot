@@ -8,14 +8,14 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 /*
- * Rynn - self-hosted WhatsApp bot
- * Originally based on Hitori Bot by Nazedev (https://github.com/nazedev/hitori),
- * heavily reworked for the Rynn project.
+ * Rynn - bot WhatsApp self-hosted
+ * Awalnya berbasis Hitori Bot karya Nazedev (https://github.com/nazedev/hitori),
+ * dirombak total untuk proyek Rynn.
  * Maintainer: https://github.com/nekonaru
  */
 
-// Zero-dependency .env loader. Secrets (API keys, database URLs) live only in
-// .env, which is gitignored. Never hardcode keys in this file.
+// Loader .env tanpa dependency. Secret (API key, URL database) hanya hidup di
+// .env, yang di-gitignore. Jangan pernah hardcode key di file ini.
 (() => {
 	try {
 		const envPath = path.join(__dirname, ".env");
@@ -52,10 +52,10 @@ global.number_bot = process.env.NUMBER_BOT || "6285764173508"; // Bot WhatsApp n
 
 global.dns_use = "custom"; // custom / default
 
-// Unified database config. Supports MongoDB, MySQL, PostgreSQL, or a local folder.
-// `path` is a connection string (mongodb://, mysql://, postgres://) or a local folder name.
-// `options.store` / `options.database` set to true means "use the connection from `path`".
-// SECURITY: never hardcode credentials. Put them in .env (see .env.example).
+// Konfigurasi database terpadu. Mendukung MongoDB, MySQL, PostgreSQL, atau folder lokal.
+// `path` bisa berupa connection string (mongodb://, mysql://, postgres://) atau nama folder lokal.
+// `options.store` / `options.database` bernilai true berarti "pakai koneksi dari `path`".
+// KEAMANAN: jangan pernah hardcode kredensial. Taruh di .env (lihat .env.example).
 global.database = {
 	path: process.env.MONGODB_URL || "rynn-session", // fallback to local folder if env is not set
 	options: {
@@ -66,7 +66,7 @@ global.database = {
 
 global.listv = ["•", "◦", "▸", "◆", "✦", "»", "›", "·", "+", "=", "*", "°", "○", "●", "◉", "◈", "▪", "➤", "❖", "∙"];
 
-// The thumbnail is optional: if src/media/rynn.png is absent the bot still runs.
+// Thumbnail bersifat opsional: kalau src/media/rynn.png tidak ada, bot tetap jalan.
 let thumbnail = null;
 try {
 	thumbnail = fs.readFileSync("./src/media/rynn.png");
@@ -116,11 +116,11 @@ global.mess = {
 	media: "Kirim medianya!",
 	wait: "Proses...",
 	fail: "Gagal!",
-	error: "Error!",
+	error: "Kesalahan!",
 	done: "Selesai!",
 };
 
-// Naze API (https://naze.dev/api/v1) is the default provider. Keys come from .env only.
+// Naze API (https://naze.dev/api/v1) provider bawaan. Key hanya dari .env.
 global.APIs = {
 	naze: "https://naze.dev/api/v1",
 	neosantara: "https://api.neosantara.xyz/v1",
@@ -244,7 +244,7 @@ global.badWords = [
 ]; // Add more toxic words here.
 global.chatLength = 1000;
 
-// Warn at startup if required API keys are missing (before any command fails at runtime).
+// Peringatan saat startup kalau API key wajib belum diisi (sebelum command gagal saat runtime).
 {
 	const missingKeys = [];
 	if (!global.APIKeys["https://naze.dev/api/v1"]) missingKeys.push("NAZE_API_KEY");

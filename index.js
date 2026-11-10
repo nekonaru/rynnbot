@@ -43,9 +43,9 @@ let reconnectTimeout = null;
 if (global.dns_use === "custom") {
 	try {
 		dns.setServers(["8.8.8.8", "1.1.1.1"]);
-		logInfo("Custom DNS Google & Cloudflare initialized.");
+		logInfo("DNS kustom Google & Cloudflare aktif.");
 	} catch (e) {
-		logInfo("Failed to set custom DNS: " + e.message);
+		logInfo("Gagal mengatur DNS kustom: " + e.message);
 	}
 }
 
@@ -140,7 +140,7 @@ const isUrl = /^(mongodb|mysql|postgres|postgresql)(\+srv)?:\/\//i.test(mainPath
 if (!isUrl) {
 	const forbiddenPaths = ["temp", "clonebot", "backup", "node_modules"];
 	if (forbiddenPaths.includes(mainPath.trim().toLowerCase())) {
-		console.log(chalk.redBright(`[WARNING] The database folder name "${mainPath}" is reserved by the system. Reverting to default directory ("rynn-session") to prevent data loss.`));
+		console.log(chalk.redBright(`[PERINGATAN] Nama folder database "${mainPath}" dipakai sistem. Mengembalikan ke direktori default ("rynn-session") agar data tidak hilang.`));
 		mainPath = "rynn-session";
 	}
 }
@@ -189,7 +189,7 @@ if (fs.existsSync(tempDir)) {
 				fs.unlinkSync(path.join(tempDir, file));
 			} catch {}
 		});
-		logSuccess("Temp folder cleared successfully!");
+		logSuccess("Folder temp berhasil dibersihkan!");
 	} catch {}
 } else {
 	fs.mkdirSync(tempDir, { recursive: true });
@@ -205,7 +205,7 @@ if (!global._tempCleanupInterval) {
 }
 
 assertInstalled(process.platform === "win32" ? "where ffmpeg" : "command -v ffmpeg", "FFmpeg", 0);
-logSuccess("All external dependencies are satisfied");
+logSuccess("Semua dependensi eksternal terpenuhi");
 
 showBanner();
 
@@ -312,15 +312,15 @@ async function startRynnBot() {
 	if (pairingCode && !phoneNumber && !fs.existsSync("./rynn-session/creds.json")) {
 		fs.rmSync("./rynn-session", { recursive: true, force: true });
 		async function getPhoneNumber() {
-			phoneNumber = global.number_bot ? global.number_bot : process.env.BOT_NUMBER || (await question("Please type your WhatsApp number : "));
+			phoneNumber = global.number_bot ? global.number_bot : process.env.BOT_NUMBER || (await question("Ketik nomor WhatsApp kamu : "));
 			phoneNumber = phoneNumber.replace(/[^0-9]/g, "");
 			if (!parsePhoneNumber("+" + phoneNumber).valid && phoneNumber.length < 6) {
-				console.log(chalk.bgBlack(chalk.redBright("Start with your Country WhatsApp code") + chalk.whiteBright(",") + chalk.greenBright(" Example : 62xxx")));
+				console.log(chalk.bgBlack(chalk.redBright("Mulai dengan kode negara WhatsApp kamu") + chalk.whiteBright(",") + chalk.greenBright(" Contoh : 62xxx")));
 				await getPhoneNumber();
 			}
 		}
 		await getPhoneNumber();
-		console.log("Phone number captured. Waiting for Connection...\n" + chalk.blueBright("Estimated time: around 2 ~ 5 minutes"));
+		console.log("Nomor tercatat. Menunggu koneksi...\n" + chalk.blueBright("Estimasi waktu: sekitar 2 ~ 5 menit"));
 	}
 	const { state, saveCreds } = await useCustomAuthState(sessionPath);
 	const getMessage = async (key) => {
@@ -426,13 +426,13 @@ async function startRynnBot() {
 			pairingStarted = true;
 			setTimeout(async () => {
 				try {
-					console.log("Requesting Pairing Code...");
+					console.log("Meminta Pairing Code...");
 					const randomPart = Math.random().toString(36).substring(2, 6).toUpperCase();
 					let code = await sock.requestPairingCode(phoneNumber, "RYNN" + randomPart);
 					code = code?.match(/.{1,4}/g)?.join("-") || code;
-					console.log(chalk.blue("Your Pairing Code :"), chalk.green(code), "\n", chalk.yellow("Expires in 15 second"));
+					console.log(chalk.blue("Pairing Code kamu :"), chalk.green(code), "\n", chalk.yellow("Berlaku 15 detik"));
 				} catch (err) {
-					console.log(chalk.redBright("[ERROR] Failed to retrieve the Pairing Code:"), err.message);
+					console.log(chalk.redBright("[ERROR] Gagal mengambil Pairing Code:"), err.message);
 					pairingStarted = false;
 				}
 			}, 3000);
@@ -461,36 +461,36 @@ async function startRynnBot() {
 			};
 
 			if (reason === DisconnectReason.connectionLost) {
-				console.log("Connection to Server Lost, Attempting to Reconnect...");
+				console.log("Koneksi ke server terputus, mencoba menyambung ulang...");
 				reconnect();
 			} else if (reason === DisconnectReason.connectionClosed) {
-				console.log("Connection closed, Attempting to Reconnect...");
+				console.log("Koneksi tertutup, mencoba menyambung ulang...");
 				reconnect();
 			} else if (reason === DisconnectReason.restartRequired) {
-				console.log("Restart Required...");
+				console.log("Perlu restart...");
 				reconnect();
 			} else if (reason === DisconnectReason.timedOut) {
-				console.log("Connection Timed Out, Attempting to Reconnect...");
+				console.log("Koneksi timeout, mencoba menyambung ulang...");
 				reconnect();
 			} else if (reason === DisconnectReason.badSession) {
-				console.log("Delete Session and Scan again...");
+				console.log("Hapus sesi dan scan lagi...");
 				reconnect();
 			} else if (reason === DisconnectReason.connectionReplaced) {
-				console.log("Close current Session first...");
+				console.log("Tutup sesi yang sedang berjalan dulu...");
 			} else if (reason === DisconnectReason.loggedOut) {
-				console.log("Scan again and Run...");
+				console.log("Scan lagi dan jalankan...");
 				if (!isUrl) fs.rmSync(sessionPath, { recursive: true, force: true });
 				process.exit(0);
 			} else if (reason === DisconnectReason.forbidden) {
-				console.log("Connection Failure, Scan again and Run...");
+				console.log("Koneksi gagal, scan lagi dan jalankan...");
 				if (!isUrl) fs.rmSync(sessionPath, { recursive: true, force: true });
 				process.exit(1);
 			} else if (reason === DisconnectReason.multideviceMismatch) {
-				console.log("Scan again...");
+				console.log("Scan lagi...");
 				if (!isUrl) fs.rmSync(sessionPath, { recursive: true, force: true });
 				process.exit(0);
 			} else {
-				console.log(chalk.yellow(`[DISCONNECT] Unexpected disconnect (code: ${reason || "unknown"}), attempting auto-recovery...`));
+				console.log(chalk.yellow(`[PUTUS] Disconnect tidak terduga (code: ${reason || "tidak diketahui"}), mencoba pemulihan otomatis...`));
 				reconnect();
 			}
 		}
@@ -500,7 +500,7 @@ async function startRynnBot() {
 				clearTimeout(reconnectTimeout);
 				reconnectTimeout = null;
 			}
-			console.log("Connected to : " + JSON.stringify(sock.user, null, 2));
+			console.log("Terhubung ke : " + JSON.stringify(sock.user, null, 2));
 			if (sock.user?.lid && sock.user?.id) {
 				updateLidMapping({ lid: sock.user.lid, pn: sock.user.id });
 			}
@@ -524,9 +524,9 @@ async function startRynnBot() {
 		if (qr) {
 			if (!pairingCode) qrcode.generate(qr, { small: true });
 		}
-		if (isNewLogin) console.log(chalk.green("[INFO] New device login detected..."));
+		if (isNewLogin) console.log(chalk.green("[INFO] Terdeteksi login perangkat baru..."));
 		if (receivedPendingNotifications == "true") {
-			console.log(chalk.green("[INFO] Please wait About 1 Minute..."));
+			console.log(chalk.green("[INFO] Mohon tunggu sekitar 1 menit..."));
 			sock.ev.flush();
 		}
 	});
@@ -624,7 +624,7 @@ async function startRynnBot() {
 			"00 00 * * *",
 			async () => {
 				cmdDel(global.db.hit);
-				console.log(chalk.cyan("[INFO] Reseted Limit Users"));
+				console.log(chalk.cyan("[INFO] Limit user direset"));
 				const activeSock = global.sock || sock;
 				let user = Object.keys(global.db.users);
 				let botNumber = activeSock.user?.id ? await activeSock.decodeJid(activeSock.user.id) : "";
@@ -646,10 +646,10 @@ async function startRynnBot() {
 								mimetype: "application/json",
 								fileName: new Date().toISOString().replace(/[:.]/g, "-") + "_database.json",
 							});
-							console.log(chalk.cyanBright(`[AUTO BACKUP] Backup success send to ${o}`));
+							console.log(chalk.cyanBright(`[BACKUP OTOMATIS] Backup berhasil dikirim ke ${o}`));
 							await new Promise((r) => setTimeout(r, 2000 + Math.floor(Math.random() * 1500)));
 						} catch (error) {
-							console.error(chalk.cyanBright(`[AUTO BACKUP] Failed to Sending Backup ${o}:`, error));
+							console.error(chalk.cyanBright(`[BACKUP OTOMATIS] Gagal mengirim backup ${o}:`, error));
 						}
 					}
 				}
@@ -709,12 +709,12 @@ let isCleaningUp = false;
 const cleanup = async (signal) => {
 	if (isCleaningUp) return;
 	isCleaningUp = true;
-	console.log(chalk.greenBright(`[SYSTEM] Received ${signal}. Menyimpan database...`));
+	console.log(chalk.greenBright(`[SISTEM] Menerima ${signal}. Menyimpan database...`));
 	try {
 		if (global.db) await database.write(global.db, { immediate: true });
 		if (global.store) await storeDB.write(global.store, { immediate: true });
 	} catch (e) {
-		console.error(chalk.redBright(`[SYSTEM] Failed to write database during cleanup:`, e));
+		console.error(chalk.redBright(`[SISTEM] Gagal menulis database saat cleanup:`, e));
 	}
 	process.exit(0);
 };

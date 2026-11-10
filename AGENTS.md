@@ -1,4 +1,4 @@
-# Rynn - Agent Guide
+# Rynn - Panduan untuk Agen
 
 ## Project
 
@@ -6,21 +6,28 @@
 - **REPO**: nekonaru/rynnbot
 - **AUTHOR_NAME**: Nekonaruu
 - **AUTHOR_GITHUB**: nekonaru
-- **PROJECT_KIND**: general (self-hosted CLI bot/service)
+- **PROJECT_KIND**: general (bot/CLI self-hosted)
 - **STACK**: Node.js (ESM), Baileys, multi-database (JSON/MongoDB/MySQL/PostgreSQL)
 - **PLATFORMS**: Linux, macOS, Windows, Android (Termux)
 - **MIN_OS**: n/a (Node.js >=20)
 - **DEFAULT_BRANCH**: main
 - **LICENSE**: MIT
-- **UI_LANGUAGES**: English, Bahasa Indonesia
-- **VERIFICATION**: local-and-ci (local Node 24, CI on GitHub Actions)
+- **UI_LANGUAGES**: Bahasa Indonesia (bahasa utama dan satu-satunya; perintah bot dan pesan pengguna dalam Bahasa Indonesia)
+- **VERIFICATION**: local-and-ci (lokal Node 24, CI di GitHub Actions)
 
-## Working on this repo
+## Bahasa
 
-- English is the source language for code, comments, commits, and docs. Indonesian is the translation (`README.id.md`, `CHANGELOG.id.md`), never the source.
-- `settings.js` is hot-reloaded. Secrets (API keys, DB URLs) live only in `.env` (gitignored). Never commit secrets, never hardcode keys in `settings.js`.
-- Before committing, run `npm run check` (syntax check + leak scan). CI runs the same on every push.
-- The main command router is the `switch (command)` block in `handler.js`. Add new commands as separate `case` entries; do not restructure the block.
-- `README.md` and `README.id.md` must change together with the same section order, table rows, and callouts.
-- Releases: bump `package.json`, update `CHANGELOG.md` + `CHANGELOG.id.md`, tag `vX.Y.Z` after CI is green, and create bilingual release notes (English first).
-- Local-only working files (`SECURITY_MAP.md`, `SECURITY_REVIEW.md`, `SECURITY_REPORT.md`) are never committed.
+Seluruh project ini berbahasa Indonesia: kode, komentar, pesan yang tampil ke pengguna, dokumen, commit message, dan release notes. Jangan menambah teks berbahasa Inggris kecuali untuk istilah teknis yang memang tidak punya padanan (nama package, perintah shell, nama API).
+
+## Bekerja di repo ini
+
+- `settings.js` di-hot-reload. Secret (API key, URL DB) hanya hidup di `.env` (gitignored). Jangan pernah commit secret atau hardcode key di `settings.js`.
+- Sebelum commit, jalankan `npm run check` (syntax check + scan kebocoran key). CI menjalankan check yang sama di setiap push.
+- Router perintah utama adalah blok `switch (command)` di `handler.js`. Tambah perintah sebagai entri `case` terpisah; jangan restrukturisasi bloknya.
+- `README.md` dan `CHANGELOG.md` adalah dokumen tunggal berbahasa Indonesia. Ubah keduanya dalam commit yang sama kalau fitur, versi, atau perintah berubah.
+- Release: bump `package.json` + `package-lock.json`, update `CHANGELOG.md`, tag `vX.Y.Z` setelah CI hijau, dan buat release notes berbahasa Indonesia.
+- File kerja lokal (`SECURITY_MAP.md`, `SECURITY_REVIEW.md`, `SECURITY_REPORT.md`) tidak pernah di-commit.
+
+## Aset brand
+
+Logo Rynn: `assets/ryn-symbol.svg` (primer, hitam), `assets/ryn-symbol-white.svg` (putih, untuk latar gelap), `assets/ryn-symbol-accent.svg` (kaki slash dengan aksen cyan `#06B6D4`), dan `assets/ryn-mark.png` (512x512, dipakai README dan `src/media/rynn.png`).

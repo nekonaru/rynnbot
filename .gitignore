@@ -1,10 +1,10 @@
-# Node dependencies
+# Dependensi Node
 node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# Local WhatsApp session & auth credentials (CRITICAL - do not commit)
+# Sesi WhatsApp & kredensial auth lokal (PENTING - jangan commit)
 database/
 rynn-session/
 nazedev/
@@ -14,7 +14,7 @@ sessions/
 *.session-journal
 creds.json
 
-# Local archives & backups
+# Arsip & backup lokal
 backup/
 backup_before_update/
 update.zip
@@ -22,19 +22,19 @@ update_temp/
 *.zip
 *.tar.gz
 
-# Environment & private keys
+# Environment & private key
 .env
 .env.local
 .env.*.local
 .rynn_setup_done
 
-# Temporary files, media cache & logs
+# File sementara, cache media & log
 temp/
 logs/
 *.log
 .system_generated/
 scratch/
 
-# OS metadata
+# Metadata OS
 .DS_Store
 Thumbs.db

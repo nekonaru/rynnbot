@@ -41,7 +41,7 @@ export const useCustomAuthState = async (sessionPath) => {
 			const mod = await import("mongoose");
 			mongoose = mod.default || mod;
 		} catch {
-			throw new Error("The 'mongoose' module is not installed! Please run: npm install mongoose");
+			throw new Error("Modul 'mongoose' belum terpasang! Jalankan: npm install mongoose");
 		}
 
 		const useSsl = isSslEnabled(sessionPath);
@@ -82,7 +82,7 @@ export const useCustomAuthState = async (sessionPath) => {
 			try {
 				mysql = await import("mysql2/promise");
 			} catch {
-				throw new Error("The 'mysql2' module is not installed! Please run: npm install mysql2");
+				throw new Error("Modul 'mysql2' belum terpasang! Jalankan: npm install mysql2");
 			}
 			const useSsl = isSslEnabled(sessionPath);
 			const poolConfig =
@@ -123,7 +123,7 @@ export const useCustomAuthState = async (sessionPath) => {
 				const pg = await import("pg");
 				Pool = pg.Pool;
 			} catch {
-				throw new Error("The 'pg' module is not installed! Please run: npm install pg");
+				throw new Error("Modul 'pg' belum terpasang! Jalankan: npm install pg");
 			}
 			const useSsl = isSslEnabled(sessionPath);
 			const cleanUrl = typeof sessionPath === "string" ? sessionPath.replace(/([?&])sslmode=[^&]+(&|$)/i, "$1").replace(/[?&]$/, "") : sessionPath;
@@ -234,7 +234,7 @@ export const useCustomAuthState = async (sessionPath) => {
 
 /**
  * fetchSessionLidMappings
- * Retrieves persisted lid-mapping pairs from MongoDB, MySQL, Postgres, or Local folder
+ * Ambil pasangan lid-mapping tersimpan dari MongoDB, MySQL, Postgres, atau folder lokal
  */
 export const fetchSessionLidMappings = async (sessionPath) => {
 	const pairs = [];

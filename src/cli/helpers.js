@@ -67,24 +67,24 @@ export function showBanner() {
 	console.log(`  ${theme.accent(user)}@${theme.accent(host)}`);
 	console.log(theme.muted("  " + "─".repeat(user.length + host.length + 1)));
 	console.log(`  ${theme.primary("OS".padEnd(14))} ${theme.muted(":")} ${platform} ${os.release()}`);
-	console.log(`  ${theme.primary("Uptime".padEnd(14))} ${theme.muted(":")} ${uptime}`);
+	console.log(`  ${theme.primary("Waktu Aktif".padEnd(14))} ${theme.muted(":")} ${uptime}`);
 	console.log(`  ${theme.primary("Shell".padEnd(14))} ${theme.muted(":")} ${shell}`);
 	console.log(`  ${theme.primary("CPU".padEnd(14))} ${theme.muted(":")} ${cpu}`);
-	console.log(`  ${theme.primary("Memory".padEnd(14))} ${theme.muted(":")} ${memUsed} / ${memTotal}`);
-	console.log(`  ${theme.primary("Script Version".padEnd(14))} ${theme.muted(":")} v${version}`);
+	console.log(`  ${theme.primary("Memori".padEnd(14))} ${theme.muted(":")} ${memUsed} / ${memTotal}`);
+	console.log(`  ${theme.primary("Versi Script".padEnd(14))} ${theme.muted(":")} v${version}`);
 	console.log(`  ${theme.primary("Node.js".padEnd(14))} ${theme.muted(":")} ${process.version}`);
 	console.log(`  ${theme.primary("Baileys".padEnd(14))} ${theme.muted(":")} ${baileysVersion.replace("^", "v")}`);
-	console.log(`  ${theme.primary("Date & Time".padEnd(14))} ${theme.muted(":")} ${dateTime}`);
+	console.log(`  ${theme.primary("Tanggal & Waktu".padEnd(14))} ${theme.muted(":")} ${dateTime}`);
 
 	console.log(
-		boxen(`${theme.accent("WhatsApp Bot")}  ${theme.muted("•")}  ${theme.bold("CLI Manager")}`, {
+		boxen(`${theme.accent("Bot WhatsApp")}  ${theme.muted("•")}  ${theme.bold("Manajer CLI")}`, {
 			padding: { left: 2, right: 2, top: 0, bottom: 0 },
 			borderStyle: "round",
 			borderColor: "cyan",
 			margin: { top: 1, bottom: 0, left: 1, right: 0 },
 		}),
 	);
-	console.log(`  ${theme.warning("⚠")}  ${theme.dim("Unofficial API • Use at your own risk • Zero liability for account sanctions or data loss")}\n`);
+	console.log(`  ${theme.warning("⚠")}  ${theme.dim("API tidak resmi - pakai dengan risiko sendiri - penulis tidak bertanggung jawab atas sanksi akun maupun kehilangan data")}\n`);
 }
 
 export function sectionHeader(title) {
@@ -124,6 +124,6 @@ export function separator() {
 export const BACK_VALUE = "__BACK__";
 export const EXIT_VALUE = "__EXIT__";
 
-export function backChoice(label = "Back") {
+export function backChoice(label = "Kembali") {
 	return { name: `${theme.muted("←")} ${label}`, value: BACK_VALUE };
 }

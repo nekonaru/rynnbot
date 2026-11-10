@@ -72,7 +72,7 @@ function formatUptime(ms) {
 
 export async function statusDashboard() {
 	showBanner();
-	sectionHeader("System Health");
+	sectionHeader("Kesehatan Sistem");
 
 	const sysTable = new Table({
 		chars: {
@@ -103,18 +103,18 @@ export async function statusDashboard() {
 	sysTable.push(["Node.js", ok(process.version)]);
 
 	const npmVer = cmdVersion("npm", "-v");
-	sysTable.push(["NPM", npmVer ? ok(`v${npmVer}`) : fail("Not found")]);
+	sysTable.push(["NPM", npmVer ? ok(`v${npmVer}`) : fail("Tidak ada")]);
 
-	sysTable.push(["FFmpeg", cmdExists("ffmpeg") ? ok("Installed") : fail("Not found")]);
+	sysTable.push(["FFmpeg", cmdExists("ffmpeg") ? ok("Terpasang") : fail("Tidak ada")]);
 
-	sysTable.push(["PM2", cmdExists("pm2") ? ok("Installed") : warn("Not installed")]);
+	sysTable.push(["PM2", cmdExists("pm2") ? ok("Terpasang") : warn("Belum dipasang")]);
 
 	const gitVer = cmdVersion("git");
-	sysTable.push(["Git", gitVer ? ok(gitVer.replace("git version ", "v")) : fail("Not found")]);
+	sysTable.push(["Git", gitVer ? ok(gitVer.replace("git version ", "v")) : fail("Tidak ada")]);
 
 	console.log(sysTable.toString());
 
-	sectionHeader("Bot Process");
+	sectionHeader("Proses Bot");
 
 	const pm2Info = pm2Status();
 	if (pm2Info) {
@@ -140,12 +140,12 @@ export async function statusDashboard() {
 			colWidths: [24, 36],
 		});
 
-		const statusText = pm2Info.running ? ok("Online") : fail(pm2Info.status || "Stopped");
-		procTable.push(["Status", statusText], ["Uptime", formatUptime(pm2Info.uptime)], ["Memory", formatBytes(pm2Info.memory)], ["CPU", `${pm2Info.cpu}%`], ["Restarts", String(pm2Info.restart)]);
+		const statusText = pm2Info.running ? ok("Online") : fail(pm2Info.status || "Berhenti");
+		procTable.push(["Status", statusText], ["Waktu Aktif", formatUptime(pm2Info.uptime)], ["Memori", formatBytes(pm2Info.memory)], ["CPU", `${pm2Info.cpu}%`], ["Restart", String(pm2Info.restart)]);
 		console.log(procTable.toString());
 	} else {
-		console.log(`  ${theme.muted("No bot process detected via PM2.")}`);
-		console.log(`  ${theme.dim("Start the bot from the main menu or run: npm start")}`);
+		console.log(`  ${theme.muted("Tidak ada proses bot terdeteksi lewat PM2.")}`);
+		console.log(`  ${theme.dim("Jalankan bot dari menu utama atau pakai: npm start")}`);
 	}
 
 	sectionHeader("Database");
@@ -154,13 +154,13 @@ export async function statusDashboard() {
 	if (fs.existsSync(dbPath)) {
 		const stats = fs.statSync(dbPath);
 		console.log(`  ${theme.primary("•")} ${theme.dim("File".padEnd(20))} ${theme.bold("database.json")}`);
-		console.log(`  ${theme.primary("•")} ${theme.dim("Size".padEnd(20))} ${theme.bold(formatBytes(stats.size))}`);
-		console.log(`  ${theme.primary("•")} ${theme.dim("Last Modified".padEnd(20))} ${theme.bold(stats.mtime.toLocaleString())}`);
+		console.log(`  ${theme.primary("•")} ${theme.dim("Ukuran".padEnd(20))} ${theme.bold(formatBytes(stats.size))}`);
+		console.log(`  ${theme.primary("•")} ${theme.dim("Terakhir Diubah".padEnd(20))} ${theme.bold(stats.mtime.toLocaleString())}`);
 	} else {
-		console.log(`  ${theme.muted("No database file found. It will be created on first run.")}`);
+		console.log(`  ${theme.muted("File database tidak ada. Akan dibuat saat pertama kali dijalankan.")}`);
 	}
 
-	sectionHeader("System Resources");
+	sectionHeader("Sumber Daya Sistem");
 
 	const memTotal = os.totalmem();
 	const memFree = os.freemem();
@@ -169,13 +169,13 @@ export async function statusDashboard() {
 
 	console.log(`  ${theme.primary("•")} ${theme.dim("Platform".padEnd(20))} ${theme.bold(`${os.platform()} ${os.arch()}`)}`);
 	console.log(`  ${theme.primary("•")} ${theme.dim("CPU".padEnd(20))} ${theme.bold(os.cpus()[0]?.model || "Unknown")} ${theme.dim(`(${os.cpus().length} cores)`)}`);
-	console.log(`  ${theme.primary("•")} ${theme.dim("Memory".padEnd(20))} ${theme.bold(`${formatBytes(memUsed)} / ${formatBytes(memTotal)}`)} ${theme.dim(`(${memPct}%)`)}`);
+	console.log(`  ${theme.primary("•")} ${theme.dim("Memori".padEnd(20))} ${theme.bold(`${formatBytes(memUsed)} / ${formatBytes(memTotal)}`)} ${theme.dim(`(${memPct}%)`)}`);
 	console.log(`  ${theme.primary("•")} ${theme.dim("Hostname".padEnd(20))} ${theme.bold(os.hostname())}`);
 
 	console.log("");
 
 	await select({
-		message: "Press Enter to go back",
-		choices: [backChoice("Back to Main Menu")],
+		message: "Tekan Enter untuk kembali",
+		choices: [backChoice("Kembali ke Menu Utama")],
 	});
 }

@@ -2,7 +2,7 @@ $ErrorActionPreference = "Continue"
 
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 
-# Define colors
+# Definisi warna
 $ESC = [char]27
 $BOLD = "$ESC[1m"
 $DIM = "$ESC[2m"
@@ -28,16 +28,16 @@ $null = Register-EngineEvent -SourceIdentifier ([System.Management.Automation.Ps
     try { [Console]::CursorVisible = $true } catch {}
 }
 $null = Register-ObjectEvent -InputObject ([console]) -EventName CancelKeyPress -Action {
-    Write-Host "`n`n  $YELLOW$WARN$NC $BOLD Installation cancelled by user.$NC"
-    Write-Host "  $CYAN Thank you for trying out Rynn! Have a great day.$NC`n"
+    Write-Host "`n`n  $YELLOW$WARN$NC $BOLD Instalasi dibatalkan oleh pengguna.$NC"
+    Write-Host "  $CYAN Terima kasih sudah mencoba Rynn! Semoga harimu menyenangkan.$NC`n"
     try { [Console]::CursorVisible = $true } catch {}
     [Environment]::Exit(130)
 }
 
 Write-Host ""
-Write-Host "  $BOLD Rynn Installation $NC"
+Write-Host "  $BOLD Instalasi Rynn $NC"
 Write-Host ""
-Write-Host "  $BLUE$INFO$NC $DIM Starting setup process... $NC"
+Write-Host "  $BLUE$INFO$NC $DIM Memulai proses setup... $NC"
 Write-Host ""
 
 $LOG_FILE = "$env:TEMP\rynn_install.log"
@@ -138,10 +138,10 @@ if (Get-Command winget -ErrorAction SilentlyContinue) {
             Invoke-WithSpinner -Message "Installing FFmpeg" -CommandStr "winget install -e --id Gyan.FFmpeg --accept-source-agreements --accept-package-agreements"
         }
     } else {
-        Write-Host "  $GREEN $TICK $NC $DIM System dependencies already installed. $NC"
+        Write-Host "  $GREEN $TICK $NC $DIM Dependensi sistem sudah terpasang. $NC"
     }
 } else {
-    Write-Host "  $YELLOW $WARN $NC $DIM 'winget' not found. Please ensure Git, Node.js, and FFmpeg are installed manually. $NC"
+    Write-Host "  $YELLOW $WARN $NC $DIM 'winget tidak ditemukan. Pastikan Git, Node.js, dan FFmpeg sudah terpasang manual. $NC"
 }
 
 if (-not (Get-Command npm -ErrorAction SilentlyContinue)) {
@@ -149,7 +149,7 @@ if (-not (Get-Command npm -ErrorAction SilentlyContinue)) {
 }
 
 if (-not (Get-Command npm -ErrorAction SilentlyContinue)) {
-    Write-Host "  $RED $CROSS $NC $BOLD Node.js (npm) is not installed or not in PATH! $NC Please install Node.js first, or restart the terminal if you just installed it."
+    Write-Host "  $RED $CROSS $NC $BOLD Node.js (npm) tidak terpasang atau tidak ada di PATH! $NC Pasang Node.js dulu, atau restart terminal jika baru saja memasangnya."
     Read-Host "Press Enter to exit"
     exit 1
 }
@@ -157,23 +157,23 @@ if (-not (Get-Command npm -ErrorAction SilentlyContinue)) {
 if (-not (Get-Command pm2 -ErrorAction SilentlyContinue)) {
     Invoke-WithSpinner -Message "Installing PM2" -CommandStr "npm install -g pm2"
 } else {
-    Write-Host "  $GREEN $TICK $NC $DIM PM2 already installed. $NC"
+    Write-Host "  $GREEN $TICK $NC $DIM PM2 sudah terpasang. $NC"
 }
 
 if (Test-Path "package.json") {
     Invoke-WithSpinner -Message "Installing project dependencies" -CommandStr "npm install"
 } else {
-    Write-Host "  $YELLOW $WARN $NC $DIM No package.json found. Skipping project dependency installation. $NC"
+    Write-Host "  $YELLOW $WARN $NC $DIM package.json tidak ditemukan. Melewati instalasi dependensi project. $NC"
 }
 
 Invoke-WithSpinner -Message "Registering global 'rynn'" -CommandStr "npm link"
 
 Write-Host ""
-Write-Host "  $GREEN $TICK $NC $BOLD All dependencies have been installed successfully! $NC"
+Write-Host "  $GREEN $TICK $NC $BOLD Semua dependensi berhasil dipasang! $NC"
 Write-Host "  $BLUE $INFO $NC $DIM You can now use the 'rynn' command from anywhere. $NC"
 Write-Host ""
 
-Write-Host "  $MAGENTA $STAR $NC $BOLD Launching first-time setup wizard... $NC"
+Write-Host "  $MAGENTA $STAR $NC $BOLD Menjalankan wizard setup pertama... $NC"
 Write-Host ""
 cmd.exe /c "node cli.js --setup"
 

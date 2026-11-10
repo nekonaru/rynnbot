@@ -12,8 +12,8 @@ RED='\033[0;31m'
 GRAY='\033[0;90m'
 NC='\033[0m'
 
-echo -e "\n  ${BOLD}Rynn Installation${NC}\n"
-echo -e "  ${BLUE}i${NC} ${DIM}Starting setup process...${NC}\n"
+echo -e "\n  ${BOLD}Instalasi Rynn${NC}\n"
+echo -e "  ${BLUE}i${NC} ${DIM}Memulai proses setup...${NC}\n"
 
 LOG_FILE="${TMPDIR:-/tmp}/rynn_install.log"
 
@@ -29,8 +29,8 @@ cleanup() {
 }
 
 handle_interrupt() {
-    echo -e "\n\n  ${YELLOW}⚠${NC} ${BOLD}Installation cancelled by user.${NC}"
-    echo -e "  ${CYAN}Thank you for trying out Rynn! Have a great day.${NC}\n"
+    echo -e "\n\n  ${YELLOW}⚠${NC} ${BOLD}Instalasi dibatalkan oleh pengguna.${NC}"
+    echo -e "  ${CYAN}Terima kasih sudah mencoba Rynn! Semoga harimu menyenangkan.${NC}\n"
     exit 130
 }
 
@@ -90,10 +90,10 @@ run_with_spinner() {
     else
         local full_bar="${RED}${full_bar_solid}${NC}"
         printf "  ${RED}✖${NC} %-33s ${GRAY}[${NC}%b${GRAY}]${NC} ${RED}FAIL${NC}\n" "$msg" "$full_bar"
-        echo -e "\n  ${RED}=== ERROR LOG ===${NC}"
+        echo -e "\n  ${RED}=== LOG ERROR ===${NC}"
         cat "$LOG_FILE" | while read -r line; do echo -e "  ${NC}$line"; done
         echo -e "  ${RED}=================${NC}"
-        echo -e "  ${DIM}Full log saved to: $LOG_FILE${NC}\n"
+        echo -e "  ${DIM}Log lengkap tersimpan di: $LOG_FILE${NC}\n"
         exit 1
     fi
 }
@@ -116,12 +116,12 @@ fi
 
 main() {
     if [[ "$PWD" == *"/storage/"* ]]; then
-        echo -e "\n  ${RED}✖ ERROR: Unsupported Directory Location${NC}"
-        echo -e "  You are attempting to install the bot in Android's shared storage (/storage/...)."
-        echo -e "  This filesystem does not support 'symlinks', which are strictly required by Node.js.\n"
-        echo -e "  ${YELLOW}How to fix this:${NC}"
-        echo -e "  Please run the command below to PERMANENTLY MOVE the bot to the native Termux environment."
-        echo -e "  (Note: In the future, clone the bot into your Termux home folder, for example '~/rynnbot')\n"
+        echo -e "\n  ${RED}✖ ERROR: Lokasi Direktori Tidak Didukung${NC}"
+        echo -e "  Kamu mencoba memasang bot di shared storage Android's shared storage (/storage/...)."
+        echo -e "  Filesystem ini tidak mendukung symlink, yang wajib dipakai Node.js.\n"
+        echo -e "  ${YELLOW}Cara mengatasinya:${NC}"
+        echo -e "  Jalankan perintah di bawah untuk MEMINDAHKAN bot secara permanen ke lingkungan native Termux."
+        echo -e "  (Catatan: selanjutnya, clone bot ke folder home Termux, misalnya '~/rynnbot')\n"
         echo -e "  ${CYAN}mv \"$PWD\" ~/rynnbot && cd ~/rynnbot && bash install.sh${NC}\n"
         exit 1
     fi
@@ -159,31 +159,31 @@ main() {
         esac
         run_with_spinner "Installing system dependencies" "$cmd"
     else
-        echo -e "  ${GREEN}✔${NC} ${DIM}System dependencies already installed.${NC}"
+        echo -e "  ${GREEN}✔${NC} ${DIM}Dependensi sistem sudah terpasang.${NC}"
     fi
 
     if ! command -v pm2 >/dev/null 2>&1; then
         local pm2_cmd="$SUDO_CMD npm install -g pm2"
         run_with_spinner "Installing PM2" "$pm2_cmd"
     else
-        echo -e "  ${GREEN}✔${NC} ${DIM}PM2 already installed.${NC}"
+        echo -e "  ${GREEN}✔${NC} ${DIM}PM2 sudah terpasang.${NC}"
     fi
 
     if [ -f "package.json" ]; then
         local install_cmd="npm install"
         run_with_spinner "Installing project dependencies" "$install_cmd"
     else
-        echo -e "  ${YELLOW}⚠${NC} ${DIM}No package.json found. Skipping project dependency installation.${NC}"
+        echo -e "  ${YELLOW}⚠${NC} ${DIM}package.json tidak ditemukan. Melewati instalasi dependensi project.${NC}"
     fi
 
     chmod +x cli.js 2>/dev/null || true
     local link_cmd="$SUDO_CMD npm link 2>/dev/null || true"
     run_with_spinner "Registering global 'rynn'" "$link_cmd"
 
-    echo -e "\n  ${GREEN}✔${NC} ${BOLD}All dependencies have been installed successfully!${NC}"
-    echo -e "  ${BLUE}i${NC} ${DIM}You can now use the 'rynn' command from anywhere.${NC}\n"
+    echo -e "\n  ${GREEN}✔${NC} ${BOLD}Semua dependensi berhasil dipasang!${NC}"
+    echo -e "  ${BLUE}i${NC} ${DIM}Kamu sekarang bisa memakai 'rynn' perintah dari mana saja.${NC}\n"
 
-    echo -e "  ${MAGENTA}✦${NC} ${BOLD}Launching first-time setup wizard...${NC}\n"
+    echo -e "  ${MAGENTA}✦${NC} ${BOLD}Menjalankan wizard setup pertama...${NC}\n"
     node cli.js --setup
 }
 

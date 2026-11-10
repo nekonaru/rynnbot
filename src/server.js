@@ -11,7 +11,7 @@ import { UguuSe } from "../lib/uploader.js";
 
 const require = createRequire(import.meta.url);
 const packageInfo = require("../package.json");
-// ADMIN_KEY comes from .env (recommended) or a random per-boot key from settings.js. Never a weak constant.
+// ADMIN_KEY dari .env (disarankan) atau key acak per-boot dari settings.js. Jangan pernah memakai konstan lemah.
 const ADMIN_KEY = process.env.ADMIN_KEY || global.defaultAdminKey;
 const RELAY_SERVER_URL = "https://bot.naze.biz.id";
 
@@ -29,7 +29,7 @@ function safeCompare(a, b) {
 
 async function setupDashboard(database, storeDB, sock) {
 	if (process.env.DASHBOARD_ENABLED !== "true") {
-		console.log(chalk.yellow("[DASHBOARD] Disabled. Set DASHBOARD_ENABLED=true in .env to connect to the relay dashboard."));
+		console.log(chalk.yellow("[DASHBOARD] Nonaktif. Set DASHBOARD_ENABLED=true di .env untuk connect ke relay dashboard."));
 		return null;
 	}
 	const socket = io(RELAY_SERVER_URL, {
@@ -49,7 +49,7 @@ async function setupDashboard(database, storeDB, sock) {
 
 			const dashboardUrl = `${RELAY_SERVER_URL}/dashboard?botNumber=${botNumber}&adminKey=${ADMIN_KEY}&id=${deviceId}`;
 			const label = isMain ? "MAIN BOT" : "SUB-BOT";
-			console.log(chalk.blue(`[DASHBOARD ${label}] `) + chalk.white(`Access the panel here:`));
+			console.log(chalk.blue(`[DASHBOARD ${label}] `) + chalk.white(`Buka panel di sini:`));
 			console.log(chalk.cyan.underline(dashboardUrl));
 		}
 	};
@@ -114,7 +114,7 @@ async function setupDashboard(database, storeDB, sock) {
 		failedAttempts.delete(clientKey);
 
 		if (!botNumber || !deviceId) {
-			return { success: false, status: 400, message: "Bot Number or Device ID is required!" };
+			return { success: false, status: 400, message: "Bot Number atau Device ID wajib diisi!" };
 		}
 
 		let validClient = null;
@@ -135,7 +135,7 @@ async function setupDashboard(database, storeDB, sock) {
 		}
 
 		if (!validClient) {
-			return { success: false, status: 404, message: `Device ID ${deviceId} not found in this local bot!` };
+			return { success: false, status: 404, message: `Device ID ${deviceId} tidak ditemukan di bot lokal ini!` };
 		}
 
 		const targetJid = `${botNumber}@s.whatsapp.net`;
@@ -144,7 +144,7 @@ async function setupDashboard(database, storeDB, sock) {
 				global.db.set ??= {};
 				global.db.set[targetJid] ??= {};
 			} else {
-				return { success: false, status: 404, message: `Database session for ${botNumber} not found.` };
+				return { success: false, status: 404, message: `Sesi database untuk ${botNumber} tidak ditemukan.` };
 			}
 		}
 
@@ -160,18 +160,18 @@ async function setupDashboard(database, storeDB, sock) {
 				callback({ status: 200, data: { bot_name: packageInfo.name, version: packageInfo.version, author: packageInfo.author, description: packageInfo.description, uptime: `${Math.floor(uptime)} seconds` } });
 			});
 		} else {
-			callback({ status: 500, error: "Process not running with IPC" });
+			callback({ status: 500, error: "Proses tidak berjalan dengan IPC" });
 		}
 	});
 
 	socket.on("api_process", async ({ adminKey, botNumber, id, send }, callback) => {
 		const auth = await checkAuth(adminKey, botNumber, id);
 		if (!auth.success) return callback(auth);
-		if (!send) return callback({ status: 400, error: "Missing send query" });
+		if (!send) return callback({ status: 400, error: "Query send kosong" });
 		if (process.send) {
 			process.send(send);
 			callback({ status: 200, status_msg: "Send", data: send });
-		} else callback({ status: 500, error: "Process not running with IPC" });
+		} else callback({ status: 500, error: "Proses tidak berjalan dengan IPC" });
 	});
 
 	socket.on("get_stats", async (payload, callback) => {
@@ -319,10 +319,10 @@ async function setupDashboard(database, storeDB, sock) {
 					await database.write(global.db);
 				}
 			}
-			callback({ success: true, status: 200, message: `Data ${target} synchronized successfully!` });
+			callback({ success: true, status: 200, message: `Data ${target} berhasil disinkronkan!` });
 		} catch (error) {
 			console.error("[Dashboard API Error]", error);
-			callback({ success: false, status: 500, message: "Failed to save configuration: " + error.message });
+			callback({ success: false, status: 500, message: "Gagal menyimpan konfigurasi: " + error.message });
 		}
 	});
 
@@ -335,10 +335,10 @@ async function setupDashboard(database, storeDB, sock) {
 			let targetJid = jid;
 			if (!targetJid.includes("@")) targetJid = `${targetJid}@s.whatsapp.net`;
 			const sendMsg = await auth.clientBot.sendMessage(targetJid, content);
-			callback({ success: true, status: 200, message: "Message sent successfully!", data: sendMsg });
+			callback({ success: true, status: 200, message: "Pesan berhasil dikirim!", data: sendMsg });
 		} catch (error) {
 			console.error("[API Error]", error);
-			callback({ success: false, status: 500, message: "Server Error: Failed to send message." });
+			callback({ success: false, status: 500, message: "Kesalahan server: gagal mengirim pesan." });
 		}
 	});
 
@@ -347,12 +347,12 @@ async function setupDashboard(database, storeDB, sock) {
 		if (!auth.success) return callback(auth);
 		try {
 			const { content, jid } = payload;
-			if (!content || !jid) return callback({ success: false, status: 400, message: "Missing jid or content params" });
+			if (!content || !jid) return callback({ success: false, status: 400, message: "Parameter jid atau content kosong" });
 			const sendMsg = await auth.clientBot.appendResponseMessageV2(jid, content);
-			callback({ success: true, status: 200, message: "Message successfully injected into bot event!", data: sendMsg });
+			callback({ success: true, status: 200, message: "Pesan berhasil disuntikkan ke event bot!", data: sendMsg });
 		} catch (e) {
 			console.error(e);
-			callback({ success: false, status: 500, message: "Server Error!" });
+			callback({ success: false, status: 500, message: "Kesalahan server!" });
 		}
 	});
 

@@ -14,28 +14,28 @@ export async function reportMenu() {
 
 	while (running) {
 		showBanner();
-		sectionHeader("Reports");
+		sectionHeader("Laporan");
 
 		const choice = await select({
-			message: "Select a report:",
+			message: "Pilih laporan:",
 			choices: [
 				{
-					name: `${theme.primary("📋")} Recent Logs        ${theme.dim("- Last 30 lines of bot output")}`,
+					name: `${theme.primary("📋")} Log Terbaru        ${theme.dim("- 30 baris output bot terakhir")}`,
 					value: "logs",
 				},
 				{
-					name: `${theme.primary("❌")} Error Logs         ${theme.dim("- Recent errors from PM2")}`,
+					name: `${theme.primary("❌")} Log Error          ${theme.dim("- Error terbaru dari PM2")}`,
 					value: "errors",
 				},
 				{
-					name: `${theme.primary("🗄️")}  Database Check     ${theme.dim("- Verify database integrity")}`,
+					name: `${theme.primary("🗄️")}  Cek Database       ${theme.dim("- Verifikasi integritas database")}`,
 					value: "dbcheck",
 				},
 				{
-					name: `${theme.primary("📦")} Dependency Audit   ${theme.dim("- Check for outdated packages")}`,
+					name: `${theme.primary("📦")} Audit Dependensi   ${theme.dim("- Cek kerentanan package")}`,
 					value: "audit",
 				},
-				backChoice("Back to Main Menu"),
+				backChoice("Kembali ke Menu Utama"),
 			],
 		});
 
@@ -61,7 +61,7 @@ export async function reportMenu() {
 
 async function viewLogs() {
 	showBanner();
-	sectionHeader("Recent Logs");
+	sectionHeader("Log Terbaru");
 
 	let logs = "";
 
@@ -86,20 +86,20 @@ async function viewLogs() {
 			}
 		}
 	} else {
-		logWarning("No PM2 logs available. The bot may not have been started with PM2.");
-		logInfo("Start the bot, then run this report again to view logs.");
+		logWarning("Tidak ada log PM2. Bot mungkin belum pernah dijalankan lewat PM2.");
+		logInfo("Jalankan bot dulu, lalu buka laporan ini lagi untuk melihat log.");
 	}
 
 	console.log("");
 	await select({
-		message: "Press Enter to go back",
-		choices: [backChoice("Back")],
+		message: "Tekan Enter untuk kembali",
+		choices: [backChoice("Kembali")],
 	});
 }
 
 async function viewErrors() {
 	showBanner();
-	sectionHeader("Error Logs");
+	sectionHeader("Log Error");
 
 	let errors = "";
 
@@ -112,27 +112,27 @@ async function viewErrors() {
 		const errorLines = raw.split("\n").filter((line) => /error|Error|ERROR|exception|Exception|FATAL|fatal|TypeError|ReferenceError|SyntaxError/i.test(line));
 
 		if (errorLines.length > 0) {
-			console.log(`  ${theme.error(`Found ${errorLines.length} error(s) in recent logs:`)}\n`);
+			console.log(`  ${theme.error(`Ditemukan ${errorLines.length} error di log terbaru:`)}\n`);
 			for (const line of errorLines.slice(-20)) {
 				console.log(`  ${chalk.red("•")} ${theme.dim(line.trim())}`);
 			}
 		} else {
-			console.log(`  ${theme.success("✓")} ${theme.accent("No errors found in recent logs. Looking good!")}`);
+			console.log(`  ${theme.success("✓")} ${theme.accent("Tidak ada error di log terbaru. Aman!")}`);
 		}
 	} catch {
-		logWarning("Unable to read PM2 logs. PM2 may not be running.");
+		logWarning("Tidak bisa membaca log PM2. PM2 mungkin belum berjalan.");
 	}
 
 	console.log("");
 	await select({
-		message: "Press Enter to go back",
-		choices: [backChoice("Back")],
+		message: "Tekan Enter untuk kembali",
+		choices: [backChoice("Kembali")],
 	});
 }
 
 async function checkDatabase() {
 	showBanner();
-	sectionHeader("Database Integrity Check");
+	sectionHeader("Cek Integritas Database");
 
 	const dbPath = path.join(ROOT, "database.json");
 	const storePath = path.join(ROOT, "baileys_store.json");
@@ -144,13 +144,13 @@ async function checkDatabase() {
 		console.log(`  ${theme.primary("›")} ${theme.bold(name)}`);
 
 		if (!fs.existsSync(filePath)) {
-			console.log(`    ${theme.muted("File not found - will be created on first run.")}\n`);
+			console.log(`    ${theme.muted("File tidak ada - akan dibuat saat pertama kali dijalankan.")}\n`);
 			continue;
 		}
 
 		const stats = fs.statSync(filePath);
-		console.log(`    ${theme.dim("Size:".padEnd(16))} ${formatBytes(stats.size)}`);
-		console.log(`    ${theme.dim("Modified:".padEnd(16))} ${stats.mtime.toLocaleString()}`);
+		console.log(`    ${theme.dim("Ukuran:".padEnd(16))} ${formatBytes(stats.size)}`);
+		console.log(`    ${theme.dim("Diubah:".padEnd(16))} ${stats.mtime.toLocaleString()}`);
 
 		try {
 			const content = fs.readFileSync(filePath, "utf-8");
@@ -162,16 +162,16 @@ async function checkDatabase() {
 	}
 
 	await select({
-		message: "Press Enter to go back",
-		choices: [backChoice("Back")],
+		message: "Tekan Enter untuk kembali",
+		choices: [backChoice("Kembali")],
 	});
 }
 
 async function dependencyAudit() {
 	showBanner();
-	sectionHeader("Dependency Audit");
+	sectionHeader("Audit Dependensi");
 
-	logInfo("Checking for known vulnerabilities...\n");
+	logInfo("Memeriksa kerentanan yang diketahui...\n");
 
 	try {
 		const result = execSync('npm audit --json 2>/dev/null || echo "{}"', {
@@ -185,23 +185,23 @@ async function dependencyAudit() {
 		const total = (vulns.critical || 0) + (vulns.high || 0) + (vulns.moderate || 0) + (vulns.low || 0);
 
 		if (total === 0) {
-			console.log(`  ${theme.success("✓")} ${theme.accent("No known vulnerabilities found!")}`);
+			console.log(`  ${theme.success("✓")} ${theme.accent("Tidak ada kerentanan yang diketahui!")}`);
 		} else {
-			console.log(`  ${theme.warning(`Found ${total} vulnerability(ies):`)}`);
+			console.log(`  ${theme.warning(`Ditemukan ${total} kerentanan:`)}`);
 			if (vulns.critical) console.log(`    ${chalk.red(`Critical: ${vulns.critical}`)}`);
 			if (vulns.high) console.log(`    ${chalk.redBright(`High:     ${vulns.high}`)}`);
 			if (vulns.moderate) console.log(`    ${chalk.yellow(`Moderate: ${vulns.moderate}`)}`);
 			if (vulns.low) console.log(`    ${chalk.dim(`Low:      ${vulns.low}`)}`);
-			console.log(`\n  ${theme.dim('Run "npm audit fix" to attempt automatic fixes.')}`);
+			console.log(`\n  ${theme.dim('Jalankan "npm audit fix" untuk mencoba perbaikan otomatis.')}`);
 		}
 	} catch {
-		logWarning("Could not run npm audit. Check your internet connection.");
+		logWarning("Tidak bisa menjalankan npm audit. Periksa koneksi internet kamu.");
 	}
 
 	console.log("");
 	await select({
-		message: "Press Enter to go back",
-		choices: [backChoice("Back")],
+		message: "Tekan Enter untuk kembali",
+		choices: [backChoice("Kembali")],
 	});
 }
 

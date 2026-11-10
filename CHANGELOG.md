@@ -2,37 +2,37 @@
 
 ## v3.0.1
 
-Rynn v3.0.1 makes the bot install and run on Termux (Android) and fixes the CLI banner.
+Rynn v3.0.1 membuat bot bisa di-install dan dijalankan di Termux (Android) dan memperbaiki banner CLI.
 
-### Improvements
+### Peningkatan
 
-- **Termux support.** `@napi-rs/canvas` is now an optional dependency, so `npm install` no longer fails on devices without prebuilt binaries or system libraries; image rendering falls back to PureImage automatically. The Termux installer path uses `pkg` + `npm install`, both READMEs include a Termux (Android) setup, and the installer stays working on Termux.
+- **Dukungan Termux.** `@napi-rs/canvas` kini menjadi optional dependency, sehingga `npm install` tidak lagi gagal di perangkat tanpa prebuilt binary atau system library; render gambar otomatis fallback ke PureImage. Jalur installer Termux memakai `pkg` + `npm install`, kedua README memuat panduan setup Termux (Android), dan installer tetap berjalan di Termux.
 
-### Bug fixes
+### Perbaikan bug
 
-- **CLI banner art.** Fixed the corrupted banner art and a stray character shown at the CLI startup banner.
+- **Banner art CLI.** Memperbaiki banner art yang rusak dan karakter nyasar yang tampil di banner startup CLI.
 
 ## v3.0.0
 
-RynnBot v3.0.0 is rebuilt on the latest upstream codebase and reworked as the Rynn project: identity moved fully to Rynn/Nekonaruu, secrets moved to `.env`, and the documentation is now bilingual.
+RynnBot v3.0.0 dibangun ulang di atas codebase upstream terbaru dan dirancang ulang sebagai proyek Rynn: identitas dipindahkan sepenuhnya ke Rynn/Nekonaruu, secret dipindahkan ke `.env`, dan dokumentasi kini berbahasa Indonesia.
 
-### Breaking changes
+### Perubahan besar
 
-- **Command handler renamed.** `naze.js` is now `handler.js`, matching upstream layout. Forks that carried custom changes must rebase manually.
-- **API keys live only in `.env`.** `settings.js` no longer stores literal keys or falls back to hardcoded ones. Move `NAZE_API_KEY` and `NEOSANTARA_API_KEY` into `.env` (copy `.env.example`). `rynn setup` and `.setapikey` write to `.env` instead of `settings.js`.
-- **Self-update targets this repo.** The built-in `.update` command now downloads `nekonaru/rynnbot` (main branch) instead of the upstream Hitori repository.
-- **Dashboard and remote exec are off by default.** Set `DASHBOARD_ENABLED=true` to connect to the relay dashboard and `ALLOW_REMOTE_EXEC=true` to enable the remote exec endpoint. The admin key no longer falls back to a weak constant.
+- **Nama file command handler berubah.** `naze.js` kini `handler.js`, mengikuti tata letak upstream. Fork yang membawa perubahan custom harus rebase manual.
+- **API key hanya hidup di `.env`.** `settings.js` tidak lagi menyimpan key literal maupun fallback hardcoded. Pindahkan `NAZE_API_KEY` dan `NEOSANTARA_API_KEY` ke `.env` (copy `.env.example`). `rynn setup` dan `.setapikey` menulis ke `.env`, bukan `settings.js`.
+- **Self-update menunjuk repo ini.** Perintah `.update` bawaan kini mengunduh `nekonaru/rynnbot` (branch main), bukan repositori upstream Hitori.
+- **Dashboard dan remote exec mati secara default.** Set `DASHBOARD_ENABLED=true` untuk connect ke relay dashboard dan `ALLOW_REMOTE_EXEC=true` untuk mengaktifkan endpoint remote exec. Admin key tidak lagi memakai fallback konstan yang lemah.
 
-### Improvements
+### Peningkatan
 
-- **Upstream parity.** Synced with the latest upstream: rewritten message parser/serializer, CloneBot sub-bots, interactive messages, lid-to-pn mapping, bounded LID caches, safer SSL handling.
-- **TLS verification on by default.** The fetch pipeline no longer disables certificate verification; set `ALLOW_INSECURE_TLS=true` to opt out with a loud warning.
-- **Key handling hardened.** No keys in `settings.js`, `.env.example`, or the CLI path; `.setapikey` masks keys in its reply; the setup wizard no longer writes placeholder keys into `.env`.
-- **Checks and CI.** New `npm run check` (syntax check of every `.js` + leaked key scan), a GitHub Actions workflow (`npm ci`, `npm run check`, advisory `npm audit`), and a committed `package-lock.json`; Dockerfile and Procfile now use `npm ci`.
-- **Docs rebuilt bilingual.** `README.md` (English) and `README.id.md` (Indonesian), aligned section order; new `CHANGELOG.md` / `CHANGELOG.id.md`; `SECURITY.md` reporting policy; `AGENTS.md` project section.
+- **Sejalan dengan upstream.** Sinkron dengan upstream terbaru: parser/serializer pesan yang ditulis ulang, CloneBot sub-bot, interactive messages, lid-to-pn mapping, bounded LID cache, penanganan SSL yang lebih aman.
+- **Verifikasi TLS aktif secara default.** Pipeline fetch tidak lagi mematikan verifikasi sertifikat; set `ALLOW_INSECURE_TLS=true` untuk opt-out dengan peringatan keras.
+- **Penanganan key diperketat.** Tidak ada key di `settings.js`, `.env.example`, atau jalur CLI; `.setapikey` men-mask key di reply-nya; wizard setup tidak lagi menulis key placeholder ke `.env`.
+- **Checks dan CI.** Baru: `npm run check` (syntax check setiap `.js` + scan key bocor), workflow GitHub Actions (`npm ci`, `npm run check`, `npm audit` advisory), dan `package-lock.json` yang ter-commit; Dockerfile dan Procfile kini memakai `npm ci`.
+- **Dokumen dibangun ulang.** README dan CHANGELOG kini satu bahasa (Indonesia); `SECURITY.md` (kebijakan pelaporan) dan `AGENTS.md` (panduan project) baru.
 
-### Bug fixes
+### Perbaikan bug
 
-- **Update URL pinned.** Auto-update pointed at the upstream repository, which would have silently re-branded and overwritten the Rynn code; now points at `nekonaru/rynnbot`.
-- **Insecure update path.** The update download no longer bypasses TLS verification.
-- **Placeholder leakage.** `.env.example` no longer ships keys that were committed in earlier releases; treating exposed keys as leaked is now documented.
+- **URL update di-pin.** Auto-update mengarah ke repositori upstream, yang akan diam-diam mengganti identitas dan menimpa kode Rynn; kini mengarah ke `nekonaru/rynnbot`.
+- **Jalur update tidak aman.** Download update tidak lagi melewati verifikasi TLS.
+- **Kebocoran placeholder.** `.env.example` tidak lagi memuat key yang ter-commit di rilis sebelumnya; perilaku memperlakukan key yang terekspos sebagai bocor kini didokumentasikan.

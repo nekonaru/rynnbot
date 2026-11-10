@@ -60,8 +60,8 @@ const settingsPath = fs.existsSync(path.join(__dirname, "settings.js")) ? path.j
 let canvasModule = null;
 
 /*
- * Based on Hitori Bot by Nazedev (https://github.com/nazedev/hitori)
- * Reworked for Rynn (https://github.com/nekonaru/rynnbot)
+ * Awalnya berbasis Hitori Bot karya Nazedev (https://github.com/nazedev/hitori)
+ * Dirombak total untuk proyek Rynn (https://github.com/nekonaru/rynnbot)
  */
 
 try {
@@ -673,7 +673,7 @@ const sock = async (sock, m, store) => {
 				m.reply(
 					{
 						"-3": "Game telah berakhir",
-						"-2": "Invalid",
+						"-2": "Tidak valid",
 						"-1": "Posisi Invalid",
 						0: "Posisi Invalid",
 					}[ok],
@@ -1991,8 +1991,8 @@ const sock = async (sock, m, store) => {
 					if (!isCreator) return m.reply(global.mess.owner);
 					fs.readdir("./rynn-session", async function (err, files) {
 						if (err) {
-							console.error("Unable to scan directory: " + err);
-							return m.reply("Unable to scan directory: " + err);
+							console.error("Tidak bisa memindai direktori: " + err);
+							return m.reply("Tidak bisa memindai direktori: " + err);
 						}
 						let filteredArray = await files.filter((item) => ["session-", "pre-key", "sender-key", "app-state"].some((ext) => item.startsWith(ext)));
 						let teks = `Terdeteksi ${filteredArray.length} Session file\n\n`;
@@ -2019,8 +2019,8 @@ const sock = async (sock, m, store) => {
 					if (!isCreator) return m.reply(global.mess.owner);
 					fs.readdir("./database/temp", async function (err, files) {
 						if (err) {
-							console.error("Unable to scan directory: " + err);
-							return m.reply("Unable to scan directory: " + err);
+							console.error("Tidak bisa memindai direktori: " + err);
+							return m.reply("Tidak bisa memindai direktori: " + err);
 						}
 						let filteredArray = await files.filter((item) => ["gif", "png", "bin", "mp3", "mp4", "jpg", "webp", "webm", "opus", "jpeg"].some((ext) => item.endsWith(ext)));
 						let teks = `Terdeteksi ${filteredArray.length} Sampah file\n\n`;
@@ -2491,10 +2491,10 @@ const sock = async (sock, m, store) => {
 							if (/on|true/i.test(args[1])) {
 								if (set[args[0]]) return m.reply("*Sudah Aktif Sebelumnya*");
 								set[args[0]] = true;
-								m.reply("*Sukses Change To On*");
+								m.reply("*Sukses Mengubah ke Aktif*");
 							} else if (/off|false/i.test(args[1])) {
 								set[args[0]] = false;
-								m.reply("*Sukses Change To Off*");
+								m.reply("*Sukses Mengubah ke Nonaktif*");
 							} else m.reply(`❗${args[0].charAt(0).toUpperCase() + args[0].slice(1)} on/off`);
 							break;
 						case "setwelcome":
@@ -2706,20 +2706,20 @@ const sock = async (sock, m, store) => {
 								sock.public = set.public = true;
 								set.grouponly = true;
 								set.privateonly = true;
-								m.reply("*Sukses Change To Public Usage*");
+								m.reply("*Sukses Mengubah ke Mode Publik*");
 							} else if (args[1] == "self") {
 								set.grouponly = false;
 								set.privateonly = false;
 								sock.public = set.public = false;
-								m.reply("*Sukses Change To Self Usage*");
+								m.reply("*Sukses Mengubah ke Mode Diri Sendiri*");
 							} else if (args[1] == "group") {
 								set.grouponly = true;
 								set.privateonly = false;
-								m.reply("*Sukses Change To Group Only*");
+								m.reply("*Sukses Mengubah ke Hanya Grup*");
 							} else if (args[1] == "private") {
 								set.grouponly = false;
 								set.privateonly = true;
-								m.reply("*Sukses Change To Private Only*");
+								m.reply("*Sukses Mengubah ke Hanya Private*");
 							} else m.reply("Mode self/public/group/private/all");
 							break;
 						case "log":
@@ -2735,10 +2735,10 @@ const sock = async (sock, m, store) => {
 							if (args[1] == "on") {
 								if (set[args[0]]) return m.reply("*Sudah Aktif Sebelumnya*");
 								set[args[0]] = true;
-								m.reply("*Sukses Change To On*");
+								m.reply("*Sukses Mengubah ke Aktif*");
 							} else if (args[1] == "off") {
 								set[args[0]] = false;
-								m.reply("*Sukses Change To Off*");
+								m.reply("*Sukses Mengubah ke Nonaktif*");
 							} else m.reply(`${args[0].charAt(0).toUpperCase() + args[0].slice(1)} on/off`);
 							break;
 						case "set":
@@ -2780,14 +2780,14 @@ const sock = async (sock, m, store) => {
 							if (!isCreator) return m.reply(global.mess.owner);
 							if (args[1] == "on") {
 								set.whitelistonly = true;
-								m.reply("*Sukses Change To Whitelist Mode*");
+								m.reply("*Sukses Mengubah ke Mode Whitelist*");
 							} else if (args[1] == "off") {
 								set.whitelistonly = false;
-								m.reply("*Sukses Change To Normal Mode*");
+								m.reply("*Sukses Mengubah ke Mode Normal*");
 							} else m.reply("Whitelist on/off");
 							break;
 						default: {
-							let menuList = `*⚙️ SETTINGS BOT ⚙️*
+							let menuList = `*⚙️ PENGATURAN BOT ⚙️*
 					
 Select Bot Settings:
 
@@ -3000,7 +3000,7 @@ Select Bot Settings:
 					if (!m.quoted.fileSha256) return m.reply("SHA256 Hash Missing!");
 					if (!text) return m.reply(`Example : ${prefix + command} CMD Name`);
 					let hash = m.quoted.fileSha256.toString("base64");
-					if (global.db.cmd[hash] && global.db.cmd[hash].locked) return m.reply("You have no permission to change this sticker command");
+					if (global.db.cmd[hash] && global.db.cmd[hash].locked) return m.reply("Kamu tidak punya izin untuk mengubah perintah sticker ini");
 					global.db.cmd[hash] = {
 						creator: m.sender,
 						locked: false,
@@ -3015,7 +3015,7 @@ Select Bot Settings:
 					if (!m.quoted) return m.reply(global.mess.quoted);
 					if (!m.quoted.fileSha256) return m.reply("SHA256 Hash Missing!");
 					let hash = m.quoted.fileSha256.toString("base64");
-					if (global.db.cmd[hash] && global.db.cmd[hash].locked) return m.reply("You have no permission to change this sticker command");
+					if (global.db.cmd[hash] && global.db.cmd[hash].locked) return m.reply("Kamu tidak punya izin untuk mengubah perintah sticker ini");
 					delete global.db.cmd[hash];
 					m.reply(global.mess.done);
 				}
@@ -3035,7 +3035,7 @@ Select Bot Settings:
 					if (!m.quoted) return m.reply(global.mess.quoted);
 					if (!m.quoted.fileSha256) return m.reply("SHA256 Hash Missing!");
 					let hash = m.quoted.fileSha256.toString("base64");
-					if (!(hash in global.db.cmd)) return m.reply("You have no permission to change this sticker command");
+					if (!(hash in global.db.cmd)) return m.reply("Kamu tidak punya izin untuk mengubah perintah sticker ini");
 					global.db.cmd[hash].locked = !/^un/i.test(command);
 				}
 				break;
@@ -5951,14 +5951,14 @@ Select Bot Settings:
 						profile = fake.anonim;
 					}
 					const menunya = `
-╭──❍「 *USER INFO* 」❍
+╭──❍「 *INFO USER* 」❍
 ├ *Nama* : ${m.pushName ? m.pushName : "Tanpa Nama"}
 ├ *Id* : @${m.sender.split("@")[0]}
 ├ *User* : ${isVip ? "VIP" : isPremium ? "PREMIUM" : "FREE"}
 ├ *Limit* : ${isVip ? "VIP" : db.users[m.sender].limit}
 ├ *Money* : ${db.users[m.sender] ? db.users[m.sender].money.toLocaleString("id-ID") : "0"}
 ╰─┬────❍
-╭─┴─❍「 *BOT INFO* 」❍
+╭─┴─❍「 *INFO BOT* 」❍
 ├ *Nama Bot* : ${botname || set?.botname || "Rynn"}
 ├ *Owner* : @${ownerNumber[0].split("@")[0]}
 ├ *Mode* : ${sock.public ? "Public" : "Self"}
@@ -6627,15 +6627,15 @@ Select Bot Settings:
 			if (isAxiosError) {
 				if (errorUrl.includes("naze.dev") || errorUrl.includes("api.naze.biz.id")) {
 					return m.reply("Akses Khusus Premium!");
-				} else m.reply("API Error: Akses ke server API ditolak (403 Forbidden).");
+				} else m.reply("Kesalahan API: Akses ke server API ditolak (403 Forbidden).");
 			} else console.log(chalk.yellowBright("[SYSTEM] Akses grup ditolak (Baileys 403 / Forbidden)."));
 		} else if (statusCode === 401) {
 			if (isAxiosError) {
 				if (errorUrl.includes("naze.dev") || errorUrl.includes("api.naze.biz.id")) {
-					return m.reply("Invalid Apikey!");
-				} else m.reply("API Error: Akses ke server API ditolak (401 Unauthorized).");
+					return m.reply("Apikey tidak valid!");
+				} else m.reply("Kesalahan API: Akses ke server API ditolak (401 Unauthorized).");
 			} else console.log(chalk.yellowBright("[SYSTEM] Akses ditolak (401 Unauthorized)."));
-		} else m.reply("Error: " + (e?.name || e?.code || e?.message || "Terjadi kesalahan tidak diketahui") + "\nLog Error Telah dikirim ke Owner\n\n");
+		} else m.reply("Kesalahan: " + (e?.name || e?.code || e?.message || "Terjadi kesalahan tidak diketahui") + "\nLog Error Telah dikirim ke Owner\n\n");
 		return sock.sendFromOwner(ownerNumber, `Halo sayang, sepertinya ada yang error nih, jangan lupa diperbaiki ya\n\nVersion : *${require("./package.json").version}*\nType : *${m.type || errorKey}*\n\n*Log error:*\n\n` + util.format(e), m, { contextInfo: { isForwarded: true } });
 	}
 };

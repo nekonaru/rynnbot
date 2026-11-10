@@ -30,7 +30,7 @@ class MongoDB {
 			this.mongoose = mod.default || mod;
 			return this.mongoose;
 		} catch {
-			throw new Error("The 'mongoose' module is not installed! Please run: npm install mongoose");
+			throw new Error("Modul 'mongoose' belum terpasang! Jalankan: npm install mongoose");
 		}
 	};
 
@@ -72,7 +72,7 @@ class MongoDB {
 					});
 					this._model = this.conn.models[this.name] || this.conn.model(this.name, schema);
 				}
-				console.log(`✅ Successfully connected to MongoDB (${this.name}).`);
+				console.log(`✅ Berhasil terhubung ke MongoDB (${this.name}).`);
 				this.isConnecting = false;
 				this.isReconnecting = false;
 				return;
@@ -142,7 +142,7 @@ class SqlDB {
 				try {
 					mysql = await import("mysql2/promise");
 				} catch {
-					throw new Error("The 'mysql2' module is not installed! Please run: npm install mysql2");
+					throw new Error("Modul 'mysql2' belum terpasang! Jalankan: npm install mysql2");
 				}
 				const useSsl = isSslEnabled(this.name, this.url);
 				const poolConfig =
@@ -166,7 +166,7 @@ class SqlDB {
 					const pg = await import("pg");
 					Pool = pg.Pool;
 				} catch {
-					throw new Error("The 'pg' module is not installed! Please run: npm install pg");
+					throw new Error("Modul 'pg' belum terpasang! Jalankan: npm install pg");
 				}
 				const useSsl = isSslEnabled(this.name, this.url);
 				const cleanUrl = typeof this.url === "string" ? this.url.replace(/([?&])sslmode=[^&]+(&|$)/i, "$1").replace(/[?&]$/, "") : this.url;
@@ -183,7 +183,7 @@ class SqlDB {
 				`);
 				this.queryClient = async (sql, params) => this.client.query(sql, params);
 			}
-			console.log("✅ Successfully connected to SQL Database.");
+			console.log("✅ Berhasil terhubung ke SQL Database.");
 		} catch (e) {
 			console.error(`❌ SQL connection failed: ${e.message}`);
 		} finally {
@@ -212,7 +212,7 @@ class SqlDB {
 				return typeof res.rows[0].data === "string" ? JSON.parse(res.rows[0].data) : res.rows[0].data;
 			}
 		} catch (e) {
-			console.error("SQL Read Error:", e);
+			console.error("Error Baca SQL:", e);
 			return {};
 		}
 	};

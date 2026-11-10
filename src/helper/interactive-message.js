@@ -50,7 +50,7 @@ import { prepareWAMessageMedia, generateWAMessageContent, proto } from "baileys"
  */
 
 /**
- * Normalizes legacy, shorthand, or native flow button object into standard Native Flow button structure
+ * Normalkan objek tombol (legacy, shorthand, atau native flow) menjadi struktur tombol Native Flow standar
  * @param {object} btn
  * @returns {object|null}
  */
@@ -193,7 +193,7 @@ class InteractiveMessage {
 	}
 
 	/**
-	 * Set title in header
+	 * Atur judul di header
 	 * @param {string} text
 	 * @returns {InteractiveMessage}
 	 */
@@ -204,7 +204,7 @@ class InteractiveMessage {
 	}
 
 	/**
-	 * Set subtitle in header
+	 * Atur subjudul di header
 	 * @param {string} text
 	 * @returns {InteractiveMessage}
 	 */
@@ -215,7 +215,7 @@ class InteractiveMessage {
 	}
 
 	/**
-	 * Set footer text
+	 * Atur teks footer
 	 * @param {string} text
 	 * @returns {InteractiveMessage}
 	 */
@@ -226,7 +226,7 @@ class InteractiveMessage {
 	}
 
 	/**
-	 * Set body text
+	 * Atur teks body
 	 * @param {string} text
 	 * @returns {InteractiveMessage}
 	 */
@@ -237,7 +237,7 @@ class InteractiveMessage {
 	}
 
 	/**
-	 * Set media content attachment
+	 * Atur lampiran media
 	 * @param {object} anyMessageContent
 	 * @param {object} [options]
 	 * @returns {InteractiveMessage}
@@ -249,7 +249,7 @@ class InteractiveMessage {
 	}
 
 	/**
-	 * Set mediaTypeOverride (e.g. 'thumbnail-link')
+	 * Override mediaType (contoh: 'thumbnail-link')
 	 * @param {string} override
 	 * @returns {InteractiveMessage}
 	 */
@@ -259,7 +259,7 @@ class InteractiveMessage {
 	}
 
 	/**
-	 * Set contextInfo
+	 * Atur contextInfo
 	 * @param {object} contextInfo
 	 * @returns {InteractiveMessage}
 	 */
@@ -272,7 +272,7 @@ class InteractiveMessage {
 	}
 
 	/**
-	 * Add CTA URL button
+	 * Tambah tombol CTA URL
 	 * @param {string} displayText
 	 * @param {string} url
 	 * @param {ButtonUrlOptions} [opts]
@@ -296,7 +296,7 @@ class InteractiveMessage {
 	}
 
 	/**
-	 * Add Quick Reply button
+	 * Tambah tombol Quick Reply
 	 * @param {string} displayText
 	 * @param {string} id
 	 * @param {ButtonQuickReplyOption} [opts]
@@ -380,7 +380,7 @@ class InteractiveMessage {
 	 */
 	setButtonLimit(limit = 1, opts = {}) {
 		const list_title = opts.list_title || opts.listTitle || "action list";
-		const button_title = opts.button_title || opts.buttonTitle || "choose action";
+		const button_title = opts.button_title || opts.buttonTitle || "Pilih aksi";
 		const rawDividers = opts.divider_indices ?? opts.dividerIndices ?? opts.dividerIndicies ?? [];
 
 		let finalDividers = rawDividers;
@@ -443,7 +443,7 @@ class InteractiveMessage {
 	}
 
 	/**
-	 * Send interactive message to target JID
+	 * Kirim pesan interaktif ke JID target
 	 * @param {string} jid
 	 * @param {object} [options={}]
 	 * @returns {Promise<any>}
@@ -537,7 +537,7 @@ class InteractiveMessage {
 }
 
 /**
- * Extracts clicked button ID from nativeFlowResponseMessage safely without requiring m.quoted
+ * Ekstrak ID tombol yang diklik dari nativeFlowResponseMessage dengan aman, tanpa perlu m.quoted
  * @param {object} [msg]
  * @param {object} [rawMessage]
  * @returns {string}
@@ -557,7 +557,7 @@ function extractNativeFlowResponseId(msg, rawMessage) {
 }
 
 /**
- * Extracts display text from nativeFlowResponseMessage safely
+ * Ekstrak teks tampilan dari nativeFlowResponseMessage dengan aman
  * @param {object} [msg]
  * @param {object} [rawMessage]
  * @returns {string}
@@ -567,8 +567,8 @@ function extractNativeFlowResponseText(msg, rawMessage) {
 }
 
 /**
- * Generates a native link preview extendedTextMessage with MMS thumbnail (mediaTypeOverride: 'thumbnail-link')
- * and optional favicon MMS metadata.
+ * Buat extendedTextMessage link preview bawaan dengan thumbnail MMS (mediaTypeOverride: 'thumbnail-link')
+ * dan metadata favicon MMS opsional.
  * @param {import("baileys").WASocket} sock
  * @param {import("baileys").AnyMediaMessageContent} anyMediaMessageContent
  * @param {object} [thumbnailContent={}]

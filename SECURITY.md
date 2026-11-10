@@ -1,22 +1,22 @@
-# Security Policy
+# Kebijakan Keamanan
 
-## Supported versions
+## Versi yang didukung
 
-Only the latest release receives security fixes.
+Hanya rilis terbaru yang menerima perbaikan keamanan.
 
-| Version | Supported |
-|---------|-----------|
-| 3.x     | yes       |
-| < 3.0   | no        |
+| Versi | Didukung |
+|-------|----------|
+| 3.x   | ya       |
+| < 3.0 | tidak    |
 
-## Reporting a vulnerability
+## Melaporkan kerentanan
 
-Please do not disclose security issues in public issues or pull requests. Report privately through GitHub's private vulnerability reporting (Security tab, "Report a vulnerability") on this repository. Include steps to reproduce and the impact. You can expect an acknowledgment within a few days.
+Jangan laporkan masalah keamanan di issue atau pull request publik. Laporkan secara privat lewat GitHub private vulnerability reporting (tab Security, "Report a vulnerability") di repositori ini. Sertakan langkah reproduksi dan dampaknya. Kamu bisa mengharapkan konfirmasi dalam beberapa hari.
 
-## Secrets
+## Secret
 
-API keys and credentials live only in `.env`, which is gitignored and never committed. Do not open pull requests that add keys, tokens, or credentials to the repository. If you find a committed secret, report it privately as described above.
+API key dan kredensial hanya hidup di `.env`, yang di-gitignore dan tidak pernah di-commit. Jangan buka pull request yang menambahkan key, token, atau kredensial ke repositori. Kalau menemukan secret yang ter-commit, laporkan secara privat sesuai cara di atas.
 
-## Scope
+## Lingkup
 
-This policy covers the code in this repository, including `handler.js`, `index.js`, `start.js`, `settings.js`, `src/` and `lib/`. It does not cover WhatsApp's services, the Naze API, or the relay dashboard at `bot.naze.biz.id`, which are third-party services operated by their respective providers.
+Kebijakan ini mencakup kode di repositori ini, termasuk `handler.js`, `index.js`, `start.js`, `settings.js`, `src/`, dan `lib/`. Tidak mencakup layanan WhatsApp, Naze API, atau relay dashboard di `bot.naze.biz.id`, yang semuanya layanan pihak ketiga yang dioperasikan penyedianya masing-masing.

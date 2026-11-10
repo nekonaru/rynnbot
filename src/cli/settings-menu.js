@@ -9,32 +9,32 @@ export async function settingsMenu() {
 
 	while (running) {
 		showBanner();
-		sectionHeader("Settings");
+		sectionHeader("Pengaturan");
 
 		const choice = await select({
-			message: "Select a category:",
+			message: "Pilih kategori:",
 			choices: [
 				{
-					name: `${theme.primary("⚙")}  General           ${theme.dim("- Name, timezone, locale, prefix")}`,
+					name: `${theme.primary("⚙")}  Umum              ${theme.dim("- Nama, timezone, locale, prefix")}`,
 					value: "general",
 				},
 				{
-					name: `${theme.primary("👤")} Owner             ${theme.dim("- Manage owner phone numbers")}`,
+					name: `${theme.primary("👤")} Owner             ${theme.dim("- Kelola nomor telepon owner")}`,
 					value: "owner",
 				},
 				{
-					name: `${theme.primary("🔑")} API Keys          ${theme.dim("- View and edit API keys")}`,
+					name: `${theme.primary("🔑")} API Keys          ${theme.dim("- Lihat dan ubah API key")}`,
 					value: "apikeys",
 				},
 				{
-					name: `${theme.primary("🗄️")} Database          ${theme.dim("- Database connections (Local/Mongo/MySQL)")}`,
+					name: `${theme.primary("🗄️")} Database          ${theme.dim("- Koneksi database (Lokal/Mongo/MySQL)")}`,
 					value: "database",
 				},
 				{
-					name: `${theme.primary("📊")} Limits            ${theme.dim("- Free, premium, and VIP limits")}`,
+					name: `${theme.primary("📊")} Limit             ${theme.dim("- Limit free, premium, dan VIP")}`,
 					value: "limits",
 				},
-				backChoice("Back to Main Menu"),
+				backChoice("Kembali ke Menu Utama"),
 			],
 		});
 
@@ -66,13 +66,13 @@ async function generalSettings() {
 
 	while (running) {
 		showBanner();
-		sectionHeader("General Settings");
+		sectionHeader("Pengaturan Umum");
 
 		const fields = [
-			["Bot Name", readSetting("botname") || "Rynn"],
-			["Bot Number", readSetting("number_bot") || theme.muted("Not set (Prompt on start)")],
+			["Nama Bot", readSetting("botname") || "Rynn"],
+			["Nomor Bot", readSetting("number_bot") || theme.muted("Belum diisi (ditanya saat start)")],
 			["Author", readSetting("author") || "Nekonaruu"],
-			["Pack Name", readSetting("packname") || "Bot WhatsApp"],
+			["Nama Pack", readSetting("packname") || "Bot WhatsApp"],
 			["Timezone", readSetting("timezone") || "Asia/Jakarta"],
 			["Locale", readSetting("locale") || "en"],
 			["Prefix", (Array.isArray(readSetting("listprefix")) ? readSetting("listprefix") : ["+", "!", "."]).join("  ")],
@@ -84,16 +84,16 @@ async function generalSettings() {
 		console.log("");
 
 		const choice = await select({
-			message: "What would you like to edit?",
+			message: "Apa yang ingin kamu ubah?",
 			choices: [
-				{ name: "Bot Name", value: "botname" },
-				{ name: "Bot Number", value: "number_bot" },
+				{ name: "Nama Bot", value: "botname" },
+				{ name: "Nomor Bot", value: "number_bot" },
 				{ name: "Author", value: "author" },
-				{ name: "Pack Name", value: "packname" },
+				{ name: "Nama Pack", value: "packname" },
 				{ name: "Timezone", value: "timezone" },
 				{ name: "Locale", value: "locale" },
 				{ name: "Prefix", value: "listprefix" },
-				backChoice("Back"),
+				backChoice("Kembali"),
 			],
 		});
 
@@ -106,18 +106,18 @@ async function generalSettings() {
 			let current = readSetting("listprefix") || ["+", "!", "."];
 			if (!Array.isArray(current)) current = [String(current)];
 			const val = await input({
-				message: "Enter prefixes separated by spaces (e.g. + ! .):",
+				message: "Masukkan prefix pisah spasi (misalnya: + ! .):",
 				default: current.join(" "),
 			});
 			writeSetting("listprefix", val.split(/\s+/).filter(Boolean));
 		} else {
 			const labels = {
-				botname: "Bot Name",
-				number_bot: "Bot Number",
+				botname: "Nama Bot",
+				number_bot: "Nomor Bot",
 				author: "Author",
-				packname: "Pack Name",
-				timezone: "Timezone",
-				locale: "Locale",
+				packname: "Nama Pack",
+				timezone: "Zona Waktu",
+				locale: "Bahasa",
 			};
 			const val = await input({
 				message: `${labels[choice]}:`,
@@ -125,9 +125,9 @@ async function generalSettings() {
 				validate: (inputVal) => {
 					if (choice === "number_bot" && inputVal.trim() !== "") {
 						const cleanNum = inputVal.trim().replace(/^\+/, "");
-						if (!/^\d+$/.test(cleanNum)) return "Invalid format. Use digits only.";
+						if (!/^\d+$/.test(cleanNum)) return "Format tidak valid. Gunakan angka saja.";
 						const pn = parsePhoneNumber("+" + cleanNum);
-						if (!pn.valid) return `Invalid phone number.`;
+						if (!pn.valid) return `Nomor telepon tidak valid.`;
 					}
 					return true;
 				},
@@ -137,7 +137,7 @@ async function generalSettings() {
 			writeSetting(choice, finalVal);
 		}
 
-		logSuccess("Setting updated in settings.js");
+		logSuccess("Pengaturan tersimpan ke settings.js");
 	}
 }
 
@@ -146,12 +146,12 @@ async function ownerSettings() {
 
 	while (running) {
 		showBanner();
-		sectionHeader("Owner Numbers");
+		sectionHeader("Nomor Owner");
 
 		let owners = readSetting("owner") || [];
 		if (!Array.isArray(owners)) owners = [String(owners)];
 		if (owners.length === 0) {
-			logWarning("No owner numbers configured.");
+			logWarning("Belum ada nomor owner.");
 		} else {
 			owners.forEach((num, i) => {
 				console.log(`  ${theme.accent(`${i + 1}.`)} ${theme.bold(num)}`);
@@ -160,9 +160,9 @@ async function ownerSettings() {
 		console.log("");
 
 		const choice = await select({
-			message: "Select an action:",
+			message: "Pilih aksi:",
 			choices: [
-				{ name: `${theme.accent("+")} Add owner number`, value: "add" },
+				{ name: `${theme.accent("+")} Tambah nomor owner`, value: "add" },
 				...(owners.length > 0
 					? [
 							{
@@ -171,7 +171,7 @@ async function ownerSettings() {
 							},
 						]
 					: []),
-				backChoice("Back"),
+				backChoice("Kembali"),
 			],
 		});
 
@@ -182,24 +182,24 @@ async function ownerSettings() {
 
 		if (choice === "add") {
 			const num = await input({
-				message: "Enter phone number (e.g. 628123456789):",
+				message: "Masukkan nomor telepon (misalnya 628123456789):",
 				validate: (val) => {
 					const cleanNum = val.trim().replace(/^\+/, "");
-					if (!/^\d+$/.test(cleanNum)) return "Invalid format. Use digits only.";
+					if (!/^\d+$/.test(cleanNum)) return "Format tidak valid. Gunakan angka saja.";
 					const pn = parsePhoneNumber("+" + cleanNum);
-					if (!pn.valid) return `Invalid phone number. Please enter a valid international number with country code.`;
+					if (!pn.valid) return `Nomor tidak valid. Masukkan nomor internasional yang valid dengan kode negara.`;
 					return true;
 				},
 			});
 			const cleanNum = num.trim().replace(/^\+/, "");
 			writeSetting("owner", [...owners, cleanNum]);
-			logSuccess(`Added owner: ${cleanNum}`);
+			logSuccess(`Owner ditambahkan: ${cleanNum}`);
 		}
 
 		if (choice === "remove") {
 			const toRemove = await select({
-				message: "Select number to remove:",
-				choices: [...owners.map((num) => ({ name: num, value: num })), backChoice("Cancel")],
+				message: "Pilih nomor yang dihapus:",
+				choices: [...owners.map((num) => ({ name: num, value: num })), backChoice("Batal")],
 			});
 
 			if (toRemove !== BACK_VALUE) {
@@ -207,7 +207,7 @@ async function ownerSettings() {
 					"owner",
 					owners.filter((n) => n !== toRemove),
 				);
-				logSuccess(`Removed owner: ${toRemove}`);
+				logSuccess(`Owner dihapus: ${toRemove}`);
 			}
 		}
 	}
@@ -221,14 +221,14 @@ async function apiKeySettings() {
 		sectionHeader("API Keys");
 
 		const apiKey = readSetting("nazeApiKey");
-		const masked = (key) => (key ? key.slice(0, 6) + "••••••" : theme.muted("(not set)"));
+		const masked = (key) => (key ? key.slice(0, 6) + "••••••" : theme.muted("(belum diisi)"));
 
 		console.log(`  ${theme.primary("•")} ${theme.dim("Naze API".padEnd(20))} ${theme.bold(masked(apiKey))}`);
 		console.log("");
 
 		const choice = await select({
-			message: "Select an action:",
-			choices: [{ name: "Edit Naze API Key", value: "naze" }, backChoice("Back")],
+			message: "Pilih aksi:",
+			choices: [{ name: "Ubah Naze API Key", value: "naze" }, backChoice("Kembali")],
 		});
 
 		if (choice === BACK_VALUE) {
@@ -239,15 +239,15 @@ async function apiKeySettings() {
 		if (choice === "naze") {
 			const val = await input({
 				message: "Naze API Key:",
-				default: apiKey === "YOUR_API_KEY" ? "" : apiKey || "",
+				default: apiKey || "",
 			});
-			const finalVal = val.trim() || "YOUR_API_KEY";
-			writeSetting("nazeApiKey", finalVal);
-			if (finalVal === "YOUR_API_KEY") {
-				logWarning("API Key is missing! Certain bot features will encounter errors and will not function properly.");
-			} else {
-				logSuccess("API key updated in settings.js");
+			const finalVal = val.trim();
+			if (!finalVal) {
+				logWarning("API Key kosong. Key yang lama dibiarkan.");
+				continue;
 			}
+			writeSetting("nazeApiKey", finalVal);
+			logSuccess("API key tersimpan ke .env");
 		}
 	}
 }
@@ -257,7 +257,7 @@ async function limitSettings() {
 
 	while (running) {
 		showBanner();
-		sectionHeader("Limits & Economy");
+		sectionHeader("Limit & Ekonomi");
 
 		const fields = [
 			["Free Limit", readSetting("limitFree") ?? 20],
@@ -271,8 +271,8 @@ async function limitSettings() {
 		console.log("");
 
 		const choice = await select({
-			message: "What would you like to edit?",
-			choices: [{ name: "Free Limit", value: "limitFree" }, { name: "Premium Limit", value: "limitPremium" }, { name: "VIP Limit", value: "limitVip" }, backChoice("Back")],
+			message: "Apa yang ingin kamu ubah?",
+			choices: [{ name: "Free Limit", value: "limitFree" }, { name: "Premium Limit", value: "limitPremium" }, { name: "VIP Limit", value: "limitVip" }, backChoice("Kembali")],
 		});
 
 		if (choice === BACK_VALUE) {
@@ -293,10 +293,10 @@ async function limitSettings() {
 		const val = await input({
 			message: `${labels[choice]}:`,
 			default: String(readSetting(choice) ?? ""),
-			validate: (v) => /^\d+$/.test(v.trim()) || "Please enter a valid number.",
+			validate: (v) => /^\d+$/.test(v.trim()) || "Masukkan angka yang valid.",
 		});
 		writeSetting(choice, parseInt(val.trim(), 10));
-		logSuccess("Limit updated in settings.js");
+		logSuccess("Limit tersimpan ke settings.js");
 	}
 }
 
@@ -305,7 +305,7 @@ async function databaseSettings() {
 
 	while (running) {
 		showBanner();
-		sectionHeader("Database Settings");
+		sectionHeader("Pengaturan Database");
 
 		const dbConfig = readDatabaseConfig();
 		const currentPath = dbConfig.path || "database.json";
@@ -322,26 +322,26 @@ async function databaseSettings() {
 		}
 
 		console.log(`  ${theme.primary("•")} ${theme.dim("Main Path".padEnd(14))} ${theme.bold(currentPath)}`);
-		console.log(`  ${theme.primary("•")} ${theme.dim("Store Path".padEnd(14))} ${theme.bold(storeVal === "true" ? "Follow Main Path" : storeVal === "false" ? "Local (baileys_store.json)" : storeVal)}`);
-		console.log(`  ${theme.primary("•")} ${theme.dim("Bot DB Path".padEnd(14))} ${theme.bold(dbVal === "true" ? "Follow Main Path" : dbVal === "false" ? "Local (database.json)" : dbVal)}`);
+		console.log(`  ${theme.primary("•")} ${theme.dim("Store Path".padEnd(14))} ${theme.bold(storeVal === "true" ? "Ikut Path Utama" : storeVal === "false" ? "Lokal (baileys_store.json)" : storeVal)}`);
+		console.log(`  ${theme.primary("•")} ${theme.dim("Bot DB Path".padEnd(14))} ${theme.bold(dbVal === "true" ? "Ikut Path Utama" : dbVal === "false" ? "Lokal (database.json)" : dbVal)}`);
 		console.log("");
 
 		const choice = await select({
-			message: "What would you like to edit?",
+			message: "Apa yang ingin kamu ubah?",
 			choices: [
 				{
-					name: `${theme.primary("\u{1F517}")} Main Path       ${theme.dim("\u2014 Session Folder / MongoDB / MySQL URL")}`,
+					name: `${theme.primary("\u{1F517}")} Path Utama      ${theme.dim("- Session Folder / MongoDB / MySQL URL")}`,
 					value: "path",
 				},
 				{
-					name: `${theme.primary("\u{1F4E6}")} Store Path      ${theme.dim("\u2014 Where to save chat history")}`,
+					name: `${theme.primary("\u{1F4E6}")} Path Store      ${theme.dim("- Tempat menyimpan chat history")}`,
 					value: "store",
 				},
 				{
-					name: `${theme.primary("\u{1F5C3}\u{FE0F}")} Bot DB Path     ${theme.dim("\u2014 Where to save users, limits, groups")}`,
+					name: `${theme.primary("\u{1F5C3}\u{FE0F}")} Path DB Bot     ${theme.dim("- Tempat menyimpan user, limit, grup")}`,
 					value: "database",
 				},
-				backChoice("Back"),
+				backChoice("Kembali"),
 			],
 		});
 
@@ -352,18 +352,18 @@ async function databaseSettings() {
 
 		if (choice === "path") {
 			const val = await input({
-				message: `Enter Main Path:\n  ${theme.dim("(Use 'rynn-session' for local folder, or 'mongodb://...' for cloud URL)")}`,
+				message: `Masukkan Path Utama:\n  ${theme.dim("(pakai 'rynn-session' untuk folder lokal, atau 'mongodb://...' untuk URL cloud)")}`,
 				default: currentPath,
 			});
 			dbConfig.path = val;
 		} else {
 			const isStore = choice === "store";
 			const typeChoice = await select({
-				message: `Select mode for ${isStore ? "STORE (Chat History)" : "DATABASE (Users & Limits)"}:`,
+				message: `Pilih mode untuk ${isStore ? "STORE (Chat History)" : "DATABASE (User & Limit)"}:`,
 				choices: [
-					{ name: `${theme.primary("\u{1F504}")} Follow Main Path ${theme.dim("\u2014 Share the exact same URL as Main Path")}`, value: "true" },
-					{ name: `${theme.primary("\u{1F4C4}")} Local File       ${theme.dim("\u2014 Save locally as .json file")}`, value: "false" },
-					{ name: `${theme.primary("\u{1F50C}")} Custom URL       ${theme.dim("\u2014 Use a completely different database URL")}`, value: "custom" },
+					{ name: `${theme.primary("\u{1F504}")} Ikut Path Utama ${theme.dim("- Pakai URL yang sama dengan Path Utama")}`, value: "true" },
+					{ name: `${theme.primary("\u{1F4C4}")} File Lokal      ${theme.dim("- Simpan lokal sebagai file .json")}`, value: "false" },
+					{ name: `${theme.primary("\u{1F50C}")} URL Custom      ${theme.dim("- Pakai URL database yang berbeda")}`, value: "custom" },
 				],
 			});
 
@@ -375,13 +375,13 @@ async function databaseSettings() {
 				dbConfig.options[choice] = false;
 			} else if (typeChoice === "custom") {
 				const val = await input({
-					message: `Enter custom URL for ${choice} (e.g. mongodb://...):`,
+					message: `Masukkan URL custom untuk ${choice} (misalnya mongodb://...):`,
 				});
 				dbConfig.options[choice] = { path: val };
 			}
 		}
 
 		writeDatabaseConfig(dbConfig);
-		logSuccess("Database settings updated in settings.js");
+		logSuccess("Pengaturan database tersimpan ke settings.js");
 	}
 }

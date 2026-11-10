@@ -15,15 +15,15 @@ import { reportMenu } from "./src/cli/report.js";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 /*
- * Rynn CLI - Main Entry Point
+ * Rynn CLI - Entry Point Utama
  *
  * Usage:
- *   rynn              Open interactive menu
- *   rynn --setup      Run first-time setup wizard
- *   rynn settings     Open settings menu directly
- *   rynn start        Start the bot directly
- *   rynn status       Show system health
- *   rynn report       Show reports
+ *   rynn              Buka menu interaktif
+ *   rynn --setup      Jalankan wizard setup pertama
+ *   rynn settings     Buka menu pengaturan langsung
+ *   rynn start        Jalankan bot langsung
+ *   rynn status       Tampilkan kesehatan sistem
+ *   rynn report       Tampilkan laporan
  */
 
 // ── Parse CLI Arguments ──────────────────────────────────────────────
@@ -72,10 +72,10 @@ async function main() {
 		await mainMenu();
 	} catch (error) {
 		if (error.name === "ExitPromptError" || error.message?.includes("User force closed")) {
-			console.log(`\n${theme.muted("  Goodbye! 👋")}\n`);
+			console.log(`\n${theme.muted("  Sampai jumpa! 👋")}\n`);
 			process.exit(0);
 		}
-		logError(`Unexpected error: ${error.message}`);
+		logError(`Kesalahan tidak terduga: ${error.message}`);
 		process.exit(1);
 	}
 }
@@ -85,26 +85,26 @@ async function mainMenu() {
 	while (running) {
 		showBanner();
 		const choice = await select({
-			message: "What would you like to do?",
+			message: "Apa yang ingin kamu lakukan?",
 			choices: [
 				{
-					name: `${theme.accent("▶")}  Start Bot          ${theme.dim("- Launch the WhatsApp bot")}`,
+					name: `${theme.accent("▶")}  Mulai Bot          ${theme.dim("- Jalankan bot WhatsApp")}`,
 					value: "start",
 				},
 				{
-					name: `${theme.primary("⚙")}  Settings           ${theme.dim("- Configure bot options")}`,
+					name: `${theme.primary("⚙")}  Pengaturan        ${theme.dim("- Atur opsi bot")}`,
 					value: "settings",
 				},
 				{
-					name: `${theme.primary("💚")} Status / Health    ${theme.dim("- Check system readiness")}`,
+					name: `${theme.primary("💚")} Status / Kesehatan ${theme.dim("- Cek kesiapan sistem")}`,
 					value: "status",
 				},
 				{
-					name: `${theme.primary("📋")} Report             ${theme.dim("- View logs and diagnostics")}`,
+					name: `${theme.primary("📋")} Laporan           ${theme.dim("- Lihat log dan diagnostik")}`,
 					value: "report",
 				},
 				{
-					name: `${theme.error("✕")}  Exit`,
+					name: `${theme.error("✕")}  Keluar`,
 					value: EXIT_VALUE,
 				},
 			],
@@ -124,7 +124,7 @@ async function mainMenu() {
 				await reportMenu();
 				break;
 			case EXIT_VALUE:
-				console.log(`\n${theme.muted("  Goodbye! 👋")}\n`);
+				console.log(`\n${theme.muted("  Sampai jumpa! 👋")}\n`);
 				running = false;
 				break;
 		}
@@ -135,17 +135,17 @@ async function mainMenu() {
 
 async function startBot() {
 	showBanner();
-	sectionHeader("Starting Bot");
+	sectionHeader("Menjalankan Bot");
 
 	const spinner = ora({
-		text: theme.dim("Initializing bot process..."),
+		text: theme.dim("Menyiapkan proses bot..."),
 		spinner: "dots12",
 		color: "cyan",
 	}).start();
 
 	await new Promise((r) => setTimeout(r, 800));
-	spinner.succeed(theme.accent("Launching Rynn..."));
-	console.log(`  ${theme.dim("Press Ctrl+C to stop the bot and return to terminal.")}\n`);
+	spinner.succeed(theme.accent("Menjalankan Rynn..."));
+	console.log(`  ${theme.dim("Tekan Ctrl+C untuk menghentikan bot dan kembali ke terminal.")}\n`);
 
 	return new Promise((resolve) => {
 		const startFile = path.join(__dirname, "start.js");
@@ -156,15 +156,15 @@ async function startBot() {
 
 		child.on("exit", (code) => {
 			if (code === 0) {
-				logSuccess("Bot stopped gracefully.");
+				logSuccess("Bot berhenti dengan normal.");
 			} else {
-				logWarning(`Bot exited with code ${code}.`);
+				logWarning(`Bot berhenti dengan kode ${code}.`);
 			}
 			resolve();
 		});
 
 		child.on("error", (err) => {
-			logError(`Failed to start bot: ${err.message}`);
+			logError(`Gagal menjalankan bot: ${err.message}`);
 			resolve();
 		});
 	});
@@ -172,15 +172,15 @@ async function startBot() {
 
 function showHelp() {
 	showBanner();
-	console.log(`  ${theme.bold("Usage:")}  rynn ${theme.dim("[command]")}\n`);
-	console.log(`  ${theme.bold("Commands:")}`);
-	console.log(`    ${theme.accent("(none)".padEnd(16))} Open interactive menu`);
-	console.log(`    ${theme.accent("start".padEnd(16))} Start the bot directly`);
-	console.log(`    ${theme.accent("settings".padEnd(16))} Open settings manager`);
-	console.log(`    ${theme.accent("status".padEnd(16))} Show system health dashboard`);
-	console.log(`    ${theme.accent("report".padEnd(16))} View logs and diagnostics`);
-	console.log(`    ${theme.accent("--setup".padEnd(16))} Run first-time setup wizard`);
-	console.log(`    ${theme.accent("--help, -h".padEnd(16))} Show this help message`);
+	console.log(`  ${theme.bold("Penggunaan:")}  rynn ${theme.dim("[perintah]")}\n`);
+	console.log(`  ${theme.bold("Perintah:")}`);
+	console.log(`    ${theme.accent("(kosong)".padEnd(16))} Buka menu interaktif`);
+	console.log(`    ${theme.accent("start".padEnd(16))} Jalankan bot langsung`);
+	console.log(`    ${theme.accent("settings".padEnd(16))} Buka manajer pengaturan`);
+	console.log(`    ${theme.accent("status".padEnd(16))} Tampilkan dashboard kesehatan sistem`);
+	console.log(`    ${theme.accent("report".padEnd(16))} Lihat log dan diagnostik`);
+	console.log(`    ${theme.accent("--setup".padEnd(16))} Jalankan wizard setup pertama`);
+	console.log(`    ${theme.accent("--help, -h".padEnd(16))} Tampilkan bantuan ini`);
 	console.log("");
 }
 

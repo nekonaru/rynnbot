@@ -1,8 +1,8 @@
 #!/usr/bin/env node
-// Lightweight, dependency-free checks for CI and local use:
-// 1. Syntax-check every .js file with `node --check`.
-// 2. Scan tracked text files for leaked API key patterns.
-// Exit code 0 means clean.
+// Check ringan tanpa dependency untuk CI dan pemakaian lokal:
+// 1. Cek syntax setiap file .js dengan `node --check`.
+// 2. Pindai file teks ter-track untuk pola API key bocor.
+// Exit code 0 berarti bersih.
 
 import fs from "fs";
 import path from "path";
@@ -30,7 +30,7 @@ function walk(dir) {
 }
 
 const files = walk(root);
-console.log(`Checking ${files.length} files...`);
+console.log(`Memeriksa ${files.length} file...`);
 
 for (const file of files) {
 	const ext = path.extname(file).toLowerCase();
@@ -39,7 +39,7 @@ for (const file of files) {
 		const result = spawnSync(process.execPath, ["--check", file], { encoding: "utf8" });
 		if (result.status !== 0) {
 			failures++;
-			console.error(`[SYNTAX] ${path.relative(root, file)}\n${result.stderr}`);
+			console.error(`[SINTAKS] ${path.relative(root, file)}\n${result.stderr}`);
 		}
 	}
 
@@ -48,14 +48,14 @@ for (const file of files) {
 		for (const pattern of SECRET_PATTERNS) {
 			if (pattern.test(content)) {
 				failures++;
-				console.error(`[SECRET] ${path.relative(root, file)} matches ${pattern}`);
+				console.error(`[SECRET] ${path.relative(root, file)} cocok dengan ${pattern}`);
 			}
 		}
 	}
 }
 
 if (failures > 0) {
-	console.error(`\n${failures} check(s) failed.`);
+	console.error(`\n${failures} pemeriksaan gagal.`);
 	process.exit(1);
 }
-console.log("All checks passed.");
+console.log("Semua pemeriksaan lolos.");

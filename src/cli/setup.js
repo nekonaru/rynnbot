@@ -11,31 +11,31 @@ export { checkFirstRun as isFirstRun };
 
 export async function runSetupWizard() {
 	showBanner();
-	sectionHeader("First-Time Setup");
+	sectionHeader("Setup Pertama");
 
-	console.log(`  ${theme.dim("Welcome! Let's configure the essentials.")}\n` + `  ${theme.dim("You can change any of these later with")} ${theme.accent("Rynn settings")}\n`);
+	console.log(`  ${theme.dim("Selamat datang! Mari atur hal-hal pentingnya.")}\n` + `  ${theme.dim("Kamu bisa mengubahnya nanti dengan")} ${theme.accent("rynn settings")}\n`);
 
 	separator();
 
-	logInfo("Owner phone number(s) - used for bot admin privileges.");
-	console.log(`  ${theme.dim("Format: country code + number, e.g. 628123456789")}`);
-	console.log(`  ${theme.dim("Separate multiple numbers with commas.")}\n`);
+	logInfo("Nomor telepon owner - dipakai untuk hak akses admin bot.");
+	console.log(`  ${theme.dim("Format: kode negara + nomor, misalnya 628123456789")}`);
+	console.log(`  ${theme.dim("Pisahkan beberapa nomor dengan koma.")}\n`);
 
 	let currentOwner = readSetting("owner") || [];
 	if (!Array.isArray(currentOwner)) currentOwner = [String(currentOwner)];
 	const ownerRaw = await input({
-		message: "Owner number(s):",
+		message: "Nomor owner:",
 		default: currentOwner.join(", "),
 		validate: (val) => {
-			if (!val.trim()) return "At least one owner number is required.";
+			if (!val.trim()) return "Minimal satu nomor owner wajib diisi.";
 			const nums = val.split(",").map((n) => n.trim());
 			for (const n of nums) {
 				const cleanNum = n.replace(/^\+/, "");
-				if (!/^\d+$/.test(cleanNum)) return `Invalid format: "${n}". Use digits only.`;
+				if (!/^\d+$/.test(cleanNum)) return `Format tidak valid: "${n}". Gunakan angka saja.`;
 
 				const pn = parsePhoneNumber("+" + cleanNum);
 				if (!pn.valid) {
-					return `Invalid phone number: "${n}". Please enter a valid international number with country code (e.g. 628...).`;
+					return `Nomor tidak valid: "${n}". Masukkan nomor internasional yang valid dengan kode negara (misalnya 628...).`;
 				}
 			}
 			return true;
@@ -45,26 +45,26 @@ export async function runSetupWizard() {
 
 	separator();
 
-	logInfo("Author name - displayed in bot info and stickers.");
+	logInfo("Nama author - ditampilkan di info bot dan stiker.");
 
 	const authorName = await input({
-		message: "Author name:",
+		message: "Nama author:",
 		default: readSetting("author") || "Nekonaruu",
 	});
 
 	separator();
 
-	logInfo("Bot name - the display name for your bot.");
+	logInfo("Nama bot - nama tampilan bot kamu.");
 
 	const botName = await input({
-		message: "Bot name:",
+		message: "Nama bot:",
 		default: readSetting("botname") || "Rynn",
 	});
 
 	separator();
 
 	logInfo("Naze API Key - get yours at https://naze.dev");
-	console.log(`  ${theme.dim("Press Enter to use the current key.")}\n`);
+	console.log(`  ${theme.dim("Tekan Enter untuk memakai key yang sekarang.")}\n`);
 
 	const currentKey = readSetting("nazeApiKey");
 	const apiKey = await input({
@@ -75,24 +75,24 @@ export async function runSetupWizard() {
 	const finalApiKey = apiKey.trim();
 
 	if (!finalApiKey) {
-		logWarning("API Key is missing! Certain bot features will encounter errors and will not function properly.");
+		logWarning("API Key belum diisi! Beberapa fitur bot akan error dan tidak bisa dipakai.");
 	}
 
 	separator();
 
-	logInfo("Bot WhatsApp Number - used for pairing code.");
-	console.log(`  ${theme.dim("Format: 628123456789. Leave empty to skip.")}\n`);
+	logInfo("Nomor WhatsApp Bot - dipakai untuk pairing code.");
+	console.log(`  ${theme.dim("Format: 628123456789. Kosongkan untuk skip.")}\n`);
 
 	const currentBotNumber = readSetting("number_bot") || "";
 	const botNumberRaw = await input({
-		message: "Bot Number:",
+		message: "Nomor Bot:",
 		default: currentBotNumber,
 		validate: (val) => {
 			if (!val.trim()) return true;
 			const cleanNum = val.trim().replace(/^\+/, "");
-			if (!/^\d+$/.test(cleanNum)) return "Invalid format. Use digits only.";
+			if (!/^\d+$/.test(cleanNum)) return "Format tidak valid. Gunakan angka saja.";
 			const pn = parsePhoneNumber("+" + cleanNum);
-			if (!pn.valid) return `Invalid phone number.`;
+			if (!pn.valid) return `Nomor telepon tidak valid.`;
 			return true;
 		},
 	});
@@ -102,14 +102,14 @@ export async function runSetupWizard() {
 	separator();
 
 	console.log("\n");
-	sectionHeader("Review Configuration");
+	sectionHeader("Periksa Konfigurasi");
 
 	const display = [
-		["Owner(s)", ownerNumbers.join(", ")],
+		["Owner", ownerNumbers.join(", ")],
 		["Author", authorName],
 		["Bot Name", botName],
-		["API Key", finalApiKey ? finalApiKey.slice(0, 6) + "*****" : theme.error("Not set")],
-		["Bot Number", botNumber || theme.muted("Not set (Will prompt on start)")],
+		["API Key", finalApiKey ? finalApiKey.slice(0, 6) + "*****" : theme.error("Belum diisi")],
+		["Bot Number", botNumber || theme.muted("Belum diisi (akan ditanyakan saat start)")],
 	];
 
 	for (const [label, value] of display) {
@@ -118,12 +118,12 @@ export async function runSetupWizard() {
 	console.log("");
 
 	const confirmed = await confirm({
-		message: "Save this configuration?",
+		message: "Simpan konfigurasi ini?",
 		default: true,
 	});
 
 	if (!confirmed) {
-		logWarning("Setup cancelled. You can run it again with: rynn --setup");
+		logWarning("Setup dibatalkan. Jalankan lagi dengan: rynn --setup");
 		return false;
 	}
 
@@ -135,12 +135,12 @@ export async function runSetupWizard() {
 		number_bot: botNumber,
 	});
 
-	logSuccess("Configuration saved.");
+	logSuccess("Konfigurasi tersimpan.");
 
 	const markerPath = path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "..", ".rynn_setup_done");
 	fs.writeFileSync(markerPath, "1", "utf-8");
 
-	console.log(`  ${theme.dim("Tip: Use")} ${theme.accent("'rynn start'")} ${theme.dim("command to start the bot anytime.")}\n`);
+	console.log(`  ${theme.dim("Tips: gunakan perintah")} ${theme.accent("'rynn start'")} ${theme.dim("kapan pun untuk menjalankan bot.")}\n`);
 
 	return true;
 }

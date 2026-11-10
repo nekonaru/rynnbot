@@ -1,6 +1,7 @@
 <div align="center">
-  <h1>Rynn: Self-Hosted WhatsApp Bot</h1>
-  <p><b>Run your own WhatsApp bot with hundreds of commands, games, AI tools,<br/>an interactive CLI, and multi-database storage.</b></p>
+  <img src="assets/ryn-mark.png" alt="Rynn" width="140" />
+  <h1>Rynn: Bot WhatsApp Self-Hosted</h1>
+  <p><b>Jalankan bot WhatsApp milikmu sendiri dengan ratusan perintah, game, perkakas AI,<br/>CLI interaktif, dan penyimpanan multi-database.</b></p>
 
   <a href="https://nodejs.org"><img src="https://img.shields.io/badge/Node.js-%E2%89%A520-339933?style=flat-square&logo=node.js&logoColor=white" alt="Node.js" /></a>
   <a href="https://github.com/nekonaru/rynnbot/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue?style=flat-square" alt="License" /></a>
@@ -9,106 +10,105 @@
 
 <br />
 
-**English** | [Bahasa Indonesia](README.id.md)
 
 > [!CAUTION]
-> **Unofficial API, account risk.** Rynn uses Baileys, an unofficial WhatsApp Web API. Automated clients violate WhatsApp's Terms of Service, and your number can face restrictions or a ban. The author accepts no liability. Use at your own risk. Read [Disclaimer and anti-ban guide](#disclaimer-and-anti-ban-guide) before deploying.
+> **API tidak resmi, risiko akun.** Rynn memakai Baileys, API WhatsApp Web tidak resmi. Klien otomatis melanggar Terms of Service WhatsApp, dan nomor kamu bisa kena pembatasan atau banned. Penulis tidak bertanggung jawab atas risiko apa pun. Gunakan dengan risiko kamu sendiri. Baca [Disclaimer dan panduan anti-banned](#disclaimer-dan-panduan-anti-banned) sebelum deploy.
 
 ---
 
-## Table of Contents
+## Daftar Isi
 
-- [About](#about)
-- [Features](#features)
-- [Requirements](#requirements)
-- [Installation](#installation)
-- [Configuration](#configuration)
-- [API Integration](#api-integration)
-- [Database & Storage](#database--storage)
+- [Tentang](#tentang)
+- [Fitur](#fitur)
+- [Kebutuhan](#kebutuhan)
+- [Instalasi](#instalasi)
+- [Konfigurasi](#konfigurasi)
+- [Integrasi API](#integrasi-api)
+- [Database & Penyimpanan](#database--penyimpanan)
 - [Web Dashboard](#web-dashboard)
 - [CLI](#cli)
-- [Project Structure](#project-structure)
-- [Development](#development)
-- [Testing](#testing)
+- [Struktur Proyek](#struktur-proyek)
+- [Pengembangan](#pengembangan)
+- [Pengujian](#pengujian)
 - [Continuous Integration](#continuous-integration)
 - [FAQ](#faq)
 - [Author](#author)
-- [Disclaimer and Anti-Ban Guide](#disclaimer-and-anti-ban-guide)
-- [License](#license)
+- [Disclaimer dan Panduan Anti-Banned](#disclaimer-dan-panduan-anti-banned)
+- [Lisensi](#lisensi)
 
 ---
 
-## About
+## Tentang
 
-Rynn is a self-hosted WhatsApp bot for people who want full control: your server, your session, your keys. It ships hundreds of ready-made commands (downloaders, AI tools, games, group management, an economy), a wizard-based CLI for setup and day-to-day control, and a database layer that runs on local JSON files or on MongoDB, PostgreSQL, and MySQL.
+Rynn adalah bot WhatsApp self-hosted untuk kamu yang ingin kendali penuh: server kamu, sesi kamu, kunci API kamu. Rynn membawa ratusan perintah siap pakai (downloader, perkakas AI, game, manajemen grup, ekonomi), CLI berbasis wizard untuk instalasi dan pengelolaan harian, dan lapisan database yang bisa jalan di JSON lokal atau di MongoDB, PostgreSQL, dan MySQL.
 
-> _"Your bot, your server, your rules."_
+> _"Bot kamu, server kamu, aturan kamu."_
 
-Originally based on Hitori Bot by [Nazedev](https://github.com/nazedev/hitori), heavily reworked and relicensed for the Rynn project.
-
----
-
-## Features
-
-| Category | Feature | Description |
-|----------|---------|-------------|
-| Menu & General | **Menu and help** | Categorized menus, command list, bot info, ping |
-| Menu & General | **Interactive CLI** | First-time setup wizard, settings manager, status dashboard, log viewer |
-| Menu & General | **Hot reload** | `settings.js` is hot-reloaded on save |
-| Group Tools | **Group management** | Kick, promote, demote, mute/unmute, tagall, welcome/leave messages, anti-link, anti-spam, anti-toxic |
-| Group Tools | **Anti-spam** | Per-user command cooldown with `.antispam` toggle per group |
-| Downloader | **YouTube, TikTok, Instagram, Facebook, Spotify, Pinterest, MediaFire** | `ytmp3`, `ytmp4`, `tiktok`, `ig`, `fb`, `spotify`, `pin`, `mediafire`, and more |
-| AI Tools | **AI chat** | `ai`, `claude`, `gemini`, `r1`, `glm` powered by the Naze API and Neosantara AI |
-| AI Tools | **Media AI** | AI image generation, background removal, and image upscaling via the API |
-| Utility | **Stickers and media** | `sticker`, `stickerwm`, `toimg`, `tomp3`, `tovn`, `translate`, `tts`, `qr` |
-| Games | **Werewolf, chess, tic-tac-toe, math quiz, slot, casino** | Multiplayer and single-player games with real game engines |
-| Games | **Quizzes** | `tebakgambar`, `tebakkata`, `susunkata`, `caklontong`, `kuismath`, `tekateki`, `family100` |
-| Economy | **RPG economy** | Coin limits, money, premium/VIP tiers, `daily`, `transfer`, `cangkulan`, `merampok`, `profile`, `leaderboard` |
-| Owner | **Owner commands** | `eval`, `broadcast`, `sewa` (rent), premium/VIP management, `ban`/`unban`, `backup` |
-| Owner | **Self-update** | `update` pulls the latest release over the network |
-| Sub-bot | **JadiBot / CloneBot** | Let others pair their own number as a sub-bot under your bot |
-| Reminder | **Sholat reminders** | Scheduled prayer-time messages per group (Aladhan-style schedule in `settings.js`) |
+Berbasis Hitori Bot karya [Nazedev](https://github.com/nazedev/hitori), yang dirombak total dan dilisensikan ulang untuk proyek Rynn.
 
 ---
 
-## Requirements
+## Fitur
 
-| Dependency | Minimum Version | Notes |
-|------------|-----------------|-------|
-| **Node.js** | v20 | Required |
-| **Git** | any | Required (source install) |
-| **FFmpeg** | any | Required for media commands; installed by the install scripts |
-| **PM2** | any | Optional, used for process management and auto-restart |
-| **npm** or **yarn** | any | yarn recommended on Termux |
+| Kategori | Fitur | Deskripsi |
+|----------|-------|-----------|
+| Menu & Umum | **Menu dan bantuan** | Menu berkategori, daftar perintah, info bot, ping |
+| Menu & Umum | **CLI interaktif** | Wizard setup pertama, manajer pengaturan, dashboard status, pembaca log |
+| Menu & Umum | **Hot reload** | `settings.js` dimuat ulang otomatis saat disimpan |
+| Alat Grup | **Manajemen grup** | Kick, promote, demote, mute/unmute, tagall, pesan welcome/leave, anti-link, anti-spam, anti-toxic |
+| Alat Grup | **Anti-spam** | Cooldown perintah per user dengan toggle `.antispam` per grup |
+| Downloader | **YouTube, TikTok, Instagram, Facebook, Spotify, Pinterest, MediaFire** | `ytmp3`, `ytmp4`, `tiktok`, `ig`, `fb`, `spotify`, `pin`, `mediafire`, dan lainnya |
+| Perkakas AI | **AI chat** | `ai`, `claude`, `gemini`, `r1`, `glm` lewat Naze API dan Neosantara AI |
+| Perkakas AI | **AI media** | AI image generation, background removal, dan upscale gambar lewat API |
+| Utilitas | **Stiker dan media** | `sticker`, `stickerwm`, `toimg`, `tomp3`, `tovn`, `translate`, `tts`, `qr` |
+| Game | **Werewolf, catur, tic-tac-toe, kuis math, slot, casino** | Game multipemain dan single player dengan engine game sungguhan |
+| Game | **Kuis** | `tebakgambar`, `tebakkata`, `susunkata`, `caklontong`, `kuismath`, `tekateki`, `family100` |
+| Ekonomi | **Ekonomi RPG** | Limit koin, uang, tier premium/VIP, `daily`, `transfer`, `cangkulan`, `merampok`, `profile`, `leaderboard` |
+| Owner | **Perintah owner** | `eval`, `broadcast`, `sewa`, manajemen premium/VIP, `ban`/`unban`, `backup` |
+| Owner | **Self-update** | `update` menarik rilis terbaru lewat jaringan |
+| Sub-bot | **JadiBot / CloneBot** | Izinkan nomor orang lain berjalan sebagai sub-bot di bawah botmu |
+| Pengingat | **Pengingat shalat** | Pesan waktu shalat terjadwal per grup (jadwal di `settings.js`) |
+
+---
+
+## Kebutuhan
+
+| Dependensi | Versi Minimum | Catatan |
+|------------|---------------|---------|
+| **Node.js** | v20 | Wajib |
+| **Git** | any | Wajib (instalasi dari source) |
+| **FFmpeg** | any | Wajib untuk perintah media; dipasang oleh install script |
+| **PM2** | any | Opsional, untuk process management dan auto-restart |
+| **npm** atau **yarn** | any | yarn direkomendasikan di Termux |
 
 > [!TIP]
-> You do not need to install FFmpeg or PM2 manually. The install scripts handle them.
+> Kamu tidak perlu memasang FFmpeg atau PM2 manual. Install script sudah mengurusnya.
 
-### Never used a terminal? Start here
+### Belum pernah pakai terminal? Mulai dari sini
 
-<details><summary><b>Show terminal basics</b></summary>
+<details><summary><b>Tampilkan dasar-dasar terminal</b></summary>
 
-1. **Windows:** press `Win + R`, type `powershell`, press Enter. WSL is also fine.
-2. **macOS:** open `Terminal` from Applications, or Spotlight (`Cmd + Space`, type `terminal`).
+1. **Windows:** tekan `Win + R`, ketik `powershell`, tekan Enter. WSL juga bisa.
+2. **macOS:** buka `Terminal` dari folder Applications, atau Spotlight (`Cmd + Space`, ketik `terminal`).
 3. **Linux:** `Ctrl + Alt + T`.
-4. **Android (Termux):** install Termux from F-Droid (not the Play Store build), open it.
-5. Type or paste a command, press Enter, and read the output. `Ctrl + C` stops a running process.
+4. **Android (Termux):** pasang Termux dari F-Droid (bukan build Play Store), lalu buka.
+5. Ketik atau tempel perintah, tekan Enter, lalu baca output-nya. `Ctrl + C` menghentikan proses yang sedang berjalan.
 </details>
 
 ---
 
-## Installation
+## Instalasi
 
-### Option A: Automatic installer (recommended)
+### Opsi A: Installer otomatis (direkomendasikan)
 
-1. Clone the repository:
+1. Clone repositori:
 
 ```bash
 git clone https://github.com/nekonaru/rynnbot.git
 cd rynnbot
 ```
 
-2. Run the installer for your platform:
+2. Jalankan installer untuk platform kamu:
 
 **Linux / macOS / Termux:**
 
@@ -122,11 +122,11 @@ bash install.sh
 .\install.ps1
 ```
 
-Both scripts detect your package manager, install system dependencies, install PM2, run `npm install`, register the global `rynn` command via `npm link`, and launch the first-time setup wizard.
+Kedua script mendeteksi package manager, memasang dependensi sistem, memasang PM2, menjalankan `npm install`, mendaftarkan command global `rynn` lewat `npm link`, lalu membuka wizard setup pertama.
 
 ### Termux (Android)
 
-Works on a stock Termux install. Install Termux from F-Droid (not the Play Store build), then:
+Berjalan di instalasi Termux standar. Pasang Termux dari F-Droid (bukan build Play Store), lalu:
 
 ```bash
 pkg update && pkg upgrade
@@ -136,14 +136,14 @@ cd rynnbot
 npm install
 ```
 
-- Do not clone into `/storage/...`; that filesystem does not support symlinks and Node.js needs them. Clone into your home directory instead (for example `~/rynnbot`). `bash install.sh` detects this and stops with instructions.
-- `@napi-rs/canvas` is an optional dependency. If it cannot build on your device, image rendering falls back to PureImage automatically; nothing else is affected.
-- `ffmpeg` is required for media commands (stickers, video conversion). `python` is needed for the `.speed` command.
-- `bash install.sh` works on Termux too (it uses `pkg`, installs the same dependencies, and registers the global `rynn` command).
+- Jangan clone ke `/storage/...`; filesystem itu tidak mendukung symlink dan Node.js membutuhkannya. Clone ke home directory (misalnya `~/rynnbot`). `bash install.sh` mendeteksi ini dan berhenti dengan petunjuk.
+- `@napi-rs/canvas` adalah optional dependency. Jika gagal dibangun di perangkatmu, render gambar otomatis fallback ke PureImage; tidak ada yang terpengaruh selainnya.
+- `ffmpeg` wajib untuk perintah media (stiker, konversi video). `python` dibutuhkan untuk perintah `.speed`.
+- `bash install.sh` juga berjalan di Termux (memakai `pkg`, memasang dependensi yang sama, dan mendaftarkan command global `rynn`).
 
-### Option B: Manual (build from source)
+### Opsi B: Manual (build from source)
 
-<details><summary><b>I have Git installed</b></summary>
+<details><summary><b>Saya sudah punya Git</b></summary>
 
 ```bash
 git clone https://github.com/nekonaru/rynnbot.git
@@ -152,95 +152,95 @@ npm install
 ```
 </details>
 
-<details><summary><b>I don't have Git</b></summary>
+<details><summary><b>Saya tidak punya Git</b></summary>
 
-1. Download the latest source from the [releases page](https://github.com/nekonaru/rynnbot/releases) (Assets, `source code (zip)`).
-2. Extract it, then open a terminal in the extracted folder.
-3. Run `npm install` (install [Node.js v20+](https://nodejs.org) first).
+1. Unduh source terbaru dari [halaman releases](https://github.com/nekonaru/rynnbot/releases) (Assets, `source code (zip)`).
+2. Ekstrak, lalu buka terminal di folder hasil ekstrak.
+3. Jalankan `npm install` (pasang [Node.js v20+](https://nodejs.org) dulu).
 </details>
 
-4. Create your `.env`:
+4. Buat file `.env`:
 
 ```bash
 cp .env.example .env
 ```
 
-5. Open `.env` and fill in your keys (see [Configuration](#configuration)).
+5. Buka `.env` dan isi key kamu (lihat [Konfigurasi](#konfigurasi)).
 
-6. Start the bot:
+6. Jalankan bot:
 
 ```bash
 npm start
-# or, if you registered the CLI globally:
+# atau, jika CLI terdaftar global:
 rynn start
 ```
 
 ---
 
-## Configuration
+## Konfigurasi
 
 ### 1. Environment variables (`.env`)
 
-Secrets live only in `.env`, which is gitignored and never committed. Copy `.env.example` and fill in your values:
+Secret hanya hidup di `.env`, yang di-gitignore dan tidak pernah di-commit. Copy `.env.example` lalu isi:
 
-| Variable | Required | Description |
-|----------|----------|-------------|
-| `NAZE_API_KEY` | Yes (for API features) | Naze API key from [naze.dev](https://naze.dev) |
-| `NEOSANTARA_API_KEY` | No | Neosantara AI key |
-| `MONGODB_URL` | No | MongoDB/MySQL/PostgreSQL connection string. Empty = local folder storage |
-| `NUMBER_BOT` | No | Bot WhatsApp number for pairing, format `628xx` |
-| `OWNER_NUMBER` | No | Owner number(s), comma separated |
-| `ADMIN_KEY` | Only if dashboard enabled | Admin key for the relay dashboard |
-| `DASHBOARD_ENABLED` | No | `true` to connect to the relay dashboard. Default `false` |
-| `ALLOW_REMOTE_EXEC` | No | `true` enables the remote shell-exec endpoint even when the dashboard is on. Default `false` |
-| `ALLOW_INSECURE_TLS` | No | `true` disables TLS verification for external APIs. Default `false` |
+| Variable | Wajib | Deskripsi |
+|----------|-------|-----------|
+| `NAZE_API_KEY` | Ya (untuk fitur API) | Naze API key dari [naze.dev](https://naze.dev) |
+| `NEOSANTARA_API_KEY` | Tidak | Neosantara AI key |
+| `MONGODB_URL` | Tidak | Connection string MongoDB/MySQL/PostgreSQL. Kosong = penyimpanan folder lokal |
+| `NUMBER_BOT` | Tidak | Nomor WhatsApp bot untuk pairing, format `628xx` |
+| `OWNER_NUMBER` | Tidak | Nomor owner, pisahkan dengan koma |
+| `ADMIN_KEY` | Hanya jika dashboard aktif | Admin key untuk relay dashboard |
+| `DASHBOARD_ENABLED` | Tidak | `true` untuk connect ke relay dashboard. Default `false` |
+| `ALLOW_REMOTE_EXEC` | Tidak | `true` mengaktifkan endpoint exec shell jarak jauh walau dashboard aktif. Default `false` |
+| `ALLOW_INSECURE_TLS` | Tidak | `true` mematikan verifikasi TLS untuk API eksternal. Default `false` |
 
 > [!IMPORTANT]
-> Keys that were shipped as examples in older releases of this file were committed to the repository and must be treated as leaked. Regenerate them at [naze.dev](https://naze.dev) and put your new keys in `.env`.
+> Key contoh yang pernah dikirim sebagai contoh di rilis lama file ini ter-commit ke repositori dan harus dianggap bocor. Generate ulang di [naze.dev](https://naze.dev) lalu taruh key baru kamu di `.env`.
 
 ### 2. `settings.js` (hot-reloaded)
 
-All non-secret bot settings live in `settings.js`: owner, bot name, author, prefix list, timezone, locale, limits, money, jadwal sholat, bad words, database path. Edit it directly (it hot-reloads) or use `rynn settings`.
+Semua pengaturan non-secret ada di `settings.js`: owner, nama bot, author, prefix, timezone, locale, limit, money, jadwal sholat, bad words, path database. Edit langsung (hot-reload) atau pakai `rynn settings`.
 
-### 3. Setup wizard
+### 3. Wizard setup
 
 ```bash
 rynn --setup
 ```
 
-Walks you through owner number, author, bot name, Naze API key, and bot WhatsApp number.
+Wizard ini memandu kamu mengisi nomor owner, author, nama bot, Naze API key, dan nomor WhatsApp bot.
 
 ---
 
-## API Integration
+## Integrasi API
 
-Rynn talks to the **Naze API** (`https://naze.dev/api/v1`) for downloaders, AI tools, and media utilities, and to **Neosantara AI** for some AI models. Get your keys at [naze.dev](https://naze.dev) and [app.neosantara.xyz](https://app.neosantara.xyz).
+Rynn berbicara dengan **Naze API** (`https://naze.dev/api/v1`) untuk downloader, perkakas AI, dan utilitas media, serta **Neosantara AI** untuk beberapa model AI. Ambil key kamu di [naze.dev](https://naze.dev) dan [app.neosantara.xyz](https://app.neosantara.xyz).
 
-A global `global.fetchApi(endpoint, data, options)` helper is defined in `index.js`. It resolves the base URL from `global.APIs`, injects your key automatically, and parses the response.
+Helper global `global.fetchApi(endpoint, data, options)` didefinisikan di `index.js`. Helper ini me-resolve base URL dari `global.APIs`, menyuntikkan key kamu otomatis, dan mem-parse respons.
 
-Function shape:
+Bentuk fungsi:
 
 ```js
 await global.fetchApi(endpoint, data, options)
 ```
 
-- `endpoint`: route starting with `/` (for example `/ai/chat`).
-- `data`: object. GET requests become query string parameters; POST requests are sent as a JSON body (or as `FormData` when `options.form = true`).
+- `endpoint`: route yang diawali `/` (misalnya `/ai/chat`).
+- `data`: object. Request GET menjadi query string; request POST dikirim sebagai JSON body (atau `FormData` jika `options.form = true`).
 - `options`:
-  - `method`: `"GET"` (default) or `"POST"`
-  - `stream`: `true` or a file path to stream the response to a temp file
-  - `buffer`: `true` to return a `Buffer`
-  - `api`: provider index (`1` = Naze, `2` = Neosantara)
-  - `responseType`: `"json"` (default), `"text"`, or `"arrayBuffer"`
+  - `method`: `"GET"` (default) atau `"POST"`
+  - `stream`: `true` atau path file untuk streaming respons ke file temp
+  - `buffer`: `true` untuk mengembalikan `Buffer`
+  - `api`: index provider (`1` = Naze, `2` = Neosantara)
+  - `responseType`: `"json"` (default), `"text"`, atau `"arrayBuffer"`
 
-### Example: AI chat with GET (default)
+### Contoh: AI chat dengan GET (default)
 
 ```js
 const response = await global.fetchApi("/ai/chat", { query: text });
 await m.reply(response.result.message);
 ```
 
-### Example: AI chat with POST
+### Contoh: AI chat dengan POST
 
 ```js
 const response = await global.fetchApi("/ai/chat", { query: text, model: "default" }, { method: "POST" });
@@ -248,40 +248,40 @@ await m.reply(response.result.message);
 ```
 
 > [!TIP]
-> For endpoints that return media (TTS, image generators), pass `{ stream: true }`. `fetchApi` saves the file and returns its local path, ready for `sock.sendMessage()`.
+> Untuk endpoint yang mengembalikan media (TTS, image generator), kirim `{ stream: true }`. `fetchApi` menyimpan file dan mengembalikan path lokalnya, siap dipakai `sock.sendMessage()`.
 
 > [!NOTE]
-> Without a valid API key, API-powered commands fail with a clear message telling you to set `NAZE_API_KEY` in `.env` or run `.setapikey`.
+> Tanpa API key yang valid, perintah berbasis API gagal dengan pesan yang jelas menyuruh kamu mengisi `NAZE_API_KEY` di `.env` atau jalankan `.setapikey`.
 
 ---
 
-## Database & Storage
+## Database & Penyimpanan
 
-Rynn splits data into three layers, each configurable independently:
+Rynn membagi data menjadi tiga lapis, masing-masing bisa dikonfigurasi sendiri:
 
-1. **Session auth** (`global.database.path`): WhatsApp credentials and signal keys, written through an async FIFO write queue.
-2. **Message store** (`global.database.options.store`): Baileys cache for messages, contacts, and group metadata.
-3. **Bot database** (`global.database.options.database`): users, economy, limits, group settings.
+1. **Session auth** (`global.database.path`): kredensial WhatsApp dan signal key, ditulis lewat antrean FIFO async.
+2. **Message store** (`global.database.options.store`): cache Baileys untuk pesan, kontak, dan metadata grup.
+3. **Bot database** (`global.database.options.database`): user, ekonomi, limit, pengaturan grup.
 
-| Engine | Prefix | Notes |
-|--------|--------|-------|
-| **Local JSON** | *(folder name, e.g. `rynn-session`)* | Default. Zero setup |
-| **MongoDB** | `mongodb://` or `mongodb+srv://` | Shared connection pool, SSL auto-detected |
-| **PostgreSQL** | `postgres://` or `postgresql://` | Works with Supabase, Neon, Aiven, RDS |
-| **MySQL** | `mysql://` | Works with TiDB Cloud, PlanetScale |
+| Engine | Prefix | Catatan |
+|--------|--------|---------|
+| **JSON lokal** | *(nama folder, misal `rynn-session`)* | Default. Nol setup |
+| **MongoDB** | `mongodb://` atau `mongodb+srv://` | Connection pool berbagi, SSL auto-detected |
+| **PostgreSQL** | `postgres://` atau `postgresql://` | Cocok untuk Supabase, Neon, Aiven, RDS |
+| **MySQL** | `mysql://` | Cocok untuk TiDB Cloud, PlanetScale |
 
-All layers can share one server (`store: true, database: true`), or each can point at its own engine or local file (`store: { path: "mongodb+srv://..." }`). Never hardcode credentials in `settings.js`; put them in `.env` or in the connection string.
+Semua lapis bisa berbagi satu server (`store: true, database: true`), atau masing-masing menunjuk engine/file lokal sendiri (`store: { path: "mongodb+srv://..." }`). Jangan hardcode kredensial di `settings.js`; taruh di `.env` atau di connection string.
 
 ```js
-// settings.js example: local JSON (default)
+// contoh settings.js: JSON lokal (default)
 global.database = {
 	path: "rynn-session",
 	options: { store: true, database: true },
 };
 
-// settings.js example: PostgreSQL everywhere (URL from .env)
+// contoh settings.js: PostgreSQL di semua lapis (URL dari .env)
 global.database = {
-	path: process.env.MONGODB_URL, // or a postgres:// string
+	path: process.env.MONGODB_URL, // atau string postgres://
 	options: { store: true, database: true },
 };
 ```
@@ -290,92 +290,92 @@ global.database = {
 
 ## Web Dashboard
 
-Rynn can connect to a relay-based dashboard at `bot.naze.biz.id` via Socket.IO. It is **disabled by default** and must be opted into:
+Rynn bisa terhubung ke relay dashboard di `bot.naze.biz.id` lewat Socket.IO. **Nonaktif secara default** dan harus diaktifkan manual:
 
 ```env
 DASHBOARD_ENABLED=true
-ADMIN_KEY=<a long random string>
-ALLOW_REMOTE_EXEC=false   # optional, enables remote shell exec. Keep false unless you need it.
+ADMIN_KEY=<string acak yang panjang>
+ALLOW_REMOTE_EXEC=false   # opsional, mengaktifkan exec shell jarak jauh. Biarkan false kecuali perlu.
 ```
 
-When enabled, the bot registers itself and prints a dashboard URL (containing the admin key) to the console. From the panel you can view stats, browse/edit data, change settings, and send messages.
+Saat aktif, bot mendaftarkan dirinya dan mencetak dashboard URL (berisi admin key) ke console. Dari panel kamu bisa melihat statistik, jelajah/edit data, mengubah pengaturan, dan mengirim pesan.
 
 > [!CAUTION]
-> The dashboard is a third-party relay service. Enabling it exposes your bot's admin controls to whoever holds the admin key. The remote exec endpoint (`ALLOW_REMOTE_EXEC=true`) can run shell commands on your server as the bot user. Keep both off unless you fully trust the relay and your network.
+> Dashboard ini adalah layanan relay pihak ketiga. Mengaktifkannya mengekspos kontrol admin bot ke siapa pun yang memegang admin key. Endpoint remote exec (`ALLOW_REMOTE_EXEC=true`) bisa menjalankan perintah shell di server kamu sebagai user bot. Biarkan keduanya mati kecuali kamu benar-benar percaya relay dan jaringanmu.
 
-See [Security](#security-notes) below for how the relay is authorized.
+Lihat bagian [Catatan keamanan](#catatan-keamanan) di bawah untuk cara otorisasi relay-nya.
 
-### Security notes
+### Catatan keamanan
 
-- `package.json` runs with `private: true`; there is no npm publish path.
-- Secrets live only in `.env` (gitignored). `scripts/check.js` scans for key patterns in CI.
-- The dashboard and its remote exec are off by default and require separate opt-in flags.
-- Admin key comparison uses timing-safe comparison; failed attempts are locked out for 15 minutes.
-- TLS verification is on by default; `ALLOW_INSECURE_TLS=true` opts out explicitly (with a loud warning).
-- Dependencies are installed with `npm ci` from the committed lockfile.
+- `package.json` berjalan dengan `private: true`; tidak ada jalur publish ke npm.
+- Secret hanya hidup di `.env` (di-gitignore). `scripts/check.js` memindai pola key di CI.
+- Dashboard dan remote exec nonaktif secara default dan butuh flag opt-in terpisah.
+- Perbandingan admin key memakai timing-safe comparison; percobaan gagal dikunci 15 menit.
+- Verifikasi TLS aktif secara default; `ALLOW_INSECURE_TLS=true` mematikan dengan peringatan keras.
+- Dependensi dipasang dengan `npm ci` dari lockfile yang ter-commit.
 
 ---
 
 ## CLI
 
-Rynn ships a full CLI (registered globally by the installers as `rynn`):
+Rynn membawa CLI lengkap (terdaftar global sebagai `rynn` oleh installer):
 
 ```text
-rynn                  Open the interactive main menu
-rynn start            Start the bot
-rynn settings         Open the settings manager
-rynn status           System health dashboard
-rynn report           Logs and diagnostics
-rynn --setup          Re-run the first-time setup wizard
-rynn --help           Help
+rynn                  Buka menu utama interaktif
+rynn start            Jalankan bot
+rynn settings         Buka manajer pengaturan
+rynn status           Dashboard kesehatan sistem
+rynn report           Log dan diagnostik
+rynn --setup          Ulangi wizard setup pertama
+rynn --help           Bantuan
 ```
 
-The settings manager edits `settings.js` (and your `.env` for the Naze API key) with a guided menu. Status shows dependency checks, PM2 process info, database file info, and system resources. Report shows recent PM2 logs, filtered errors, a JSON integrity check, and `npm audit`.
+Manajer pengaturan mengedit `settings.js` (dan `.env` untuk Naze API key) lewat menu terarah. Status menampilkan cek dependensi, info proses PM2, info file database, dan resource sistem. Report menampilkan log PM2 terakhir, error terfilter, cek integritas JSON, dan `npm audit`.
 
 ---
 
-## Project Structure
+## Struktur Proyek
 
 ```text
 rynnbot/
-├── index.js                  # Core connector: Baileys init, events, pairing, auto-restart hooks
-├── handler.js                # All bot commands (switch (command) block)
-├── start.js                  # Entry point: spawns index.js, restarts on crash, graceful shutdown
-├── settings.js               # Configuration, hot-reloaded
-├── cli.js                    # CLI entry point
-├── speed.py                  # Speedtest helper used by the .speed command
+├── index.js                  # Core connector: init Baileys, event, pairing, auto-restart
+├── handler.js                # Semua perintah bot (blok switch (command))
+├── start.js                  # Entry point: spawn index.js, restart saat crash, graceful shutdown
+├── settings.js               # Konfigurasi, hot-reload
+├── cli.js                    # Entry point CLI
+├── speed.py                  # Helper speedtest untuk perintah .speed
 ├── install.sh                # Installer (Linux / macOS / Termux)
 ├── install.ps1               # Installer (Windows)
-├── install.cmd               # Installer launcher (Windows)
-├── .env.example              # Template for your .env (always safe to commit)
+├── install.cmd               # Launcher installer (Windows)
+├── .env.example              # Template .env (aman di-commit)
 ├── lib/
-│   ├── converter.js          # Media conversion (audio, video, GIF, WebP)
-│   ├── exif.js               # Sticker EXIF metadata
-│   ├── function.js           # Shared helpers (fetchJson, updateSettings, antiSpam, backups)
-│   ├── game.js               # Game logic (Werewolf, Chess AI, RPG economy)
-│   ├── math.js               # Math quiz generator
-│   ├── scraper.js            # YouTube/media scrapers
-│   ├── template_menu.js      # Menu templates
-│   ├── tictactoe.js          # Tic-tac-toe engine
-│   ├── uploader.js           # File uploads
-│   ├── werewolf.js           # Werewolf game engine
-│   └── interactive.js        # Interactive message helpers
+│   ├── converter.js          # Konversi media (audio, video, GIF, WebP)
+│   ├── exif.js               # Metadata EXIF stiker
+│   ├── function.js           # Helper bersama (fetchJson, updateSettings, antiSpam, backup)
+│   ├── game.js               # Logika game (Werewolf, Chess AI, ekonomi RPG)
+│   ├── math.js               # Generator kuis math
+│   ├── scraper.js            # Scraper YouTube/media
+│   ├── template_menu.js      # Template menu
+│   ├── tictactoe.js          # Engine tic-tac-toe
+│   ├── uploader.js           # Upload file
+│   ├── werewolf.js           # Engine game Werewolf
+│   └── interactive.js        # Helper interactive message
 ├── src/
-│   ├── auth.js               # Custom auth adapter (local/MongoDB/SQL)
-│   ├── database.js           # Database adapter (JSON / MongoDB / MySQL / PostgreSQL)
-│   ├── message.js            # Message parser, serializer, lid-mapping
-│   ├── clonebot.js           # Sub-bot (clonebot) sessions
-│   ├── server.js             # Relay dashboard client (disabled by default)
-│   ├── env.js                # .env read/write helpers
-│   ├── cli/                  # CLI modules (setup, settings, status, report)
-│   ├── helper/               # Interactive message builders
-│   ├── lib/interactive.js    # Interactive message re-exports
-│   ├── media/                # Static assets
-│   └── nulis/                # Handwriting image generator assets
+│   ├── auth.js               # Adapter auth custom (lokal/MongoDB/SQL)
+│   ├── database.js           # Adapter database (JSON / MongoDB / MySQL / PostgreSQL)
+│   ├── message.js            # Parser & serializer pesan, lid-mapping
+│   ├── clonebot.js           # Sesi sub-bot (clonebot)
+│   ├── server.js             # Klien relay dashboard (nonaktif default)
+│   ├── env.js                # Helper read/write .env
+│   ├── cli/                  # Modul CLI (setup, settings, status, report)
+│   ├── helper/               # Builder interactive message
+│   ├── lib/interactive.js    # Re-export interactive message
+│   ├── media/                # Aset statis
+│   └── nulis/                # Aset generator gambar tulisan tangan
 ├── scripts/
-│   └── check.js              # `npm run check`: syntax + leaked-key scan
+│   └── check.js              # `npm run check`: cek sintaks + pemindai key bocor
 ├── .github/workflows/ci.yml  # CI
-├── database/                 # Runtime data (gitignored)
+├── database/                 # Data runtime (gitignored)
 ├── Dockerfile
 ├── docker-compose.yml
 ├── package.json
@@ -384,12 +384,12 @@ rynnbot/
 
 ---
 
-## Development
+## Pengembangan
 
-### Adding a new command
+### Menambah perintah baru
 
-1. Open `handler.js` and find the `switch (command)` block.
-2. Add a new `case`:
+1. Buka `handler.js`, cari blok `switch (command)`.
+2. Tambahkan `case` baru:
 
 ```js
 case "ping": {
@@ -398,71 +398,71 @@ case "ping": {
 break;
 ```
 
-3. Register the command in the menu template (`lib/template_menu.js`) if it should be listed.
-4. Run `npm run check` before committing (syntax + secret scan).
+3. Daftarkan perintah di template menu (`lib/template_menu.js`) jika ingin muncul di menu.
+4. Jalankan `npm run check` sebelum commit (cek sintaks + pemindai secret).
 
-Do not restructure the main `switch` block. Add commands as separate `case` entries only.
+Jangan restrukturisasi blok `switch` utama. Tambah perintah sebagai entri `case` terpisah saja.
 
-### Updating
+### Update
 
-`settings.js` is hot-reloaded on save. For code updates, pull the latest changes or run `.update` in WhatsApp, then restart the bot (`Ctrl + C`, `npm start`).
+`settings.js` di-hot-reload saat disimpan. Untuk update kode, pull perubahan terbaru atau jalankan `.update` di WhatsApp, lalu restart bot (`Ctrl + C`, `npm start`).
 
 ---
 
-## Testing
+## Pengujian
 
 ```bash
-npm run check   # node --check every .js file + scan for leaked key patterns
+npm run check   # node --check semua file .js + scan pola key bocor
 ```
 
-| Check | Requirement |
-|-------|-------------|
-| `node --check` on every `.js` file | Must pass |
-| Secret scan (`gsk_`, `nz-` followed by 10+ hex, `nsk_` followed by 16+ hex) in tracked files | Must find nothing |
-| `npm audit --omit=dev --audit-level=high` | Advisory in CI (does not fail the build) |
+| Cek | Kebutuhan |
+|-----|-----------|
+| `node --check` di setiap file `.js` | Harus lolos |
+| Scan secret (`gsk_`, `nz-` diikuti 10+ hex, `nsk_` diikuti 16+ hex) di file ter-track | Harus kosong |
+| `npm audit --omit=dev --audit-level=high` | Advisory di CI (tidak menggagalkan build) |
 
-Linting is left to your editor; the project ships a Prettier config (`.prettierrc.json`) but no mandatory lint gate.
+Linting diserahkan ke editor kamu; proyek membawa konfigurasi Prettier (`.prettierrc.json`) tapi tanpa gate lint wajib.
 
 ---
 
 ## Continuous Integration
 
-| Workflow | Purpose |
-|----------|---------|
-| `.github/workflows/ci.yml` | On every push to `main`, tags `v*`, and PRs: install with `npm ci`, run `npm run check`, and run `npm audit` as advisory |
+| Workflow | Tujuan |
+|----------|--------|
+| `.github/workflows/ci.yml` | Setiap push ke `main`, tag `v*`, dan PR: install dengan `npm ci`, jalankan `npm run check`, dan `npm audit` sebagai advisory |
 
 ---
 
 ## FAQ
 
-<details><summary><b>I got a pairing code but the bot won't connect. What's wrong?</b></summary>
+<details><summary><b>Saya dapat pairing code tapi bot tidak connect. Kenapa?</b></summary>
 
-The number set in `NUMBER_BOT` (`.env`) must be a WhatsApp number you control and must not be logged in elsewhere. Try deleting the session folder (`rynn-session/`), restarting, and re-pairing. See the anti-ban guide before using a fresh number.
+Nomor di `NUMBER_BOT` (`.env`) harus nomor WhatsApp yang kamu kontrol dan tidak sedang dipakai di tempat lain. Coba hapus folder sesi (`rynn-session/`), restart, lalu pairing ulang. Baca panduan anti-banned dulu sebelum memakai nomor baru.
 </details>
 
-<details><summary><b>Can I use Rynn for two WhatsApp numbers?</b></summary>
+<details><summary><b>Bisa dipakai untuk dua nomor WhatsApp?</b></summary>
 
-Yes. `jadibot`/`clonebot` let other people's numbers run as sub-bots under your bot. Owners can manage them with `listjadibot` and `deljadibot`.
+Bisa. `jadibot`/`clonebot` mengizinkan nomor orang lain berjalan sebagai sub-bot di bawah botmu. Owner bisa mengelolanya lewat `listjadibot` dan `deljadibot`.
 </details>
 
-<details><summary><b>Where do I put the API key?</b></summary>
+<details><summary><b>Taruh API key di mana?</b></summary>
 
-In `.env` as `NAZE_API_KEY` (copy `.env.example`). You can also run `.setapikey your-key` in WhatsApp, or `rynn settings` and pick API Keys. The key is stored in `.env`, never in `settings.js`.
+Di `.env` sebagai `NAZE_API_KEY` (copy `.env.example`). Kamu juga bisa jalankan `.setapikey key-kamu` di WhatsApp, atau `rynn settings` lalu pilih API Keys. Key tersimpan di `.env`, tidak pernah di `settings.js`.
 </details>
 
-<details><summary><b>My number got banned. Can you help?</b></summary>
+<details><summary><b>Nomor saya banned. Bisa dibantu?</b></summary>
 
-No. Bans are issued by Meta's anti-spam systems and are outside anyone's control. Please read the [Disclaimer and anti-ban guide](#disclaimer-and-anti-ban-guide) before deploying, and never use a fresh SIM card.
+Tidak bisa. Banned dikeluarkan oleh sistem anti-spam Meta dan di luar kendali siapa pun. Baca [Disclaimer dan panduan anti-banned](#disclaimer-dan-panduan-anti-banned) sebelum deploy, dan jangan pernah memakai SIM card baru.
 </details>
 
-<details><summary><b>Does this project store my WhatsApp messages?</b></summary>
+<details><summary><b>Apakah proyek ini menyimpan pesan WhatsApp saya?</b></summary>
 
-Messages are cached locally in the session/store folder to make Baileys work, and bot data (limits, premium, etc.) lives in the configured database. Nothing is sent to third parties except the API providers you call, and the relay dashboard if you enable it (off by default).
+Pesan di-cache lokal di folder sesi/store supaya Baileys bisa bekerja, dan data bot (limit, premium, dll) hidup di database yang kamu konfigurasi. Tidak ada yang dikirim ke pihak ketiga selain API provider yang kamu panggil, dan relay dashboard jika kamu mengaktifkannya (nonaktif default).
 </details>
 
-<details><summary><b>How do I update?</b></summary>
+<details><summary><b>Bagaimana cara update?</b></summary>
 
-`git pull` (or `.update` in WhatsApp) followed by `npm start`. The bot restarts automatically on crash when launched via `start.js`.
+`git pull` (atau `.update` di WhatsApp) lalu `npm start`. Bot restart otomatis saat crash jika dijalankan lewat `start.js`.
 </details>
 
 ---
@@ -477,29 +477,29 @@ Messages are cached locally in the session/store folder to make Baileys work, an
 
 </div>
 
-Based on Hitori Bot by [Nazedev](https://github.com/nazedev/hitori).
+Berbasis Hitori Bot karya [Nazedev](https://github.com/nazedev/hitori).
 
 
 ---
 
-## Disclaimer and Anti-Ban Guide
+## Disclaimer dan Panduan Anti-Banned
 
-### 1. Unofficial API and legal disclaimer
+### 1. API tidak resmi dan disclaimer hukum
 
-Rynn is an independent open-source project built on Baileys, an unofficial WhatsApp Web multi-device protocol. It is not affiliated with, endorsed, or authorized by WhatsApp Inc. or Meta Platforms, Inc. Using it violates WhatsApp's Terms of Service. By downloading, installing, or running Rynn, you accept all risks, including account restriction or ban, message loss, and any resulting damages. The author and contributors accept no liability.
+Rynn adalah proyek open-source independen yang dibangun di atas Baileys, protokol WhatsApp Web multi-device tidak resmi. Proyek ini tidak berafiliasi dengan, didukung, atau diotorisasi oleh WhatsApp Inc. maupun Meta Platforms, Inc. Penggunaannya melanggar Terms of Service WhatsApp. Dengan mengunduh, memasang, atau menjalankan Rynn, kamu menerima semua risiko, termasuk pembatasan atau banned akun, kehilangan pesan, dan kerugian apa pun yang timbul. Penulis dan kontributor tidak bertanggung jawab.
 
-### 2. Why accounts get banned
+### 2. Kenapa akun di-banned
 
-1. **Fresh SIM cards.** New numbers have no chat history and are flagged immediately. Warm a number up for 2-4 weeks with normal human use before botting it.
-2. **User reports.** Two or three "Report and block" clicks in public groups will trigger an instant ban. Restrict the bot to private or trusted groups.
-3. **Datacenter IPs.** Cloud VPS IP ranges (AWS, DigitalOcean, Heroku, Railway) are treated with higher suspicion than residential connections. Avoid frequent reconnects and keep message volume realistic.
+1. **SIM card baru.** Nomor baru tidak punya jejak chat dan langsung ditandai. Hangatkan nomor 2-4 minggu dengan pemakaian manusia normal sebelum dipakai bot.
+2. **Laporan user.** Dua atau tiga klik "Report and block" di grup publik akan memicu banned instan. Batasi bot ke grup privat atau tepercaya.
+3. **IP datacenter.** Range IP VPS cloud (AWS, DigitalOcean, Heroku, Railway) dicurigai lebih tinggi dibanding koneksi rumahan. Hindari reconnect terlalu sering dan jaga volume pesan tetap realistis.
 
-### 3. Maintainer policy
+### 3. Kebijakan maintainer
 
-Issues complaining about banned numbers will be closed without action. Account safety is 100% the user's responsibility.
+Issue yang mengeluhkan nomor banned akan ditutup tanpa tindakan. Keamanan akun 100% tanggung jawab pengguna bot.
 
 ---
 
-## License
+## Lisensi
 
-Distributed under the **MIT License**. See [`LICENSE`](LICENSE) for more information.
+Didistribusikan di bawah **Lisensi MIT**. Lihat [`LICENSE`](LICENSE) untuk informasi lebih lanjut.

@@ -306,8 +306,8 @@ async function loadSessionLidMappings(sessionPath = "./rynn-session") {
 }
 
 /*
- * Based on Hitori Bot by Nazedev (https://github.com/nazedev/hitori)
- * Reworked for Rynn (https://github.com/nekonaru/rynnbot)
+ * Awalnya berbasis Hitori Bot karya Nazedev (https://github.com/nazedev/hitori)
+ * Dirombak total untuk proyek Rynn (https://github.com/nekonaru/rynnbot)
  */
 
 let _reloadTimer = null;
@@ -772,10 +772,10 @@ async function MessagesUpsert(sock, message, store) {
 					}
 
 					if (sockHandler) {
-						sockHandler(sock, m, store).catch((e) => console.error("Error in sockHandler:", e));
+						sockHandler(sock, m, store).catch((e) => console.error("Kesalahan di sockHandler:", e));
 					} else {
 						await reloadHandler();
-						if (sockHandler) sockHandler(sock, m, store).catch((e) => console.error("Error in sockHandler:", e));
+						if (sockHandler) sockHandler(sock, m, store).catch((e) => console.error("Kesalahan di sockHandler:", e));
 					}
 				}
 
@@ -798,7 +798,7 @@ async function MessagesUpsert(sock, message, store) {
 					}
 				}
 			} catch (err) {
-				console.error("Error processing message in MessagesUpsert loop:", err);
+				console.error("Error memproses pesan di loop MessagesUpsert:", err);
 			}
 		}
 	} catch (e) {
@@ -1556,7 +1556,7 @@ async function Solving(sock, store, sessionPath = "./rynn-session") {
 		const limitConfig = buttonLimit ?? button_limit ?? options.buttonLimit ?? options.button_limit ?? content.in_thread_buttons_limit ?? options.in_thread_buttons_limit;
 		if (limitConfig !== undefined && limitConfig !== null) {
 			const bListTitle = listTitle || list_title || options.listTitle || options.list_title || "action list";
-			const bBtnTitle = buttonTitle || button_title || options.buttonTitle || options.button_title || "choose action";
+			const bBtnTitle = buttonTitle || button_title || options.buttonTitle || options.button_title || "Pilih aksi";
 			const bDividers = dividerIndices || divider_indices || options.dividerIndices || options.divider_indices || [];
 
 			if (typeof limitConfig === "object") {
@@ -1860,8 +1860,8 @@ async function Solving(sock, store, sessionPath = "./rynn-session") {
 }
 
 /*
- * Based on Hitori Bot by Nazedev (https://github.com/nazedev/hitori)
- * Reworked for Rynn (https://github.com/nekonaru/rynnbot)
+ * Awalnya berbasis Hitori Bot karya Nazedev (https://github.com/nazedev/hitori)
+ * Dirombak total untuk proyek Rynn (https://github.com/nekonaru/rynnbot)
  */
 
 const BOT_MESSAGE_TYPES = new Set(["templateMessage", "buttonsMessage", "listMessage", "interactiveMessage", "highlyStructuredMessage", "botInvokeMessage", "botTaskMessage", "botForwardedMessage", "richResponseMessage", "bcallMessage"]);

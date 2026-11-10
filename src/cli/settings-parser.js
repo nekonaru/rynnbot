@@ -59,8 +59,8 @@ const FIELD_MAP = {
 		serialize: (val) => String(val),
 		section: "global.limit",
 	},
-	// The Naze API key lives in .env (NAZE_API_KEY), never in settings.js.
-	// It is handled separately in readSetting/writeSetting/writeSettings.
+	// Naze API key hidup di .env (NAZE_API_KEY), tidak pernah di settings.js.
+	// Ditangani terpisah di readSetting/writeSetting/writeSettings.
 	nazeApiKey: null,
 };
 
@@ -262,7 +262,7 @@ export function readDatabaseConfig() {
 			}
 			return res;
 		} catch (e) {
-			console.error("Failed to parse database config", e);
+			console.error("Gagal mem-parse konfigurasi database", e);
 		}
 	}
 	return { path: "rynn-session" };

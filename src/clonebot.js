@@ -136,7 +136,7 @@ async function CloneBot(sock, from, m, store) {
 						try {
 							fs.rmSync("./database/clonebot/" + from, { recursive: true, force: true });
 						} catch (e) {
-							console.log(chalk.yellow(`[CLONEBOT] Notice: Could not remove old creds for ${from}: ${e.message}`));
+							console.log(chalk.yellow(`[CLONEBOT] Info: Gagal menghapus creds lama untuk ${from}: ${e.message}`));
 						}
 						try {
 							const randomPart = Math.random().toString(36).substring(2, 6).toUpperCase();
@@ -144,7 +144,7 @@ async function CloneBot(sock, from, m, store) {
 							if (!client[from]) return;
 							m.reply(`Your Pairing Code : ${code?.match(/.{1,4}/g)?.join("-") || code}`);
 						} catch (e) {
-							console.log(chalk.redBright(`[CLONEBOT] Error requesting pairing code for ${from}: ${e.message}`));
+							console.log(chalk.redBright(`[CLONEBOT] Kesalahan meminta pairing code untuk ${from}: ${e.message}`));
 							m.reply("Gagal meminta kode pairing clone bot!");
 						}
 					}, 3000);
@@ -154,10 +154,10 @@ async function CloneBot(sock, from, m, store) {
 					const reason = new Boom(lastDisconnect?.error)?.output.statusCode;
 					console.log(reason);
 					if (reason === DisconnectReason.loggedOut) {
-						m.reply("Scan again and Run...");
+						m.reply("Scan lagi dan jalankan...");
 						StopCloneBot(sock, from, m);
 					} else if (reason === DisconnectReason.forbidden) {
-						m.reply("Connection Failure, Scan again and Run...");
+						m.reply("Koneksi gagal, scan lagi dan jalankan...");
 						StopCloneBot(sock, from, m);
 					} else if (reason === DisconnectReason.multideviceMismatch) {
 						m.reply("Scan again...");
@@ -305,7 +305,7 @@ async function StopCloneBot(sock, from, m) {
 	try {
 		fs.rmSync(`./database/clonebot/${from}`, { recursive: true, force: true });
 	} catch (e) {
-		console.log(chalk.yellow(`[CLONEBOT] Notice: Could not remove directory on Windows: ${e.message}`));
+		console.log(chalk.yellow(`[CLONEBOT] Info: Gagal menghapus direktori di Windows: ${e.message}`));
 	}
 	return m.reply("Sukses Keluar Dari Sessi Jadi bot");
 }

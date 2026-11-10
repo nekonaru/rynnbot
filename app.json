@@ -1,16 +1,21 @@
 {
-	"name": "rynnbot",
-	"description": "Self-hosted WhatsApp bot with hundreds of commands, games, AI tools, an interactive CLI, and multi-database storage",
-	"repository": "https://github.com/nekonaru/rynnbot",
-	"keywords": ["whatsapp-bot", "multi-device", "bot", "whatsapp"],
-	"formation": {
-		"worker": {
-			"quantity": 1
-		}
-	},
-	"buildpacks": [
-		{
-			"url": "heroku/nodejs"
-		}
-	]
+    "name":  "rynnbot",
+    "description":  "Bot WhatsApp self-hosted dengan ratusan perintah, game, perkakas AI, dan penyimpanan multi-database",
+    "repository":  "https://github.com/nekonaru/rynnbot",
+    "keywords":  [
+                     "whatsapp-bot",
+                     "multi-device",
+                     "bot",
+                     "whatsapp"
+                 ],
+    "formation":  {
+                      "worker":  {
+                                     "quantity":  1
+                                 }
+                  },
+    "buildpacks":  [
+                       {
+                           "url":  "heroku/nodejs"
+                       }
+                   ]
 }
