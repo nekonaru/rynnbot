@@ -6,7 +6,7 @@ Rynn v3.0.1 membuat bot bisa di-install dan dijalankan di Termux (Android) dan m
 
 ### Peningkatan
 
-- **Dukungan Termux.** `@napi-rs/canvas` kini menjadi optional dependency, sehingga `npm install` tidak lagi gagal di perangkat tanpa prebuilt binary atau system library; render gambar otomatis fallback ke PureImage. Jalur installer Termux memakai `pkg` + `npm install`, kedua README memuat panduan setup Termux (Android), dan installer tetap berjalan di Termux.
+- **Dukungan Termux.** `@napi-rs/canvas` kini menjadi optional dependency, sehingga `npm install` tidak lagi gagal di perangkat tanpa prebuilt binary atau system library; render gambar otomatis fallback ke PureImage. Jalur installer Termux memakai `pkg` + `npm install`, README memuat panduan setup Termux (Android), dan installer tetap berjalan di Termux.
 
 ### Perbaikan bug
 
