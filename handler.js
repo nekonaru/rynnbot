@@ -897,7 +897,7 @@ const sock = async (sock, m, store) => {
 		let pilih = "🌀",
 			bomb = "💣";
 		if (m.sender in tebakbom) {
-			if (!/^[1-9]|10$/i.test(body) && !isCmd && !isCreator) return !0;
+			if (!/^(10|[1-9])$/i.test(body) && !isCmd && !isCreator) return !0;
 			let index = parseInt(body) - 1;
 			if (tebakbom[m.sender].petak[index] === 1 || tebakbom[m.sender].petak[index] === 3) return !0;
 			if (tebakbom[m.sender].petak[index] === 2) {
@@ -990,6 +990,7 @@ const sock = async (sock, m, store) => {
 				let isSurender = /^((me)?nyerah|surr?ender)$/i.test(teks);
 				if (!isSurender) {
 					let index = room.jawaban.findIndex((v) => v.toLowerCase().replace(/[^\w\s\-]+/, "") === teks);
+					if (index === -1) return m.reply("Jawaban Salah!");
 					if (room.terjawab[index]) return !0;
 					room.terjawab[index] = m.sender;
 				}
@@ -1087,7 +1088,7 @@ const sock = async (sock, m, store) => {
 				];
 				for (let url of boardUrls) {
 					try {
-						const { data } = { data: await global.fetchApi(url, {}, { buffer: true }) };
+						const { data } = { data: await fetchBoardBuffer(url) };
 						let { key } = await m.reply({
 							image: data,
 							caption: `♟️CHESS GAME (vs BOT)\n\nLangkahmu: ${from} → ${to}\nLangkah bot: ${botMove.from} → ${botMove.to}\n${evalCaption}\nGiliranmu berikutnya!\nExample: e2 e4\nKetik .chess hint untuk saran langkah!`,
@@ -1149,7 +1150,7 @@ const sock = async (sock, m, store) => {
 					];
 					for (let url of boardUrls) {
 						try {
-							const { data } = { data: await global.fetchApi(url, {}, { buffer: true }) };
+							const { data } = { data: await fetchBoardBuffer(url) };
 							let { key } = await m.reply({
 								image: data,
 								caption: `♟️CHESS GAME\n\nGiliran: @${nextPlayer.split("@")[0]}\n\nReply Pesan Ini untuk lanjut bermain!\nExample: from to -> b1 c3`,
@@ -1553,6 +1554,7 @@ const sock = async (sock, m, store) => {
 				break;
 			case "listblock":
 				{
+					if (!isCreator) return m.reply(global.mess.owner);
 					let anu = await sock.fetchBlocklist();
 					m.reply(`Total Block : ${anu.length}\n` + anu.map((v) => "• " + v.replace(/@.+/, "")).join`\n`);
 				}
@@ -1967,7 +1969,7 @@ const sock = async (sock, m, store) => {
 			case "addcase":
 				{
 					if (!isCreator) return m.reply(global.mess.owner);
-					if (!text && !text.startsWith("case")) return m.reply("Masukkan Casenya!");
+					if (!text || !text.startsWith("case")) return m.reply("Masukkan Casenya!");
 					fs.readFile(__filename, "utf8", (err, data) => {
 						if (err) {
 							console.error("Terjadi kesalahan saat membaca file:", err);
@@ -2054,24 +2056,43 @@ const sock = async (sock, m, store) => {
 							m.reply("Sukses Mengaktifkan Auto Backup");
 							break;
 						case "session":
-							await m.reply({
-								document: fs.readFileSync("./rynn-session/creds.json"),
-								mimetype: "application/json",
-								fileName: "creds.json",
-							});
+							if (/^(mongodb|mysql|postgres|postgresql)/i.test(global.database?.path || "")) return m.reply("Backup session untuk database remote belum didukung.");
+							{
+								const dbPath = global.database?.path || "rynn-session";
+								const credsFile = path.join(dbPath, "creds.json");
+								if (!fs.existsSync(credsFile)) return m.reply("File kredensial sesi tidak ditemukan di " + credsFile);
+								await m.reply({
+									document: fs.readFileSync(credsFile),
+									mimetype: "application/json",
+									fileName: "creds.json",
+								});
+							}
 							break;
 						case "database":
-							let tglnya = new Date().toISOString().replace(/[:.]/g, "-");
-							let datanya = "./database/" + global.tempatDB;
-							if (global.tempatDB.startsWith("mongodb")) {
-								datanya = "./database/backup_database.json";
-								fs.writeFileSync(datanya, JSON.stringify(global.db, null, 2), "utf-8");
+							{
+								const tglnya = new Date().toISOString().replace(/[:.]/g, "-");
+								const dbPath = global.database?.path || "rynn-session";
+								const isRemote = /^(mongodb|mysql|postgres|postgresql)/i.test(dbPath);
+								let datanya = "./database/backup_database.json";
+								try {
+									if (isRemote) {
+										fs.writeFileSync(datanya, JSON.stringify(global.db, null, 2), "utf-8");
+									} else {
+										datanya = path.join(process.cwd(), "database", dbPath + ".json");
+										if (!fs.existsSync(datanya)) {
+											fs.writeFileSync(datanya, JSON.stringify(global.db, null, 2), "utf-8");
+										}
+									}
+									await m.reply({
+										document: fs.readFileSync(datanya),
+										mimetype: "application/json",
+										fileName: tglnya + "_database.json",
+									});
+								} catch (e) {
+									console.error("[backup]", e);
+									m.reply("Gagal membuat backup database.");
+								}
 							}
-							await m.reply({
-								document: fs.readFileSync(datanya),
-								mimetype: "application/json",
-								fileName: tglnya + "_database.json",
-							});
 							break;
 						default:
 							m.reply("Gunakan perintah:\n- backup all\n- backup auto\n- backup session\n- backup database");
@@ -2081,18 +2102,26 @@ const sock = async (sock, m, store) => {
 			case "getsession":
 				{
 					if (!isCreator) return m.reply(global.mess.owner);
+					const dbPath = global.database?.path || "rynn-session";
+					if (/^(mongodb|mysql|postgres|postgresql)/i.test(dbPath)) return m.reply("Backup session untuk database remote belum didukung.");
+					const credsFile = path.join(dbPath, "creds.json");
+					if (!fs.existsSync(credsFile)) return m.reply("File kredensial sesi tidak ditemukan di " + credsFile);
 					await m.reply({
-						document: fs.readFileSync("./rynn-session/creds.json"),
+						document: fs.readFileSync(credsFile),
 						mimetype: "application/json",
 						fileName: "creds.json",
 					});
 				}
 				break;
+				break;
 			case "deletesession":
 			case "delsession":
 				{
 					if (!isCreator) return m.reply(global.mess.owner);
-					fs.readdir("./rynn-session", async function (err, files) {
+						const dbPath2 = global.database?.path || 'rynn-session';
+					const isRemote2 = /^(mongodb|mysql|postgres|postgresql)/i.test(dbPath2);
+					if (isRemote2) return m.reply('Hapus session untuk database remote belum didukung.');
+					fs.readdir(dbPath2, async function (err, files) {
 						if (err) {
 							console.error("Tidak bisa memindai direktori: " + err);
 							return m.reply("Tidak bisa memindai direktori: " + err);
@@ -2106,7 +2135,7 @@ const sock = async (sock, m, store) => {
 						if (text && text == "true") {
 							let { key } = await m.reply("Menghapus Session File..");
 							await filteredArray.forEach(function (file) {
-								fs.unlinkSync("./rynn-session/" + file);
+											fs.unlinkSync(path.join(dbPath2, file));
 							});
 							sleep(2000);
 							m.reply("Berhasil Menghapus Semua Sampah Session", { edit: key });
@@ -2978,19 +3007,23 @@ Select Bot Settings:
 			case "speedtest":
 			case "speed":
 				{
+					if (!isCreator) return m.reply(global.mess.owner);
 					m.reply("Testing Speed...");
-					let cp = require("child_process");
-					let { promisify } = require("util");
-					let exec = promisify(cp.exec).bind(cp);
-					let o;
+					const cp = require("child_process");
+					const { promisify } = require("util");
+					const exec = promisify(cp.exec).bind(cp);
 					try {
-						o = await exec("python3 speed.py --share");
-					} catch (e) {
-						o = e;
-					} finally {
-						let { stdout, stderr } = o;
+						await exec("python3 --version");
+					} catch {
+						return m.reply("Fitur speedtest butuh Python 3 terpasang di server. `python3 speed.py --share`");
+					}
+					try {
+						const { stdout, stderr } = await exec("python3 speed.py --share");
 						if (stdout.trim()) m.reply(stdout);
 						if (stderr.trim()) m.reply(stderr);
+					} catch (e) {
+						console.log("[speedtest]", e);
+						m.reply(global.mess.fail);
 					}
 				}
 				break;
@@ -3038,9 +3071,10 @@ Select Bot Settings:
 								if (e.data == 401) return m.reply("Bot Di Kick Dari Grup Tersebut❗");
 								if (e.data == 410) return m.reply("Url Grup Telah Di Setel Ulang❗");
 							});
-					} else if (_saluran.test(text) || text.endsWith("@newsletter") || !isNaN(text)) {
+					} else if (_saluran.test(text) || text.endsWith("@newsletter")) {
+						const channelId = _saluran.test(text) ? text.match(_saluran)[1] : text;
 						await sock
-							.newsletterMsg(text.match(_saluran)[1])
+							.newsletterMsg(channelId)
 							.then((n) => {
 								m.reply(
 									`*[ INFORMATION CHANNEL ]*\n\nID: ${n.id}\nState: ${n.state.type}\nName: ${n.thread_metadata.name.text}\nCreate At: ${new Date(n.thread_metadata.creation_time * 1000).toLocaleString()}\nSubscriber: ${n.thread_metadata.subscribers_count}\nVerification: ${n.thread_metadata.verification}\nDescription: ${n.thread_metadata.description.text}\n`,
@@ -3064,6 +3098,7 @@ Select Bot Settings:
 			case "delmsg":
 			case "deletemsg":
 				{
+					if (!isCreator) return m.reply(global.mess.owner);
 					if (!text) return m.reply("Nama msg yg mau di delete?");
 					let msgs = db.database;
 					if (text == "allmsg") {
@@ -3119,6 +3154,7 @@ Select Bot Settings:
 					if (!m.quoted.fileSha256) return m.reply("SHA256 Hash Missing!");
 					let hash = m.quoted.fileSha256.toString("base64");
 					if (global.db.cmd[hash] && global.db.cmd[hash].locked) return m.reply("Kamu tidak punya izin untuk mengubah perintah sticker ini");
+					if (!isCreator && global.db.cmd[hash] && global.db.cmd[hash].creator !== m.sender) return m.reply("Hanya pembuat perintah ini atau owner yang bisa menghapus");
 					delete global.db.cmd[hash];
 					m.reply(global.mess.done);
 				}
@@ -4473,7 +4509,7 @@ Select Bot Settings:
 						let format = parsed.number ? parsed.number.international : num.split("@")[0];
 						let regionNames = new Intl.DisplayNames(["en"], { type: "region" });
 						let country = parsed.regionCode ? regionNames.of(parsed.regionCode) : "Unknown";
-						let wea = `WhatsApp Stalk\n\n*° Country :* ${country.toUpperCase()}\n*° Name :* ${name ? name : "-"}\n*° Format Number :* ${format}\n*° Url Api :* wa.me/${num.split("@")[0]}\n*° Mentions :* @${num.split("@")[0]}\n*° Status :* ${bio?.status || "-"}\n*° Date Status :* ${bio?.setAt ? new Date(bio.setAt).toLocaleDateString(global.locale, { year: "numeric", month: "long", day: "numeric" }) : "-"}\n\n${business ? `*WhatsApp Business Stalk*\n\n*° BusinessId :* ${business.wid}\n*° Website :* ${business.website ? business.website : "-"}\n*° Email :* ${business.email ? business.email : "-"}\n*° Category :* ${business.category}\n*° Address :* ${business.address ? business.address : "-"}\n*° Timeone :* ${business.business_hours.timezone ? business.business_hours.timezone : "-"}\n*° Description* : ${business.description ? business.description : "-"}` : "*Standard WhatsApp Account*"}`;
+						let wea = `WhatsApp Stalk\n\n*° Country :* ${country.toUpperCase()}\n*° Name :* ${name ? name : "-"}\n*° Format Number :* ${format}\n*° Url Api :* wa.me/${num.split("@")[0]}\n*° Mentions :* @${num.split("@")[0]}\n*° Status :* ${bio?.status || "-"}\n*° Date Status :* ${bio?.setAt ? new Date(bio.setAt).toLocaleDateString(global.locale, { year: "numeric", month: "long", day: "numeric" }) : "-"}\n\n${business ? `*WhatsApp Business Stalk*\n\n*° BusinessId :* ${business.wid}\n*° Website :* ${business.website ? business.website : "-"}\n*° Email :* ${business.email ? business.email : "-"}\n*° Category :* ${business.category}\n*° Address :* ${business.address ? business.address : "-"}\n*° Timeone :* ${business.business_hours?.timezone ? business.business_hours.timezone : "-"}\n*° Description* : ${business.description ? business.description : "-"}` : "*Standard WhatsApp Account*"}`;
 						img ? await sock.sendMessage(m.chat, { image: { url: img }, caption: wea, mentions: [num] }, { quoted: m }) : m.reply(wea);
 					} catch (e) {
 						console.error(e);
@@ -5454,8 +5490,8 @@ Select Bot Settings:
 						mode: text.toLowerCase(),
 						id: key.id,
 					};
-					await sleep(kuismath, result.waktu);
-					if (rdGame(m.chat + key.id)) {
+					await sleep(result.waktu);
+					if (rdGame(kuismath, m.chat, key.id)) {
 						m.reply("Waktu Habis\nJawaban: " + kuismath[m.chat + key.id].jawaban);
 						delete kuismath[m.chat + key.id];
 					}
@@ -5560,7 +5596,7 @@ Select Bot Settings:
 								];
 								for (let url of boardUrls) {
 									try {
-										const { data } = { data: await global.fetchApi(url, {}, { buffer: true }) };
+										const { data } = { data: await fetchBoardBuffer(url) };
 										let { key } = await m.reply({
 											image: data,
 											caption: `♟️${command.toUpperCase()} GAME\n\nGiliran: @${m.sender.split("@")[0]}\n\nReply Pesan Ini untuk lanjut bermain!\nExample: from to -> b1 c3`,
@@ -5589,7 +5625,7 @@ Select Bot Settings:
 								for (let url of boardUrls) {
 									try {
 										chess[m.chat].turn = chess[m.chat].turn === m.sender ? m.sender : nextPlayer;
-										const { data } = { data: await global.fetchApi(url, {}, { buffer: true }) };
+										const { data } = { data: await fetchBoardBuffer(url) };
 										let { key } = await m.reply({
 											image: data,
 											caption: `♟️CHESS GAME\n\nGiliran: @${chess[m.chat].turn.split("@")[0]}\n\nReply Pesan Ini untuk lanjut bermain!\nExample: from to -> b1 c3`,
@@ -5673,7 +5709,7 @@ Select Bot Settings:
 								];
 								for (let url of boardUrls) {
 									try {
-										const { data } = { data: await global.fetchApi(url, {}, { buffer: true }) };
+										const { data } = { data: await fetchBoardBuffer(url) };
 										let { key } = await m.reply({
 											image: data,
 											caption: `♟️CHESS GAME\n\nGiliran: @${chess[m.sender].turn.split("@")[0]}\n\nReply Pesan Ini untuk lanjut bermain!\nExample: from to -> b1 c3`,
@@ -6032,7 +6068,7 @@ Select Bot Settings:
 					if (args[0] == "set") {
 						if (!isCreator) return m.reply(mess.owner);
 						if (["1", "2", "3", "4"].includes(args[1])) {
-							set.template = parseInt(Number(args[1]));
+							set.template = parseInt(args[1], 10);
 							m.reply(`Sukses Mengubah Template Menu\nTemplate : ${set.template == 1 ? "Button Menu" : set.template == 2 ? "List Menu" : set.template == 3 ? "Document Menu" : set.template == 4 ? "Location Menu" : "Button Menu"}`);
 						} else m.reply(`Template Menu:\n- 1 (Button Menu)\n- 2 (List Menu)\n- 3 (Document Menu)\n- 4 (Location Menu)\n\nExample: ${prefix + command} set 1`);
 					} else
@@ -6706,7 +6742,8 @@ Select Bot Settings:
 				}
 		}
 	} catch (e) {
-		console.log(e);
+		const redact = (s) => String(s).replace(/([?&]apikey=)[^\s&]+/gi, "$1********").replace(/nz-[A-Za-z0-9]{4,}/g, "nz-********").replace(/nsk_[A-Za-z0-9]{4,}/g, "nsk_********");
+		console.error("[ERR]", e?.stack ? redact(e.stack) : redact(e?.message || e));
 		if (e?.message?.includes("No sessions") || e?.message?.includes("ffmpeg exited with code") || e?.code === "ERR_FR_MAX_BODY_LENGTH_EXCEEDED" || e?.message?.includes("maxBodyLength limit") || e?.message?.includes("rate-overlimit")) return;
 		const errorKey = e?.code || e?.name || e?.message?.slice(0, 100) || "unknown_error";
 		const now = Date.now();
@@ -6742,8 +6779,8 @@ Select Bot Settings:
 					return m.reply("Apikey tidak valid!");
 				} else m.reply("Kesalahan API: Akses ke server API ditolak (401 Unauthorized).");
 			} else console.log(chalk.yellowBright("[SYSTEM] Akses ditolak (401 Unauthorized)."));
-		} else m.reply("Kesalahan: " + (e?.name || e?.code || e?.message || "Terjadi kesalahan tidak diketahui") + "\nLog Error Telah dikirim ke Owner\n\n");
-		return sock.sendFromOwner(ownerNumber, `Halo sayang, sepertinya ada yang error nih, jangan lupa diperbaiki ya\n\nVersion : *${require("./package.json").version}*\nType : *${m.type || errorKey}*\n\n*Log error:*\n\n` + util.format(e), m, { contextInfo: { isForwarded: true } });
+		} else m.reply("Kesalahan: " + redact(e?.name || e?.code || e?.message || "Terjadi kesalahan tidak diketahui") + "\nLog Error Telah dikirim ke Owner\n\n");
+		return sock.sendFromOwner(ownerNumber, `Halo, ada error yang perlu diperbaiki:\n\nVersion : *${require("./package.json").version}*\nType : *${m.type || errorKey}*\n\n*Log error:*\n\n` + redact(util.format(e)), m, { contextInfo: { isForwarded: true } });
 	}
 };
 

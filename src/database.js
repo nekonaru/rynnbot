@@ -12,7 +12,7 @@ const isSslEnabled = (name, url) => {
 };
 
 class MongoDB {
-	constructor(url = global.tempatDB, name = "database", options = { serverSelectionTimeoutMS: 5000 }) {
+	constructor(url = global.database?.path, name = "database", options = { serverSelectionTimeoutMS: 5000 }) {
 		this.url = url;
 		this.name = name;
 		this._model = null;
@@ -244,7 +244,7 @@ class SqlDB {
 }
 
 class JsonDB {
-	constructor(file = global.tempatDB || "database.json", name = "database") {
+	constructor(file = global.database?.path, name = "database") {
 		if (typeof file === "string" && !file.endsWith(".json")) {
 			file = file + ".json";
 		}

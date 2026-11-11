@@ -87,7 +87,7 @@ global.fetchApi = async (endpoint = "/", data = {}, options = {}) => {
 			} else {
 				url += "?" + new URLSearchParams({ ...data, apikey }).toString();
 			}
-			const fetchOptions = { method, headers, dispatcher: customDispatcher };
+			const fetchOptions = { method, headers, dispatcher: customDispatcher, signal: AbortSignal.timeout(options.timeout || 60000) };
 			if (method !== "GET" && method !== "HEAD") fetchOptions.body = payload;
 			const res = await fetch(url, fetchOptions);
 			if (!res.ok) {

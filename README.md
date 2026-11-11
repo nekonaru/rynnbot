@@ -527,12 +527,14 @@ Jangan restrukturisasi blok `switch` utama. Tambah perintah sebagai entri `case`
 
 ```bash
 npm run check   # node --check semua file .js + scan pola key bocor
+npm test        # unit test (node --test) untuk lib/function.js
 ```
 
 | Cek | Kebutuhan |
 |-----|-----------|
 | `node --check` di setiap file `.js` | Harus lolos |
 | Scan secret (`gsk_`, `nz-` diikuti 10+ hex, `nsk_` diikuti 16+ hex) di file ter-track | Harus kosong |
+| `npm test` (unit test) | Harus hijau |
 | `npm audit --omit=dev --audit-level=high` | Advisory di CI (tidak menggagalkan build) |
 
 Linting diserahkan ke editor kamu; proyek membawa konfigurasi Prettier (`.prettierrc.json`) tapi tanpa gate lint wajib.
@@ -543,7 +545,7 @@ Linting diserahkan ke editor kamu; proyek membawa konfigurasi Prettier (`.pretti
 
 | Workflow | Tujuan |
 |----------|--------|
-| `.github/workflows/ci.yml` | Setiap push ke `main`, tag `v*`, dan PR: install dengan `npm ci`, jalankan `npm run check`, dan `npm audit` sebagai advisory |
+| `.github/workflows/ci.yml` | Setiap push ke `main`, tag `v*`, dan PR: install dengan `npm ci`, jalankan `npm run check` dan `npm test`, lalu `npm audit` sebagai advisory |
 
 ---
 

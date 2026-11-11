@@ -37,7 +37,8 @@
     "debug": "DEBUG=* node --expose-gc start.js",
     "cli": "node cli.js",
     "setup": "node cli.js --setup",
-    "check": "node scripts/check.js"
+    "check": "node scripts/check.js",
+    "test": "node --test"
   },
   "dependencies": {
     "@hapi/boom": "^10.0.1",
