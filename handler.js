@@ -19,6 +19,7 @@ import { UguuSe } from "./lib/uploader.js";
 import TicTacToe from "./lib/tictactoe.js";
 import { werewolf } from "./lib/werewolf.js";
 import templateMenu from "./lib/template_menu.js";
+import { FIRST_SETUP_MARKER, firstSetupStates, firstSetupStepText, sendFirstSetupIntro } from './src/setup-wizard.js';
 import { ytMp4, ytMp3, ytMp4Stream } from "./lib/scraper.js";
 import { GroupUpdate, LoadDataBase, extractNativeFlowResponseId } from "./src/message.js";
 import { CloneBot, StopCloneBot, ListCloneBot } from "./src/clonebot.js";
@@ -55,6 +56,106 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const timez = Intl.supportedValuesOf("timeZone");
+
+async function handleSetupWizard(sock, m) {
+	if (m.isGroup || !m.isCreator) return false;
+	const sender = m.sender;
+	const state = firstSetupStates.get(sender);
+
+	// Perintah batal / setup ulang selalu diterima
+	const text = typeof m.text === "string" ? m.text.trim() : "";
+	if (/^\.?setupbot$/i.test(text)) {
+		firstSetupStates.set(sender, "nama");
+		await sendFirstSetupIntro(sock, sender);
+		return true;
+	}
+	if (!state) return false;
+
+	if (!text) {
+		await m.reply("Balas dengan teks, ya. Ketik *batal* untuk berhenti.");
+		return true;
+	}
+	if (/^batal$/i.test(text)) {
+		firstSetupStates.delete(sender);
+		await m.reply(`Setup dihentikan. Fitur download & AI belum bisa dipakai karena Naze API key belum diisi.\n\nKetik *.setupbot* kapan pun untuk melanjutkan.`);
+		return true;
+	}
+
+	const t = text.trim();
+	const isSkip = /^skip$/i.test(t);
+
+	if (state === "nama") {
+		if (!isSkip) await updateSettings({ filePath: settingsPath, author: t });
+		firstSetupStates.set(sender, "botname");
+		await m.reply(isSkip ? "⚙️ Bawaan *nama author* dipakai." : `✅ Author diubah menjadi *${t}*`);
+		await m.reply(firstSetupStepText("botname", null));
+		return true;
+	}
+	if (state === "botname") {
+		if (!isSkip) await updateSettings({ filePath: settingsPath, botname: t });
+		firstSetupStates.set(sender, "packname");
+		await m.reply(isSkip ? "⚙️ Bawaan *nama bot* dipakai." : `✅ Nama bot diubah menjadi *${t}*`);
+		await m.reply(firstSetupStepText("packname", null));
+		return true;
+	}
+	if (state === "packname") {
+		if (!isSkip) await updateSettings({ filePath: settingsPath, packname: t });
+		firstSetupStates.set(sender, "owner");
+		await m.reply(isSkip ? "⚙️ Bawaan *nama paket stiker* dipakai." : `✅ Paket stiker diubah menjadi *${t}*`);
+		await m.reply(firstSetupStepText("owner", null));
+		return true;
+	}
+	if (state === "owner") {
+		if (!isSkip) {
+			const nums = t.split(",").map((n) => n.replace(/\D/g, "")).filter(Boolean);
+			if (nums.length === 0 || nums.some((n) => n.length < 8 || n.length > 16)) {
+				await m.reply("❌ Format salah. Kirim nomor pisah koma (misalnya *6282173282591, 628123456789*), atau *skip* untuk tetap memakai yang sekarang.");
+				return true;
+			}
+			await updateSettings({ filePath: settingsPath, owner: nums });
+			await m.reply(`✅ Owner diubah menjadi *${nums.join(", ")}*`);
+		} else {
+			await m.reply("⚙️ Owner bawaan dipakai.");
+		}
+		firstSetupStates.set(sender, "apikey");
+		await m.reply(firstSetupStepText("apikey", null));
+		return true;
+	}
+	if (state === "apikey") {
+		if (!/^nz-[A-Za-z0-9]{6,}$/.test(t)) {
+			await m.reply("❌ Key tidak valid. Key Naze diawali *nz-* (contoh: *nz-abc123def*). Coba lagi, atau ketik *batal* untuk berhenti.");
+			return true;
+		}
+		await updateSettings({ filePath: settingsPath, apikey: t });
+		firstSetupStates.set(sender, "neosantara");
+		await m.reply("✅ Naze API key tersimpan di *.env* (tidak pernah ter-commit).");
+		await m.reply(firstSetupStepText("neosantara", null));
+		return true;
+	}
+	if (state === "neosantara") {
+		if (isSkip) {
+			await m.reply("⚙️ Fitur Neosantara AI dilewati.");
+		} else {
+			if (!/^nsk_[A-Za-z0-9]{6,}$/.test(t)) {
+				await m.reply("❌ Key tidak valid. Key Neosantara diawali *nsk_*. Coba lagi, atau ketik *skip* untuk melewati.");
+				return true;
+			}
+			await updateSettings({ filePath: settingsPath, neosantara: t });
+			await m.reply("✅ Neosantara API key tersimpan.");
+		}
+		// Selesai
+		firstSetupStates.delete(sender);
+		try { fs.writeFileSync(FIRST_SETUP_MARKER, "1"); } catch {}
+		await m.reply(
+			`*✅ Setup selesai!*\n\n` +
+			`Bot siap dipakai. Ketik *.allmenu* untuk melihat semua perintah.\n\n` +
+			`Ketik *.setupbot* kapan pun untuk mengubah konfigurasi.\n` +
+			`Jangan pernah bagikan API key kamu ke siapa pun.`,
+		);
+		return true;
+	}
+	return true;
+}
 const menfesTimeouts = new Map();
 const settingsPath = fs.existsSync(path.join(__dirname, "settings.js")) ? path.join(__dirname, "settings.js") : path.join(process.cwd(), "settings.js");
 let canvasModule = null;
@@ -228,6 +329,8 @@ const sock = async (sock, m, store) => {
 			return findJid === m.sender || findJid === jidNormalizedUser(m.sender) || findJid === sock.findJidByLid(m.sender, store, true);
 		});
 		m.isCreator = isCreator;
+		// Wizard setup pertama (first pairing): owner diarahkan sebelum perintah lain diproses
+		if (await handleSetupWizard(sock, m)) return;
 		const symbolMatch = body.match(/^[°•π÷×¶∆£¢€¥®™+✓_=|~!?@()#,'"*+÷/\%^&.©^]/gi);
 		const emojiMatch = body.match(/^[\uD800-\uDBFF][\uDC00-\uDFFF]/gi);
 		const listMatch = (global.listprefix || []).find((a) => body?.startsWith(a));
@@ -4423,7 +4526,8 @@ Select Bot Settings:
 							});
 							setLimit(m, db);
 						} catch (e) {
-							m.reply(global.mess.fail);
+							console.log("[ytmp3]", e);
+							m.reply("Gagal mengunduh audio. Video mungkin privat, dihapus, atau server sedang bermasalah.");
 						}
 					}
 				}
@@ -4459,7 +4563,8 @@ Select Bot Settings:
 							});
 							setLimit(m, db);
 						} catch (e) {
-							m.reply(global.mess.fail);
+							console.log("[ytmp4]", e);
+							m.reply("Gagal mengunduh video. Video mungkin privat, dihapus, atau server sedang bermasalah.");
 						}
 					}
 				}
@@ -4493,8 +4598,8 @@ Select Bot Settings:
 						}
 						setLimit(m, db);
 					} catch (e) {
-						console.log(e);
-						m.reply(global.mess.fail);
+						console.log("[instagram]", e);
+						m.reply("Gagal mengunduh media Instagram. Media mungkin privat, dihapus, atau server sedang bermasalah.");
 					}
 				}
 				break;
@@ -4544,8 +4649,8 @@ Select Bot Settings:
 
 						setLimit(m, db);
 					} catch (e) {
-						console.log(e);
-						m.reply(global.mess.fail);
+						console.log("[tiktok]", e);
+						m.reply("Gagal mengunduh TikTok. Video mungkin privat, dihapus, atau server sedang bermasalah.");
 					}
 				}
 				break;
@@ -4567,7 +4672,8 @@ Select Bot Settings:
 						});
 						setLimit(m, db);
 					} catch (e) {
-						m.reply(global.mess.fail);
+						console.log("[tiktok-mp3]", e);
+						m.reply("Gagal mengunduh audio TikTok. Video mungkin privat, dihapus, atau server sedang bermasalah.");
 					}
 				}
 				break;
@@ -4595,7 +4701,8 @@ Select Bot Settings:
 						}
 						setLimit(m, db);
 					} catch (e) {
-						m.reply(global.mess.fail);
+						console.log("[facebook]", e);
+						m.reply("Gagal mengunduh video Facebook. Video mungkin privat, dihapus, atau server sedang bermasalah.");
 					}
 				}
 				break;

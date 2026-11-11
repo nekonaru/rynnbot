@@ -20,6 +20,7 @@ import { showBanner, logSuccess, logInfo } from "./src/cli/helpers.js";
 import { dataBase, cmdDel, checkStatus, checkExpired } from "./src/database.js";
 import { GroupParticipantsUpdate, MessagesUpsert, Solving, updateLidMapping } from "./src/message.js";
 import { assertInstalled, customDispatcher, compressMessage, decompressMessage, rotateBackups } from "./lib/function.js";
+import { firstSetupStates, FIRST_SETUP_MARKER, sendFirstSetupIntro } from "./src/setup-wizard.js";
 
 rotateBackups("./backup", 5);
 
@@ -501,6 +502,19 @@ async function startRynnBot() {
 				reconnectTimeout = null;
 			}
 			console.log("Terhubung ke : " + JSON.stringify(sock.user, null, 2));
+			// Perangkat baru login: kirim wizard setup ke owner di chat pribadi
+			try {
+				if (isNewLogin && !fs.existsSync(FIRST_SETUP_MARKER)) {
+					const ownerDigits = String(global.owner?.[0] || "").replace(/\D/g, "");
+					if (ownerDigits) {
+						const ownerJid = `${ownerDigits}@s.whatsapp.net`;
+						firstSetupStates.set(ownerJid, "nama");
+						await sendFirstSetupIntro(sock, ownerJid).catch((e) => console.log("[SETUP WIZARD] Gagal mengirim wizard ke owner:", e.message));
+					}
+				}
+			} catch (e) {
+				console.log("[SETUP WIZARD] Gagal memulai wizard:", e?.message || e);
+			}
 			if (sock.user?.lid && sock.user?.id) {
 				updateLidMapping({ lid: sock.user.lid, pn: sock.user.id });
 			}

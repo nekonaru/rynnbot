@@ -27,6 +27,7 @@ update_temp/
 .env.local
 .env.*.local
 .rynn_setup_done
+.rynn_first_setup_done
 
 # File sementara, cache media & log
 temp/

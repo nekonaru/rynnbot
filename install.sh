@@ -110,14 +110,23 @@ detect_pkg() {
 }
 
 SUDO_CMD=""
-if [ "$(id -u)" -ne 0 ] && command -v sudo >/dev/null 2>&1; then
-    SUDO_CMD="sudo"
+if [ "$(id -u)" -ne 0 ]; then
+    if sudo -v >/dev/null 2>&1; then
+        SUDO_CMD="sudo"
+    else
+        echo -e "  ${YELLOW}!${NC} ${DIM}Tidak ada superuser (root) atau sudo tidak bisa dipakai. Melanjutkan tanpa hak admin.${NC}\n"
+    fi
+fi
+
+IS_TERMUX=false
+if [[ "${PREFIX:-}" == *"com.termux"* ]] || [ -d "/data/data/com.termux" ]; then
+    IS_TERMUX=true
 fi
 
 main() {
     if [[ "$PWD" == *"/storage/"* ]]; then
         echo -e "\n  ${RED}✖ ERROR: Lokasi Direktori Tidak Didukung${NC}"
-        echo -e "  Kamu mencoba memasang bot di shared storage Android's shared storage (/storage/...)."
+        echo -e "  Kamu mencoba memasang bot di shared storage Android (/storage/...)."
         echo -e "  Filesystem ini tidak mendukung symlink, yang wajib dipakai Node.js.\n"
         echo -e "  ${YELLOW}Cara mengatasinya:${NC}"
         echo -e "  Jalankan perintah di bawah untuk MEMINDAHKAN bot secara permanen ke lingkungan native Termux."
@@ -129,13 +138,12 @@ main() {
     local PKG=$(detect_pkg)
 
     if [ -z "$PKG" ]; then
-        echo -e "  ${RED}✖${NC} ${BOLD}Package manager not recognized.${NC} Cannot install dependencies automatically."
+        echo -e "  ${RED}✖${NC} ${BOLD}Package manager tidak dikenali.${NC} Dependensi tidak bisa dipasang otomatis."
         exit 1
     fi
 
     if [ -n "$SUDO_CMD" ]; then
-        echo -e "  ${BLUE}i${NC} ${DIM}Requesting administrator privileges for global installation...${NC}"
-        $SUDO_CMD -v
+        echo -e "  ${BLUE}i${NC} ${DIM}Hak superuser tersedia; dependensi sistem akan dipasang otomatis.${NC}"
     fi
 
     local NEED_INSTALL=false
@@ -152,19 +160,33 @@ main() {
         local cmd=""
         case "$PKG" in
           pkg) cmd="pkg update -y && pkg install -y git nodejs-lts ffmpeg python" ;;
-          apt|apt-get) cmd="$SUDO_CMD $PKG update -y && $SUDO_CMD $PKG install -y git nodejs npm ffmpeg" ;;
-          pacman) cmd="$SUDO_CMD pacman -Syu --noconfirm && $SUDO_CMD pacman -S --noconfirm git nodejs npm ffmpeg yarn" ;;
-          dnf) cmd="$SUDO_CMD dnf install -y git nodejs npm ffmpeg yarn" ;;
-          yum) cmd="$SUDO_CMD yum install -y epel-release && $SUDO_CMD yum install -y git nodejs npm ffmpeg" ;;
+          apt|apt-get) cmd="$SUDO_CMD apt-get update -y && $SUDO_CMD apt-get install -y git nodejs npm ffmpeg python" ;;
+          pacman) cmd="$SUDO_CMD pacman -Syu --noconfirm && $SUDO_CMD pacman -S --noconfirm git nodejs npm ffmpeg python" ;;
+          dnf) cmd="$SUDO_CMD dnf install -y git nodejs npm ffmpeg python" ;;
+          yum) cmd="$SUDO_CMD yum install -y epel-release && $SUDO_CMD yum install -y git nodejs npm ffmpeg python" ;;
         esac
-        run_with_spinner "Installing system dependencies" "$cmd"
+        if [ -z "$SUDO_CMD" ] && [ "$IS_TERMUX" = false ]; then
+            echo -e "  ${YELLOW}!${NC} ${DIM}Tidak bisa memasang dependensi sistem tanpa hak superuser.${NC}"
+            echo -e "  ${DIM}Pasang manual: git, nodejs (>=20), ffmpeg, python. Lalu jalankan script ini lagi.${NC}"
+            if ! command -v node >/dev/null 2>&1; then
+                echo -e "  ${RED}?${NC} ${BOLD}Node.js wajib terpasang. Batal.${NC}"
+                exit 1
+            fi
+            echo -e "  ${GREEN}?${NC} ${DIM}Node.js sudah ada, melanjutkan dengan dependensi yang tersedia.${NC}\n"
+        else
+            run_with_spinner "Installing system dependencies" "$cmd"
+        fi
     else
         echo -e "  ${GREEN}✔${NC} ${DIM}Dependensi sistem sudah terpasang.${NC}"
     fi
 
     if ! command -v pm2 >/dev/null 2>&1; then
-        local pm2_cmd="$SUDO_CMD npm install -g pm2"
-        run_with_spinner "Installing PM2" "$pm2_cmd"
+        if npm install -g pm2 > "$LOG_FILE" 2>&1; then
+            echo -e "  ${GREEN}✔${NC} ${DIM}PM2 terpasang.${NC}"
+        else
+            echo -e "  ${YELLOW}!${NC} ${DIM}PM2 tidak bisa dipasang tanpa hak admin; lewati.${NC}"
+            echo -e "  ${DIM}Jalankan bot dengan 'npm start' atau 'rynn start' (auto-restart tetap aktif lewat start.js).${NC}\n"
+        fi
     else
         echo -e "  ${GREEN}✔${NC} ${DIM}PM2 sudah terpasang.${NC}"
     fi
@@ -177,11 +199,14 @@ main() {
     fi
 
     chmod +x cli.js 2>/dev/null || true
-    local link_cmd="$SUDO_CMD npm link 2>/dev/null || true"
-    run_with_spinner "Registering global 'rynn'" "$link_cmd"
+    if npm link > "$LOG_FILE" 2>&1; then
+        echo -e "  ${GREEN}✔${NC} ${DIM}'rynn' terdaftar global. Jalankan dari mana saja.${NC}"
+    else
+        echo -e "  ${YELLOW}!${NC} ${DIM}'rynn' tidak bisa didaftarkan global; pakai 'npm start' saja.${NC}"
+    fi
 
     echo -e "\n  ${GREEN}✔${NC} ${BOLD}Semua dependensi berhasil dipasang!${NC}"
-    echo -e "  ${BLUE}i${NC} ${DIM}Kamu sekarang bisa memakai 'rynn' perintah dari mana saja.${NC}\n"
+    echo -e "  ${BLUE}i${NC} ${DIM}Kamu sekarang bisa memakai perintah 'rynn' dari mana saja.${NC}\n"
 
     echo -e "  ${MAGENTA}✦${NC} ${BOLD}Menjalankan wizard setup pertama...${NC}\n"
     node cli.js --setup
