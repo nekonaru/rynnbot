@@ -6706,6 +6706,179 @@ Select Bot Settings:
 				}
 				break;
 
+			case "remind":
+			case "reminds":
+				{
+					const sender = m.sender;
+					const parts = (text || "").trim().split(/\s+/).filter(Boolean);
+					const fmtTgl = (t) => new Date(t).toLocaleString("id-ID", { timeZone: global.timezone || "Asia/Jakarta", day: "numeric", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit" });
+					const parseJam = (s) => { const r = s.match(/^(\d{1,2}):(\d{2})$/); if (!r) return null; const h = +r[1], mi = +r[2]; if (h > 23 || mi > 59) return null; return h * 3600000 + mi * 60000; };
+					if (!parts.length) {
+						const list = (global.db.reminders && global.db.reminders[sender]) || [];
+						if (list.length === 0) return m.reply("*Reminder*\n\nBelum ada reminder.\n\nContoh:\n- .remind 30m Ingatkan minum air\n- .remind 2jam Istirahat\n- .remind 07:30 Bangun pagi\n- .remind besok 07:00 Pindah rumah\n- .remind 2026-12-01 07:00 Deadline\n- .remind setiap 07:00 Sholat Subuh\n- .reminddel <nomor> untuk menghapus");
+						let teks = "*Reminder milikmu*\n";
+						list.forEach((r, i) => { teks += `*${i + 1}.* ${fmtTgl(r.due)}${r.repeat === "daily" ? " (setiap hari)" : ""}\n    ${r.text}\n`; });
+						return m.reply(teks);
+					}
+					let due = null, repeat = null, payload = "";
+					const p0 = parts[0].toLowerCase();
+					if (p0 === "setiap") {
+						if (!parts[1]) return m.reply("Format: .remind setiap HH:MM teks (mis. .remind setiap 07:00 Bangun pagi)");
+						const tj = parseJam(parts[1]); if (tj == null) return m.reply("Format jam: HH:MM (mis. 07:00)");
+						let d = new Date(); d.setHours(0, 0, 0, 0); d = new Date(d.getTime() + tj);
+						if (d.getTime() <= Date.now()) d = new Date(d.getTime() + 24 * 3600000);
+						due = d.getTime(); repeat = "daily"; payload = parts.slice(2).join(" ");
+					} else if (/^\d{4}-\d{2}-\d{2}$/.test(parts[0]) && parts[1] && /^\d{1,2}:\d{2}$/.test(parts[1])) {
+						const tj = parseJam(parts[1]); if (tj == null) return m.reply("Format jam: HH:MM (mis. 07:00)");
+						due = new Date(parts[0] + "T00:00:00").getTime() + tj; payload = parts.slice(2).join(" ");
+					} else if (p0 === "besok" && parts[1] && /^\d{1,2}:\d{2}$/.test(parts[1])) {
+						const tj = parseJam(parts[1]);
+						const d = new Date(); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() + 1);
+						due = d.getTime() + tj; payload = parts.slice(2).join(" ");
+					} else if (/^\d{1,2}:\d{2}$/.test(p0)) {
+						const tj = parseJam(p0);
+						const now = new Date();
+						let d = new Date(); d.setHours(0, 0, 0, 0); d = new Date(d.getTime() + tj);
+						if (d.getTime() <= Date.now()) d = new Date(d.getTime() + 24 * 3600000);
+						due = d.getTime(); payload = parts.slice(1).join(" ");
+					} else {
+						const mHit = p0.match(/^(\d+)(menit|jam|hari|minggu|m|j|h|d|w)$/);
+						if (!mHit) return m.reply("Format waktu tidak dikenali. Contoh:\n.remind 30m Pesanan masuk\n.remind 2jam Istirahat\n.remind 07:30 Bangun\n.remind 2026-12-01 07:00 Deadline\n.remind setiap 07:00 Sholat Subuh");
+						const units = { menit: 60000, m: 60000, jam: 3600000, j: 3600000, h: 3600000, hari: 86400000, d: 86400000, minggu: 604800000, w: 604800000 };
+						due = Date.now() + parseInt(mHit[1], 10) * units[mHit[2].toLowerCase()]; payload = parts.slice(1).join(" ");
+					}
+					if (!payload) return m.reply("Teksnya kosong. Contoh: .remind 30m Minum air");
+					if (due <= Date.now()) return m.reply("Waktu harus di masa depan.");
+					global.db.reminders = global.db.reminders || {};
+					global.db.reminders[sender] = global.db.reminders[sender] || [];
+					const id = "r" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+					global.db.reminders[sender].push({ id, text: payload, due, repeat });
+					return m.reply("*Reminder ditambahkan*\n\n" + fmtTgl(due) + (repeat === "daily" ? " (setiap hari)" : "") + "\nTeks: " + payload);
+				}
+				break;
+			case "reminddel":
+			case "remindhapus":
+				{
+					const sender = m.sender;
+					const list = (global.db.reminders && global.db.reminders[sender]) || [];
+					if (!text) return m.reply("Kirim nomor reminder yang mau dihapus. \nLihat list: .remind");
+					const idx = parseInt(text, 10) - 1;
+					if (!(idx >= 0 && idx < list.length)) return m.reply("Reminder nomor " + text + " tidak ditemukan.");
+					const [r] = list.splice(idx, 1);
+					if (list.length === 0) delete global.db.reminders[sender];
+					return m.reply("Reminder *" + (idx + 1) + "* dihapus.");
+				}
+				break;
+			case "note":
+				{
+					if (!text) return m.reply("Contoh: .note Beli gula cap buntal\nLihat catatan: .notes");
+					global.db.notes = global.db.notes || {};
+					global.db.notes[m.sender] = global.db.notes[m.sender] || [];
+					global.db.notes[m.sender].push({ text, at: Date.now() });
+					return m.reply("*Catatan ditambahkan.*\n" + text);
+				}
+				break;
+			case "notes":
+				{
+					const list = (global.db.notes && global.db.notes[m.sender]) || [];
+					if (!list.length) return m.reply("Belum ada catatan.\nContoh: .note Beli gula cap buntal");
+					let teks = "*Catatan milikmu*\n\n";
+					list.forEach((n, i) => { teks += "*" + (i + 1) + ".* " + n.text + "\n"; });
+					return m.reply(teks.trimEnd());
+				}
+				break;
+			case "notedel":
+			case "hapusnote":
+				{
+					const list = (global.db.notes && global.db.notes[m.sender]) || [];
+					if (!text) return m.reply("Kirim nomor catatan yang mau dihapus. \nLihat list: .notes");
+					const idx = parseInt(text, 10) - 1;
+					if (!(idx >= 0 && idx < list.length)) return m.reply("Catatan nomor " + text + " tidak ditemukan.");
+					const [n] = list.splice(idx, 1);
+					if (list.length === 0) delete global.db.notes[m.sender];
+					return m.reply("Catatan *" + (idx + 1) + "* dihapus.");
+				}
+				break;
+			case "stats":
+			case "botstats":
+				{
+					if (!isCreator) return m.reply(global.mess.owner);
+					const hit = global.db.hit || {};
+					const top = Object.entries(hit).sort((a, b) => b[1] - a[1]).slice(0, 5);
+					const users = Object.keys(global.db.users || {}).length;
+					const groups = Object.keys(global.db.groups || {}).length;
+					const premium = (global.db.premium || []).length;
+					const sewa = (global.db.sewa || []).length;
+					const totalHit = Object.values(hit).reduce((acc, v) => acc + (Number(v) || 0), 0);
+					const mem = (process.memoryUsage().rss / 1024 / 1024).toFixed(1);
+					const version = require("./package.json").version;
+					let teks = "*Statistik Rynn*\n\n";
+					teks += "Versi : v" + version + "\n";
+					teks += "Uptime : " + runtime(Math.floor(process.uptime())) + "\n";
+					teks += "Memori : " + mem + " MB\n";
+					teks += "Total user : " + users + "\n";
+					teks += "Total grup : " + groups + "\n";
+					teks += "Premium : " + premium + "\n";
+					teks += "Sewa : " + sewa + "\n";
+					teks += "Total perintah dipakai : " + totalHit + "\n\n";
+					teks += "*Top 5 Perintah*\n";
+					top.forEach(([cmd, n], i) => { teks += "*" + (i + 1) + ".* ." + cmd + " - " + n + "x\n"; });
+					return m.reply(teks.trimEnd());
+				}
+				break;
+			case "poll":
+				{
+					if (!m.isGroup) return m.reply(global.mess.group);
+					const mt = (text || "").match(/^"([^"]+)"\s+(.+)$/);
+					if (!mt) return m.reply("Contoh: .poll \"Jam berapa rapat?\" 10:00 | 13:00 | 15:00\n\nJudul pakai tanda kutip, pilihan pisah dengan |");
+					const options = mt[2].split("|").map(s => s.trim()).filter(Boolean);
+					if (options.length < 2) return m.reply("Minimal 2 pilihan.");
+					if (options.length > 12) options.length = 12;
+					await sock.sendMessage(m.chat, { poll: { name: mt[1], values: options, selectableCount: 1 } });
+				}
+				break;
+			case "gempa":
+				{
+					if (!isLimit) return m.reply(global.mess.limit);
+					try {
+						const res = await fetchJson("https://data.bmkg.go.id/DataMKG/TEWS/gempaterkini.json");
+						const d = res?.Infogempa?.gempa?.[0];
+						if (!d) return m.reply("Data gempa tidak tersedia saat ini.");
+						const teks = "*Gempa Terkini - BMKG*\n\n"
+							+ "Magnitudo : *" + d.Magnitude + "*\n"
+							+ "Kedalaman : " + d.Kedalaman + "\n"
+							+ "Wilayah   : " + d.Wilayah + "\n"
+							+ "Koordinat : " + d.Lintang + ", " + d.Bujur + "\n"
+							+ "Waktu     : " + d.Tanggal + ", " + d.Jam + "\n"
+							+ "Potensi   : " + (d.Potensi || "-");
+						return m.reply(teks);
+					} catch (e) {
+						console.log("[gempa]", e);
+						return m.reply("Gagal mengambil data gempa BMKG.");
+					}
+				}
+				break;
+			case "kurs":
+				{
+					if (!isLimit) return m.reply(global.mess.limit);
+					const fmtNum = (n) => Number(n.toFixed(2)).toLocaleString("id-ID", { maximumFractionDigits: 2 });
+					const args2 = (text || "").trim().split(/\s+/).filter(Boolean);
+					if (args2.length === 0) {
+						const res = await fetchJson("https://open.er-api.com/v6/latest/USD").catch(() => null);
+						if (!res || res.result !== "success") return m.reply("Gagal mengambil kurs. Coba lagi nanti.");
+						const r = res.rates;
+						return m.reply("*Kurs (base USD)*\n1 USD = Rp " + fmtNum(r.IDR) + "\n1 USD = € " + fmtNum(r.EUR) + "\n1 USD = ¥ " + fmtNum(r.JPY));
+					}
+					let [from, to, amountRaw] = args2;
+					from = (from || "USD").toUpperCase(); to = (to || "IDR").toUpperCase();
+					const amount = parseFloat(amountRaw) || 1;
+					if (!/^[A-Z]{3}$/.test(from) || !/^[A-Z]{3}$/.test(to)) return m.reply("Kode mata uang 3 huruf, contoh: USD, IDR, EUR, JPY.");
+					const res = await fetchJson("https://open.er-api.com/v6/latest/" + from).catch(() => null);
+					if (!res || res.result !== "success" || !res.rates || !(to in res.rates)) return m.reply("Gagal mengambil kurs atau mata uang " + to + " tidak dikenal.");
+					const val = amount * res.rates[to];
+					return m.reply(fmtNum(amount) + " " + from + " = *" + fmtNum(val) + " " + to + "*");
+				}
+				break;
 			default:
 				if (budy.startsWith(">")) {
 					if (!isCreator) return;

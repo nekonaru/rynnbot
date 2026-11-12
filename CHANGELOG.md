@@ -1,5 +1,23 @@
 # Changelog
 
+## v3.2.0
+
+Rynn v3.2.0 menambahkan pengingat, catatan pribadi, polling, dan perintah informasi.
+
+### Fitur baru
+
+- **`.remind`** — pengingat pribadi: `.remind 30m teks`, `.remind 07:30 teks`, `.remind besok 07:00 teks`, `.remind 2026-12-01 07:00 teks`, `.remind setiap 07:00 teks`. Lihat daftar dengan `.remind`, hapus dengan `.reminddel <nomor>`. Bot mengirim pesan reminder di waktu yang dijadwalkan; reminder `setiap` berjalan harian.
+- **`.note`** — catatan pribadi per pengguna: `.note teks`, `.notes`, `.notedel <nomor>`.
+- **`.poll`** — polling native WhatsApp (grup): `.poll "Judul" opsi1 | opsi2 | opsi3`.
+- **`.stats`** — statistik bot untuk owner: versi, uptime, memori, pengguna/grup/premium/sewa, total perintah dipakai, top 5 perintah.
+- **`.gempa`** — gempa terkini BMKG (tanggal, magnitudo, wilayah, kedalaman, potensi tsunami).
+- **`.kurs`** — kurs mata uang: tanpa argumen (menu ringkas), atau `.kurs USD IDR 1`.
+
+### Peningkatan
+
+- **Persistensi data baru.** `global.db` kini menyimpan `reminders` dan `notes` (ikut tersimpan ke database lokal/remote).
+- **Checker reminder setiap menit** di `index.js` yang mengirim pesan saat waktunya tiba.
+
 ## v3.1.1
 
 Rynn v3.1.1 stabil mencakup perbaikan bug fungsi inti, pengetatan privilege command, dan redaksi key di log/error.

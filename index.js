@@ -225,6 +225,8 @@ async function startRynnBot() {
 			database: {},
 			premium: [],
 			sewa: [],
+			reminders: {},
+			notes: {},
 			...(loadData || {}),
 		};
 		if (!loadData || Object.keys(loadData).length === 0) {
@@ -291,6 +293,38 @@ async function startRynnBot() {
 					}
 				},
 				5 * 60 * 1000,
+			);
+		}
+
+		if (!global._reminderInterval) {
+			global._reminderInterval = setInterval(
+				async () => {
+					try {
+						const reminders = global.db?.reminders || {};
+						for (const jid of Object.keys(reminders)) {
+							const list = reminders[jid];
+							if (!Array.isArray(list)) continue;
+							const due = list.filter((r) => r && r.due && r.due <= Date.now());
+							if (due.length === 0) continue;
+							for (const r of due) {
+								try {
+									await sock.sendMessage(jid, { text: `⏰ *Pengingat*\n\n${r.text}` });
+								} catch {}
+								if (r.repeat === "daily") {
+									let d = r.due;
+									while (d <= Date.now()) d += 24 * 60 * 60 * 1000;
+									r.due = d;
+								} else {
+									list.splice(list.indexOf(r), 1);
+								}
+							}
+							if (list.length === 0) delete reminders[jid];
+						}
+					} catch (e) {
+						console.log("[REMINDER]", e?.message || e);
+					}
+				},
+				60 * 1000,
 			);
 		}
 

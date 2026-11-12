@@ -535,6 +535,8 @@ async function LoadDataBase(sock, m) {
 	try {
 		const botNumber = sock.user?.id ? await sock.decodeJid(sock.user.id) : "";
 		global.db = global.db || {};
+	global.db.reminders = global.db.reminders || {};
+	global.db.notes = global.db.notes || {};
 		global.db.game = global.db.game || {};
 		global.db.premium = global.db.premium || [];
 		global.db.users = global.db.users || {};
