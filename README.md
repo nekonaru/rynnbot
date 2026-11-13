@@ -61,10 +61,10 @@ Berbasis Hitori Bot karya [Nazedev](https://github.com/nazedev/hitori), yang dir
 | Menu & Umum | **Hot reload** | `settings.js` dimuat ulang otomatis saat disimpan |
 | Utilitas | **Kalender & hiburan** | `.cal` (kalender bulan), `.pantun` (pantun acak), `.b64` (encode/decode base64), `.password` (generate password acak) |
 | Utilitas | **Cek anggota** | `.admins` (daftar admin grup), `.saldo` (saldo limit/uang/status) |
-| Utilitas | **Edukasi** | `.rumus`, `.hitung` (kalkulator), `.suku` (60+ suku), `.kuliner` (~90 kuliner), `.hitungmundur`, `.provinsi` (38 provinsi: ibukota, kota besar, gubernur, penduduk, lagu daerah, rumah adat, kuliner, wisata) |
-| Utilitas | **Hiburan & pengetahuan** | `.fakta` (~275 fakta), `.puisi`, `.pantun`, `.zodiak`, `.wayang`, `.lagu`, `.wisata` (~80 destinasi), `.resep` (~50 resep), `.mbti` (tes kepribadian 16 pertanyaan), `.hangman` (tebak kata) |
-| Utilitas | **Dunia & sains** | `.ibukota` (~180 negara), `.negara` (ibukota/mata uang/benua/populasi), `.unsur` (tabel periodik lengkap, 118 unsur), `.planet` (8 planet) |
-| Utilitas | **Konversi & angka** | `.umur`, `.terbilang`, `.roman`, `.konversi` (panjang/berat/suhu/luas/volume), `.morse`, `.binary`, `.hex`, `.rot13`, `.angkaacak`, `.pilih` |
+| Utilitas | **Edukasi** | `.rumus` (12 kategori), `.hitung` (kalkulator), `.suku` (60+ suku), `.kuliner` (~110 kuliner), `.hitungmundur`, `.provinsi` (38 provinsi: ibukota, kota besar, gubernur, penduduk, lagu daerah, rumah adat, kuliner, wisata) |
+| Utilitas | **Hiburan & pengetahuan** | `.fakta` (~330 fakta), `.puisi`, `.pantun`, `.zodiak`, `.wayang`, `.lagudaerah`, `.wisata` (~90 destinasi), `.resep` (~70 resep), `.mbti` (tes kepribadian 16 pertanyaan), `.hangman` (tebak kata) |
+| Utilitas | **Dunia & sains** | `.ibukota` (~180 negara), `.negara` (ibukota/mata uang/benua/populasi), `.unsur` (tabel periodik lengkap, 118 unsur), `.planet` (21 planet & exoplanet) |
+| Utilitas | **Konversi & angka** | `.umur`, `.terbilang`, `.roman`, `.konversi` (panjang/berat/suhu/luas/volume/kecepatan/energi/tekanan/data/waktu), `.morse`, `.binary`, `.hex`, `.rot13`, `.angkaacak`, `.pilih` |
 | Utilitas | **Lirik lagu** | `.lirik <artis> - <judul>` lewat Naze API |
 | Game | **Kuis & tim** | `.quiz` (kuis pengetahuan umum, hadiah 50 uang), `.team` (bagi tim acak), `.pair` (pasangan acak di grup) |
 | Owner | **Keluar semua** | `.kickall confirm` (keluarkan semua non-admin, dengan konfirmasi) |

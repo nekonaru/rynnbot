@@ -1,5 +1,28 @@
 # Changelog
 
+## v3.8.0
+
+Rynn v3.8.0 menambahkan opsi `random`, perintah `.lagudaerah` (ganti dari `.lagu`), rumus dan konversi yang jauh lebih lengkap, planet diperluas (planet kerdil dan exoplanet), serta menu EDUKASI yang lebih ringkas.
+
+### Yang ditambah
+
+- **`.lagudaerah`** (alias `.lagu`) - nama perintah diganti supaya lebih spesifik.
+- **Opsi `random`** untuk .suku, .kuliner, .resep, .wayang, .wisata, .lagudaerah, .negara, .ibukota, .unsur, .planet, .provinsi, .rumus (contoh: `.suku random`, `.planet random`).
+- **`.rumus`** diperluas menjadi 12 kategori (tambahan: peluang, matriks, vektor, kalkulus), total sekitar 110+ rumus.
+- **`.konversi`** diperluas: kecepatan (mps, kmh, mph, knot), energi (j, kj, kalori, kkal, kwh), tekanan (pa, kpa, bar, atm, mmhg, psi), data digital (b, kb, mb, gb, tb, bit), waktu (s, detik, menit, jam, hari, minggu, bulan, tahun).
+- **`.planet`** diperluas menjadi 21 entri: 8 planet tata surya, 5 planet kerdil (pluto, ceres, eris, makemake, haumea), 8 exoplanet terkenal (proxima, trappist-1e, kepler-186f, kepler-452b, 51 pegasi b, HD 209458 b, K2-18 b, TOI-700 d).
+- **Data** diperluas: fakta 277 ke 330, kuliner 89 ke 111, resep 53 ke 71, wisata 81 ke 93, wayang 43 ke 48, (total lebih dari 1.300 entri data).
+
+### Peningkatan
+
+- **Menu EDUKASI**: keterangan dalam kurung dihilangkan (sesuai permintaan), footer GAME-EDUKASI dirapikan di kedua menu.
+- **`.rumus`** dan **`.konversi`** kini mencantumkan daftar satuan/kategori yang lengkap di pesan bantuan.
+- **README** diperbarui.
+
+### Catatan
+
+- Exoplanet: jarak adalah perkiraan tahun cahaya, diameter perkiraan. Momen penemuan: 1995 untuk 51 Pegasi b (exoplanet pertama yang ditemukan mengelilingi bintang mirip Matahari).
+
 ## v3.7.0
 
 Rynn v3.7.0 fokus pada memperkaya data (lebih dari 1.300 entri data Indonesia dan dunia) dan memudahkan update di Termux lewat perintah `.update`.

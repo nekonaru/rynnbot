@@ -6289,40 +6289,41 @@ Select Bot Settings:
 │${setv} ${prefix}tebaknegara
 │${setv} ${prefix}tebakgambar
 │${setv} ${prefix}tebakbendera
-│${setv} ${prefix}quiz (jawab a/b/c/d)
-│${setv} ${prefix}team <n> (bagi tim acak)
-│${setv} ${prefix}pair (cari pasangan)
-│${setv} ${prefix}hangman (tebak kata)
+│${setv} ${prefix}quiz
+│${setv} ${prefix}team <n>
+│${setv} ${prefix}pair
+│${setv} ${prefix}hangman
+╰──────❍
 ╭─┴❍「 *EDUKASI* 」❍
-│${setv} ${prefix}rumus (matematika/fisika/kimia/indonesia)
-│${setv} ${prefix}hitung (soal matematika)
-│${setv} ${prefix}suku (nama suku)
-│${setv} ${prefix}kuliner (nama kuliner)
-│${setv} ${prefix}hitungmundur (hari / tanggal)
-│${setv} ${prefix}umur (tgl lahir)
-│${setv} ${prefix}terbilang (angka)
-│${setv} ${prefix}roman (angka romawi)
-│${setv} ${prefix}konversi (km->mil, c->f, dll)
-│${setv} ${prefix}morse (teks ke kode morse)
-│${setv} ${prefix}binary (teks ke binary)
-│${setv} ${prefix}hex (teks ke hex)
-│${setv} ${prefix}rot13 (teks)
-│${setv} ${prefix}zodiak (tgl lahir)
-│${setv} ${prefix}wayang (tokoh)
-│${setv} ${prefix}lagu (lagu daerah)
-│${setv} ${prefix}wisata (destinasi)
-│${setv} ${prefix}resep (masakan)
-│${setv} ${prefix}provinsi (38 provinsi)
-│${setv} ${prefix}mbti (tes kepribadian)
-│${setv} ${prefix}lirik (artis - judul)
-│${setv} ${prefix}fakta (fakta menarik)
-│${setv} ${prefix}puisi (puisi pendek)
-│${setv} ${prefix}ibukota (negara)
-│${setv} ${prefix}negara (info negara)
-│${setv} ${prefix}unsur (tabel periodik mini)
-│${setv} ${prefix}planet (tata surya)
-│${setv} ${prefix}balik (teks dibalik)
-│${setv} ${prefix}hitungkata (statistik teks)
+│${setv} ${prefix}rumus
+│${setv} ${prefix}hitung
+│${setv} ${prefix}suku
+│${setv} ${prefix}kuliner
+│${setv} ${prefix}hitungmundur
+│${setv} ${prefix}umur
+│${setv} ${prefix}terbilang
+│${setv} ${prefix}roman
+│${setv} ${prefix}konversi
+│${setv} ${prefix}morse
+│${setv} ${prefix}binary
+│${setv} ${prefix}hex
+│${setv} ${prefix}rot13
+│${setv} ${prefix}zodiak
+│${setv} ${prefix}wayang
+│${setv} ${prefix}lagudaerah
+│${setv} ${prefix}wisata
+│${setv} ${prefix}resep
+│${setv} ${prefix}provinsi
+│${setv} ${prefix}mbti
+│${setv} ${prefix}lirik
+│${setv} ${prefix}fakta
+│${setv} ${prefix}puisi
+│${setv} ${prefix}ibukota
+│${setv} ${prefix}negara
+│${setv} ${prefix}unsur
+│${setv} ${prefix}planet
+│${setv} ${prefix}balik
+│${setv} ${prefix}hitungkata
 ╰─┬────❍
 ╭─┴❍「 *FUN* 」❍
 │${setv} ${prefix}coba
@@ -6344,9 +6345,9 @@ Select Bot Settings:
 │${setv} ${prefix}huluh (text)
 │${setv} ${prefix}heleh (text)
 │${setv} ${prefix}holoh (text)
-│${setv} ${prefix}pilih (kopi | teh | susu)
-│${setv} ${prefix}angkaacak (1-100)
-│${setv} ${prefix}warna (warna acak hex/rgb/hsl)
+│${setv} ${prefix}pilih
+│${setv} ${prefix}angkaacak
+│${setv} ${prefix}warna
 ╰─┬────❍
 ╭─┴❍「 *RANDOM* 」❍
 │${setv} ${prefix}coffe
@@ -6664,40 +6665,41 @@ Select Bot Settings:
 │${setv} ${prefix}tebaknegara
 │${setv} ${prefix}tebakgambar
 │${setv} ${prefix}tebakbendera
-│${setv} ${prefix}quiz (jawab a/b/c/d)
-│${setv} ${prefix}team <n> (bagi tim acak)
-│${setv} ${prefix}pair (cari pasangan)
-│${setv} ${prefix}hangman (tebak kata)
+│${setv} ${prefix}quiz
+│${setv} ${prefix}team <n>
+│${setv} ${prefix}pair
+│${setv} ${prefix}hangman
+╰──────❍
 ╭─┴❍「 *EDUKASI* 」❍
-│${setv} ${prefix}rumus (matematika/fisika/kimia/indonesia)
-│${setv} ${prefix}hitung (soal matematika)
-│${setv} ${prefix}suku (nama suku)
-│${setv} ${prefix}kuliner (nama kuliner)
-│${setv} ${prefix}hitungmundur (hari / tanggal)
-│${setv} ${prefix}umur (tgl lahir)
-│${setv} ${prefix}terbilang (angka)
-│${setv} ${prefix}roman (angka romawi)
-│${setv} ${prefix}konversi (km->mil, c->f, dll)
-│${setv} ${prefix}morse (teks ke kode morse)
-│${setv} ${prefix}binary (teks ke binary)
-│${setv} ${prefix}hex (teks ke hex)
-│${setv} ${prefix}rot13 (teks)
-│${setv} ${prefix}zodiak (tgl lahir)
-│${setv} ${prefix}wayang (tokoh)
-│${setv} ${prefix}lagu (lagu daerah)
-│${setv} ${prefix}wisata (destinasi)
-│${setv} ${prefix}resep (masakan)
-│${setv} ${prefix}provinsi (38 provinsi)
-│${setv} ${prefix}mbti (tes kepribadian)
-│${setv} ${prefix}lirik (artis - judul)
-│${setv} ${prefix}fakta (fakta menarik)
-│${setv} ${prefix}puisi (puisi pendek)
-│${setv} ${prefix}ibukota (negara)
-│${setv} ${prefix}negara (info negara)
-│${setv} ${prefix}unsur (tabel periodik mini)
-│${setv} ${prefix}planet (tata surya)
-│${setv} ${prefix}balik (teks dibalik)
-│${setv} ${prefix}hitungkata (statistik teks)
+│${setv} ${prefix}rumus
+│${setv} ${prefix}hitung
+│${setv} ${prefix}suku
+│${setv} ${prefix}kuliner
+│${setv} ${prefix}hitungmundur
+│${setv} ${prefix}umur
+│${setv} ${prefix}terbilang
+│${setv} ${prefix}roman
+│${setv} ${prefix}konversi
+│${setv} ${prefix}morse
+│${setv} ${prefix}binary
+│${setv} ${prefix}hex
+│${setv} ${prefix}rot13
+│${setv} ${prefix}zodiak
+│${setv} ${prefix}wayang
+│${setv} ${prefix}lagudaerah
+│${setv} ${prefix}wisata
+│${setv} ${prefix}resep
+│${setv} ${prefix}provinsi
+│${setv} ${prefix}mbti
+│${setv} ${prefix}lirik
+│${setv} ${prefix}fakta
+│${setv} ${prefix}puisi
+│${setv} ${prefix}ibukota
+│${setv} ${prefix}negara
+│${setv} ${prefix}unsur
+│${setv} ${prefix}planet
+│${setv} ${prefix}balik
+│${setv} ${prefix}hitungkata
 ╰──────❍`);
 				}
 				break;
@@ -6724,9 +6726,9 @@ Select Bot Settings:
 │${setv} ${prefix}huluh (text)
 │${setv} ${prefix}heleh (text)
 │${setv} ${prefix}holoh (text)
-│${setv} ${prefix}pilih (kopi | teh | susu)
-│${setv} ${prefix}angkaacak (1-100)
-│${setv} ${prefix}warna (warna acak hex/rgb/hsl)
+│${setv} ${prefix}pilih
+│${setv} ${prefix}angkaacak
+│${setv} ${prefix}warna
 ╰──────❍`);
 				}
 				break;
@@ -6734,39 +6736,39 @@ Select Bot Settings:
 				{
 					m.reply(`
 ╭─┴❍「 *EDUKASI* 」❍
-│${setv} ${prefix}rumus (matematika/fisika/kimia/indonesia)
-│${setv} ${prefix}hitung (soal matematika)
-│${setv} ${prefix}suku (nama suku)
-│${setv} ${prefix}kuliner (nama kuliner)
-│${setv} ${prefix}hitungmundur (hari / tanggal)
-│${setv} ${prefix}umur (tgl lahir)
-│${setv} ${prefix}terbilang (angka)
-│${setv} ${prefix}roman (angka romawi)
-│${setv} ${prefix}konversi (km->mil, c->f, dll)
-│${setv} ${prefix}morse (teks ke kode morse)
-│${setv} ${prefix}binary (teks ke binary)
-│${setv} ${prefix}hex (teks ke hex)
-│${setv} ${prefix}rot13 (teks)
-│${setv} ${prefix}zodiak (tgl lahir)
-│${setv} ${prefix}wayang (tokoh)
-│${setv} ${prefix}lagu (lagu daerah)
-│${setv} ${prefix}wisata (destinasi)
-│${setv} ${prefix}resep (masakan)
-│${setv} ${prefix}provinsi (38 provinsi)
-│${setv} ${prefix}mbti (tes kepribadian)
-│${setv} ${prefix}lirik (artis - judul)
-│${setv} ${prefix}fakta (fakta menarik)
-│${setv} ${prefix}puisi (puisi pendek)
-│${setv} ${prefix}ibukota (negara)
-│${setv} ${prefix}negara (info negara)
-│${setv} ${prefix}unsur (tabel periodik mini)
-│${setv} ${prefix}planet (tata surya)
-│${setv} ${prefix}balik (teks dibalik)
-│${setv} ${prefix}hitungkata (statistik teks)
-│${setv} ${prefix}quiz (jawab a/b/c/d)
-│${setv} ${prefix}team <n> (bagi tim acak)
-│${setv} ${prefix}pair (cari pasangan)
-│${setv} ${prefix}hangman (tebak kata)
+│${setv} ${prefix}rumus
+│${setv} ${prefix}hitung
+│${setv} ${prefix}suku
+│${setv} ${prefix}kuliner
+│${setv} ${prefix}hitungmundur
+│${setv} ${prefix}umur
+│${setv} ${prefix}terbilang
+│${setv} ${prefix}roman
+│${setv} ${prefix}konversi
+│${setv} ${prefix}morse
+│${setv} ${prefix}binary
+│${setv} ${prefix}hex
+│${setv} ${prefix}rot13
+│${setv} ${prefix}zodiak
+│${setv} ${prefix}wayang
+│${setv} ${prefix}lagudaerah
+│${setv} ${prefix}wisata
+│${setv} ${prefix}resep
+│${setv} ${prefix}provinsi
+│${setv} ${prefix}mbti
+│${setv} ${prefix}lirik
+│${setv} ${prefix}fakta
+│${setv} ${prefix}puisi
+│${setv} ${prefix}ibukota
+│${setv} ${prefix}negara
+│${setv} ${prefix}unsur
+│${setv} ${prefix}planet
+│${setv} ${prefix}balik
+│${setv} ${prefix}hitungkata
+│${setv} ${prefix}quiz
+│${setv} ${prefix}team <n>
+│${setv} ${prefix}pair
+│${setv} ${prefix}hangman
 ╰──────❍`);
 				}
 				break;
@@ -7212,18 +7214,27 @@ case "team":
 				{
 					const kategori = (text || "").trim().toLowerCase();
 					const data = {
-						matematika: "*Rumus Matematika*\n\n- Luas segitiga: 1/2 x alas x tinggi\n- Keliling lingkaran: 2 x pi x r (pi = 3,14)\n- Luas lingkaran: pi x r x r\n- Pythagoras: c2 = a2 + b2\n- Volume kubus: s x s x s\n- Luas persegi panjang: p x l\n- Rata-rata: jumlah data / banyak data\n- Persentase: (bagian / keseluruhan) x 100",
-						fisika: "*Rumus Fisika*\n\n- Gerak lurus: s = v x t\n- Kecepatan: v = s / t\n- Percepatan: a = (v2 - v1) / t\n- Gaya: F = m x a\n- Energi kinetik: Ek = 1/2 x m x v2\n- Tekanan: P = F / A\n- Usaha: W = F x s\n- Daya: P = W / t",
-						kimia: "*Rumus Kimia*\n\n- Massa jenis: rho = m / V\n- Molaritas: M = mol / volume (liter)\n- Mol: mol = massa / Mr\n- pH asam: pH = -log [H+]\n- Hukum Avogadro: V sebanding mol (pada P dan T sama)",
-						indonesia: "*Bahasa Indonesia*\n\n- Unsur intrinsik: tema, amanat, tokoh, latar, alur, sudut pandang, gaya bahasa\n- Majas: metafora (kiasan), simile (perbandingan), hiperbola (berlebihan), personifikasi (benda dihidupkan)\n- Jenis kalimat: deklaratif (berita), interogatif (tanya), imperatif (perintah), eksklamatif (seru)\n- Paragraf: deduktif (utama di awal), induktif (utama di akhir), campuran",
+						matematika: "*Rumus Matematika*\n\n- Luas segitiga: 1/2 x alas x tinggi\n- Keliling segitiga: a + b + c\n- Keliling lingkaran: 2 x pi x r (pi = 3,14)\n- Luas lingkaran: pi x r x r\n- Pythagoras: c2 = a2 + b2\n- Volume kubus: s x s x s\n- Luas persegi panjang: p x l\n- Keliling persegi panjang: 2 x (p + l)\n- Rata-rata: jumlah data / banyak data\n- Persentase: (bagian / keseluruhan) x 100\n- Skala: jarak peta / jarak sebenarnya\n- Perbandingan senilai: a / b = c / d",
+						fisika: "*Rumus Fisika*\n\n- Gerak lurus: s = v x t\n- Kecepatan: v = s / t\n- Percepatan: a = (v2 - v1) / t\n- Gaya: F = m x a\n- Energi kinetik: Ek = 1/2 x m x v2\n- Tekanan: P = F / A\n- Usaha: W = F x s\n- Daya: P = W / t\n- Hukum Ohm: V = I x R\n- Rangkaian seri: R total = R1 + R2 + ...\n- Rangkaian paralel: 1/R total = 1/R1 + 1/R2 + ...\n- Daya listrik: P = V x I\n- Energi listrik: W = P x t",
+						kimia: "*Rumus Kimia*\n\n- Massa jenis: rho = m / V\n- Molaritas: M = mol / volume (liter)\n- Mol: mol = massa / Mr\n- pH asam: pH = -log [H+]\n- Hukum Avogadro: V sebanding mol (pada P dan T sama)\n- Hukum kekekalan massa: massa sebelum reaksi = massa sesudah reaksi\n- Hukum gas ideal: PV = nRT\n- Pengenceran: M1 x V1 = M2 x V2\n- pOH: pOH = -log [OH-]\n- pH + pOH = 14",
+						indonesia: "*Bahasa Indonesia*\n\n- Unsur intrinsik: tema, amanat, tokoh, latar, alur, sudut pandang, gaya bahasa\n- Majas: metafora (kiasan), simile (perbandingan), hiperbola (berlebihan), personifikasi (benda dihidupkan)\n- Jenis kalimat: deklaratif (berita), interogatif (tanya), imperatif (perintah), eksklamatif (seru)\n- Paragraf: deduktif (utama di awal), induktif (utama di akhir), campuran\n- Jenis puisi: bebas, terikat\n- Unsur ekstrinsik: latar belakang penulis dan kondisi sosial",
 						statistika: "*Rumus Statistika*\n\n- Rata-rata (mean): jumlah data / banyak data\n- Median: nilai tengah data terurut (ganjil), atau rata-rata dua nilai tengah (genap)\n- Modus: nilai yang paling sering muncul\n- Jangkauan (range): nilai terbesar - nilai terkecil\n- Kuartil 1 (Q1): nilai pada 1/4 data terurut\n- Kuartil 2 (Q2): sama dengan median\n- Kuartil 3 (Q3): nilai pada 3/4 data terurut\n- Hampar (IQR): Q3 - Q1\n- Varians: rata-rata kuadrat selisih data dari mean\n- Simpangan baku: akar varians",
-						trigonometri: "*Rumus Trigonometri*\n\n- sin A = depan / miring\n- cos A = samping / miring\n- tan A = depan / samping\n- sin^2 A + cos^2 A = 1\n- tan A = sin A / cos A\n- Luas segitiga: 1/2 x a x b x sin C",
-						aljabar: "*Rumus Aljabar*\n\n- Diskriminan: D = b^2 - 4ac\n- Akar persamaan kuadrat: x = (-b ± akar(D)) / 2a\n- Jumlah akar: -b / a\n- Hasil kali akar: c / a\n- Deret aritmetika: Un = a + (n-1)b ; Sn = n/2 x (2a + (n-1)b)\n- Deret geometri: Un = a x r^(n-1) ; Sn = a x (r^n - 1) / (r - 1)",
-						geometri: "*Rumus Geometri Lanjutan*\n\n- Volume tabung: pi x r^2 x t\n- Luas permukaan tabung: 2 x pi x r x (r + t)\n- Volume kerucut: 1/3 x pi x r^2 x t\n- Volume bola: 4/3 x pi x r^3\n- Luas permukaan bola: 4 x pi x r^2\n- Volume limas: 1/3 x luas alas x tinggi\n- Keliling persegi panjang: 2 x (p + l)"
+						trigonometri: "*Rumus Trigonometri*\n\n- sin A = depan / miring\n- cos A = samping / miring\n- tan A = depan / samping\n- sin^2 A + cos^2 A = 1\n- tan A = sin A / cos A\n- Luas segitiga: 1/2 x a x b x sin C\n- sin (A + B) = sin A cos B + cos A sin B\n- cos (A + B) = cos A cos B - sin A sin B\n- Aturan sinus: a / sin A = b / sin B = c / sin C\n- Aturan cosinus: c2 = a2 + b2 - 2ab cos C\n- sin (A - B) = sin A cos B - cos A sin B",
+						aljabar: "*Rumus Aljabar*\n\n- Diskriminan: D = b^2 - 4ac\n- Akar persamaan kuadrat: x = (-b ± akar(D)) / 2a\n- Jumlah akar: -b / a\n- Hasil kali akar: c / a\n- Deret aritmetika: Un = a + (n-1)b ; Sn = n/2 x (2a + (n-1)b)\n- Deret geometri: Un = a x r^(n-1) ; Sn = a x (r^n - 1) / (r - 1)\n- (a + b)^2 = a^2 + 2ab + b^2\n- (a - b)^2 = a^2 - 2ab + b^2\n- Selisih kuadrat: a^2 - b^2 = (a-b)(a+b)\n- (a + b + c)^2 = a^2 + b^2 + c^2 + 2ab + 2ac + 2bc",
+						geometri: "*Rumus Geometri Lanjutan*\n\n- Volume tabung: pi x r^2 x t\n- Luas permukaan tabung: 2 x pi x r x (r + t)\n- Volume kerucut: 1/3 x pi x r^2 x t\n- Luas permukaan kerucut: pi x r x (r + s)\n- Volume bola: 4/3 x pi x r^3\n- Luas permukaan bola: 4 x pi x r^2\n- Volume limas: 1/3 x luas alas x tinggi\n- Volume prisma: luas alas x tinggi\n- Keliling persegi panjang: 2 x (p + l)\n- Luas segitiga siku-siku: 1/2 x a x t\n- Keliling lingkaran: 2 x pi x r",
+						peluang: "*Rumus Peluang*\n\n- Peluang: P(A) = n(A) / n(S)\n- Peluang komplemen: P(A') = 1 - P(A)\n- Faktorial: n! = n x (n-1) x ... x 1\n- 0! = 1\n- Permutasi: P(n, r) = n! / (n-r)!\n- Kombinasi: C(n, r) = n! / (r! x (n-r)!)\n- Permutasi siklis: (n-1)!\n- Peluang gabungan bebas: P(A dan B) = P(A) x P(B)\n- Peluang gabungan lepas: P(A atau B) = P(A) + P(B)\n- Peluang gabungan tidak lepas: P(A atau B) = P(A) + P(B) - P(A dan B)",
+						matriks: "*Rumus Matriks*\n\n- Determinan 2x2: |a b; c d| = a d - b c\n- Invers 2x2: (1/D) x |d -b; -c a|\n- Transpose: baris menjadi kolom\n- Perkalian matriks: baris ke-i kali kolom ke-j\n- Penjumlahan matriks: elemen sesuai posisi\n- Perkalian skalar: c x M = c kali setiap elemen\n- Determinan 3x3 (metode Sarrus): salin dua kolom pertama ke kanan\n- Kesamaan matriks: elemen sesuai posisi sama",
+						vektor: "*Rumus Vektor*\n\n- Panjang vektor a = (a1, a2): |a| = akar(a1^2 + a2^2)\n- Dot product: a.b = a1*b1 + a2*b2\n- Sudut antara vektor: cos theta = a.b / (|a| x |b|)\n- Vektor satuan: a / |a|\n- Penjumlahan vektor: komponen per komponen\n- Selisih vektor: a - b = (a1-b1, a2-b2)\n- Proyeksi skalar: a.b / |b|\n- Proyeksi vektor: (a.b / |b|^2) x b",
+						kalkulus: "*Rumus Turunan & Integral*\n\n- Turunan x^n: d/dx x^n = n x x^(n-1)\n- Turunan konstanta: d/dx k = 0\n- Turunan sin x: cos x\n- Turunan cos x: -sin x\n- Turunan ln x: 1 / x\n- Turunan e^x: e^x\n- Turunan tan x: sec^2 x\n- Integral x^n: x^(n+1) / (n+1) + C (n bukan -1)\n- Integral 1/x: ln|x| + C\n- Integral e^x: e^x + C\n- Integral sin x: -cos x + C\n- Integral cos x: sin x + C"
 					};
-					if (!kategori) return m.reply("Contoh: .rumus matematika\n\nPilihan: matematika, fisika, kimia, indonesia, statistika, trigonometri, aljabar, geometri");
+					if (kategori === "random") {
+						const keys2 = Object.keys(data);
+						const found2 = data[keys2[Math.floor(Math.random() * keys2.length)]];
+						return m.reply(found2);
+					}
+					if (!kategori) return m.reply("Contoh: .rumus matematika\n\nPilihan: matematika, fisika, kimia, indonesia, statistika, trigonometri, aljabar, geometri, peluang, matriks, vektor, kalkulus");
 					const found = data[kategori];
-					if (!found) return m.reply("Kategori tidak ditemukan.\n\nPilihan: matematika, fisika, kimia, indonesia, statistika, trigonometri, aljabar, geometri");
+					if (!found) return m.reply("Kategori tidak ditemukan.\n\nPilihan: matematika, fisika, kimia, indonesia, statistika, trigonometri, aljabar, geometri, peluang, matriks, vektor, kalkulus");
 					return m.reply(found);
 				}
 				break;
@@ -7263,6 +7274,7 @@ case "team":
 				{
 					const q = (text || "").trim().toLowerCase().replace(/[^a-z]/g, "");
 					const list = Object.keys(SUKU).sort().join(", ");
+					if (q === "random") { const keys2 = Object.keys(SUKU); return m.reply(SUKU[keys2[Math.floor(Math.random() * keys2.length)]]); }
 					if (!q) return m.reply(`*Suku-suku Nusantara (${Object.keys(SUKU).length})*\n\n${list}\n\nKetik .suku jawa`);
 					const found = SUKU[q] || Object.entries(SUKU).find(([k]) => k.startsWith(q));
 					if (!found) return m.reply(`Suku tidak ditemukan.\n\n${list}`);
@@ -7273,6 +7285,7 @@ case "team":
 				{
 					const q = (text || "").trim().toLowerCase().replace(/[^a-z]/g, "");
 					const list = Object.keys(KULINER).sort().join(", ");
+					if (q === "random") { const keys2 = Object.keys(KULINER); return m.reply(KULINER[keys2[Math.floor(Math.random() * keys2.length)]]); }
 					if (!q) return m.reply(`*Kuliner Khas Indonesia (${Object.keys(KULINER).length})*\n\n${list}\n\nKetik .kuliner rendang`);
 					const found = KULINER[q] || Object.entries(KULINER).find(([k]) => k.includes(q));
 					if (!found) return m.reply(`Kuliner tidak ditemukan.\n\n${list}`);
@@ -7352,7 +7365,7 @@ case "fakta":
 				{
 					const arg = (text || "").trim();
 					if (!arg) {
-						return m.reply(`Contoh:\n.konversi 1 km ke mil\n.konversi 100 kg ke ons\n.konversi 0 c ke f\n.konversi 1 galon ke liter\n\nSatuan: mm cm m km inci ft kaki mil | mg g kg ons pon ton | m2 km2 hektar are | ml liter m3 galon | c f k`);
+						return m.reply(`Contoh:\n.konversi 1 km ke mil\n.konversi 100 kg ke ons\n.konversi 0 c ke f\n.konversi 1 galon ke liter\n.konversi 90 kmh ke mps\n.konversi 1 kwh ke j\n.konversi 1 atm ke kpa\n.konversi 1 hari ke menit\n.konversi 2 gb ke mb\n\nSatuan: mm cm m km inci ft kaki mil | mg g kg ons pon ton | m2 km2 hektar are | ml liter m3 galon | c f k | mps kmh mph knot | j kj kalori kkal kwh | pa kpa bar atm mmhg psi | b kb mb gb tb bit | s menit jam hari minggu bulan tahun`);
 					}
 					const mt = (" " + arg + " ").match(/\s(-?[\d.,]+)\s*([a-z0-9]+)\s+(?:ke|to|=)\s*([a-z0-9]+)\s/i);
 					if (!mt) return m.reply("Format: .konversi 1 km ke mil");
@@ -7463,6 +7476,7 @@ case "fakta":
 			case "wayang":
 				{
 					const q = (text || "").trim().toLowerCase().replace(/[^a-z]/g, "");
+					if (q === "random") { const keys2 = Object.keys(WAYANG); return m.reply(WAYANG[keys2[Math.floor(Math.random() * keys2.length)]]); }
 					if (!q) {
 						return m.reply(`*Tokoh Wayang Indonesia*\n\n${Object.keys(WAYANG).sort().join(", ")}\n\nKetik .wayang gatotkaca`);
 					}
@@ -7471,9 +7485,11 @@ case "fakta":
 					return m.reply(found[1]);
 				}
 				break;
+			case "lagudaerah":
 			case "lagu":
 				{
 					const q = (text || "").trim().toLowerCase();
+					if (q === "random") { const l = LAGU_DAERAH[Math.floor(Math.random() * LAGU_DAERAH.length)]; return m.reply(`*${l.nama}* - ${l.daerah}`); }
 					if (!q) {
 						return m.reply(`*Lagu Daerah Indonesia*\n\n${LAGU_DAERAH.map((l) => `- ${l.nama} (${l.daerah})`).join("\n")}`);
 					}
@@ -7485,6 +7501,7 @@ case "fakta":
 			case "wisata":
 				{
 					const q = (text || "").trim().toLowerCase();
+					if (q === "random") { const w = WISATA[Math.floor(Math.random() * WISATA.length)]; return m.reply(`*${w.nama}* (${w.provinsi})\n${w.info}`); }
 					if (!q) {
 						return m.reply(`*Destinasi Wisata Indonesia*\n\n${WISATA.map((w) => `- ${w.nama} (${w.provinsi})`).join("\n")}\n\nKetik .wisata bromo`);
 					}
@@ -7496,6 +7513,7 @@ case "fakta":
 			case "resep":
 				{
 					const q = (text || "").trim().toLowerCase().replace(/[^a-z]/g, "");
+					if (q === "random") { const keys2 = Object.keys(RESEP); return m.reply(RESEP[keys2[Math.floor(Math.random() * keys2.length)]]); }
 					if (!q) {
 						return m.reply(`*Resep Sederhana Indonesia*\n\n${Object.keys(RESEP).sort().join(", ")}\n\nKetik .resep nasigoreng`);
 					}
@@ -7509,6 +7527,7 @@ case "fakta":
 					const arg = (text || "").trim();
 					const norm = (s) => s.toLowerCase().replace(/[^a-z ]/g, " ").replace(/\s+/g, " ").trim();
 					const keys = Object.keys(PROVINSI);
+					if (norm(arg) === "random") { const keys2 = Object.keys(PROVINSI); const foundKey2 = keys2[Math.floor(Math.random() * keys2.length)]; const p2 = PROVINSI[foundKey2]; return m.reply(`*Provinsi ${p2.nama}*\n\nIbukota: ${p2.ibukota}\nKota besar: ${p2.kota}\nGubernur: ${p2.gubernur}\nPenduduk: ${p2.penduduk} (Sensus 2020, dibulatkan)\nSuku: ${p2.sukus}\nBahasa: ${p2.bahasa}\nLagu daerah: ${p2.lagu}\nRumah adat: ${p2.rumahadat}\nKuliner khas: ${p2.makanan}\nWisata: ${p2.wisata}\nKhas: ${p2.khas}`); }
 					if (!arg) {
 						return m.reply(`*38 Provinsi Indonesia*\n\n${keys.map((k) => PROVINSI[k].nama).join(", ")}\n\nKetik .provinsi jawa barat`);
 					}
@@ -7584,6 +7603,7 @@ case "ibukota":
 					const norm = (s) => s.toLowerCase().replace(/[^a-z ]/g, " ").replace(/\s+/g, " ").trim();
 					const q = norm(text || "");
 					const keys = Object.keys(NEGARA);
+					if (q === "random") { const keys2 = Object.keys(NEGARA); const found2 = keys2[Math.floor(Math.random() * keys2.length)]; const n2 = NEGARA[found2]; return m.reply(`*Ibukota ${cap(found2)}*\n\n${n2.ibukota}\n\nMata uang: ${n2.matauang}\nBenua: ${n2.benua}`); }
 					if (!q) {
 						return m.reply(`*Ibukota Negara (${keys.length} negara)*\n\n${keys.map((k) => cap(k)).join(", ")}\n\nKetik .ibukota jepang`);
 					}
@@ -7598,6 +7618,7 @@ case "ibukota":
 					const norm = (s) => s.toLowerCase().replace(/[^a-z ]/g, " ").replace(/\s+/g, " ").trim();
 					const q = norm(text || "");
 					const keys = Object.keys(NEGARA);
+					if (q === "random") { const keys2 = Object.keys(NEGARA); const found2 = keys2[Math.floor(Math.random() * keys2.length)]; const n2 = NEGARA[found2]; return m.reply(`*${cap(found2)}*\n\nIbukota: ${n2.ibukota}\nMata uang: ${n2.matauang}\nBenua: ${n2.benua}\nPenduduk: ${n2.penduduk} (angka dibulatkan, estimasi Bank Dunia 2023)`); }
 					if (!q) {
 						return m.reply(`*Negara di Dunia (${keys.length})*\n\n${keys.map((k) => cap(k)).join(", ")}\n\nKetik .negara jepang`);
 					}
@@ -7611,6 +7632,7 @@ case "ibukota":
 				{
 					const q = (text || "").trim().toLowerCase().replace(/[^a-z]/g, "");
 					const keys = Object.keys(UNSUR);
+					if (q === "random") { const keys2 = Object.keys(UNSUR); const found2 = keys2[Math.floor(Math.random() * keys2.length)]; const u2 = UNSUR[found2]; return m.reply(`*${cap(found2)} (${u2.simbol})*\n\nNomor atom: ${u2.nomor}\nGolongan: ${u2.golongan}`); }
 					if (!q) {
 						return m.reply(`*Tabel Periodik Mini*\n\n${keys.map((k) => `${cap(k)} (${UNSUR[k].simbol})`).join(", ")}\n\nKetik .unsur emas\nAtau pakai simbol: .unsur au`);
 					}
@@ -7624,8 +7646,9 @@ case "ibukota":
 				{
 					const q = (text || "").trim().toLowerCase().replace(/[^a-z]/g, "");
 					const keys = Object.keys(PLANET);
+					if (q === "random") { const keys2 = Object.keys(PLANET); const found2 = keys2[Math.floor(Math.random() * keys2.length)]; const p2 = PLANET[found2]; return m.reply(`*${cap(found2)}*\n\nJenis: ${p2.jenis}\nJarak: ${p2.jarak}\nDiameter: ${p2.diameter}\nPeriode orbit: ${p2.orbit}\nJumlah bulan: ${p2.bulan}\n\n${p2.info}`); }
 					if (!q) {
-						return m.reply(`*Planet Tata Surya (8)*\n\n${keys.map((k) => cap(k)).join(", ")}\n\nKetik .planet mars`);
+						return m.reply(`*Planet & Exoplanet (21)*\n\n${keys.map((k) => cap(k)).join(", ")}\n\nKetik .planet mars`);
 					}
 					const found = keys.find((k) => k === q) || keys.find((k) => k.startsWith(q));
 					if (!found) return m.reply("Planet tidak ditemukan.\n\nKetik .planet untuk daftar.");
