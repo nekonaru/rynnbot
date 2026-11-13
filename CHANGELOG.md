@@ -1,5 +1,32 @@
 # Changelog
 
+## v3.6.0
+
+Rynn v3.6.0 menambahkan perintah dunia & sains, teks, dan game hangman. Semua berjalan lokal tanpa API eksternal.
+
+### Fitur baru
+
+- **`.ibukota`** - ibukota sekitar 150 negara (`.ibukota jepang`).
+- **`.negara`** - info negara: ibukota, mata uang, benua, penduduk (dibulatkan, estimasi Bank Dunia 2023) (`.negara jepang`).
+- **`.unsur`** - tabel periodik mini, sekitar 80 unsur (nama atau simbol: `.unsur emas` atau `.unsur au`).
+- **`.planet`** - info 8 planet tata surya (`.planet mars`).
+- **`.balik`** - teks dibalik (`.balik halo`).
+- **`.hitungkata`** - statistik teks: jumlah kata, karakter (dengan/tanpa spasi), kalimat (`.hitungkata halo dunia`).
+- **`.warna`** - warna acak dalam HEX, RGB, dan HSL.
+- **`.hangman`** - tebak kata Indonesia, 6 nyawa, hadiah 100 uang (alias `.gantung`).
+- **`.rumus`** diperluas: kategori statistika, trigonometri, aljabar, dan geometri lanjutan.
+
+### Peningkatan
+
+- Kategori **EDUKASI** berisi perintah dunia & sains; `.warna` masuk FUN, `.hangman` masuk GAME.
+- `.edukasimenu` diperluas mencakup semua perintah edukasi.
+- **README** mencatat perintah-perintah baru di tabel fitur dan perintah populer.
+
+### Catatan
+
+- Populasi negara dibulatkan dari estimasi Bank Dunia 2023 dan diberi tanda ±. Angka bisa berubah seiring waktu.
+- Data tabel periodik dan planet adalah data textbook umum.
+
 ## v3.5.0
 
 Rynn v3.5.0 menambahkan lebih dari 20 perintah baru, mayoritas edukasi, budaya Indonesia, konversi, dan MBTI. Mayoritas berjalan lokal tanpa API eksternal.

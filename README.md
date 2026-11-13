@@ -62,7 +62,8 @@ Berbasis Hitori Bot karya [Nazedev](https://github.com/nazedev/hitori), yang dir
 | Utilitas | **Kalender & hiburan** | `.cal` (kalender bulan), `.pantun` (pantun acak), `.b64` (encode/decode base64), `.password` (generate password acak) |
 | Utilitas | **Cek anggota** | `.admins` (daftar admin grup), `.saldo` (saldo limit/uang/status) |
 | Utilitas | **Edukasi** | `.rumus`, `.hitung` (kalkulator), `.suku` (~30 suku), `.kuliner` (~40 kuliner), `.hitungmundur`, `.provinsi` (38 provinsi: ibukota, gubernur, penduduk, lagu daerah, rumah adat, kuliner, wisata) |
-| Utilitas | **Hiburan & pengetahuan** | `.fakta` (~100 fakta), `.puisi`, `.pantun`, `.zodiak`, `.wayang`, `.lagu`, `.wisata`, `.resep`, `.mbti` (tes kepribadian 16 pertanyaan) |
+| Utilitas | **Hiburan & pengetahuan** | `.fakta` (~170 fakta), `.puisi`, `.pantun`, `.zodiak`, `.wayang`, `.lagu`, `.wisata`, `.resep`, `.mbti` (tes kepribadian 16 pertanyaan), `.hangman` (tebak kata) |
+| Utilitas | **Dunia & sains** | `.ibukota` (~150 negara), `.negara` (ibukota/mata uang/benua/populasi), `.unsur` (tabel periodik mini ~80 unsur), `.planet` (8 planet) |
 | Utilitas | **Konversi & angka** | `.umur`, `.terbilang`, `.roman`, `.konversi` (panjang/berat/suhu/luas/volume), `.morse`, `.binary`, `.hex`, `.rot13`, `.angkaacak`, `.pilih` |
 | Utilitas | **Lirik lagu** | `.lirik <artis> - <judul>` lewat Naze API |
 | Game | **Kuis & tim** | `.quiz` (kuis pengetahuan umum, hadiah 50 uang), `.team` (bagi tim acak), `.pair` (pasangan acak di grup) |
@@ -468,6 +469,11 @@ Semua perintah memakai prefix default `.` `!` atau `+` (atur di `settings.js`).
 | `.umur 1999-05-20` | Kalkulator umur |
 | `.konversi 1 km ke mil` | Konversi panjang/berat/suhu/luas/volume |
 | `.lirik Pamungkas - To The Bone` | Lirik lagu |
+| `.ibukota jepang` | Ibukota negara |
+| `.negara jepang` | Info negara (ibukota, mata uang, benua, penduduk) |
+| `.unsur emas` | Tabel periodik mini |
+| `.planet mars` | Info planet tata surya |
+| `.hangman` | Tebak kata Indonesia |
 | `.mode public` / `.mode self` | Mode publik / khusus owner |
 
 Daftar lengkap: jalankan `.menu` di WhatsApp.

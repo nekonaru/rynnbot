@@ -22,8 +22,10 @@ import templateMenu from "./lib/template_menu.js";
 import { FAKTA, PUISI, PANTUN } from "./lib/data-umum.js";
 import { SUKU, KULINER, RESEP, LAGU_DAERAH, WISATA, WAYANG } from "./lib/data-indonesia.js";
 import { PROVINSI } from "./lib/provinsi.js";
+import { NEGARA, UNSUR, PLANET } from "./lib/data-dunia.js";
+import { HANGMAN_KATA } from "./lib/data-game.js";
 import { MBTI_PERTANYAAN, MBTI_TIPES, hitungMBTI } from "./lib/mbti.js";
-import { angkaKeKata, toRoman, fromRoman, rot13, morseEncode, morseDecode, binaryEncode, binaryDecode, hexEncode, hexDecode, ZODIAC, zodiacFor, convertUnit } from "./lib/util-lokal.js";
+import { angkaKeKata, toRoman, fromRoman, rot13, morseEncode, morseDecode, binaryEncode, binaryDecode, hexEncode, hexDecode, ZODIAC, zodiacFor, convertUnit, cap } from "./lib/util-lokal.js";
 import { FIRST_SETUP_MARKER, firstSetupStates, firstSetupStepText, sendFirstSetupIntro } from './src/setup-wizard.js';
 import { ytMp4, ytMp3, ytMp4Stream } from "./lib/scraper.js";
 import { GroupUpdate, LoadDataBase, extractNativeFlowResponseId } from "./src/message.js";
@@ -6275,6 +6277,7 @@ Select Bot Settings:
 │${setv} ${prefix}quiz (jawab a/b/c/d)
 │${setv} ${prefix}team <n> (bagi tim acak)
 │${setv} ${prefix}pair (cari pasangan)
+│${setv} ${prefix}hangman (tebak kata)
 ╭─┴❍「 *EDUKASI* 」❍
 │${setv} ${prefix}rumus (matematika/fisika/kimia/indonesia)
 │${setv} ${prefix}hitung (soal matematika)
@@ -6299,6 +6302,12 @@ Select Bot Settings:
 │${setv} ${prefix}lirik (artis - judul)
 │${setv} ${prefix}fakta (fakta menarik)
 │${setv} ${prefix}puisi (puisi pendek)
+│${setv} ${prefix}ibukota (negara)
+│${setv} ${prefix}negara (info negara)
+│${setv} ${prefix}unsur (tabel periodik mini)
+│${setv} ${prefix}planet (tata surya)
+│${setv} ${prefix}balik (teks dibalik)
+│${setv} ${prefix}hitungkata (statistik teks)
 ╰─┬────❍
 ╭─┴❍「 *FUN* 」❍
 │${setv} ${prefix}coba
@@ -6322,6 +6331,7 @@ Select Bot Settings:
 │${setv} ${prefix}holoh (text)
 │${setv} ${prefix}pilih (kopi | teh | susu)
 │${setv} ${prefix}angkaacak (1-100)
+│${setv} ${prefix}warna (warna acak hex/rgb/hsl)
 ╰─┬────❍
 ╭─┴❍「 *RANDOM* 」❍
 │${setv} ${prefix}coffe
@@ -6642,6 +6652,7 @@ Select Bot Settings:
 │${setv} ${prefix}quiz (jawab a/b/c/d)
 │${setv} ${prefix}team <n> (bagi tim acak)
 │${setv} ${prefix}pair (cari pasangan)
+│${setv} ${prefix}hangman (tebak kata)
 ╭─┴❍「 *EDUKASI* 」❍
 │${setv} ${prefix}rumus (matematika/fisika/kimia/indonesia)
 │${setv} ${prefix}hitung (soal matematika)
@@ -6666,6 +6677,12 @@ Select Bot Settings:
 │${setv} ${prefix}lirik (artis - judul)
 │${setv} ${prefix}fakta (fakta menarik)
 │${setv} ${prefix}puisi (puisi pendek)
+│${setv} ${prefix}ibukota (negara)
+│${setv} ${prefix}negara (info negara)
+│${setv} ${prefix}unsur (tabel periodik mini)
+│${setv} ${prefix}planet (tata surya)
+│${setv} ${prefix}balik (teks dibalik)
+│${setv} ${prefix}hitungkata (statistik teks)
 ╰──────❍`);
 				}
 				break;
@@ -6694,6 +6711,7 @@ Select Bot Settings:
 │${setv} ${prefix}holoh (text)
 │${setv} ${prefix}pilih (kopi | teh | susu)
 │${setv} ${prefix}angkaacak (1-100)
+│${setv} ${prefix}warna (warna acak hex/rgb/hsl)
 ╰──────❍`);
 				}
 				break;
@@ -6724,9 +6742,16 @@ Select Bot Settings:
 │${setv} ${prefix}lirik (artis - judul)
 │${setv} ${prefix}fakta (fakta menarik)
 │${setv} ${prefix}puisi (puisi pendek)
+│${setv} ${prefix}ibukota (negara)
+│${setv} ${prefix}negara (info negara)
+│${setv} ${prefix}unsur (tabel periodik mini)
+│${setv} ${prefix}planet (tata surya)
+│${setv} ${prefix}balik (teks dibalik)
+│${setv} ${prefix}hitungkata (statistik teks)
 │${setv} ${prefix}quiz (jawab a/b/c/d)
 │${setv} ${prefix}team <n> (bagi tim acak)
 │${setv} ${prefix}pair (cari pasangan)
+│${setv} ${prefix}hangman (tebak kata)
 ╰──────❍`);
 				}
 				break;
@@ -7175,11 +7200,15 @@ case "team":
 						matematika: "*Rumus Matematika*\n\n- Luas segitiga: 1/2 x alas x tinggi\n- Keliling lingkaran: 2 x pi x r (pi = 3,14)\n- Luas lingkaran: pi x r x r\n- Pythagoras: c2 = a2 + b2\n- Volume kubus: s x s x s\n- Luas persegi panjang: p x l\n- Rata-rata: jumlah data / banyak data\n- Persentase: (bagian / keseluruhan) x 100",
 						fisika: "*Rumus Fisika*\n\n- Gerak lurus: s = v x t\n- Kecepatan: v = s / t\n- Percepatan: a = (v2 - v1) / t\n- Gaya: F = m x a\n- Energi kinetik: Ek = 1/2 x m x v2\n- Tekanan: P = F / A\n- Usaha: W = F x s\n- Daya: P = W / t",
 						kimia: "*Rumus Kimia*\n\n- Massa jenis: rho = m / V\n- Molaritas: M = mol / volume (liter)\n- Mol: mol = massa / Mr\n- pH asam: pH = -log [H+]\n- Hukum Avogadro: V sebanding mol (pada P dan T sama)",
-						indonesia: "*Bahasa Indonesia*\n\n- Unsur intrinsik: tema, amanat, tokoh, latar, alur, sudut pandang, gaya bahasa\n- Majas: metafora (kiasan), simile (perbandingan), hiperbola (berlebihan), personifikasi (benda dihidupkan)\n- Jenis kalimat: deklaratif (berita), interogatif (tanya), imperatif (perintah), eksklamatif (seru)\n- Paragraf: deduktif (utama di awal), induktif (utama di akhir), campuran"
+						indonesia: "*Bahasa Indonesia*\n\n- Unsur intrinsik: tema, amanat, tokoh, latar, alur, sudut pandang, gaya bahasa\n- Majas: metafora (kiasan), simile (perbandingan), hiperbola (berlebihan), personifikasi (benda dihidupkan)\n- Jenis kalimat: deklaratif (berita), interogatif (tanya), imperatif (perintah), eksklamatif (seru)\n- Paragraf: deduktif (utama di awal), induktif (utama di akhir), campuran",
+						statistika: "*Rumus Statistika*\n\n- Rata-rata (mean): jumlah data / banyak data\n- Median: nilai tengah data terurut (ganjil), atau rata-rata dua nilai tengah (genap)\n- Modus: nilai yang paling sering muncul\n- Jangkauan (range): nilai terbesar - nilai terkecil\n- Kuartil 1 (Q1): nilai pada 1/4 data terurut\n- Kuartil 2 (Q2): sama dengan median\n- Kuartil 3 (Q3): nilai pada 3/4 data terurut\n- Hampar (IQR): Q3 - Q1\n- Varians: rata-rata kuadrat selisih data dari mean\n- Simpangan baku: akar varians",
+						trigonometri: "*Rumus Trigonometri*\n\n- sin A = depan / miring\n- cos A = samping / miring\n- tan A = depan / samping\n- sin^2 A + cos^2 A = 1\n- tan A = sin A / cos A\n- Luas segitiga: 1/2 x a x b x sin C",
+						aljabar: "*Rumus Aljabar*\n\n- Diskriminan: D = b^2 - 4ac\n- Akar persamaan kuadrat: x = (-b ± akar(D)) / 2a\n- Jumlah akar: -b / a\n- Hasil kali akar: c / a\n- Deret aritmetika: Un = a + (n-1)b ; Sn = n/2 x (2a + (n-1)b)\n- Deret geometri: Un = a x r^(n-1) ; Sn = a x (r^n - 1) / (r - 1)",
+						geometri: "*Rumus Geometri Lanjutan*\n\n- Volume tabung: pi x r^2 x t\n- Luas permukaan tabung: 2 x pi x r x (r + t)\n- Volume kerucut: 1/3 x pi x r^2 x t\n- Volume bola: 4/3 x pi x r^3\n- Luas permukaan bola: 4 x pi x r^2\n- Volume limas: 1/3 x luas alas x tinggi\n- Keliling persegi panjang: 2 x (p + l)"
 					};
-					if (!kategori) return m.reply("Contoh: .rumus matematika\n\nPilihan: matematika, fisika, kimia, indonesia");
+					if (!kategori) return m.reply("Contoh: .rumus matematika\n\nPilihan: matematika, fisika, kimia, indonesia, statistika, trigonometri, aljabar, geometri");
 					const found = data[kategori];
-					if (!found) return m.reply("Kategori tidak ditemukan.\n\nPilihan: matematika, fisika, kimia, indonesia");
+					if (!found) return m.reply("Kategori tidak ditemukan.\n\nPilihan: matematika, fisika, kimia, indonesia, statistika, trigonometri, aljabar, geometri");
 					return m.reply(found);
 				}
 				break;
@@ -7533,6 +7562,134 @@ case "fakta":
 					} catch (e) {
 						return m.reply("Gagal mengambil lirik. Periksa ejaan artis dan judul, atau coba lagi nanti.");
 					}
+				}
+				break;
+case "ibukota":
+				{
+					const norm = (s) => s.toLowerCase().replace(/[^a-z ]/g, " ").replace(/\s+/g, " ").trim();
+					const q = norm(text || "");
+					const keys = Object.keys(NEGARA);
+					if (!q) {
+						return m.reply(`*Ibukota Negara (${keys.length} negara)*\n\n${keys.map((k) => cap(k)).join(", ")}\n\nKetik .ibukota jepang`);
+					}
+					const found = keys.find((k) => norm(k) === q) || keys.find((k) => norm(k).includes(q));
+					if (!found) return m.reply("Negara tidak ditemukan.\n\nKetik .ibukota untuk daftar.");
+					const n = NEGARA[found];
+					return m.reply(`*Ibukota ${cap(found)}*\n\n${n.ibukota}\n\nMata uang: ${n.matauang}\nBenua: ${n.benua}`);
+				}
+				break;
+			case "negara":
+				{
+					const norm = (s) => s.toLowerCase().replace(/[^a-z ]/g, " ").replace(/\s+/g, " ").trim();
+					const q = norm(text || "");
+					const keys = Object.keys(NEGARA);
+					if (!q) {
+						return m.reply(`*Negara di Dunia (${keys.length})*\n\n${keys.map((k) => cap(k)).join(", ")}\n\nKetik .negara jepang`);
+					}
+					const found = keys.find((k) => norm(k) === q) || keys.find((k) => norm(k).includes(q));
+					if (!found) return m.reply(`Negara tidak ditemukan.\n\nKetik .negara untuk daftar.`);
+					const n = NEGARA[found];
+					return m.reply(`*${cap(found)}*\n\nIbukota: ${n.ibukota}\nMata uang: ${n.matauang}\nBenua: ${n.benua}\nPenduduk: ${n.penduduk} (angka dibulatkan, estimasi Bank Dunia 2023)`);
+				}
+				break;
+			case "unsur":
+				{
+					const q = (text || "").trim().toLowerCase().replace(/[^a-z]/g, "");
+					const keys = Object.keys(UNSUR);
+					if (!q) {
+						return m.reply(`*Tabel Periodik Mini*\n\n${keys.map((k) => `${cap(k)} (${UNSUR[k].simbol})`).join(", ")}\n\nKetik .unsur emas\nAtau pakai simbol: .unsur au`);
+					}
+					const foundKey = keys.find((k) => k === q) || keys.find((k) => UNSUR[k].simbol.toLowerCase() === q) || keys.find((k) => k.startsWith(q));
+					if (!foundKey) return m.reply("Unsur tidak ditemukan.\n\nKetik .unsur untuk daftar.");
+					const u = UNSUR[foundKey];
+					return m.reply(`*${cap(foundKey)} (${u.simbol})*\n\nNomor atom: ${u.nomor}\nGolongan: ${u.golongan}`);
+				}
+				break;
+			case "planet":
+				{
+					const q = (text || "").trim().toLowerCase().replace(/[^a-z]/g, "");
+					const keys = Object.keys(PLANET);
+					if (!q) {
+						return m.reply(`*Planet Tata Surya (8)*\n\n${keys.map((k) => cap(k)).join(", ")}\n\nKetik .planet mars`);
+					}
+					const found = keys.find((k) => k === q) || keys.find((k) => k.startsWith(q));
+					if (!found) return m.reply("Planet tidak ditemukan.\n\nKetik .planet untuk daftar.");
+					const p = PLANET[found];
+					return m.reply(`*${cap(found)}*\n\nJenis: ${p.jenis}\nJarak dari Matahari: ${p.jarak}\nDiameter: ${p.diameter}\nPeriode orbit: ${p.orbit}\nJumlah bulan: ${p.bulan}\n\n${p.info}`);
+				}
+				break;
+			case "balik":
+				{
+					if (!text) return m.reply("Contoh: .balik selamat pagi");
+					return m.reply([...text].reverse().join(""));
+				}
+				break;
+			case "hitungkata":
+				{
+					if (!text) return m.reply("Contoh: .hitungkata halo apa kabar dunia");
+					const kata = text.trim().split(/\s+/).filter(Boolean);
+					const karakter = text.length;
+					const karakterTanpaSpasi = text.replace(/\s+/g, "").length;
+					const kalimat = (text.match(/[.!?]+/g) || []).length || 1;
+					return m.reply(`*Statistik Teks*\n\nKata: ${kata.length}\nKarakter (dengan spasi): ${karakter}\nKarakter (tanpa spasi): ${karakterTanpaSpasi}\nKalimat: ${kalimat}`);
+				}
+				break;
+			case "warna":
+				{
+					const hex = () => Array.from({ length: 3 }, () => Math.floor(Math.random() * 256));
+					const [r, g, b] = hex();
+					const toHex = (v) => v.toString(16).padStart(2, "0").toUpperCase();
+					const max = Math.max(r, g, b) / 255, min = Math.min(r, g, b) / 255;
+					const l = (max + min) / 2;
+					const d = max - min;
+					const s = d === 0 ? 0 : d / (1 - Math.abs(2 * l - 1));
+					let h = 0;
+					if (d !== 0) {
+						if (max * 255 === r) h = 60 * (((g - b) / (d * 255)) % 6);
+						else if (max * 255 === g) h = 60 * ((b - r) / (d * 255) + 2);
+						else h = 60 * ((r - g) / (d * 255) + 4);
+						if (h < 0) h += 360;
+					}
+					return m.reply(`*Warna Acak*\n\nHEX: #${toHex(r)}${toHex(g)}${toHex(b)}\nRGB: rgb(${r}, ${g}, ${b})\nHSL: hsl(${Math.round(h)}, ${Math.round(s * 100)}%, ${Math.round(l * 100)}%)`);
+				}
+				break;
+			case "hangman":
+			case "gantung":
+				{
+					global.hangmanState = global.hangmanState || new Map();
+					const userKey = m.chat + ":" + m.sender;
+					const arg = (text || "").trim().toLowerCase();
+					if (arg === "batal") {
+						global.hangmanState.delete(userKey);
+						return m.reply("Hangman dibatalkan.");
+					}
+					const pending = global.hangmanState.get(userKey);
+					if (pending && Date.now() - pending.at < 15 * 60 * 1000) {
+						if (/^[a-z]$/.test(arg)) {
+							if (pending.guessed.includes(arg)) return m.reply(`Huruf ${arg.toUpperCase()} sudah ditebak.`);
+							pending.guessed.push(arg);
+							pending.at = Date.now();
+							const word = pending.word;
+							if (!word.includes(arg)) pending.nyawa -= 1;
+							const masked = word.split("").map((c) => (pending.guessed.includes(c) ? c : "_")).join(" ");
+							if (!masked.includes("_")) {
+								global.hangmanState.delete(userKey);
+								const u = db.users && db.users[m.sender];
+								if (u) u.money = (typeof u.money === "number" ? u.money : 0) + 100;
+								return m.reply(`*Selamat, kamu menang!* Kata: *${word}*\nHadiah: +100 uang`);
+							}
+							if (pending.nyawa <= 0) {
+								global.hangmanState.delete(userKey);
+								return m.reply(`*Kamu kalah!* Kata yang benar: *${word}*`);
+							}
+							return m.reply(`*Hangman*\n\nKata: ${masked}\nHuruf ditebak: ${pending.guessed.join(" ").toUpperCase()}\nSisa nyawa: ${pending.nyawa}\n\nTebak huruf dengan: .hangman a`);
+						}
+						return m.reply("Ketik satu huruf: .hangman a\nAtau .hangman batal untuk membatalkan.");
+					}
+					if (pending) global.hangmanState.delete(userKey);
+					const word = HANGMAN_KATA[Math.floor(Math.random() * HANGMAN_KATA.length)];
+					global.hangmanState.set(userKey, { word, guessed: [], nyawa: 6, at: Date.now() });
+					return m.reply(`*Hangman Dimulai*\n\nKata: ${word.split("").map(() => "_").join(" ")}\nJumlah huruf: ${word.length}\nNyawa: 6\n\nTebak huruf dengan: .hangman a\n.hangman batal untuk membatalkan.`);
 				}
 				break;
 			default:
