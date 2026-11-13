@@ -1,5 +1,46 @@
 # Changelog
 
+## v3.5.0
+
+Rynn v3.5.0 menambahkan lebih dari 20 perintah baru, mayoritas edukasi, budaya Indonesia, konversi, dan MBTI. Mayoritas berjalan lokal tanpa API eksternal.
+
+### Fitur baru
+
+- **`.provinsi`** - info 38 provinsi Indonesia: ibukota, gubernur (Pilkada 2024, hanya yang diyakini), penduduk (Sensus 2020, dibulatkan), suku, bahasa, lagu daerah, rumah adat, kuliner khas, wisata.
+- **`.mbti`** - tes kepribadian MBTI, 16 pertanyaan (4 per sumbu). Deskripsi 16 tipe. Hasil tersimpan di db user.
+- **`.wayang`** - info tokoh wayang Indonesia.
+- **`.lagu`** - daftar lagu daerah + daerah asal.
+- **`.wisata`** - 40 destinasi wisata Indonesia.
+- **`.resep`** - 22 resep sederhana masakan Indonesia.
+- **`.fakta`** - sekitar 100 fakta menarik.
+- **`.puisi`** - puisi pendek orisinal.
+- **`.pantun`** - diperluas dari 5 menjadi 20.
+- **`.suku`** - diperluas dari 15 menjadi lebih dari 30 suku.
+- **`.kuliner`** - diperluas dari 12 menjadi lebih dari 40 kuliner.
+- **`.umur`** - kalkulator umur + hitung mundur ulang tahun berikutnya.
+- **`.terbilang`** - angka ke kata Indonesia (sampai triliun).
+- **`.roman`** - konversi angka Arab dan Romawi dua arah.
+- **`.konversi`** - konversi panjang, berat, suhu, luas, volume.
+- **`.morse`** - encode/decode kode Morse.
+- **`.binary`** - encode/decode binary.
+- **`.hex`** - encode/decode hex.
+- **`.rot13`** - cipher ROT13.
+- **`.angkaacak`** - angka acak dalam rentang (`.angkaacak 1-100`).
+- **`.pilih`** - random choice picker (`.pilih kopi | teh | susu`).
+- **`.zodiak`** - zodiak + elemen dan rentang tanggal.
+- **`.lirik`** - lirik lagu lewat Naze API (`.lirik Pamungkas - To The Bone`).
+
+### Peningkatan
+
+- Kategori **EDUKASI** di menu berisi semua perintah edukasi baru; perintah `.pilih` dan `.angkaacak` masuk kategori FUN.
+- `.suku`, `.kuliner`, `.pantun` memakai data terpusat yang lebih besar (`lib/data-indonesia.js`, `lib/data-umum.js`).
+- **README** mencatat perintah-perintah baru di tabel fitur dan perintah populer.
+
+### Catatan
+
+- Data provinsi: penduduk dibulatkan dari Sensus Penduduk 2020; gubernur hanya diisi untuk provinsi yang diyakini menang Pilkada 2024, sisanya diisi jujur "data belum tersedia".
+- Endpoint Naze `/ai/sunora` (lagu AI) dan `/tools/ocr` (ocr) tidak dirilis karena tidak berfungsi dengan key yang dipakai. `/ai/zonerai/txt2img` (gambar) tidak dirilis karena menuntut akses VIP. Lirik lagu (`/music/lyrics`) sudah diverifikasi dan disertakan.
+
 ## v3.4.0
 
 Rynn v3.4.0 menambahkan perintah edukasi dan permainan, semuanya bisa dipakai tanpa API eksternal, kecuali `.hitung` yang memakai Naze API.

@@ -19,6 +19,11 @@ import { UguuSe } from "./lib/uploader.js";
 import TicTacToe from "./lib/tictactoe.js";
 import { werewolf } from "./lib/werewolf.js";
 import templateMenu from "./lib/template_menu.js";
+import { FAKTA, PUISI, PANTUN } from "./lib/data-umum.js";
+import { SUKU, KULINER, RESEP, LAGU_DAERAH, WISATA, WAYANG } from "./lib/data-indonesia.js";
+import { PROVINSI } from "./lib/provinsi.js";
+import { MBTI_PERTANYAAN, MBTI_TIPES, hitungMBTI } from "./lib/mbti.js";
+import { angkaKeKata, toRoman, fromRoman, rot13, morseEncode, morseDecode, binaryEncode, binaryDecode, hexEncode, hexDecode, ZODIAC, zodiacFor, convertUnit } from "./lib/util-lokal.js";
 import { FIRST_SETUP_MARKER, firstSetupStates, firstSetupStepText, sendFirstSetupIntro } from './src/setup-wizard.js';
 import { ytMp4, ytMp3, ytMp4Stream } from "./lib/scraper.js";
 import { GroupUpdate, LoadDataBase, extractNativeFlowResponseId } from "./src/message.js";
@@ -6276,6 +6281,24 @@ Select Bot Settings:
 │${setv} ${prefix}suku (nama suku)
 │${setv} ${prefix}kuliner (nama kuliner)
 │${setv} ${prefix}hitungmundur (hari / tanggal)
+│${setv} ${prefix}umur (tgl lahir)
+│${setv} ${prefix}terbilang (angka)
+│${setv} ${prefix}roman (angka romawi)
+│${setv} ${prefix}konversi (km->mil, c->f, dll)
+│${setv} ${prefix}morse (teks ke kode morse)
+│${setv} ${prefix}binary (teks ke binary)
+│${setv} ${prefix}hex (teks ke hex)
+│${setv} ${prefix}rot13 (teks)
+│${setv} ${prefix}zodiak (tgl lahir)
+│${setv} ${prefix}wayang (tokoh)
+│${setv} ${prefix}lagu (lagu daerah)
+│${setv} ${prefix}wisata (destinasi)
+│${setv} ${prefix}resep (masakan)
+│${setv} ${prefix}provinsi (38 provinsi)
+│${setv} ${prefix}mbti (tes kepribadian)
+│${setv} ${prefix}lirik (artis - judul)
+│${setv} ${prefix}fakta (fakta menarik)
+│${setv} ${prefix}puisi (puisi pendek)
 ╰─┬────❍
 ╭─┴❍「 *FUN* 」❍
 │${setv} ${prefix}coba
@@ -6297,6 +6320,8 @@ Select Bot Settings:
 │${setv} ${prefix}huluh (text)
 │${setv} ${prefix}heleh (text)
 │${setv} ${prefix}holoh (text)
+│${setv} ${prefix}pilih (kopi | teh | susu)
+│${setv} ${prefix}angkaacak (1-100)
 ╰─┬────❍
 ╭─┴❍「 *RANDOM* 」❍
 │${setv} ${prefix}coffe
@@ -6623,6 +6648,24 @@ Select Bot Settings:
 │${setv} ${prefix}suku (nama suku)
 │${setv} ${prefix}kuliner (nama kuliner)
 │${setv} ${prefix}hitungmundur (hari / tanggal)
+│${setv} ${prefix}umur (tgl lahir)
+│${setv} ${prefix}terbilang (angka)
+│${setv} ${prefix}roman (angka romawi)
+│${setv} ${prefix}konversi (km->mil, c->f, dll)
+│${setv} ${prefix}morse (teks ke kode morse)
+│${setv} ${prefix}binary (teks ke binary)
+│${setv} ${prefix}hex (teks ke hex)
+│${setv} ${prefix}rot13 (teks)
+│${setv} ${prefix}zodiak (tgl lahir)
+│${setv} ${prefix}wayang (tokoh)
+│${setv} ${prefix}lagu (lagu daerah)
+│${setv} ${prefix}wisata (destinasi)
+│${setv} ${prefix}resep (masakan)
+│${setv} ${prefix}provinsi (38 provinsi)
+│${setv} ${prefix}mbti (tes kepribadian)
+│${setv} ${prefix}lirik (artis - judul)
+│${setv} ${prefix}fakta (fakta menarik)
+│${setv} ${prefix}puisi (puisi pendek)
 ╰──────❍`);
 				}
 				break;
@@ -6649,6 +6692,8 @@ Select Bot Settings:
 │${setv} ${prefix}huluh (text)
 │${setv} ${prefix}heleh (text)
 │${setv} ${prefix}holoh (text)
+│${setv} ${prefix}pilih (kopi | teh | susu)
+│${setv} ${prefix}angkaacak (1-100)
 ╰──────❍`);
 				}
 				break;
@@ -6661,6 +6706,24 @@ Select Bot Settings:
 │${setv} ${prefix}suku (nama suku)
 │${setv} ${prefix}kuliner (nama kuliner)
 │${setv} ${prefix}hitungmundur (hari / tanggal)
+│${setv} ${prefix}umur (tgl lahir)
+│${setv} ${prefix}terbilang (angka)
+│${setv} ${prefix}roman (angka romawi)
+│${setv} ${prefix}konversi (km->mil, c->f, dll)
+│${setv} ${prefix}morse (teks ke kode morse)
+│${setv} ${prefix}binary (teks ke binary)
+│${setv} ${prefix}hex (teks ke hex)
+│${setv} ${prefix}rot13 (teks)
+│${setv} ${prefix}zodiak (tgl lahir)
+│${setv} ${prefix}wayang (tokoh)
+│${setv} ${prefix}lagu (lagu daerah)
+│${setv} ${prefix}wisata (destinasi)
+│${setv} ${prefix}resep (masakan)
+│${setv} ${prefix}provinsi (38 provinsi)
+│${setv} ${prefix}mbti (tes kepribadian)
+│${setv} ${prefix}lirik (artis - judul)
+│${setv} ${prefix}fakta (fakta menarik)
+│${setv} ${prefix}puisi (puisi pendek)
 │${setv} ${prefix}quiz (jawab a/b/c/d)
 │${setv} ${prefix}team <n> (bagi tim acak)
 │${setv} ${prefix}pair (cari pasangan)
@@ -6962,14 +7025,7 @@ case "cal":
 				break;
 			case "pantun":
 				{
-					const pantun = [
-						"Jalan-jalan ke kota Surabaya\nJangan lupa membeli oleh-oleh\nBelajar itu butuh kesabaran\nTapi hasilnya sangatlah elok",
-						"Pohon randu tinggi menjulang\nAkarnya menembus tanah lebur\nJangan pernah takut untuk belajar\nKarena ilmu adalah cahaya hidup",
-						"Buah durian jatuh di jalan\nSemua orang berebut duluan\nKalau kamu rajin bekerja keras\nPasti akan Tuhan memberkati",
-						"Beli ayam di pasar pagi\nPulang-pulang hujan lebat\nSahabat sejati itu hadiah terindah\nJangan pernah lupakan saudaramu",
-						"Pohon pinus tumbuh di gunung\nDaunnya rindang di musim kering\nKalau kamu ingin sukses di dunia\nJangan malas, belajarlah terus"
-					];
-					m.reply(pantun[Math.floor(Math.random() * pantun.length)]);
+					return m.reply(PANTUN[Math.floor(Math.random() * PANTUN.length)]);
 				}
 				break;
 			case "admins":
@@ -7162,50 +7218,321 @@ case "team":
 			case "suku":
 				{
 					const q = (text || "").trim().toLowerCase().replace(/[^a-z]/g, "");
-					const data = {
-							jawa: "*Suku Jawa*\n\nAsal: Jawa Tengah, Jawa Timur, dan DI Yogyakarta.\nDikenal dengan kelembutan tutur kata (unggah-ungguh), seni gamelan, wayang kulit, dan batik.\nBahasa: Jawa.",
-							sunda: "*Suku Sunda*\n\nAsal: Jawa Barat dan Banten.\nDikenal dengan carita pantun, angklung, tari jaipong, dan batik.\nBahasa: Sunda.",
-							batak: "*Suku Batak*\n\nAsal: Sumatera Utara.\nDikenal dengan sistem marga, rumah Bolon, dan seni gondang sabangunan.\nBahasa: Batak.",
-							minang: "*Suku Minangkabau*\n\nAsal: Sumatera Barat.\nDikenal dengan adat matrilineal (garis ibu), rumah Gadang, rendang, dan rantau (merantau).\nBahasa: Minang.",
-							bugis: "*Suku Bugis*\n\nAsal: Sulawesi Selatan.\nDikenal sebagai pelaut tangguh, dengan aksara Lontara dan rumah panggung (saoraja).\nBahasa: Bugis.",
-							betawi: "*Suku Betawi*\n\nAsal: Jakarta dan sekitarnya.\nDikenal dengan ondel-ondel, tanjidor, kerak telor, dan lenong.\nBahasa: Betawi.",
-							banjar: "*Suku Banjar*\n\nAsal: Kalimantan Selatan.\nDikenal dengan soto banjar, kayu ulin (kayu besi), dan kehidupan sungai.\nBahasa: Banjar.",
-							madura: "*Suku Madura*\n\nAsal: Pulau Madura.\nDikenal dengan karapan sapi (balapan sapi), sate madura, dan tradisi merantau.\nBahasa: Madura.",
-							bali: "*Suku Bali*\n\nAsal: Pulau Bali.\nDikenal dengan seni tari, kecak, nyepi, dan pura sebagai tempat ibadah.\nBahasa: Bali.",
-							dayak: "*Suku Dayak*\n\nAsal: Kalimantan.\nDikenal dengan rumah lamin (betang), tato tradisional, dan seni ukir kayu.\nBahasa: Dayak (banyak subkelompok).",
-							aceh: "*Suku Aceh*\n\nAsal: Aceh.\nDikenal dengan Masjid Baiturrahman, kopi gayo, tari saman, dan sejarah Kesultanan Aceh.\nBahasa: Aceh.",
-							sasak: "*Suku Sasak*\n\nAsal: Pulau Lombok.\nDikenal dengan tenun ikat, Gendang Beleq, dan tradisi Perang Topat di Lingsar.\nBahasa: Sasak.",
-							tionghoa: "*Suku Tionghoa*\n\nAsal: keturunan Tionghoa di Indonesia, tersebar di berbagai daerah.\nDikenal dengan kuliner peranakan, pasar malam, dan perayaan Imlek.\nBahasa: Indonesia, Tionghoa (Hokkien, Mandarin, Kanton).",
-							palembang: "*Suku Palembang (Sumatra Selatan)*\n\nAsal: Palembang, Sumatera Selatan.\nDikenal dengan pempek, Sungai Musi, jembatan Ampera, dan rumah Limas.\nBahasa: Melayu Palembang.",
-							papua: "*Suku-suku di Papua*\n\nTerdiri dari banyak suku, misalnya Dani, Asmat, dan Kamoro.\nDikenal dengan seni ukir, noken (tas anyaman), dan adat bakar batu.\nBahasa: ratusan bahasa Papua."
-					};
-					if (!q) return m.reply("Contoh: .suku jawa\n\nPilihan: jawa, sunda, batak, minang, bugis, betawi, banjar, madura, bali, dayak, aceh, sasak, tionghoa, palembang, papua");
-					const found = data[q];
-					if (!found) return m.reply("Suku tidak ditemukan.\n\nPilihan: jawa, sunda, batak, minang, bugis, betawi, banjar, madura, bali, dayak, aceh, sasak, tionghoa, palembang, papua");
-					return m.reply(found);
+					const list = Object.keys(SUKU).sort().join(", ");
+					if (!q) return m.reply(`*Suku-suku Nusantara (${Object.keys(SUKU).length})*\n\n${list}\n\nKetik .suku jawa`);
+					const found = SUKU[q] || Object.entries(SUKU).find(([k]) => k.startsWith(q));
+					if (!found) return m.reply(`Suku tidak ditemukan.\n\n${list}`);
+					return m.reply(found[1]);
 				}
 				break;
-			case "kuliner":
+						case "kuliner":
 				{
 					const q = (text || "").trim().toLowerCase().replace(/[^a-z]/g, "");
-					const data = {
-							rendang: "*Rendang*\n\nAsal: Minangkabau, Sumatera Barat.\nDaging sapi dimasak lama dengan santan dan rempah sampai kering dan hitam. Cocok sebagai lauk tahan lama.",
-							gudeg: "*Gudeg*\n\nAsal: Yogyakarta dan Jawa Tengah.\nNangka muda dimasak dengan santan manis, disajikan dengan krecek, ayam kampung, dan telur.",
-							soto: "*Soto*\n\nSoto ayam (Jawa), soto betawi (santan, Jakarta), soto lamongan, soto banjar (Kalimantan Selatan), soto padang. Kuah kuning atau bening dengan rempah, cocok dengan nasi atau lontong.",
-							nasigoreng: "*Nasi Goreng*\n\nMakanan nasional Indonesia. Nasi digoreng dengan bumbu, telur, dan kecap, disajikan dengan kerupuk, mentimun, dan kadang ayam/sosis.",
-							sate: "*Sate*\n\nSate ayam dan sate kambing (Madura, Jawa), sate lilit (Bali), sate maranggi (Purwakarta). Daging ditusuk dan dibakar, disajikan dengan bumbu kacang atau kecap.",
-							pempek: "*Pempek*\n\nAsal: Palembang, Sumatera Selatan.\nAdonan ikan dan tepung digoreng, disajikan dengan kuah saus (cuko), timun, dan mie kuning.",
-							bakso: "*Bakso*\n\nBola daging (sapi/ayam) kuah dengan mie, bihun, tahu, dan pangsit. Populer di seluruh Indonesia, khas warung dan kaki lima.",
-							rawon: "*Rawon*\n\nAsal: Jawa Timur.\nSemur daging sapi dengan kluwek, kuah hitam pekat, disajikan dengan nasi, kecambah, dan sambal.",
-							keraktelor: "*Kerak Telor*\n\nAsal: Jakarta, Betawi.\nTelur (ayam/bebek) dicampur beras ketan dan bumbu, dimasak di atas tungku arang.",
-							martabak: "*Martabak*\n\nMartabak manis (piringan tebal dengan cokelat, keju, kacang) dan martabak telur (kulit diisi telur, daging, daun bawang, digoreng).",
-							gadogado: "*Gado-gado*\n\nSalad Indonesia: sayuran rebus, telur, lontong, tahu, tempe, disiram bumbu kacang. Siomay dan batagor serumpun.",
-							opor: "*Opor*\n\nOpor ayam: ayam dimasak dengan kuah santan dan rempah, khas Lebaran. Ada varian opor bebek dan opor tahu/tempe."
-					};
-					if (!q) return m.reply("Contoh: .kuliner rendang\n\nPilihan: rendang, gudeg, soto, nasigoreng, sate, pempek, bakso, rawon, keraktelor, martabak, gadogado, opor");
-					const found = data[q];
-					if (!found) return m.reply("Kuliner tidak ditemukan.\n\nPilihan: rendang, gudeg, soto, nasigoreng, sate, pempek, bakso, rawon, keraktelor, martabak, gadogado, opor");
-					return m.reply(found);
+					const list = Object.keys(KULINER).sort().join(", ");
+					if (!q) return m.reply(`*Kuliner Khas Indonesia (${Object.keys(KULINER).length})*\n\n${list}\n\nKetik .kuliner rendang`);
+					const found = KULINER[q] || Object.entries(KULINER).find(([k]) => k.includes(q));
+					if (!found) return m.reply(`Kuliner tidak ditemukan.\n\n${list}`);
+					return m.reply(found[1]);
+				}
+				break;
+
+case "fakta":
+				{
+					return m.reply(`*Fakta Menarik*\n\n${FAKTA[Math.floor(Math.random() * FAKTA.length)]}`);
+				}
+				break;
+			case "puisi":
+				{
+					return m.reply(`*Puisi*\n\n${PUISI[Math.floor(Math.random() * PUISI.length)]}`);
+				}
+				break;
+			case "umur":
+				{
+					const arg = (text || "").trim();
+					if (!arg) return m.reply("Contoh: .umur 1999-05-20");
+					let dt = new Date(arg);
+					if (isNaN(dt.getTime())) {
+						const mt = arg.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/);
+						if (mt) dt = new Date(`${mt[3]}-${mt[2].padStart(2, "0")}-${mt[1].padStart(2, "0")}`);
+					}
+					if (isNaN(dt.getTime())) return m.reply("Format tanggal tidak dikenali.\nGunakan YYYY-MM-DD, contoh: 1999-05-20");
+					if (dt.getTime() > Date.now()) return m.reply("Tanggal lahir tidak boleh di masa depan.");
+					const now = new Date();
+					let years = now.getFullYear() - dt.getFullYear();
+					let months = now.getMonth() - dt.getMonth();
+					let days = now.getDate() - dt.getDate();
+					if (days < 0) {
+						months -= 1;
+						days += new Date(now.getFullYear(), now.getMonth(), 0).getDate();
+					}
+					if (months < 0) {
+						years -= 1;
+						months += 12;
+					}
+					let ulang = new Date(now.getFullYear(), dt.getMonth(), dt.getDate());
+					if (ulang < now) ulang = new Date(now.getFullYear() + 1, dt.getMonth(), dt.getDate());
+					const sisa = Math.ceil((ulang - now) / 86400000);
+					return m.reply(`*Umur kamu*\n\nTahun: ${years}\nBulan: ${months}\nHari: ${days}\n\nUlang tahun berikutnya: *${sisa} hari lagi* (${ulang.toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" })})`);
+				}
+				break;
+			case "terbilang":
+				{
+					const raw = (text || "").trim().replace(/\./g, "").replace(",", ".");
+					if (!raw) return m.reply("Contoh: .terbilang 12345");
+					const neg = raw.startsWith("-");
+					const num = neg ? raw.slice(1) : raw;
+					if (!/^\d+(\.\d+)?$/.test(num)) return m.reply("Contoh: .terbilang 12345 atau .terbilang 1000000");
+					const bulat = Math.floor(Number(num));
+					const pecahan = num.includes(".") ? num.split(".")[1] : "";
+					if (bulat.toString().length > 13) return m.reply("Maksimal 15 digit.");
+					let out = angkaKeKata(bulat);
+					if (pecahan) out += " koma " + pecahan.split("").map((d) => angkaKeKata(Number(d))).join(" ");
+					return m.reply(`${neg ? "Minus " : ""}${out || "nol"}`);
+				}
+				break;
+			case "roman":
+				{
+					const arg = (text || "").trim().toUpperCase();
+					if (!arg) return m.reply("Contoh: .roman 2026 atau .roman MMXXVI");
+					if (/^\d+$/.test(arg)) {
+						const v = parseInt(arg, 10);
+						const r = toRoman(v);
+						return m.reply(r ? `${v} = *${r}*` : "Angka harus antara 1 dan 3999.");
+					}
+					const f = fromRoman(arg);
+					return m.reply(f !== null ? `${arg} = *${f}*` : "Angka Romawi tidak valid (I V X L C D M, 1-3999).");
+				}
+				break;
+			case "konversi":
+			case "convert":
+				{
+					const arg = (text || "").trim();
+					if (!arg) {
+						return m.reply(`Contoh:\n.konversi 1 km ke mil\n.konversi 100 kg ke ons\n.konversi 0 c ke f\n.konversi 1 galon ke liter\n\nSatuan: mm cm m km inci ft kaki mil | mg g kg ons pon ton | m2 km2 hektar are | ml liter m3 galon | c f k`);
+					}
+					const mt = (" " + arg + " ").match(/\s(-?[\d.,]+)\s*([a-z0-9]+)\s+(?:ke|to|=)\s*([a-z0-9]+)\s/i);
+					if (!mt) return m.reply("Format: .konversi 1 km ke mil");
+					const value = Number(mt[1].replace(",", "."));
+					if (isNaN(value)) return m.reply("Angka tidak valid.");
+					const hasil = convertUnit(value, mt[2], mt[3]);
+					if (!hasil.ok) return m.reply(`Gagal konversi: ${hasil.alasan}.\nKetik .konversi untuk melihat daftar satuan.`);
+					const dibulatkan = Math.abs(hasil.hasil) >= 100 ? hasil.hasil.toFixed(2) : Number(hasil.hasil.toFixed(6));
+					return m.reply(`*Hasil*\n\n${value} ${mt[2].toLowerCase()} = *${dibulatkan} ${hasil.satuan}*`);
+				}
+				break;
+			case "morse":
+				{
+					const arg = (text || "").trim();
+					if (!arg) return m.reply("Contoh:\n.morse halo (teks ke kode Morse)\n.morse .... .- .-.. --- (kode Morse ke teks)\nSpasi = huruf, garis miring / = kata");
+					if (/^[.\-/\s]+$/.test(arg)) return m.reply(`*Teks:* ${morseDecode(arg) || "(tidak bisa dibaca)"}`);
+					return m.reply(`*Morse:* ${morseEncode(arg)}`);
+				}
+				break;
+			case "binary":
+				{
+					const arg = (text || "").trim();
+					if (!arg) return m.reply("Contoh:\n.binary halo (teks ke binary)\n.binary 01101000 01100001 (binary ke teks)");
+					if (/^[01\s]+$/.test(arg)) {
+						const d = binaryDecode(arg);
+						return m.reply(d ? `*Teks:* ${d}` : "Binary tidak valid (8 bit per byte).");
+					}
+					return m.reply(`*Binary:* ${binaryEncode(arg)}`);
+				}
+				break;
+			case "hex":
+				{
+					const arg = (text || "").trim();
+					if (!arg) return m.reply("Contoh:\n.hex halo (teks ke hex)\n.hex 68 61 6c 6f (hex ke teks)");
+					if (/^[0-9a-fA-F\s]+$/.test(arg) && !/[a-fA-F]/.test(arg.replace(/\s/g, ""))) {
+						const d = hexDecode(arg);
+						return m.reply(d ? `*Teks:* ${d}` : "Hex tidak valid.");
+					}
+					if (/^[0-9a-fA-F\s]+$/.test(arg)) {
+						const d = hexDecode(arg);
+						return m.reply(d !== null ? `*Teks:* ${d}` : `*Hex:* ${hexEncode(arg)}`);
+					}
+					return m.reply(`*Hex:* ${hexEncode(arg)}`);
+				}
+				break;
+			case "rot13":
+				{
+					const arg = (text || "").trim();
+					if (!arg) return m.reply("Contoh: .rot13 halo");
+					return m.reply(rot13(arg));
+				}
+				break;
+			case "pilih":
+			case "pilihan":
+				{
+					const arg = (text || "").trim();
+					if (!arg) return m.reply("Contoh: .pilih kopi | teh | susu");
+					let items = arg.split(/[|,]/).map((s) => s.trim()).filter(Boolean);
+					if (items.length < 2) {
+						const alt = arg.split(/\s+atau\s+/i).map((s) => s.trim()).filter(Boolean);
+						if (alt.length >= 2) items = alt;
+					}
+					if (items.length < 2) return m.reply("Minimal 2 opsi.\nContoh: .pilih kopi | teh | susu");
+					return m.reply(`*${items[Math.floor(Math.random() * items.length)]}*\n\nOpsi: ${items.join(", ")}`);
+				}
+				break;
+			case "angkaacak":
+				{
+					const arg = (text || "").trim();
+					if (!arg) return m.reply("Contoh: .angkaacak 1-100 atau .angkaacak 100 (1-100)");
+					const mt = arg.match(/^(\d+)(?:\s*-\s*(\d+))?$/);
+					if (!mt) return m.reply("Contoh: .angkaacak 1-100 atau .angkaacak 100");
+					let a = parseInt(mt[1], 10);
+					let b = mt[2] ? parseInt(mt[2], 10) : 100;
+					if (a > b) [a, b] = [b, a];
+					if (b - a > 10000000) return m.reply("Rentang terlalu besar.");
+					return m.reply(`*Angka acak: ${a + Math.floor(Math.random() * (b - a + 1))}*\n\nRentang: ${a} - ${b}`);
+				}
+				break;
+			case "zodiak":
+				{
+					const BULAN = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+					const BULAN_IDX = { jan: 1, feb: 2, mar: 3, apr: 4, mei: 5, jun: 6, jul: 7, agu: 8, agustus: 8, sep: 9, sept: 9, okt: 10, oct: 10, nov: 11, des: 12, dec: 12 };
+					const arg = (text || "").trim().toLowerCase();
+					if (!arg) {
+						const list = ZODIAC.map((z) => `- *${z.nama}*: ${z.mulai[1]} ${BULAN[z.mulai[0] - 1]} - ${z.sampai[1]} ${BULAN[z.sampai[0] - 1]} (${z.elemen})`).join("\n");
+						return m.reply(`*Zodiak*\n\n${list}\n\nKetik .zodiak 25 desember`);
+					}
+					let day = 0, month = 0;
+					const iso = arg.match(/^(\d{4})-(\d{2})-(\d{2})/);
+					if (iso) { month = +iso[2]; day = +iso[3]; }
+					else {
+						const dm = arg.match(/^(\d{1,2})(?:[\s\/\-]|[-\/])([a-z]+)/i);
+						if (dm) {
+							day = +dm[1];
+							const key = dm[2].toLowerCase();
+							month = BULAN_IDX[key] || BULAN_IDX[key.slice(0, 3)] || 0;
+						} else {
+							const nd = arg.match(/^(\d{1,2})[-\/](\d{1,2})$/);
+							if (nd) { day = +nd[1]; month = +nd[2]; }
+						}
+					}
+					if (day < 1 || day > 31 || month < 1 || month > 12) return m.reply("Contoh: .zodiak 25 desember atau .zodiak 1999-12-25");
+					const z = zodiacFor(day, month);
+					return m.reply(`*${z.nama}*\n\nElemen: ${z.elemen}\nRentang: ${z.mulai[1]} ${BULAN[z.mulai[0] - 1]} - ${z.sampai[1]} ${BULAN[z.sampai[0] - 1]}`);
+				}
+				break;
+			case "wayang":
+				{
+					const q = (text || "").trim().toLowerCase().replace(/[^a-z]/g, "");
+					if (!q) {
+						return m.reply(`*Tokoh Wayang Indonesia*\n\n${Object.keys(WAYANG).sort().join(", ")}\n\nKetik .wayang gatotkaca`);
+					}
+					const found = WAYANG[q] || Object.entries(WAYANG).find(([k, v]) => k.startsWith(q) || v.toLowerCase().includes(q));
+					if (!found) return m.reply("Tokoh tidak ditemukan.\n\nKetik .wayang untuk lihat daftar.");
+					return m.reply(found[1]);
+				}
+				break;
+			case "lagu":
+				{
+					const q = (text || "").trim().toLowerCase();
+					if (!q) {
+						return m.reply(`*Lagu Daerah Indonesia*\n\n${LAGU_DAERAH.map((l) => `- ${l.nama} (${l.daerah})`).join("\n")}`);
+					}
+					const found = LAGU_DAERAH.filter((l) => `${l.nama} ${l.daerah}`.toLowerCase().includes(q));
+					if (!found.length) return m.reply("Tidak ada lagu yang cocok.\n\nKetik .lagu untuk daftar.");
+					return m.reply(found.map((l) => `*${l.nama}* - ${l.daerah}`).join("\n"));
+				}
+				break;
+			case "wisata":
+				{
+					const q = (text || "").trim().toLowerCase();
+					if (!q) {
+						return m.reply(`*Destinasi Wisata Indonesia*\n\n${WISATA.map((w) => `- ${w.nama} (${w.provinsi})`).join("\n")}\n\nKetik .wisata bromo`);
+					}
+					const found = WISATA.filter((w) => `${w.nama} ${w.provinsi}`.toLowerCase().includes(q));
+					if (!found.length) return m.reply("Tidak ada destinasi yang cocok.\n\nKetik .wisata untuk daftar.");
+					return m.reply(found.map((w) => `*${w.nama}* (${w.provinsi})\n${w.info}`).join("\n\n"));
+				}
+				break;
+			case "resep":
+				{
+					const q = (text || "").trim().toLowerCase().replace(/[^a-z]/g, "");
+					if (!q) {
+						return m.reply(`*Resep Sederhana Indonesia*\n\n${Object.keys(RESEP).sort().join(", ")}\n\nKetik .resep nasigoreng`);
+					}
+					const found = RESEP[q] || Object.entries(RESEP).find(([k]) => k.includes(q));
+					if (!found) return m.reply("Resep tidak ditemukan.\n\nKetik .resep untuk lihat daftar.");
+					return m.reply(found[1]);
+				}
+				break;
+			case "provinsi":
+				{
+					const arg = (text || "").trim();
+					const norm = (s) => s.toLowerCase().replace(/[^a-z ]/g, " ").replace(/\s+/g, " ").trim();
+					const keys = Object.keys(PROVINSI);
+					if (!arg) {
+						return m.reply(`*38 Provinsi Indonesia*\n\n${keys.map((k) => PROVINSI[k].nama).join(", ")}\n\nKetik .provinsi jawa barat`);
+					}
+					const q = norm(arg);
+					const foundKey = keys.find((k) => norm(k) === q) || keys.find((k) => norm(k).includes(q) || norm(PROVINSI[k].nama).includes(q));
+					if (!foundKey) return m.reply("Provinsi tidak ditemukan.\n\nKetik .provinsi untuk lihat daftar.");
+					const p = PROVINSI[foundKey];
+					return m.reply(`*Provinsi ${p.nama}*\n\nIbukota: ${p.ibukota}\nGubernur: ${p.gubernur}\nPenduduk: ${p.penduduk} (Sensus 2020, dibulatkan)\nSuku: ${p.sukus}\nBahasa: ${p.bahasa}\nLagu daerah: ${p.lagu}\nRumah adat: ${p.rumahadat}\nKuliner khas: ${p.makanan}\nWisata: ${p.wisata}\nKhas: ${p.khas}\n\n_Data bisa berubah; cek Kemendagri/BPS untuk data terkini._`);
+				}
+				break;
+			case "mbti":
+			case "kepribadian":
+				{
+					global.mbtiState = global.mbtiState || new Map();
+					const userKey = m.chat + ":" + m.sender;
+					const arg = (text || "").trim().toLowerCase();
+					const TIPE = MBTI_TIPES[arg.toUpperCase()];
+					if (TIPE) {
+						return m.reply(`${TIPE}\n\nKetik .mbti untuk tes kepribadian.`);
+					}
+					const pending = global.mbtiState.get(userKey);
+					if (pending && Date.now() - pending.at < 15 * 60 * 1000) {
+						if (arg === "batal") {
+							global.mbtiState.delete(userKey);
+							return m.reply("Tes MBTI dibatalkan.");
+						}
+						if (/^[ab]$/.test(arg)) {
+							const Q = MBTI_PERTANYAAN[pending.idx];
+							pending.jawaban.push(arg === "a" ? Q.a[1] : Q.b[1]);
+							pending.idx += 1;
+							pending.at = Date.now();
+							if (pending.idx >= MBTI_PERTANYAAN.length) {
+								const tipe = hitungMBTI(pending.jawaban);
+								global.mbtiState.delete(userKey);
+								const u = db.users && db.users[m.sender];
+								if (u) u.mbti = tipe;
+								return m.reply(`*Tes MBTI Selesai*\n\nTipe kamu: *${tipe}*\n\n${MBTI_TIPES[tipe] || ""}\n\nKetik .mbti untuk tes lagi.\nKetik .mbti ${tipe} untuk lihat deskripsi lagi.`);
+							}
+							const next = MBTI_PERTANYAAN[pending.idx];
+							return m.reply(`*Tes MBTI* (pertanyaan ${pending.idx + 1}/${MBTI_PERTANYAAN.length})\n\n${next.q}\n\na. ${next.a[0]}\nb. ${next.b[0]}\n\nJawab dengan .mbti a / .mbti b`);
+						}
+						return m.reply("Kamu sedang dalam tes MBTI.\nJawab dengan .mbti a / .mbti b, atau .mbti batal untuk membatalkan.");
+					}
+					if (pending) global.mbtiState.delete(userKey);
+					global.mbtiState.set(userKey, { idx: 0, jawaban: [], at: Date.now() });
+					const q1 = MBTI_PERTANYAAN[0];
+					return m.reply(`*Tes MBTI Dimulai*\n\n16 pertanyaan singkat. Jawab dengan .mbti a / .mbti b.\n\nPertanyaan 1/${MBTI_PERTANYAAN.length}\n\n${q1.q}\n\na. ${q1.a[0]}\nb. ${q1.b[0]}`);
+				}
+				break;
+			case "lirik":
+				{
+					if (!isLimit) return m.reply(global.mess.limit);
+					if (!text || !text.includes(" - ")) {
+						return m.reply("Contoh: .lirik Pamungkas - To The Bone");
+					}
+					const sep = text.indexOf(" - ");
+					const artist = text.slice(0, sep).trim();
+					const title = text.slice(sep + 3).trim();
+					if (!artist || !title) return m.reply("Contoh: .lirik Pamungkas - To The Bone");
+					try {
+						const res = await fetchApi("/music/lyrics", { artist, title });
+						const lyrics = res?.result?.lyrics;
+						if (!lyrics) return m.reply("Lirik tidak ditemukan untuk artis dan judul itu.");
+						const pendek = lyrics.length > 3500 ? lyrics.slice(0, 3500) + "\n\n... (terpotong)" : lyrics;
+						return m.reply(`*${artist} - ${title}*\n\n${pendek}`);
+					} catch (e) {
+						return m.reply("Gagal mengambil lirik. Periksa ejaan artis dan judul, atau coba lagi nanti.");
+					}
 				}
 				break;
 			default:

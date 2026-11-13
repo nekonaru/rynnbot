@@ -61,7 +61,10 @@ Berbasis Hitori Bot karya [Nazedev](https://github.com/nazedev/hitori), yang dir
 | Menu & Umum | **Hot reload** | `settings.js` dimuat ulang otomatis saat disimpan |
 | Utilitas | **Kalender & hiburan** | `.cal` (kalender bulan), `.pantun` (pantun acak), `.b64` (encode/decode base64), `.password` (generate password acak) |
 | Utilitas | **Cek anggota** | `.admins` (daftar admin grup), `.saldo` (saldo limit/uang/status) |
-| Utilitas | **Edukasi** | `.rumus` (matematika/fisika/kimia/Bahasa Indonesia), `.hitung` (kalkulator matematika), `.suku` (15 suku Nusantara), `.kuliner` (12 kuliner khas), `.hitungmundur` (hitung mundur hari/tanggal) |
+| Utilitas | **Edukasi** | `.rumus`, `.hitung` (kalkulator), `.suku` (~30 suku), `.kuliner` (~40 kuliner), `.hitungmundur`, `.provinsi` (38 provinsi: ibukota, gubernur, penduduk, lagu daerah, rumah adat, kuliner, wisata) |
+| Utilitas | **Hiburan & pengetahuan** | `.fakta` (~100 fakta), `.puisi`, `.pantun`, `.zodiak`, `.wayang`, `.lagu`, `.wisata`, `.resep`, `.mbti` (tes kepribadian 16 pertanyaan) |
+| Utilitas | **Konversi & angka** | `.umur`, `.terbilang`, `.roman`, `.konversi` (panjang/berat/suhu/luas/volume), `.morse`, `.binary`, `.hex`, `.rot13`, `.angkaacak`, `.pilih` |
+| Utilitas | **Lirik lagu** | `.lirik <artis> - <judul>` lewat Naze API |
 | Game | **Kuis & tim** | `.quiz` (kuis pengetahuan umum, hadiah 50 uang), `.team` (bagi tim acak), `.pair` (pasangan acak di grup) |
 | Owner | **Keluar semua** | `.kickall confirm` (keluarkan semua non-admin, dengan konfirmasi) |
 | Alat Grup | **Manajemen grup** | Kick, promote, demote, mute/unmute, tagall, pesan welcome/leave, anti-link, anti-spam, anti-toxic |
@@ -455,6 +458,16 @@ Semua perintah memakai prefix default `.` `!` atau `+` (atur di `settings.js`).
 | `.hitungmundur 30` | Hitung mundur 30 hari ke depan |
 | `.suku jawa` | Info suku Nusantara |
 | `.kuliner rendang` | Info kuliner khas daerah |
+| `.provinsi jawa barat` | Info provinsi (38 provinsi) |
+| `.mbti` | Tes kepribadian MBTI (16 pertanyaan) |
+| `.fakta` | Fakta menarik acak |
+| `.resep nasigoreng` | Resep sederhana masakan Indonesia |
+| `.wisata bromo` | Destinasi wisata di Indonesia |
+| `.lagu sunda` | Lagu daerah Indonesia |
+| `.wayang gatotkaca` | Info tokoh wayang |
+| `.umur 1999-05-20` | Kalkulator umur |
+| `.konversi 1 km ke mil` | Konversi panjang/berat/suhu/luas/volume |
+| `.lirik Pamungkas - To The Bone` | Lirik lagu |
 | `.mode public` / `.mode self` | Mode publik / khusus owner |
 
 Daftar lengkap: jalankan `.menu` di WhatsApp.
