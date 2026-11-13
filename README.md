@@ -61,8 +61,8 @@ Berbasis Hitori Bot karya [Nazedev](https://github.com/nazedev/hitori), yang dir
 | Menu & Umum | **Hot reload** | `settings.js` dimuat ulang otomatis saat disimpan |
 | Utilitas | **Kalender & hiburan** | `.cal` (kalender bulan), `.pantun` (pantun acak), `.b64` (encode/decode base64), `.password` (generate password acak) |
 | Utilitas | **Cek anggota** | `.admins` (daftar admin grup), `.saldo` (saldo limit/uang/status) |
-| Utilitas | **Edukasi** | `.rumus` (12 kategori), `.hitung` (kalkulator), `.suku` (60+ suku), `.kuliner` (~110 kuliner), `.hitungmundur`, `.provinsi` (38 provinsi: ibukota, kota besar, gubernur, penduduk, lagu daerah, rumah adat, kuliner, wisata) |
-| Utilitas | **Hiburan & pengetahuan** | `.fakta` (~330 fakta), `.puisi`, `.pantun`, `.zodiak`, `.wayang`, `.lagudaerah`, `.wisata` (~90 destinasi), `.resep` (~70 resep), `.mbti` (tes kepribadian 16 pertanyaan), `.hangman` (tebak kata) |
+| Utilitas | **Belajar SMA** | `.soal` (bank soal campuran), `.soalmtk`, `.soalipa`, `.soalips`, `.soalbindon`, `.soalppkn`, `.namabayi` (nama bayi Indonesia + asal + arti) |
+| Utilitas | **Hiburan & pengetahuan** | `.fakta` (~400 fakta), `.puisi`, `.pantun`, `.zodiak`, `.wayang`, `.lagudaerah`, `.wisata` (~115 destinasi), `.resep` (~83 resep) |
 | Utilitas | **Dunia & sains** | `.ibukota` (~180 negara), `.negara` (ibukota/mata uang/benua/populasi), `.unsur` (tabel periodik lengkap, 118 unsur), `.planet` (21 planet & exoplanet) |
 | Utilitas | **Konversi & angka** | `.umur`, `.terbilang`, `.roman`, `.konversi` (panjang/berat/suhu/luas/volume/kecepatan/energi/tekanan/data/waktu), `.morse`, `.binary`, `.hex`, `.rot13`, `.angkaacak`, `.pilih` |
 | Utilitas | **Lirik lagu** | `.lirik <artis> - <judul>` lewat Naze API |
@@ -450,6 +450,9 @@ Semua perintah memakai prefix default `.` `!` atau `+` (atur di `settings.js`).
 | `.password` | Generate password acak |
 | `.b64` `encode`/`decode` teks | Encode/decode base64 |
 | `.pantun` | Pantun acak |
+| `.soal` | Bank soal SMA (campuran) |
+| `.soalmtk` / `.soalipa` / `.soalips` / `.soalbindon` / `.soalppkn` | Bank soal per mata pelajaran |
+| `.namabayi cowo` / `.namabayi cewe` | Nama bayi Indonesia + asal + arti |
 | `.admins` | Daftar admin grup |
 | `.saldo` | Cek saldo limit/uang/status |
 | `.quiz` | Kuis pengetahuan umum (hadiah 50 uang) |

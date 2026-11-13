@@ -1,5 +1,28 @@
 # Changelog
 
+## v3.10.0
+
+Rynn v3.10.0 menambahkan bundle belajar SMA, nama bayi Indonesia, dan memperkaya data di hampir semua fitur.
+
+### Fitur baru
+
+- **`.soal`** - bank soal SMA campuran. Jawaban dengan `.soal a` sampai `.soal d`. Hadiah +25 uang per jawaban benar. `.soal skor` untuk melihat skor.
+- **`.soalmtk`**, **`.soalipa`**, **`.soalips`**, **`.soalbindon`**, **`.soalppkn`** - bank soal per mata pelajaran (matematika, IPA, IPS, Bahasa Indonesia, PPKn).
+- **`.namabayi`** - nama bayi Indonesia beserta asal dan arti. `.namabayi cowo`, `.namabayi cewe`, `.namabayi cowo artinya rama`.
+
+### Peningkatan data besar-besaran
+
+- Fakta: 330 ke 400, puisi: 65 ke 75, pantun: 62 ke 100.
+- Kuliner: 4 item baru (sotokudus, wingkobabad, lumpia, ayamlodho).
+- WISATA: 22 destinasi baru.
+- WAYANG: 4 tokoh baru.
+- HANGMAN: 30 kosakata baru.
+
+### Catatan
+
+- Bank soal berisi jawaban yang disesuaikan dengan kurikulum nasional SMA/sederajat.
+- Semua data nama bayi dan asalnya diambil dari referensi umum.
+
 ## v3.9.0
 
 Rynn v3.9.0 memperluas konverter mata uang, rumus, konversi, dan memperkaya data besar-besaran.

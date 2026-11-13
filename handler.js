@@ -20,6 +20,8 @@ import TicTacToe from "./lib/tictactoe.js";
 import { werewolf } from "./lib/werewolf.js";
 import templateMenu from "./lib/template_menu.js";
 import { FAKTA, PUISI, PANTUN } from "./lib/data-umum.js";
+import { SOAL } from "./lib/soal.js";
+import { NAMA_BAYI_COWO, NAMA_BAYI_CEWE } from "./lib/namabayi.js";
 import { SUKU, KULINER, RESEP, LAGU_DAERAH, WISATA, WAYANG } from "./lib/data-indonesia.js";
 import { PROVINSI } from "./lib/provinsi.js";
 import { NEGARA, UNSUR, PLANET } from "./lib/data-dunia.js";
@@ -6324,6 +6326,13 @@ Select Bot Settings:
 │${setv} ${prefix}planet
 │${setv} ${prefix}balik
 │${setv} ${prefix}hitungkata
+│${setv} ${prefix}soal
+│${setv} ${prefix}soalmtk
+│${setv} ${prefix}soalipa
+│${setv} ${prefix}soalips
+│${setv} ${prefix}soalbindon
+│${setv} ${prefix}soalppkn
+│${setv} ${prefix}namabayi
 ╰─┬────❍
 ╭─┴❍「 *FUN* 」❍
 │${setv} ${prefix}coba
@@ -6700,6 +6709,13 @@ Select Bot Settings:
 │${setv} ${prefix}planet
 │${setv} ${prefix}balik
 │${setv} ${prefix}hitungkata
+│${setv} ${prefix}soal
+│${setv} ${prefix}soalmtk
+│${setv} ${prefix}soalipa
+│${setv} ${prefix}soalips
+│${setv} ${prefix}soalbindon
+│${setv} ${prefix}soalppkn
+│${setv} ${prefix}namabayi
 ╰──────❍`);
 				}
 				break;
@@ -6765,6 +6781,13 @@ Select Bot Settings:
 │${setv} ${prefix}planet
 │${setv} ${prefix}balik
 │${setv} ${prefix}hitungkata
+│${setv} ${prefix}soal
+│${setv} ${prefix}soalmtk
+│${setv} ${prefix}soalipa
+│${setv} ${prefix}soalips
+│${setv} ${prefix}soalbindon
+│${setv} ${prefix}soalppkn
+│${setv} ${prefix}namabayi
 │${setv} ${prefix}quiz
 │${setv} ${prefix}team <n>
 │${setv} ${prefix}pair
@@ -7768,6 +7791,194 @@ case "ibukota":
 					const word = HANGMAN_KATA[Math.floor(Math.random() * HANGMAN_KATA.length)];
 					global.hangmanState.set(userKey, { word, guessed: [], nyawa: 6, at: Date.now() });
 					return m.reply(`*Hangman Dimulai*\n\nKata: ${word.split("").map(() => "_").join(" ")}\nJumlah huruf: ${word.length}\nNyawa: 6\n\nTebak huruf dengan: .hangman a\n.hangman batal untuk membatalkan.`);
+				}
+				break;
+case "soal":
+				{
+					const dbR = (global.db && global.db.users && global.db.users[m.sender]) ? global.db.users[m.sender] : null;
+					const skorKategori = (args[0] || "").toLowerCase();
+					if (skorKategori === "skor") {
+						const ku = dbR && dbR.soal;
+						return m.reply(ku ? `*Skor soal kamu*\n\nBenar: ${ku.benar}\nSalah: ${ku.salah}` : "Kamu belum pernah main soal.");
+					}
+					const categories = Object.keys(SOAL);
+					const kategori = args[0] && SOAL[args[0].toLowerCase()] ? args[0].toLowerCase() : categories[Math.floor(Math.random() * categories.length)];
+					const pool = SOAL[kategori];
+					global.soalState = global.soalState || new Map();
+					const key = m.chat + ":" + m.sender;
+					const pending = global.soalState.get(key);
+					if (pending && Date.now() - pending.at < 15 * 60 * 1000 && /^[a-d]$/i.test(skorKategori)) {
+						const idx = skorKategori.charCodeAt(0) - 97;
+						const pick = pending.soal;
+						global.soalState.delete(key);
+						const u = dbR;
+						if (u) {
+							u.soal = u.soal || { benar: 0, salah: 0 };
+							if (idx === pick.a) {
+								u.soal.benar++;
+								u.money = (typeof u.money === "number" ? u.money : 0) + 25;
+							} else {
+								u.soal.salah++;
+							}
+						}
+						if (idx === pick.a) return m.reply(`*Benar!* +25 uang.\n\nPembahasan: ${pick.p}\n\nKetik .soal untuk soal berikutnya atau .soal skor untuk melihat skor.`);
+						return m.reply(`*Salah.* Jawaban benar: ${String.fromCharCode(65 + pick.a)}\n\nPembahasan: ${pick.p}`);
+					}
+					if (pending && Date.now() - pending.at < 15 * 60 * 1000 && skorKategori && skorKategori !== "a" && skorKategori !== "b" && skorKategori !== "c" && skorKategori !== "d") {
+						return m.reply("Kamu sedang punya soal yang belum dijawab.\nJawab dengan: .soal a (sampai .soal d)\nKetik .soal skor untuk melihat skor.");
+					}
+					const pick = pool[Math.floor(Math.random() * pool.length)];
+					global.soalState.set(key, { soal: pick, kategori, at: Date.now() });
+					let out = `*Soal ${kategori.toUpperCase()}*\n\n${pick.q}\n\n`;
+					out += pick.o.map((op, i) => String.fromCharCode(65 + i) + ". " + op).join("\n");
+					out += "\n\nJawab dengan: .soal a (sampai d)\nKetik .soal skor untuk melihat skor. Hadiah: +25 uang per jawaban benar.";
+					return m.reply(out);
+				}
+				break;
+			case "soalmtk":
+				{
+					if (args[0] && args[0].toLowerCase() === "skor") {
+						return m.reply("Gunakan .soal skor untuk melihat skor.");
+					}
+					const key = m.chat + ":" + m.sender;
+					global.soalState = global.soalState || new Map();
+					const pending = global.soalState.get(key);
+					if (pending && Date.now() - pending.at < 15 * 60 * 1000) {
+						const jawab = (text || "").trim().toLowerCase();
+						if (/^[a-d]$/.test(jawab)) {
+							return m.reply("Ketik .soal " + jawab + " untuk menjawab soal.");
+						}
+					}
+					const pool = SOAL.matematika;
+					const pick = pool[Math.floor(Math.random() * pool.length)];
+					global.soalState.set(key, { soal: pick, kategori: "matematika", at: Date.now() });
+					let out = `*Soal Matematika*\n\n${pick.q}\n\n`;
+					out += pick.o.map((op, i) => String.fromCharCode(65 + i) + ". " + op).join("\n");
+					out += "\n\nJawab dengan: .soal a (sampai d)";
+					return m.reply(out);
+				}
+				break;
+			case "soalipa":
+				{
+					if (args[0] && args[0].toLowerCase() === "skor") {
+						return m.reply("Gunakan .soal skor untuk melihat skor.");
+					}
+					const key = m.chat + ":" + m.sender;
+					global.soalState = global.soalState || new Map();
+					const pending = global.soalState.get(key);
+					if (pending && Date.now() - pending.at < 15 * 60 * 1000) {
+						const jawab = (text || "").trim().toLowerCase();
+						if (/^[a-d]$/.test(jawab)) return m.reply("Ketik .soal " + jawab + " untuk menjawab soal.");
+					}
+					const pool = SOAL.ipa;
+					const pick = pool[Math.floor(Math.random() * pool.length)];
+					global.soalState.set(key, { soal: pick, kategori: "ipa", at: Date.now() });
+					let out = `*Soal IPA*\n\n${pick.q}\n\n`;
+					out += pick.o.map((op, i) => String.fromCharCode(65 + i) + ". " + op).join("\n");
+					out += "\n\nJawab dengan: .soal a (sampai d)";
+					return m.reply(out);
+				}
+				break;
+			case "soalips":
+				{
+					if (args[0] && args[0].toLowerCase() === "skor") {
+						return m.reply("Gunakan .soal skor untuk melihat skor.");
+					}
+					const key = m.chat + ":" + m.sender;
+					global.soalState = global.soalState || new Map();
+					const pending = global.soalState.get(key);
+					if (pending && Date.now() - pending.at < 15 * 60 * 1000) {
+						const jawab = (text || "").trim().toLowerCase();
+						if (/^[a-d]$/.test(jawab)) return m.reply("Ketik .soal " + jawab + " untuk menjawab soal.");
+					}
+					const pool = SOAL.ips;
+					const pick = pool[Math.floor(Math.random() * pool.length)];
+					global.soalState.set(key, { soal: pick, kategori: "ips", at: Date.now() });
+					let out = `*Soal IPS*\n\n${pick.q}\n\n`;
+					out += pick.o.map((op, i) => String.fromCharCode(65 + i) + ". " + op).join("\n");
+					out += "\n\nJawab dengan: .soal a (sampai d)";
+					return m.reply(out);
+				}
+				break;
+			case "soalbindon":
+				{
+					if (args[0] && args[0].toLowerCase() === "skor") {
+						return m.reply("Gunakan .soal skor untuk melihat skor.");
+					}
+					const key = m.chat + ":" + m.sender;
+					global.soalState = global.soalState || new Map();
+					const pending = global.soalState.get(key);
+					if (pending && Date.now() - pending.at < 15 * 60 * 1000) {
+						const jawab = (text || "").trim().toLowerCase();
+						if (/^[a-d]$/.test(jawab)) return m.reply("Ketik .soal " + jawab + " untuk menjawab soal.");
+					}
+					const pool = SOAL.bindon;
+					const pick = pool[Math.floor(Math.random() * pool.length)];
+					global.soalState.set(key, { soal: pick, kategori: "bindon", at: Date.now() });
+					let out = `*Soal Bahasa Indonesia*\n\n${pick.q}\n\n`;
+					out += pick.o.map((op, i) => String.fromCharCode(65 + i) + ". " + op).join("\n");
+					out += "\n\nJawab dengan: .soal a (sampai d)";
+					return m.reply(out);
+				}
+				break;
+			case "soalppkn":
+				{
+					if (args[0] && args[0].toLowerCase() === "skor") {
+						return m.reply("Gunakan .soal skor untuk melihat skor.");
+					}
+					const key = m.chat + ":" + m.sender;
+					global.soalState = global.soalState || new Map();
+					const pending = global.soalState.get(key);
+					if (pending && Date.now() - pending.at < 15 * 60 * 1000) {
+						const jawab = (text || "").trim().toLowerCase();
+						if (/^[a-d]$/.test(jawab)) return m.reply("Ketik .soal " + jawab + " untuk menjawab soal.");
+					}
+					const pool = SOAL.ppkn;
+					const pick = pool[Math.floor(Math.random() * pool.length)];
+					global.soalState.set(key, { soal: pick, kategori: "ppkn", at: Date.now() });
+					let out = `*Soal PPKn*\n\n${pick.q}\n\n`;
+					out += pick.o.map((op, i) => String.fromCharCode(65 + i) + ". " + op).join("\n");
+					out += "\n\nJawab dengan: .soal a (sampai d)";
+					return m.reply(out);
+				}
+				break;
+			case "namabayi":
+				{
+					const argRaw = (text || "").trim().toLowerCase();
+					if (argRaw === "list cowo") {
+						const nama = NAMA_BAYI_COWO.map((n) => n.nama).join(", ");
+						return m.reply(`*Daftar nama cowo (${NAMA_BAYI_COWO.length})*\n\n${nama}`);
+					}
+					if (argRaw === "list cewe") {
+						const nama = NAMA_BAYI_CEWE.map((n) => n.nama).join(", ");
+						return m.reply(`*Daftar nama cewe (${NAMA_BAYI_CEWE.length})*\n\n${nama}`);
+					}
+					const [gender, ...rest] = argRaw.split(/\s+/);
+					const restText = rest.join(" ").trim();
+					if (!gender || !["cowo", "cewe"].includes(gender)) {
+						return m.reply("Contoh:\n.namabayi cowo\n.namabayi cewe\n.namabayi cowo artinya rama\n.namabayi list cowo\n.namabayi list cewe");
+					}
+
+					const list = gender === "cowo" ? NAMA_BAYI_COWO : NAMA_BAYI_CEWE;
+					if (restText === "list") {
+						const nama = list.map((n) => n.nama).join(", ");
+						return m.reply(`*Daftar nama ${gender} (${list.length})*\n\n${nama}`);
+					}
+					if (restText) {
+						const q = restText.toLowerCase().replace(/[^a-z]/g, "");
+						const partial = list.filter((n) => n.nama.toLowerCase().includes(q));
+						if (!partial.length) return m.reply(`Tidak ada nama yang cocok dengan "${restText}".`);
+						return m.reply(partial.map((n) => `*${n.nama}* - ${n.asal}: ${n.arti}`).join("\n"));
+					}
+
+					// Acak 10 nama
+					const copy = [...list];
+					for (let i = copy.length - 1; i > 0; i--) {
+						const j = Math.floor(Math.random() * (i + 1));
+						[copy[i], copy[j]] = [copy[j], copy[i]];
+					}
+					const pick10 = copy.slice(0, 10);
+					return m.reply(`*10 Nama bayi ${gender}*\n\n${pick10.map((n) => `- *${n.nama}* (${n.asal}) - ${n.arti}`).join("\n")}\n\nCari spesifik: .namabayi cowo raka`);
 				}
 				break;
 			default:
