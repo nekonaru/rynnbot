@@ -59,6 +59,9 @@ Berbasis Hitori Bot karya [Nazedev](https://github.com/nazedev/hitori), yang dir
 | Menu & Umum | **Menu dan bantuan** | Menu berkategori, daftar perintah, info bot, ping |
 | Menu & Umum | **CLI interaktif** | Wizard setup pertama, manajer pengaturan, dashboard status, pembaca log |
 | Menu & Umum | **Hot reload** | `settings.js` dimuat ulang otomatis saat disimpan |
+| Utilitas | **Kalender & hiburan** | `.cal` (kalender bulan), `.pantun` (pantun acak), `.b64` (encode/decode base64), `.password` (generate password acak) |
+| Utilitas | **Cek anggota** | `.admins` (daftar admin grup), `.saldo` (saldo limit/uang/status) |
+| Owner | **Keluar semua** | `.kickall confirm` (keluarkan semua non-admin, dengan konfirmasi) |
 | Alat Grup | **Manajemen grup** | Kick, promote, demote, mute/unmute, tagall, pesan welcome/leave, anti-link, anti-spam, anti-toxic |
 | Alat Grup | **Anti-spam** | Cooldown perintah per user dengan toggle `.antispam` per grup |
 | Downloader | **YouTube, TikTok, Instagram, Facebook, Spotify, Pinterest, MediaFire** | `ytmp3`, `ytmp4`, `tiktok`, `ig`, `fb`, `spotify`, `pin`, `mediafire`, dan lainnya |
@@ -436,6 +439,12 @@ Semua perintah memakai prefix default `.` `!` atau `+` (atur di `settings.js`).
 | `.kurs USD IDR 1` | Kurs mata uang |
 | `.poll "judul" opt1 \| opt2` | Buat polling (grup) |
 | `.stats` | Statistik bot (owner) |
+| `.cal` | Kalender bulan berjalan |
+| `.password` | Generate password acak |
+| `.b64` `encode`/`decode` teks | Encode/decode base64 |
+| `.pantun` | Pantun acak |
+| `.admins` | Daftar admin grup |
+| `.saldo` | Cek saldo limit/uang/status |
 | `.mode public` / `.mode self` | Mode publik / khusus owner |
 
 Daftar lengkap: jalankan `.menu` di WhatsApp.

@@ -1309,13 +1309,6 @@ const sock = async (sock, m, store) => {
 
 		switch (fileSha256 || command) {
 			// Tempat Add Case
-			case "19rujxl1e":
-				{
-					console.log(".");
-				}
-				break;
-
-			// Owner Menu
 			case "shutdown":
 			case "off":
 				{
@@ -1338,21 +1331,12 @@ const sock = async (sock, m, store) => {
 					});
 				}
 				break;
-			case "byq":
-				{
-					if (!isCreator) return m.reply(global.mess.owner);
-					if (!m.quoted) return m.reply(global.mess.quoted);
-					delete m.quoted.chat;
-					let anya = Object.values(m.quoted.fakeObj())[1];
-					m.reply(`const byt = ${JSON.stringify(anya.message, null, 2)}\nsock.relayMessage(m.chat, byt, {})`);
-				}
-				break;
 			case "setbio":
 				{
 					if (!isCreator) return m.reply(global.mess.owner);
 					if (!text) return m.reply(global.mess.text);
-					sock.setStatus(q);
-					m.reply(`*Bio telah di ganti menjadi ${q}*`);
+					sock.setStatus(text);
+					m.reply(`*Bio telah di ganti menjadi ${text}*`);
 				}
 				break;
 			case "setppbot":
@@ -2339,7 +2323,7 @@ const sock = async (sock, m, store) => {
 			case "donasi":
 			case "donate":
 				{
-					m.reply("Donasi belum tersedia untuk saat ini.");
+					m.reply(`Dukung Rynn supaya terus dikembangkan:\n\n☕ Saweria: https://saweria.co/nekonaruu\n💰 Sociabuzz: https://sociabuzz.com/nekonaru/donate\n🎁 Bagibagi: https://bagibagi.co/Nekonaru\n🐙 GitHub Sponsors: https://github.com/sponsors/nekonaru`);
 				}
 				break;
 
@@ -2789,7 +2773,7 @@ const sock = async (sock, m, store) => {
 						fs
 							.readFileSync(__filename)
 							.toString()
-							.match(/case '/g) || []
+							.match(/case "/g) || []
 					).length;
 					m.reply(`Total Fitur : ${total}`);
 				}
@@ -6128,16 +6112,12 @@ Select Bot Settings:
 │${setv} ${prefix}ping
 │${setv} ${prefix}afk
 │${setv} ${prefix}rvo (reply pesan viewone)
-│${setv} ${prefix}inspect (url gc)
-│${setv} ${prefix}addmsg
-│${setv} ${prefix}delmsg
-│${setv} ${prefix}getmsg
-│${setv} ${prefix}listmsg
-│${setv} ${prefix}setcmd
-│${setv} ${prefix}delcmd
-│${setv} ${prefix}listcmd
-│${setv} ${prefix}lockcmd
-│${setv} ${prefix}q (reply pesan)
+│${setv} ${prefix}remind
+│${setv} ${prefix}notes
+│${setv} ${prefix}poll (judul | opsi1 | opsi2)
+│${setv} ${prefix}gempa
+│${setv} ${prefix}kurs
+│${setv} ${prefix}stats
 │${setv} ${prefix}menfes (62xxx|fake name)
 │${setv} ${prefix}confes (62xxx|fake name)
 │${setv} ${prefix}roomai
@@ -6258,7 +6238,6 @@ Select Bot Settings:
 │${setv} ${prefix}claude (query)
 │${setv} ${prefix}archipelago (query)
 │${setv} ${prefix}deepseek (query)
-│${setv} ${prefix}txt2img (query)
 ╰─┬────❍
 ╭─┴❍「 *ANIME* 」❍
 │${setv} ${prefix}waifu
@@ -6410,6 +6389,12 @@ Select Bot Settings:
 │${setv} ${prefix}getmsg
 │${setv} ${prefix}listmsg
 │${setv} ${prefix}setcmd
+│${setv} ${prefix}remind
+│${setv} ${prefix}notes
+│${setv} ${prefix}poll (judul | opsi1 | opsi2)
+│${setv} ${prefix}gempa
+│${setv} ${prefix}kurs
+│${setv} ${prefix}stats
 │${setv} ${prefix}delcmd
 │${setv} ${prefix}listcmd
 │${setv} ${prefix}lockcmd
@@ -6564,7 +6549,6 @@ Select Bot Settings:
 │${setv} ${prefix}claude (query)
 │${setv} ${prefix}archipelago (query)
 │${setv} ${prefix}deepseek (query)
-│${setv} ${prefix}txt2img (query)
 ╰──────❍`);
 				}
 				break;
@@ -6877,6 +6861,126 @@ Select Bot Settings:
 					if (!res || res.result !== "success" || !res.rates || !(to in res.rates)) return m.reply("Gagal mengambil kurs atau mata uang " + to + " tidak dikenal.");
 					const val = amount * res.rates[to];
 					return m.reply(fmtNum(amount) + " " + from + " = *" + fmtNum(val) + " " + to + "*");
+				}
+				break;
+case "cal":
+			case "kalendar":
+				{
+					const now = new Date();
+					const [mArg, yArg] = (text || "").trim().split(/\s+/);
+					const month = mArg ? parseInt(mArg, 10) : now.getMonth() + 1;
+					const year = yArg ? parseInt(yArg, 10) : now.getFullYear();
+					if (isNaN(month) || isNaN(year) || month < 1 || month > 12 || year < 2000 || year > 9999) {
+						return m.reply("Format: .cal [bulan] [tahun]\nContoh: .cal 11 2026\n(Kosong untuk bulan ini)");
+					}
+					const cal = new Date(year, month, 0);
+					const daysInMonth = cal.getDate();
+					const firstDay = new Date(year, month - 1, 1).getDay();
+					const monthNames = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
+					let out = `*Kalender ${monthNames[month - 1]} ${year}*\n`;
+					out += "Min Sen Sel Rab Kam Jum Sab\n";
+					let line = "";
+					for (let i = 0; i < firstDay; i++) line += "    ";
+					for (let d = 1; d <= daysInMonth; d++) {
+						line += String(d).padStart(3, " ") + " ";
+						if ((firstDay + d) % 7 === 0) {
+							out += line.trimEnd() + "\n";
+							line = "";
+						}
+					}
+					if (line.trim()) out += line.trimEnd() + "\n";
+					const today = now.getDate();
+					const isCurrentMonth = now.getMonth() + 1 === month && now.getFullYear() === year;
+					return m.reply(out.trimEnd() + (isCurrentMonth ? `\nHari ini: ${today} ${monthNames[now.getMonth()]} ${year}` : ""));
+				}
+				break;
+			case "password":
+			case "pass":
+				{
+					const len = parseInt((text || "").trim(), 10) || 12;
+					if (len < 4 || len > 128) return m.reply("Panjang password harus antara 4 dan 128.");
+					const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+-=[]{}|;:,.<>?";
+					const bytes = new Uint8Array(len);
+					crypto.getRandomValues(bytes);
+					let out = "";
+					for (let i = 0; i < len; i++) out += charset[bytes[i] % charset.length];
+					m.reply(`*Password acak* (${len} karakter):\n\n${out}`);
+				}
+				break;
+			case "b64":
+			case "base64":
+				{
+					const payload = (text || "").trim();
+					if (!payload) return m.reply(`Contoh:\n.b64 encode halo\n.b64 decode aGFsbw==`);
+					const [mode, ...rest] = payload.split(/\s+/);
+					const data = rest.join(" ");
+					if (!data) return m.reply(`Contoh:\n.b64 encode halo\n.b64 decode aGFsbw==`);
+					try {
+						if (/^(encode|enc)$/i.test(mode)) {
+							return m.reply(Buffer.from(data).toString("base64"));
+						} else if (/^(decode|dec)$/i.test(mode)) {
+							return m.reply(Buffer.from(data, "base64").toString("utf8"));
+						}
+						return m.reply(`Contoh:\n.b64 encode halo\n.b64 decode aGFsbw==`);
+					} catch (e) {
+						return m.reply("Gagal memproses data.");
+					}
+				}
+				break;
+			case "pantun":
+				{
+					const pantun = [
+						"Jalan-jalan ke kota Surabaya\nJangan lupa membeli oleh-oleh\nBelajar itu butuh kesabaran\nTapi hasilnya sangatlah elok",
+						"Pohon randu tinggi menjulang\nAkarnya menembus tanah lebur\nJangan pernah takut untuk belajar\nKarena ilmu adalah cahaya hidup",
+						"Buah durian jatuh di jalan\nSemua orang berebut duluan\nKalau kamu rajin bekerja keras\nPasti akan Tuhan memberkati",
+						"Beli ayam di pasar pagi\nPulang-pulang hujan lebat\nSahabat sejati itu hadiah terindah\nJangan pernah lupakan saudaramu",
+						"Pohon pinus tumbuh di gunung\nDaunnya rindang di musim kering\nKalau kamu ingin sukses di dunia\nJangan malas, belajarlah terus"
+					];
+					m.reply(pantun[Math.floor(Math.random() * pantun.length)]);
+				}
+				break;
+			case "admins":
+			case "adminlist":
+				{
+					if (!m.isGroup) return m.reply(global.mess.group);
+					const metadata = await sock.groupMetadata(m.chat).catch(() => null);
+					if (!metadata) return m.reply("Gagal mengambil metadata grup.");
+					const admins = metadata.participants.filter(p => p.admin).map(p => `@${p.id.split("@")[0]}`);
+					if (!admins.length) return m.reply("Tidak ada admin di grup ini.");
+					return m.reply(`*Admin Grup (${admins.length})*\n\n${admins.join("\n")}`);
+				}
+				break;
+			case "saldo":
+				{
+					const user = db.users[m.sender];
+					if (!user) return m.reply("Akun kamu belum terdaftar.");
+					const money = user.money?.toLocaleString("id-ID") || 0;
+					const limit = user.limit ?? 0;
+					const premium = db.premium.includes(m.sender) ? "Premium" : "Free";
+					return m.reply(`*Saldo kamu*\n\nUang: ${money}\nLimit: ${limit}\nStatus: ${premium}`);
+				}
+				break;
+			case "kickall":
+				{
+					if (!isCreator) return m.reply(global.mess.owner);
+					if (!m.isGroup) return m.reply(global.mess.group);
+					if (!args[0] || args[0].toLowerCase() !== "confirm") {
+						return m.reply(`Perintah ini akan MENGELUARKAN SEMUA anggota non-admin dari grup.\n\n${prefix + command} confirm\n\nPerintah tidak bisa dibatalkan!`);
+					}
+					const metadata = await sock.groupMetadata(m.chat).catch(() => null);
+					if (!metadata) return m.reply("Gagal mengambil metadata grup.");
+					const targets = metadata.participants.filter(p => !p.admin).map(p => p.id);
+					if (!targets.length) return m.reply("Tidak ada anggota non-admin yang bisa dikeluarkan.");
+					m.reply(`Mengeluarkan ${targets.length} anggota...`);
+					let removed = 0;
+					for (const id of targets) {
+						try {
+							await sock.groupParticipantsUpdate(m.chat, [id], "remove");
+							removed++;
+							await new Promise(r => setTimeout(r, 1200));
+						} catch {}
+					}
+					m.reply(`Berhasil mengeluarkan ${removed} anggota.`);
 				}
 				break;
 			default:

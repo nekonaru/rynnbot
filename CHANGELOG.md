@@ -1,17 +1,43 @@
 # Changelog
 
+## v3.3.0
+
+Rynn v3.3.0 menambahkan perintah utility dan hiburan tanpa API eksternal, memperketat ownership command, dan memperbaiki bug kecil.
+
+### Fitur baru
+
+- **`.cal`** - tampilkan kalender bulan berjalan (atau `.cal 12 2026`).
+- **`.password`** - generate password acak (`.password 16`).
+- **`.b64`** - encode/decode base64 (`.b64 encode teks`, `.b64 decode aGFsbw==`).
+- **`.pantun`** - pantun acak.
+- **`.admins`** - daftar admin grup.
+- **`.saldo`** - cek saldo limit, uang, dan status (free/premium).
+- **`.kickall confirm`** - keluarkan semua anggota non-admin dalam grup (owner, dengan konfirmasi eksplisit).
+
+### Perbaikan bug
+
+- **`totalfitur`** dihitung dari `case "` (sebelumnya `case '` yang tidak pernah cocok).
+- **`setbio`** memperbaiki referensi variabel yang salah.
+- **Menu**: hapus `txt2img` dari semua menu karena command tidak tersedia.
+- **`donasi`** menampilkan opsi dukungan: GitHub Sponsors, Saweria, Sociabuzz, dan Bagibagi.
+
+### Peningkatan
+
+- **Menu yang lebih jelas**: daftar perintah baru `.remind`, `.note`, `.poll`, `.gempa`, `.kurs`, `.stats` sekarang muncul di menu utama.
+- **README** mencatat perintah-perintah baru di tabel fitur dan perintah populer.
+
 ## v3.2.0
 
 Rynn v3.2.0 menambahkan pengingat, catatan pribadi, polling, dan perintah informasi.
 
 ### Fitur baru
 
-- **`.remind`** — pengingat pribadi: `.remind 30m teks`, `.remind 07:30 teks`, `.remind besok 07:00 teks`, `.remind 2026-12-01 07:00 teks`, `.remind setiap 07:00 teks`. Lihat daftar dengan `.remind`, hapus dengan `.reminddel <nomor>`. Bot mengirim pesan reminder di waktu yang dijadwalkan; reminder `setiap` berjalan harian.
-- **`.note`** — catatan pribadi per pengguna: `.note teks`, `.notes`, `.notedel <nomor>`.
-- **`.poll`** — polling native WhatsApp (grup): `.poll "Judul" opsi1 | opsi2 | opsi3`.
-- **`.stats`** — statistik bot untuk owner: versi, uptime, memori, pengguna/grup/premium/sewa, total perintah dipakai, top 5 perintah.
-- **`.gempa`** — gempa terkini BMKG (tanggal, magnitudo, wilayah, kedalaman, potensi tsunami).
-- **`.kurs`** — kurs mata uang: tanpa argumen (menu ringkas), atau `.kurs USD IDR 1`.
+- **`.remind`** - pengingat pribadi: `.remind 30m teks`, `.remind 07:30 teks`, `.remind besok 07:00 teks`, `.remind 2026-12-01 07:00 teks`, `.remind setiap 07:00 teks`. Lihat daftar dengan `.remind`, hapus dengan `.reminddel <nomor>`. Bot mengirim pesan reminder di waktu yang dijadwalkan; reminder `setiap` berjalan harian.
+- **`.note`** - catatan pribadi per pengguna: `.note teks`, `.notes`, `.notedel <nomor>`.
+- **`.poll`** - polling native WhatsApp (grup): `.poll "Judul" opsi1 | opsi2 | opsi3`.
+- **`.stats`** - statistik bot untuk owner: versi, uptime, memori, pengguna/grup/premium/sewa, total perintah dipakai, top 5 perintah.
+- **`.gempa`** - gempa terkini BMKG (tanggal, magnitudo, wilayah, kedalaman, potensi tsunami).
+- **`.kurs`** - kurs mata uang: tanpa argumen (menu ringkas), atau `.kurs USD IDR 1`.
 
 ### Peningkatan
 
