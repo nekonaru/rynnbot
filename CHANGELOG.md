@@ -1,5 +1,30 @@
 # Changelog
 
+## v3.4.0
+
+Rynn v3.4.0 menambahkan perintah edukasi dan permainan, semuanya bisa dipakai tanpa API eksternal, kecuali `.hitung` yang memakai Naze API.
+
+### Fitur baru
+
+- **`.quiz`** - kuis pengetahuan umum pilihan ganda. Hadiah 50 uang per jawaban benar. `.quiz` untuk soal baru, `.quiz a` (sampai `d`) untuk menjawab, `.quiz skor` untuk melihat skor.
+- **`.team <n>`** (alias `.tim`) - bagi anggota grup menjadi 2-8 tim secara acak.
+- **`.pair`** (alias `.pasangan`) - pasangan acak dua anggota grup, cocok untuk games.
+- **`.rumus`** - rumus matematika, fisika, kimia, dan Bahasa Indonesia (`.rumus matematika`).
+- **`.hitung`** - evaluasi soal matematika lewat Naze API (contoh: `.hitung (2+3)*4`).
+- **`.hitungmundur`** (alias `.countdown`) - hitung mundur N hari ke depan atau menuju tanggal tertentu (contoh: `.hitungmundur 30`, `.hitungmundur 2026-12-25`).
+- **`.suku`** - info singkat 15 suku Nusantara (`.suku jawa`).
+- **`.kuliner`** - info 12 kuliner khas Indonesia (`.kuliner rendang`).
+- **`.edukasimenu`** - menu perintah edukasi.
+
+### Peningkatan
+
+- **Menu utama**: kategori `EDUKASI` baru berisi `.rumus`, `.hitung`, `.suku`, `.kuliner`, `.hitungmundur`. Perintah `.quiz`, `.team`, `.pair` masuk kategori GAME.
+- **README** mencatat perintah-perintah baru di tabel fitur dan perintah populer.
+
+### Catatan
+
+- Naze menyediakan endpoint `ocr`, `zonerai txt2img`, dan `sunora`, tetapi ketiganya tidak disertakan di rilis ini: ocr mengembalikan error 500 di sisi penyedia, txt2img menuntut akses VIP, dan sunora gagal menghasilkan lagu dengan key yang dipakai.
+
 ## v3.3.0
 
 Rynn v3.3.0 menambahkan perintah utility dan hiburan tanpa API eksternal, memperketat ownership command, dan memperbaiki bug kecil.

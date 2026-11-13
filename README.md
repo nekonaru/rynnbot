@@ -61,6 +61,8 @@ Berbasis Hitori Bot karya [Nazedev](https://github.com/nazedev/hitori), yang dir
 | Menu & Umum | **Hot reload** | `settings.js` dimuat ulang otomatis saat disimpan |
 | Utilitas | **Kalender & hiburan** | `.cal` (kalender bulan), `.pantun` (pantun acak), `.b64` (encode/decode base64), `.password` (generate password acak) |
 | Utilitas | **Cek anggota** | `.admins` (daftar admin grup), `.saldo` (saldo limit/uang/status) |
+| Utilitas | **Edukasi** | `.rumus` (matematika/fisika/kimia/Bahasa Indonesia), `.hitung` (kalkulator matematika), `.suku` (15 suku Nusantara), `.kuliner` (12 kuliner khas), `.hitungmundur` (hitung mundur hari/tanggal) |
+| Game | **Kuis & tim** | `.quiz` (kuis pengetahuan umum, hadiah 50 uang), `.team` (bagi tim acak), `.pair` (pasangan acak di grup) |
 | Owner | **Keluar semua** | `.kickall confirm` (keluarkan semua non-admin, dengan konfirmasi) |
 | Alat Grup | **Manajemen grup** | Kick, promote, demote, mute/unmute, tagall, pesan welcome/leave, anti-link, anti-spam, anti-toxic |
 | Alat Grup | **Anti-spam** | Cooldown perintah per user dengan toggle `.antispam` per grup |
@@ -445,6 +447,14 @@ Semua perintah memakai prefix default `.` `!` atau `+` (atur di `settings.js`).
 | `.pantun` | Pantun acak |
 | `.admins` | Daftar admin grup |
 | `.saldo` | Cek saldo limit/uang/status |
+| `.quiz` | Kuis pengetahuan umum (hadiah 50 uang) |
+| `.team 2` | Bagi anggota grup menjadi tim acak |
+| `.pair` | Cari pasangan acak di grup |
+| `.rumus matematika` | Rumus pelajaran (matematika/fisika/kimia/Bahasa Indonesia) |
+| `.hitung (2+3)*4` | Kalkulator matematika |
+| `.hitungmundur 30` | Hitung mundur 30 hari ke depan |
+| `.suku jawa` | Info suku Nusantara |
+| `.kuliner rendang` | Info kuliner khas daerah |
 | `.mode public` / `.mode self` | Mode publik / khusus owner |
 
 Daftar lengkap: jalankan `.menu` di WhatsApp.

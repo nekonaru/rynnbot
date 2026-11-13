@@ -6267,6 +6267,15 @@ Select Bot Settings:
 │${setv} ${prefix}tebaknegara
 │${setv} ${prefix}tebakgambar
 │${setv} ${prefix}tebakbendera
+│${setv} ${prefix}quiz (jawab a/b/c/d)
+│${setv} ${prefix}team <n> (bagi tim acak)
+│${setv} ${prefix}pair (cari pasangan)
+╭─┴❍「 *EDUKASI* 」❍
+│${setv} ${prefix}rumus (matematika/fisika/kimia/indonesia)
+│${setv} ${prefix}hitung (soal matematika)
+│${setv} ${prefix}suku (nama suku)
+│${setv} ${prefix}kuliner (nama kuliner)
+│${setv} ${prefix}hitungmundur (hari / tanggal)
 ╰─┬────❍
 ╭─┴❍「 *FUN* 」❍
 │${setv} ${prefix}coba
@@ -6605,6 +6614,15 @@ Select Bot Settings:
 │${setv} ${prefix}tebaknegara
 │${setv} ${prefix}tebakgambar
 │${setv} ${prefix}tebakbendera
+│${setv} ${prefix}quiz (jawab a/b/c/d)
+│${setv} ${prefix}team <n> (bagi tim acak)
+│${setv} ${prefix}pair (cari pasangan)
+╭─┴❍「 *EDUKASI* 」❍
+│${setv} ${prefix}rumus (matematika/fisika/kimia/indonesia)
+│${setv} ${prefix}hitung (soal matematika)
+│${setv} ${prefix}suku (nama suku)
+│${setv} ${prefix}kuliner (nama kuliner)
+│${setv} ${prefix}hitungmundur (hari / tanggal)
 ╰──────❍`);
 				}
 				break;
@@ -6631,6 +6649,21 @@ Select Bot Settings:
 │${setv} ${prefix}huluh (text)
 │${setv} ${prefix}heleh (text)
 │${setv} ${prefix}holoh (text)
+╰──────❍`);
+				}
+				break;
+			case "edukasimenu":
+				{
+					m.reply(`
+╭─┴❍「 *EDUKASI* 」❍
+│${setv} ${prefix}rumus (matematika/fisika/kimia/indonesia)
+│${setv} ${prefix}hitung (soal matematika)
+│${setv} ${prefix}suku (nama suku)
+│${setv} ${prefix}kuliner (nama kuliner)
+│${setv} ${prefix}hitungmundur (hari / tanggal)
+│${setv} ${prefix}quiz (jawab a/b/c/d)
+│${setv} ${prefix}team <n> (bagi tim acak)
+│${setv} ${prefix}pair (cari pasangan)
 ╰──────❍`);
 				}
 				break;
@@ -6981,6 +7014,198 @@ case "cal":
 						} catch {}
 					}
 					m.reply(`Berhasil mengeluarkan ${removed} anggota.`);
+				}
+				break;
+case "team":
+			case "tim":
+				{
+					if (!m.isGroup) return m.reply(global.mess.group);
+					const n = parseInt((text || "").trim(), 10);
+					if (isNaN(n) || n < 2 || n > 8) return m.reply("Contoh: .team 2\n(bagikan anggota grup menjadi 2 tim, maksimal 8)");
+					const md = await sock.groupMetadata(m.chat).catch(() => null);
+					if (!md) return m.reply("Gagal mengambil metadata grup.");
+					const botId = sock.user?.id;
+					const members = md.participants.map((p) => p.id).filter((id) => id !== botId);
+					if (members.length < n * 2) return m.reply(`Anggota grup tidak cukup untuk dibagi menjadi ${n} tim.`);
+					for (let i = members.length - 1; i > 0; i--) {
+						const j = Math.floor(Math.random() * (i + 1));
+						[members[i], members[j]] = [members[j], members[i]];
+					}
+					let out = `*Pembagian ${n} Tim*\n\n`;
+					const mentions = [];
+					for (let t = 0; t < n; t++) {
+						const team = members.filter((_, idx) => idx % n === t);
+						mentions.push(...team);
+						out += `*Tim ${t + 1}*\n` + team.map((id) => `- @${id.split("@")[0]}`).join("\n") + "\n\n";
+					}
+					return m.reply(out.trim(), { mentions });
+				}
+				break;
+			case "pair":
+			case "pasangan":
+				{
+					if (!m.isGroup) return m.reply(global.mess.group);
+					const md = await sock.groupMetadata(m.chat).catch(() => null);
+					if (!md) return m.reply("Gagal mengambil metadata grup.");
+					const members = md.participants.map((p) => p.id).filter((id) => id !== sock.user?.id);
+					if (members.length < 2) return m.reply("Anggota grup tidak cukup.");
+					const tema = (text || "").trim();
+					let a = members[Math.floor(Math.random() * members.length)];
+					let b = members[Math.floor(Math.random() * members.length)];
+					while (b === a) b = members[Math.floor(Math.random() * members.length)];
+					return m.reply(`*Pasangan acak${tema ? ` untuk ${tema}` : ""}*\n@${a.split("@")[0]} dan @${b.split("@")[0]}`, { mentions: [a, b] });
+				}
+				break;
+			case "quiz":
+			case "soalku":
+				{
+					global.quizState = global.quizState || new Map();
+					const arg = (text || "").trim().toLowerCase();
+					if (arg === "skor") {
+						const ku = db.users && db.users[m.sender] && db.users[m.sender].quiz;
+						return m.reply(ku ? `*Skor kuis kamu*\n\nBenar: ${ku.benar}\nSalah: ${ku.salah}` : "Kamu belum pernah main kuis.");
+					}
+					const userKey = m.chat + ":" + m.sender;
+					const pending = global.quizState.get(userKey);
+					if (pending && Date.now() - pending.at < 10 * 60 * 1000 && /^[a-d]$/.test(arg)) {
+						const idx = arg.charCodeAt(0) - 97;
+						const pickSoal = pending.soal;
+						global.quizState.delete(userKey);
+						const u = db.users && db.users[m.sender];
+						if (u) {
+							u.quiz = u.quiz || { benar: 0, salah: 0 };
+							if (idx === pickSoal.a) {
+								u.quiz.benar++;
+								u.money = (typeof u.money === "number" ? u.money : 0) + 50;
+							} else {
+								u.quiz.salah++;
+							}
+						}
+						if (idx === pickSoal.a) return m.reply("*Benar!* +50 uang.\n\nKetik .quiz untuk soal berikutnya atau .quiz skor untuk melihat skor.");
+						return m.reply(`*Salah.* Jawaban benar: ${String.fromCharCode(65 + pickSoal.a)}\n\nKetik .quiz untuk soal berikutnya.`);
+					}
+					if (pending && arg && !["a", "b", "c", "d"].includes(arg) && Date.now() - pending.at < 10 * 60 * 1000) {
+						return m.reply("Kamu punya soal yang belum dijawab.\nJawab dengan: .quiz a (sampai .quiz d)\nKetik .quiz skor untuk melihat skor.");
+					}
+					const soal = [
+						{ q: "Ibu Kota Indonesia setelah pemindahan pusat pemerintahan adalah?", o: ["Jakarta", "Surabaya", "Ibu Kota Nusantara", "Bandung"], a: 2 },
+						{ q: "Berapa hasil 12 x 8?", o: ["86", "96", "106", "116"], a: 1 },
+						{ q: "Gunung tertinggi di Indonesia adalah?", o: ["Kerinci", "Semeru", "Rinjani", "Puncak Jaya"], a: 3 },
+						{ q: "Rumah Gadang berasal dari daerah mana?", o: ["Jawa", "Sunda", "Sumatera Barat (Minangkabau)", "Sumatera Utara (Batak)"], a: 2 },
+						{ q: "Bahasa resmi Indonesia adalah?", o: ["Jawa", "Indonesia", "Inggris", "Melayu"], a: 1 },
+						{ q: "Berapa hasil 7 x 9?", o: ["56", "63", "72", "81"], a: 1 },
+						{ q: "Sungai terpanjang di Indonesia adalah?", o: ["Musi", "Barito", "Mahakam", "Kapuas"], a: 3 },
+						{ q: "Pulau terbesar di Indonesia adalah?", o: ["Jawa", "Sumatera", "Kalimantan", "Sulawesi"], a: 2 },
+						{ q: "Lagu Indonesia Raya diciptakan oleh?", o: ["Wage Rudolf Supratman", "Ismail Marzuki", "Cornel Simandjuntak", "H. Mutahar"], a: 0 },
+						{ q: "Tugu Pahlawan berada di kota mana?", o: ["Jakarta", "Bandung", "Semarang", "Surabaya"], a: 3 },
+						{ q: "Berapa menit dalam 2 jam?", o: ["100", "110", "120", "130"], a: 2 },
+						{ q: "Mana yang termasuk mamalia?", o: ["Kadal", "Kelelawar", "Ikan hiu", "Burung hantu"], a: 1 },
+						{ q: "Rumus luas persegi adalah?", o: ["sisi x sisi", "2 x sisi", "4 x sisi", "sisi pangkat 3"], a: 0 },
+						{ q: "Mata uang Indonesia adalah?", o: ["Ringgit", "Baht", "Rupiah", "Peso"], a: 2 },
+						{ q: "Paus bernapas dengan?", o: ["Insang", "Paru-paru", "Kulit", "Sirip"], a: 1 }
+					];
+					const pick = soal[Math.floor(Math.random() * soal.length)];
+					global.quizState.set(userKey, { a: pick.a, at: Date.now(), soal: pick });
+					let out = `*Kuis Pengetahuan Umum*\n\n${pick.q}\n\n`;
+					out += pick.o.map((op, i) => String.fromCharCode(65 + i) + ". " + op).join("\n");
+					out += "\n\nJawab dengan: .quiz a (sampai .quiz d)\nKetik .quiz skor untuk melihat skor. Hadiah: +50 uang per jawaban benar.";
+					return m.reply(out);
+				}
+				break;
+			case "rumus":
+				{
+					const kategori = (text || "").trim().toLowerCase();
+					const data = {
+						matematika: "*Rumus Matematika*\n\n- Luas segitiga: 1/2 x alas x tinggi\n- Keliling lingkaran: 2 x pi x r (pi = 3,14)\n- Luas lingkaran: pi x r x r\n- Pythagoras: c2 = a2 + b2\n- Volume kubus: s x s x s\n- Luas persegi panjang: p x l\n- Rata-rata: jumlah data / banyak data\n- Persentase: (bagian / keseluruhan) x 100",
+						fisika: "*Rumus Fisika*\n\n- Gerak lurus: s = v x t\n- Kecepatan: v = s / t\n- Percepatan: a = (v2 - v1) / t\n- Gaya: F = m x a\n- Energi kinetik: Ek = 1/2 x m x v2\n- Tekanan: P = F / A\n- Usaha: W = F x s\n- Daya: P = W / t",
+						kimia: "*Rumus Kimia*\n\n- Massa jenis: rho = m / V\n- Molaritas: M = mol / volume (liter)\n- Mol: mol = massa / Mr\n- pH asam: pH = -log [H+]\n- Hukum Avogadro: V sebanding mol (pada P dan T sama)",
+						indonesia: "*Bahasa Indonesia*\n\n- Unsur intrinsik: tema, amanat, tokoh, latar, alur, sudut pandang, gaya bahasa\n- Majas: metafora (kiasan), simile (perbandingan), hiperbola (berlebihan), personifikasi (benda dihidupkan)\n- Jenis kalimat: deklaratif (berita), interogatif (tanya), imperatif (perintah), eksklamatif (seru)\n- Paragraf: deduktif (utama di awal), induktif (utama di akhir), campuran"
+					};
+					if (!kategori) return m.reply("Contoh: .rumus matematika\n\nPilihan: matematika, fisika, kimia, indonesia");
+					const found = data[kategori];
+					if (!found) return m.reply("Kategori tidak ditemukan.\n\nPilihan: matematika, fisika, kimia, indonesia");
+					return m.reply(found);
+				}
+				break;
+			case "hitung":
+				{
+					if (!isLimit) return m.reply(global.mess.limit);
+					const expr = (text || "").trim();
+					if (!expr) return m.reply("Contoh: .hitung (2+3)*4\n\nSoal matematika dievaluasi lewat Naze API.");
+					try {
+						const res = await fetchApi("/education/math", { expr });
+						const hasil = res?.result?.result ?? res?.result;
+						if (hasil === undefined || hasil === null) return m.reply("Soal tidak bisa dihitung. Contoh: .hitung (2+3)*4");
+						return m.reply(`*Hasil*\n\n${expr} = ${hasil}`);
+					} catch (e) {
+						return m.reply("Soal tidak bisa dihitung atau server API sedang bermasalah.\nContoh: .hitung (2+3)*4");
+					}
+				}
+				break;
+			case "hitungmundur":
+			case "countdown":
+				{
+					const arg = (text || "").trim();
+					if (!arg) return m.reply("Contoh: .hitungmundur 30\natau .hitungmundur 2026-12-25");
+					if (/^\d{1,4}$/.test(arg)) {
+						const d = parseInt(arg, 10);
+						const t = new Date(Date.now() + d * 86400000);
+						return m.reply(`${d} hari ke depan jatuh pada *${t.toLocaleDateString("id-ID", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}*`);
+					}
+					const dt = new Date(arg);
+					if (isNaN(dt.getTime())) return m.reply("Format tanggal tidak dikenali.\n\nGunakan: .hitungmundur 2026-12-25\natau .hitungmundur 30");
+					const diff = Math.ceil((dt.getTime() - Date.now()) / 86400000);
+					if (diff >= 0) return m.reply(`*${diff} hari lagi* menuju ${dt.toLocaleDateString("id-ID", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}`);
+					return m.reply(`*${-diff} hari yang lalu* (${dt.toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" })})`);
+				}
+				break;
+			case "suku":
+				{
+					const q = (text || "").trim().toLowerCase().replace(/[^a-z]/g, "");
+					const data = {
+							jawa: "*Suku Jawa*\n\nAsal: Jawa Tengah, Jawa Timur, dan DI Yogyakarta.\nDikenal dengan kelembutan tutur kata (unggah-ungguh), seni gamelan, wayang kulit, dan batik.\nBahasa: Jawa.",
+							sunda: "*Suku Sunda*\n\nAsal: Jawa Barat dan Banten.\nDikenal dengan carita pantun, angklung, tari jaipong, dan batik.\nBahasa: Sunda.",
+							batak: "*Suku Batak*\n\nAsal: Sumatera Utara.\nDikenal dengan sistem marga, rumah Bolon, dan seni gondang sabangunan.\nBahasa: Batak.",
+							minang: "*Suku Minangkabau*\n\nAsal: Sumatera Barat.\nDikenal dengan adat matrilineal (garis ibu), rumah Gadang, rendang, dan rantau (merantau).\nBahasa: Minang.",
+							bugis: "*Suku Bugis*\n\nAsal: Sulawesi Selatan.\nDikenal sebagai pelaut tangguh, dengan aksara Lontara dan rumah panggung (saoraja).\nBahasa: Bugis.",
+							betawi: "*Suku Betawi*\n\nAsal: Jakarta dan sekitarnya.\nDikenal dengan ondel-ondel, tanjidor, kerak telor, dan lenong.\nBahasa: Betawi.",
+							banjar: "*Suku Banjar*\n\nAsal: Kalimantan Selatan.\nDikenal dengan soto banjar, kayu ulin (kayu besi), dan kehidupan sungai.\nBahasa: Banjar.",
+							madura: "*Suku Madura*\n\nAsal: Pulau Madura.\nDikenal dengan karapan sapi (balapan sapi), sate madura, dan tradisi merantau.\nBahasa: Madura.",
+							bali: "*Suku Bali*\n\nAsal: Pulau Bali.\nDikenal dengan seni tari, kecak, nyepi, dan pura sebagai tempat ibadah.\nBahasa: Bali.",
+							dayak: "*Suku Dayak*\n\nAsal: Kalimantan.\nDikenal dengan rumah lamin (betang), tato tradisional, dan seni ukir kayu.\nBahasa: Dayak (banyak subkelompok).",
+							aceh: "*Suku Aceh*\n\nAsal: Aceh.\nDikenal dengan Masjid Baiturrahman, kopi gayo, tari saman, dan sejarah Kesultanan Aceh.\nBahasa: Aceh.",
+							sasak: "*Suku Sasak*\n\nAsal: Pulau Lombok.\nDikenal dengan tenun ikat, Gendang Beleq, dan tradisi Perang Topat di Lingsar.\nBahasa: Sasak.",
+							tionghoa: "*Suku Tionghoa*\n\nAsal: keturunan Tionghoa di Indonesia, tersebar di berbagai daerah.\nDikenal dengan kuliner peranakan, pasar malam, dan perayaan Imlek.\nBahasa: Indonesia, Tionghoa (Hokkien, Mandarin, Kanton).",
+							palembang: "*Suku Palembang (Sumatra Selatan)*\n\nAsal: Palembang, Sumatera Selatan.\nDikenal dengan pempek, Sungai Musi, jembatan Ampera, dan rumah Limas.\nBahasa: Melayu Palembang.",
+							papua: "*Suku-suku di Papua*\n\nTerdiri dari banyak suku, misalnya Dani, Asmat, dan Kamoro.\nDikenal dengan seni ukir, noken (tas anyaman), dan adat bakar batu.\nBahasa: ratusan bahasa Papua."
+					};
+					if (!q) return m.reply("Contoh: .suku jawa\n\nPilihan: jawa, sunda, batak, minang, bugis, betawi, banjar, madura, bali, dayak, aceh, sasak, tionghoa, palembang, papua");
+					const found = data[q];
+					if (!found) return m.reply("Suku tidak ditemukan.\n\nPilihan: jawa, sunda, batak, minang, bugis, betawi, banjar, madura, bali, dayak, aceh, sasak, tionghoa, palembang, papua");
+					return m.reply(found);
+				}
+				break;
+			case "kuliner":
+				{
+					const q = (text || "").trim().toLowerCase().replace(/[^a-z]/g, "");
+					const data = {
+							rendang: "*Rendang*\n\nAsal: Minangkabau, Sumatera Barat.\nDaging sapi dimasak lama dengan santan dan rempah sampai kering dan hitam. Cocok sebagai lauk tahan lama.",
+							gudeg: "*Gudeg*\n\nAsal: Yogyakarta dan Jawa Tengah.\nNangka muda dimasak dengan santan manis, disajikan dengan krecek, ayam kampung, dan telur.",
+							soto: "*Soto*\n\nSoto ayam (Jawa), soto betawi (santan, Jakarta), soto lamongan, soto banjar (Kalimantan Selatan), soto padang. Kuah kuning atau bening dengan rempah, cocok dengan nasi atau lontong.",
+							nasigoreng: "*Nasi Goreng*\n\nMakanan nasional Indonesia. Nasi digoreng dengan bumbu, telur, dan kecap, disajikan dengan kerupuk, mentimun, dan kadang ayam/sosis.",
+							sate: "*Sate*\n\nSate ayam dan sate kambing (Madura, Jawa), sate lilit (Bali), sate maranggi (Purwakarta). Daging ditusuk dan dibakar, disajikan dengan bumbu kacang atau kecap.",
+							pempek: "*Pempek*\n\nAsal: Palembang, Sumatera Selatan.\nAdonan ikan dan tepung digoreng, disajikan dengan kuah saus (cuko), timun, dan mie kuning.",
+							bakso: "*Bakso*\n\nBola daging (sapi/ayam) kuah dengan mie, bihun, tahu, dan pangsit. Populer di seluruh Indonesia, khas warung dan kaki lima.",
+							rawon: "*Rawon*\n\nAsal: Jawa Timur.\nSemur daging sapi dengan kluwek, kuah hitam pekat, disajikan dengan nasi, kecambah, dan sambal.",
+							keraktelor: "*Kerak Telor*\n\nAsal: Jakarta, Betawi.\nTelur (ayam/bebek) dicampur beras ketan dan bumbu, dimasak di atas tungku arang.",
+							martabak: "*Martabak*\n\nMartabak manis (piringan tebal dengan cokelat, keju, kacang) dan martabak telur (kulit diisi telur, daging, daun bawang, digoreng).",
+							gadogado: "*Gado-gado*\n\nSalad Indonesia: sayuran rebus, telur, lontong, tahu, tempe, disiram bumbu kacang. Siomay dan batagor serumpun.",
+							opor: "*Opor*\n\nOpor ayam: ayam dimasak dengan kuah santan dan rempah, khas Lebaran. Ada varian opor bebek dan opor tahu/tempe."
+					};
+					if (!q) return m.reply("Contoh: .kuliner rendang\n\nPilihan: rendang, gudeg, soto, nasigoreng, sate, pempek, bakso, rawon, keraktelor, martabak, gadogado, opor");
+					const found = data[q];
+					if (!found) return m.reply("Kuliner tidak ditemukan.\n\nPilihan: rendang, gudeg, soto, nasigoreng, sate, pempek, bakso, rawon, keraktelor, martabak, gadogado, opor");
+					return m.reply(found);
 				}
 				break;
 			default:
