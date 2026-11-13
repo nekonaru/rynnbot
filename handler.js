@@ -6984,24 +6984,61 @@ Select Bot Settings:
 				{
 					if (!isLimit) return m.reply(global.mess.limit);
 					const fmtNum = (n) => Number(n.toFixed(2)).toLocaleString("id-ID", { maximumFractionDigits: 2 });
+					const fmtKurs = (n) => {
+						const v = Number(n);
+						if (!v) return "0";
+						if (v >= 100) return v.toLocaleString("id-ID", { maximumFractionDigits: 2 });
+						if (v >= 0.01) return Number(v.toFixed(4)).toLocaleString("id-ID", { maximumFractionDigits: 4 });
+						return v.toFixed(6);
+					};
+					const ALIAS = {
+						dólar: "USD", dolar: "USD", usd: "USD", rupiah: "IDR", idr: "IDR", euro: "EUR", eur: "EUR",
+						yen: "JPY", jpy: "JPY", ringgit: "MYR", myr: "MYR", bah: "THB", baht: "THB", thb: "THB",
+						yuan: "CNY", rmb: "CNY", cny: "CNY", won: "KRW", krw: "KRW", rupee: "INR", inr: "INR",
+						gbp: "GBP", poundsterling: "GBP", sg$: "SGD", sgd: "SGD", aud: "AUD", dolaraustralia: "AUD",
+						cad: "CAD", chf: "CHF", hkd: "HKD", nzd: "NZD", try: "TRY", lira: "TRY", dkk: "DKK",
+						sek: "SEK", nok: "NOK", sar: "SAR", aed: "AED", qar: "QAR", kwd: "KWD", bhd: "BHD", omr: "OMR",
+						php: "PHP", vnd: "VND", php_: "PHP", mmk: "MMK", khr: "KHR", lak: "LAK", bnd: "BND",
+						pgk: "PGK", fjd: "FJD", npr: "NPR", lkr: "LKR", pkr: "PKR", bdt: "BDT", rub: "RUB",
+						egp: "EGP", zar: "ZAR", ngn: "NGN", brl: "BRL", mxn: "MXN", ars: "ARS", clp: "CLP",
+						cop: "COP", pen: "PEN", uyu: "UYU", sek_: "SEK", gel: "GEL", kazakh: "KZT",
+					};
+					const norm = (s) => ALIAS[String(s).toLowerCase().replace(/[^a-z]/g, "")] || String(s).trim().toUpperCase().replace(/[^A-Z]/g, "");
 					const args2 = (text || "").trim().split(/\s+/).filter(Boolean);
-					if (args2.length === 0) {
+					const tampil = ["IDR", "EUR", "GBP", "JPY", "MYR", "SGD", "THB", "CNY", "KRW", "INR", "AUD", "CAD", "CHF", "HKD", "NZD", "SAR", "AED", "QAR", "KWD", "BHD", "OMR", "TRY", "DKK", "SEK", "NOK", "PHP", "VND", "MMK", "KHR", "LAK", "BND", "PGK", "FJD", "NPR", "LKR", "PKR", "BDT", "RUB", "EGP", "ZAR", "NGN", "BRL", "MXN", "ARS", "CLP", "COP", "PEN", "UYU", "GEL"];
+					if (args2.length === 0 || args2[0].toLowerCase() === "list") {
 						const res = await fetchJson("https://open.er-api.com/v6/latest/USD").catch(() => null);
 						if (!res || res.result !== "success") return m.reply("Gagal mengambil kurs. Coba lagi nanti.");
+						if (args2[0]?.toLowerCase() === "list") {
+							const semua = Object.keys(res.rates || {}).sort();
+							return m.reply(`*Kode Mata Uang (${semua.length})*\n\n${semua.join(", ")}\n\nAlias: rupiah, dolar, euro, yen, ringgit, baht, yuan, won, rupee, poundsterling\nContoh: .kurs 25000 IDR USD`);
+						}
 						const r = res.rates;
-						return m.reply("*Kurs (base USD)*\n1 USD = Rp " + fmtNum(r.IDR) + "\n1 USD = € " + fmtNum(r.EUR) + "\n1 USD = ¥ " + fmtNum(r.JPY));
+						const list = tampil.filter((c) => r[c]).map((c) => `- 1 USD = ${fmtKurs(r[c])} ${c}`).join("\n");
+						return m.reply(`*Kurs (base USD)*\n${list}\n\nKonversi: .kurs 100 USD IDR atau .kurs USD IDR 100\nDaftar kode: .kurs list`);
 					}
-					let [from, to, amountRaw] = args2;
-					from = (from || "USD").toUpperCase(); to = (to || "IDR").toUpperCase();
-					const amount = parseFloat(amountRaw) || 1;
-					if (!/^[A-Z]{3}$/.test(from) || !/^[A-Z]{3}$/.test(to)) return m.reply("Kode mata uang 3 huruf, contoh: USD, IDR, EUR, JPY.");
+					let [a, b, c] = args2;
+					let from, to, amount = 1;
+					if (/^[\d.,]+$/.test(a)) {
+						amount = parseFloat(a.replace(",", "."));
+						from = norm(b || "IDR");
+						to = norm(c || "IDR");
+					} else {
+						from = norm(a);
+						to = norm(b || "IDR");
+						if (c && /^[\d.,]+$/.test(c)) amount = parseFloat(c.replace(",", "."));
+					}
+					if (!/^[A-Z]{3}$/.test(from) || !/^[A-Z]{3}$/.test(to)) return m.reply("Kode mata uang 3 huruf, contoh: .kurs 100 USD IDR atau .kurs USD IDR 100.\nKetik .kurs list untuk melihat kode.");
+					if (isNaN(amount) || amount < 0) amount = 1;
 					const res = await fetchJson("https://open.er-api.com/v6/latest/" + from).catch(() => null);
 					if (!res || res.result !== "success" || !res.rates || !(to in res.rates)) return m.reply("Gagal mengambil kurs atau mata uang " + to + " tidak dikenal.");
 					const val = amount * res.rates[to];
-					return m.reply(fmtNum(amount) + " " + from + " = *" + fmtNum(val) + " " + to + "*");
+					const updated = res.time_last_update_utc ? `\nDiperbarui: ${res.time_last_update_utc}` : "";
+					return m.reply(`*Konversi Kurs*\n\n${fmtNum(amount)} ${from} = *${fmtNum(val)} ${to}*\nKurs: 1 ${from} = ${fmtKurs(res.rates[to])} ${to}${updated}`);
 				}
 				break;
-case "cal":
+
+			case "cal":
 			case "kalendar":
 				{
 					const now = new Date();
@@ -7225,6 +7262,9 @@ case "team":
 						peluang: "*Rumus Peluang*\n\n- Peluang: P(A) = n(A) / n(S)\n- Peluang komplemen: P(A') = 1 - P(A)\n- Faktorial: n! = n x (n-1) x ... x 1\n- 0! = 1\n- Permutasi: P(n, r) = n! / (n-r)!\n- Kombinasi: C(n, r) = n! / (r! x (n-r)!)\n- Permutasi siklis: (n-1)!\n- Peluang gabungan bebas: P(A dan B) = P(A) x P(B)\n- Peluang gabungan lepas: P(A atau B) = P(A) + P(B)\n- Peluang gabungan tidak lepas: P(A atau B) = P(A) + P(B) - P(A dan B)",
 						matriks: "*Rumus Matriks*\n\n- Determinan 2x2: |a b; c d| = a d - b c\n- Invers 2x2: (1/D) x |d -b; -c a|\n- Transpose: baris menjadi kolom\n- Perkalian matriks: baris ke-i kali kolom ke-j\n- Penjumlahan matriks: elemen sesuai posisi\n- Perkalian skalar: c x M = c kali setiap elemen\n- Determinan 3x3 (metode Sarrus): salin dua kolom pertama ke kanan\n- Kesamaan matriks: elemen sesuai posisi sama",
 						vektor: "*Rumus Vektor*\n\n- Panjang vektor a = (a1, a2): |a| = akar(a1^2 + a2^2)\n- Dot product: a.b = a1*b1 + a2*b2\n- Sudut antara vektor: cos theta = a.b / (|a| x |b|)\n- Vektor satuan: a / |a|\n- Penjumlahan vektor: komponen per komponen\n- Selisih vektor: a - b = (a1-b1, a2-b2)\n- Proyeksi skalar: a.b / |b|\n- Proyeksi vektor: (a.b / |b|^2) x b",
+						basis: "*Rumus Sistem Bilangan*\n\n- Biner: basis 2 (0 dan 1)\n- Oktal: basis 8 (0 sampai 7)\n- Desimal: basis 10 (0 sampai 9)\n- Heksadesimal: basis 16 (0-9, A-F)\n- Konversi desimal ke biner: bagi 2 berturut-turut, baca sisa dari bawah ke atas\n- 1011 (biner) = 1 x 8 + 0 x 4 + 1 x 2 + 1 x 1 = 11 (desimal)\n- 1A (hex) = 1 x 16 + 10 = 26 (desimal)\n- 255 (desimal) = FF (hex) = 11111111 (biner)",
+						biologi: "*Rumus Biologi*\n\n- Fotosintesis: 6 CO2 + 6 H2O -> C6H12O6 + 6 O2\n- Respirasi: C6H12O6 + 6 O2 -> 6 CO2 + 6 H2O + energi\n- Rantai makanan: produsen -> konsumen primer -> konsumen sekunder\n- Foto sintesis dipengaruhi cahaya, klorofil, dan CO2\n- Pembelahan sel: mitosis (tubuh) dan meiosis (sel kelamin)\n- Jaringan tumbuhan: epidermis, parenkim, kolenkim, sklerenkim\n- Jaringan hewan: epitel, ikat, otot, saraf",
+						termodinamika: "*Rumus Termodinamika*\n\n- Kalor: Q = m x c x delta T\n- Kalor lebur: Q = m x L\n- Pemuaian panjang: delta L = alpha x L0 x delta T\n- Usaha: W = P x delta V\n- Hukum Hooke: F = k x delta x\n- Mesin Carnot: efisiensi = 1 - T rendah / T tinggi\n- Energi dalam: delta U = Q - W",
 						kalkulus: "*Rumus Turunan & Integral*\n\n- Turunan x^n: d/dx x^n = n x x^(n-1)\n- Turunan konstanta: d/dx k = 0\n- Turunan sin x: cos x\n- Turunan cos x: -sin x\n- Turunan ln x: 1 / x\n- Turunan e^x: e^x\n- Turunan tan x: sec^2 x\n- Integral x^n: x^(n+1) / (n+1) + C (n bukan -1)\n- Integral 1/x: ln|x| + C\n- Integral e^x: e^x + C\n- Integral sin x: -cos x + C\n- Integral cos x: sin x + C"
 					};
 					if (kategori === "random") {
@@ -7232,9 +7272,9 @@ case "team":
 						const found2 = data[keys2[Math.floor(Math.random() * keys2.length)]];
 						return m.reply(found2);
 					}
-					if (!kategori) return m.reply("Contoh: .rumus matematika\n\nPilihan: matematika, fisika, kimia, indonesia, statistika, trigonometri, aljabar, geometri, peluang, matriks, vektor, kalkulus");
+					if (!kategori) return m.reply("Contoh: .rumus matematika\n\nPilihan: matematika, fisika, kimia, indonesia, statistika, trigonometri, aljabar, geometri, peluang, matriks, vektor, kalkulus, basis, biologi, termodinamika");
 					const found = data[kategori];
-					if (!found) return m.reply("Kategori tidak ditemukan.\n\nPilihan: matematika, fisika, kimia, indonesia, statistika, trigonometri, aljabar, geometri, peluang, matriks, vektor, kalkulus");
+					if (!found) return m.reply("Kategori tidak ditemukan.\n\nPilihan: matematika, fisika, kimia, indonesia, statistika, trigonometri, aljabar, geometri, peluang, matriks, vektor, kalkulus, basis, biologi, termodinamika");
 					return m.reply(found);
 				}
 				break;
@@ -7365,7 +7405,7 @@ case "fakta":
 				{
 					const arg = (text || "").trim();
 					if (!arg) {
-						return m.reply(`Contoh:\n.konversi 1 km ke mil\n.konversi 100 kg ke ons\n.konversi 0 c ke f\n.konversi 1 galon ke liter\n.konversi 90 kmh ke mps\n.konversi 1 kwh ke j\n.konversi 1 atm ke kpa\n.konversi 1 hari ke menit\n.konversi 2 gb ke mb\n\nSatuan: mm cm m km inci ft kaki mil | mg g kg ons pon ton | m2 km2 hektar are | ml liter m3 galon | c f k | mps kmh mph knot | j kj kalori kkal kwh | pa kpa bar atm mmhg psi | b kb mb gb tb bit | s menit jam hari minggu bulan tahun`);
+						return m.reply(`Contoh:\n.konversi 1 km ke mil\n.konversi 100 kg ke ons\n.konversi 0 c ke f\n.konversi 1 galon ke liter\n.konversi 90 kmh ke mps\n.konversi 1 kwh ke j\n.konversi 1 atm ke kpa\n.konversi 1 hari ke menit\n.konversi 2 gb ke mb\n.konversi 1 hp ke watt\n.konversi 1 ghz ke mhz\n.konversi 45 derajat ke rad\n\nSatuan: mm cm m km inci ft kaki mil | mg g kg ons pon ton | m2 km2 hektar are | ml liter m3 galon | c f k | mps kmh mph knot | j kj kalori kkal kwh | pa kpa bar atm mmhg psi | b kb mb gb tb bit | s menit jam hari minggu bulan tahun | watt kw hp pk | hz khz mhz ghz | derajat rad grad`);
 					}
 					const mt = (" " + arg + " ").match(/\s(-?[\d.,]+)\s*([a-z0-9]+)\s+(?:ke|to|=)\s*([a-z0-9]+)\s/i);
 					if (!mt) return m.reply("Format: .konversi 1 km ke mil");

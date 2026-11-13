@@ -1,5 +1,26 @@
 # Changelog
 
+## v3.9.0
+
+Rynn v3.9.0 memperluas konverter mata uang, rumus, konversi, dan memperkaya data besar-besaran.
+
+### Perubahan besar
+
+- **`.kurs`** diperluas menjadi konverter mata uang penuh:
+  - Konversi dua arah dengan alias: `.kurs 100 USD IDR`, `.kurs USD IDR 100`, `.kurs 25000 IDR USD` (alias: rupiah, dolar, euro, yen, ringgit, baht, yuan, won, rupee, poundsterling).
+  - `.kurs` menampilkan kurs 49 mata uang utama (base USD).
+  - `.kurs list` menampilkan semua kode mata uang (~160).
+  - Setiap konversi menampilkan kurs satuan dan waktu pembaruan dari server.
+- **`.rumus`** diperluas menjadi 15 kategori (tambahan: basis/sistem bilangan, biologi, termodinamika), total sekitar 130+ rumus.
+- **`.konversi`** diperluas: daya (watt, kw, hp, pk), frekuensi (hz, khz, mhz, ghz), sudut (derajat, rad, grad). Total 13 kelompok satuan.
+- **`.hangman`** diperluas dari 200 ke 300 kosakata.
+- **Data** diperluas: fakta 330 ke 359, puisi 55 ke 65, pantun 62 ke 82, kuliner 111 ke 124, resep 71 ke 83, wisata 93 ke 100 (total lebih dari 1.500 entri data).
+- **Audit**: semua fitur `.kurs`, `.konversi`, `.rumus` diverifikasi berjalan; `npm run check`, `npm test`, CI hijau.
+
+### Catatan
+
+- Kurs mata uang memakai open.er-api.com (diperbarui harian, tanpa API key). Angka kurs bisa berbeda dengan kurs bank.
+
 ## v3.8.0
 
 Rynn v3.8.0 menambahkan opsi `random`, perintah `.lagudaerah` (ganti dari `.lagu`), rumus dan konversi yang jauh lebih lengkap, planet diperluas (planet kerdil dan exoplanet), serta menu EDUKASI yang lebih ringkas.

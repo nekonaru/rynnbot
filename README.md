@@ -74,7 +74,7 @@ Berbasis Hitori Bot karya [Nazedev](https://github.com/nazedev/hitori), yang dir
 | Perkakas AI | **AI chat** | `ai`, `claude`, `gemini`, `r1`, `glm` lewat Naze API dan Neosantara AI |
 | Perkakas AI | **AI media** | AI image generation, background removal, dan upscale gambar lewat API |
 | Utilitas | **Stiker dan media** | `sticker`, `stickerwm`, `toimg`, `tomp3`, `tovn`, `translate`, `tts`, `qr` |
-| Utilitas | **Informasi & hiburan** | `.gempa` (gempa terkini BMKG), `.kurs` (kurs mata uang), `.poll` (polling native WhatsApp) |
+| Utilitas | **Informasi & hiburan** | `.gempa` (gempa terkini BMKG), `.kurs` (konversi mata uang 160+ kode), `.poll` (polling native WhatsApp) |
 | Produktivitas | **Reminder & catatan** | `.remind` (pengingat sekali atau setiap hari), `.note` (catatan pribadi per user) |
 | Owner | **Statistik bot** | `.stats` untuk owner: uptime, memori, pengguna/grup, top 5 perintah |
 | Game | **Werewolf, catur, tic-tac-toe, kuis math, slot, casino** | Game multipemain dan single player dengan engine game sungguhan |
@@ -442,7 +442,8 @@ Semua perintah memakai prefix default `.` `!` atau `+` (atur di `settings.js`).
 | `.remind` `30m` teks / `07:30` teks / `setiap 07:00` teks | Pengingat pribadi |
 | `.note` teks | Simpan catatan pribadi |
 | `.gempa` | Gempa terkini BMKG |
-| `.kurs USD IDR 1` | Kurs mata uang |
+| `.kurs 100 USD IDR` | Konversi mata uang (160+ kode, alias: rupiah, dolar, euro, yen) |
+| `.kurs` | 49 kurs utama (base USD) |
 | `.poll "judul" opt1 \| opt2` | Buat polling (grup) |
 | `.stats` | Statistik bot (owner) |
 | `.cal` | Kalender bulan berjalan |
