@@ -1329,11 +1329,26 @@ const sock = async (sock, m, store) => {
 			case "upgrade":
 				{
 					if (!isCreator) return m.reply(global.mess.owner);
-					m.reply(`*[BOT] Process Update And Upgrade...*`).then(() => {
+					m.reply("*[BOT] Memproses update...*\nTunggu sampai proses selesai, lalu bot akan memulai ulang otomatis.").then(async () => {
 						try {
-							runUpdate();
+							const hasil = await runUpdate();
+							const bisaRestart = typeof process.send === "function";
+							if (hasil !== false) {
+								const pesan = bisaRestart
+									? "*Update selesai.* Bot memulai ulang dengan versi terbaru..."
+									: "*Update selesai.* Silakan mulai ulang bot secara manual (npm start).";
+								m.reply(pesan).then(() => {
+									if (bisaRestart) {
+										setTimeout(() => {
+											process.exit(1);
+										}, 1500);
+									}
+								});
+							} else {
+								m.reply("*Update gagal.* Bot tetap memakai versi lama. Cek log konsol.");
+							}
 						} catch (e) {
-							process.exit(0);
+							m.reply("*Update gagal.* Cek log konsol.");
 						}
 					});
 				}
@@ -7501,7 +7516,7 @@ case "fakta":
 					const foundKey = keys.find((k) => norm(k) === q) || keys.find((k) => norm(k).includes(q) || norm(PROVINSI[k].nama).includes(q));
 					if (!foundKey) return m.reply("Provinsi tidak ditemukan.\n\nKetik .provinsi untuk lihat daftar.");
 					const p = PROVINSI[foundKey];
-					return m.reply(`*Provinsi ${p.nama}*\n\nIbukota: ${p.ibukota}\nGubernur: ${p.gubernur}\nPenduduk: ${p.penduduk} (Sensus 2020, dibulatkan)\nSuku: ${p.sukus}\nBahasa: ${p.bahasa}\nLagu daerah: ${p.lagu}\nRumah adat: ${p.rumahadat}\nKuliner khas: ${p.makanan}\nWisata: ${p.wisata}\nKhas: ${p.khas}\n\n_Data bisa berubah; cek Kemendagri/BPS untuk data terkini._`);
+					return m.reply(`*Provinsi ${p.nama}*\n\nIbukota: ${p.ibukota}\nKota besar: ${p.kota}\nGubernur: ${p.gubernur}\nPenduduk: ${p.penduduk} (Sensus 2020, dibulatkan)\nSuku: ${p.sukus}\nBahasa: ${p.bahasa}\nLagu daerah: ${p.lagu}\nRumah adat: ${p.rumahadat}\nKuliner khas: ${p.makanan}\nWisata: ${p.wisata}\nKhas: ${p.khas}\n\n_Data bisa berubah; cek Kemendagri/BPS untuk data terkini._`);
 				}
 				break;
 			case "mbti":

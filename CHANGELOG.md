@@ -1,5 +1,24 @@
 # Changelog
 
+## v3.7.0
+
+Rynn v3.7.0 fokus pada memperkaya data (lebih dari 1.300 entri data Indonesia dan dunia) dan memudahkan update di Termux lewat perintah `.update`.
+
+### Peningkatan besar
+
+- **Data diperluas masif**: fakta 277, puisi 55, pantun 62, suku 61, kuliner 89, resep 53, lagu daerah 28, wisata 81, tokoh wayang 43, provinsi 38 (ditambah field `Kota besar`), negara 181 (146 + 35), unsur 118 (tabel periodik lengkap), kata hangman 200.
+- **`.provinsi`** kini menampilkan `Kota besar` selain ibukota, gubernur, penduduk, suku, bahasa, lagu daerah, rumah adat, kuliner, wisata, dan khas provinsi.
+
+### Perbaikan perintah `.update`
+
+- Termux sekarang memakai `npm install --omit=dev` (bukan yarn yang sering tidak terpasang). Dependensi hanya dipasang ulang jika memang berubah.
+- `.update` menunggu update selesai, lalu membalas hasilnya, dan **bot memulai ulang otomatis** jika dijalankan lewat `npm start` (start.js), tanpa perlu instalasi ulang. Backup otomatis dibuat sebelum update dengan rollback jika gagal.
+
+### Catatan
+
+- Angka populasi negara dibulatkan (estimasi Bank Dunia 2023) dan diberi tanda ±.
+- Data provinsi: penduduk dibulatkan (Sensus 2020); gubernur hanya diisi untuk yang diyakini menang Pilkada 2024.
+
 ## v3.6.0
 
 Rynn v3.6.0 menambahkan perintah dunia & sains, teks, dan game hangman. Semua berjalan lokal tanpa API eksternal.
