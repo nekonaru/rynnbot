@@ -1,5 +1,21 @@
 # Changelog
 
+## v3.11.0
+
+Rynn v3.11.0 memperkaya data lebih banyak lagi di hampir semua fitur.
+
+### Peningkatan data besar-besaran
+
+- Fakta: 400 ke 440 (40 fakta baru).
+- Puisi: 75 ke 85 (10 puisi baru).
+- Pantun: 100 ke 110 (10 pantun baru).
+- Kuliner: 124 ke 130 (6 entri baru).
+- Berjumlah sekitar 1.800 entri data di semua kumpulan.
+
+### Peningkatan
+
+- Daftar yang muncul pada perintah `.suku`, `.kuliner`, `.lagu`, `.wisata`, `.resep` juga bertambah karena data-data baru di atas.
+
 ## v3.10.0
 
 Rynn v3.10.0 menambahkan bundle belajar SMA, nama bayi Indonesia, dan memperkaya data di hampir semua fitur.

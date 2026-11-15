@@ -62,7 +62,7 @@ Berbasis Hitori Bot karya [Nazedev](https://github.com/nazedev/hitori), yang dir
 | Utilitas | **Kalender & hiburan** | `.cal` (kalender bulan), `.pantun` (pantun acak), `.b64` (encode/decode base64), `.password` (generate password acak) |
 | Utilitas | **Cek anggota** | `.admins` (daftar admin grup), `.saldo` (saldo limit/uang/status) |
 | Utilitas | **Belajar SMA** | `.soal` (bank soal campuran), `.soalmtk`, `.soalipa`, `.soalips`, `.soalbindon`, `.soalppkn`, `.namabayi` (nama bayi Indonesia + asal + arti) |
-| Utilitas | **Hiburan & pengetahuan** | `.fakta` (~400 fakta), `.puisi`, `.pantun`, `.zodiak`, `.wayang`, `.lagudaerah`, `.wisata` (~115 destinasi), `.resep` (~83 resep) |
+| Utilitas | **Hiburan & pengetahuan** | `.fakta` (~440 fakta), `.puisi`, `.pantun`, `.zodiak`, `.wayang`, `.lagudaerah`, `.wisata` (~115 destinasi), `.resep` (~83 resep) |
 | Utilitas | **Dunia & sains** | `.ibukota` (~180 negara), `.negara` (ibukota/mata uang/benua/populasi), `.unsur` (tabel periodik lengkap, 118 unsur), `.planet` (21 planet & exoplanet) |
 | Utilitas | **Konversi & angka** | `.umur`, `.terbilang`, `.roman`, `.konversi` (panjang/berat/suhu/luas/volume/kecepatan/energi/tekanan/data/waktu), `.morse`, `.binary`, `.hex`, `.rot13`, `.angkaacak`, `.pilih` |
 | Utilitas | **Lirik lagu** | `.lirik <artis> - <judul>` lewat Naze API |
