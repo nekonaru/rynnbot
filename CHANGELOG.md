@@ -1,5 +1,23 @@
 # Changelog
 
+## v3.12.0
+
+Rynn v3.12.0 menambahkan `.peribahasa` (24 pepatah/peribahasa Indonesia) dan memperkaya respons audit.
+
+### Fitur baru
+
+- **`.peribahasa`** - pepatah dan peribahasa Indonesia. Ketik `.peribahasa` untuk acak, `.peribahasa <kata kunci>` untuk cari, `.peribahasa list` untuk lihat daftar.
+
+### Peningkatan data besar-besaran
+
+- Fakta: 440 ke 487 (47 fakta baru)
+- Puisi: 85 ke 100 (15 puisi baru)
+- Pantun: 110 ke 125 (15 pantun baru)
+
+### Peningkatan
+
+- `.auth` (proses baca tulis data sesi) sekarang menolak data rusak/korup dengan aman (tidak crash, hanya skip). Audit mendeteksi potensi crash saat data sesi tersimpan rusak di database.
+
 ## v3.11.0
 
 Rynn v3.11.0 memperkaya data lebih banyak lagi di hampir semua fitur.

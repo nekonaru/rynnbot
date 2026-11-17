@@ -21,6 +21,7 @@ import { werewolf } from "./lib/werewolf.js";
 import templateMenu from "./lib/template_menu.js";
 import { FAKTA, PUISI, PANTUN } from "./lib/data-umum.js";
 import { SOAL } from "./lib/soal.js";
+import { PERIBAHASA } from "./lib/data-peribahasa.js";
 import { NAMA_BAYI_COWO, NAMA_BAYI_CEWE } from "./lib/namabayi.js";
 import { SUKU, KULINER, RESEP, LAGU_DAERAH, WISATA, WAYANG } from "./lib/data-indonesia.js";
 import { PROVINSI } from "./lib/provinsi.js";
@@ -6333,6 +6334,7 @@ Select Bot Settings:
 │${setv} ${prefix}soalbindon
 │${setv} ${prefix}soalppkn
 │${setv} ${prefix}namabayi
+│${setv} ${prefix}peribahasa
 ╰─┬────❍
 ╭─┴❍「 *FUN* 」❍
 │${setv} ${prefix}coba
@@ -6716,6 +6718,7 @@ Select Bot Settings:
 │${setv} ${prefix}soalbindon
 │${setv} ${prefix}soalppkn
 │${setv} ${prefix}namabayi
+│${setv} ${prefix}peribahasa
 ╰──────❍`);
 				}
 				break;
@@ -6788,6 +6791,7 @@ Select Bot Settings:
 │${setv} ${prefix}soalbindon
 │${setv} ${prefix}soalppkn
 │${setv} ${prefix}namabayi
+│${setv} ${prefix}peribahasa
 │${setv} ${prefix}quiz
 │${setv} ${prefix}team <n>
 │${setv} ${prefix}pair
@@ -7979,6 +7983,26 @@ case "soal":
 					}
 					const pick10 = copy.slice(0, 10);
 					return m.reply(`*10 Nama bayi ${gender}*\n\n${pick10.map((n) => `- *${n.nama}* (${n.asal}) - ${n.arti}`).join("\n")}\n\nCari spesifik: .namabayi cowo raka`);
+				}
+				break;
+			case "peribahasa":
+				{
+					const arg = (text || "").trim().toLowerCase();
+					const q = arg.replace(/[^a-z]/g, "");
+					if (arg === "list" || arg === "semua") {
+						return m.reply(`*Pepatah & Peribahasa Indonesia (${PERIBAHASA.length})*\n\n${PERIBAHASA.map((p, i) => `${i + 1}. ${p.pepatah}`).join("\n")}`);
+					}
+					let found;
+					if (q === "random" || (!arg && Math.random() < 1)) {
+						found = PERIBAHASA[Math.floor(Math.random() * PERIBAHASA.length)];
+					} else if (q) {
+						found = PERIBAHASA.find((p) => p.pepatah.toLowerCase().replace(/[^a-z]/g, "").includes(q));
+					}
+					if (!found) {
+						if (arg) return m.reply(`Pepatah atau peribahasa yang cocok dengan "${arg}" tidak ditemukan.\n\nKetik .peribahasa untuk acak.\nKetik .peribahasa list untuk lihat daftar.`);
+						found = PERIBAHASA[Math.floor(Math.random() * PERIBAHASA.length)];
+					}
+					return m.reply(`*${found.pepatah}*\n\nArtinya: ${found.makna}`);
 				}
 				break;
 			default:

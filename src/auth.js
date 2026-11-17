@@ -68,7 +68,7 @@ export const useCustomAuthState = async (sessionPath) => {
 
 		readData = async (identifier) => {
 			const doc = await AuthModel.findOne({ session: sessionName, identifier });
-			return doc ? JSON.parse(doc.value, BufferJSON.reviver) : null;
+			return doc ? (() => { try { return JSON.parse(doc.value, BufferJSON.reviver); } catch { return null; } })() : null;
 		};
 
 		removeData = async (identifier) => {
@@ -111,7 +111,7 @@ export const useCustomAuthState = async (sessionPath) => {
 
 			readData = async (identifier) => {
 				const [rows] = await executeQuery(`SELECT value FROM \`baileys_auth\` WHERE session = ? AND identifier = ?`, [sessionName, identifier]);
-				return rows.length > 0 ? JSON.parse(rows[0].value, BufferJSON.reviver) : null;
+				return rows.length > 0 ? (() => { try { return JSON.parse(rows[0].value, BufferJSON.reviver); } catch { return null; } })() : null;
 			};
 
 			removeData = async (identifier) => {
@@ -148,7 +148,7 @@ export const useCustomAuthState = async (sessionPath) => {
 
 			readData = async (identifier) => {
 				const res = await pool.query(`SELECT value FROM baileys_auth WHERE session = $1 AND identifier = $2`, [sessionName, identifier]);
-				return res.rows.length > 0 ? JSON.parse(res.rows[0].value, BufferJSON.reviver) : null;
+				return res.rows.length > 0 ? (() => { try { return JSON.parse(res.rows[0].value, BufferJSON.reviver); } catch { return null; } })() : null;
 			};
 
 			removeData = async (identifier) => {
@@ -284,7 +284,7 @@ export const fetchSessionLidMappings = async (sessionPath) => {
 
 			for (const doc of docs) {
 				try {
-					const val = JSON.parse(doc.value, BufferJSON.reviver);
+					const val = (() => { try { return JSON.parse(doc.value, BufferJSON.reviver); } catch { return null; } })();
 					if (doc.identifier.endsWith("_reverse")) {
 						const lid = doc.identifier.slice("lid-mapping-".length, -"_reverse".length);
 						if (lid && val) pairs.push({ lid, pn: val });
@@ -316,7 +316,7 @@ export const fetchSessionLidMappings = async (sessionPath) => {
 					const [rows] = await pool.execute("SELECT identifier, value FROM `baileys_auth` WHERE session = ? AND identifier LIKE 'lid-mapping-%'", [sessionName]);
 					for (const row of rows) {
 						try {
-							const val = JSON.parse(row.value, BufferJSON.reviver);
+							const val = (() => { try { return JSON.parse(row.value, BufferJSON.reviver); } catch { return null; } })();
 							if (row.identifier.endsWith("_reverse")) {
 								const lid = row.identifier.slice("lid-mapping-".length, -"_reverse".length);
 								if (lid && val) pairs.push({ lid, pn: val });
@@ -348,7 +348,7 @@ export const fetchSessionLidMappings = async (sessionPath) => {
 					const res = await pool.query("SELECT identifier, value FROM baileys_auth WHERE session = $1 AND identifier LIKE 'lid-mapping-%'", [sessionName]);
 					for (const row of res.rows) {
 						try {
-							const val = JSON.parse(row.value, BufferJSON.reviver);
+							const val = (() => { try { return JSON.parse(row.value, BufferJSON.reviver); } catch { return null; } })();
 							if (row.identifier.endsWith("_reverse")) {
 								const lid = row.identifier.slice("lid-mapping-".length, -"_reverse".length);
 								if (lid && val) pairs.push({ lid, pn: val });
