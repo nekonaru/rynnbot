@@ -1,5 +1,20 @@
 # Changelog
 
+## v3.13.0
+
+Rynn v3.13.0 memperkenalkan identitas visual baru dan perbaikan beberapa aspek kode.
+
+### Brand / identitas visual
+
+- **Logo baru** (menggantikan mascot lama sejak rilis ini): ikon kepala kucing bergaya speech bubble krem pada kartu navy gelap. Revisi aset programmatic, semua varian konsisten: `assets/icon-1024.png`, `assets/icon-512.png`, `assets/icon-192.png`, `assets/icon-64.png`, `assets/favicon-32.png`, `assets/icon-light-512.png`, `assets/icon-accent-512.png`, `assets/rynn-lockup.png`.
+- `assets/rynn-mascot.png` dan `src/media/rynn.png` diperbarui dengan desain baru (tidak lagi transparan). README menampilkan lockup horizontal.
+- `AGENTS.md` diperbarui sesuai aset baru.
+
+### Peningkatan
+
+- `src/auth.js` - penanganan data sesi rusak/korup sekarang kembali `null` daripada menyebabkan crash. Tidak ada perubahan perilaku perintah.
+- Audit umum: `npm run check`, `npm test`, CI hijau.
+
 ## v3.12.0
 
 Rynn v3.12.0 menambahkan `.peribahasa` (24 pepatah/peribahasa Indonesia) dan memperkaya respons audit.

@@ -30,4 +30,12 @@ Seluruh project ini berbahasa Indonesia: kode, komentar, pesan yang tampil ke pe
 
 ## Aset brand
 
-Logo Rynn: mascot oranye melambai (`assets/rynn-mascot.png`, 512x512 dengan background transparan, dipakai README) dan `src/media/rynn.png` (768x768, thumbnail bot di adReply).
+Logo Rynn: ikon kepala kucing bergaya speech bubble berwarna krem pada kartu navy gelap. Aset:
+- `assets/icon-1024.png`, `assets/icon-512.png`, `assets/icon-192.png`, `assets/icon-64.png` - aplikasi/ikon.
+- `assets/favicon-32.png` - favicon.
+- `assets/icon-light-512.png`, `assets/icon-accent-512.png` - varian terang dan aksen.
+- `assets/rynn-lockup.png` - lockup horizontal (icon + wordmark), dipakai README.
+- `assets/rynn-mascot.png` (512x512) - dipakai sebagai thumbnail di README.
+- `src/media/rynn.png` (768x768) - thumbnail bot di adReply.
+
+Semua aset dibuat dengan skrip Python (Pillow) untuk konsistensi dan reproduksibilitas.
