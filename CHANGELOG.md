@@ -1,5 +1,42 @@
 # Changelog
 
+## v3.14.0
+
+Rynn v3.14.0 mengganti logo sementara dari v3.13.0 dengan desain final dan menambahkan 11 perintah baru.
+
+### Brand / identitas visual
+
+- **Logo final** (diberikan pengguna, `assets/rynn-icon.svg`): ikon kepala kucing dengan bentuk membulat, gradasi ungu (`#5B47E0` ke `#2A1B4D`), muka krem (`#FFF7EE`) dengan chevron mata, hidung oranye (`#FF9F1C`), telinga dalam peach (`#FFC9A3`), dan ekor speech bubble.
+- Semua PNG dibuat ulang dari SVG dengan `sharp`: `assets/icon-1024.png`, `assets/icon-512.png`, `assets/icon-192.png`, `assets/icon-128.png` (baru), `assets/icon-64.png`, `assets/favicon-32.png`, `assets/rynn-mascot.png`, `src/media/rynn.png`, dan `assets/rynn-lockup.png` (sumber `assets/rynn-lockup.svg`, horizontal untuk README).
+- Varian `assets/icon-light-512.png` dan `assets/icon-accent-512.png` dihapus (tidak dipakai).
+
+### Fitur baru
+
+- `.kpk` / `.fpb` - kelipatan persekutuan terkecil dan faktor persekutuan terbesar (hingga 8 bilangan).
+- `.faktor` (alias `.faktorisasi`) - faktorisasi prima.
+- `.prima` - cek bilangan prima dengan pembagi terkecil.
+- `.palindrom` - cek palindrom (spasi dan tanda baca diabaikan).
+- `.anagram` - cek anagram dua teks (pisahkan dengan garis tegak).
+- `.diskon` - harga setelah diskon, dengan hitung hemat.
+- `.cicilan` - simulasi cicilan anuitas (pokok, bunga-tahunan, tenor).
+- `.bmi` - kalkulator BMI standar WHO (bukan diagnosis medis).
+- `.jamtidur` - prediksi waktu bangun ideal (3 opsi, siklus 90 menit, +15 menit tertidur).
+- `.uuid` - UUID v4 acak (hingga 5 per perintah).
+- `.base64` dan `.password` yang sudah ada ikut ditampilkan di menu TOOLS; `.password` sekarang memilih karakter tanpa bias modulo.
+- Perintah baru tampil di `.allmenu`, `.edukasimenu`, `.gamemenu`, `.toolsmenu`, dan README.
+- `lib/kalkulator.js` - modul matematika murni baru, tercakup 12 tes unit di `test/kalkulator.test.js`.
+
+### Peningkatan
+
+- `.peribahasa` - dari 24 menjadi 44 entri pepatah klasik Indonesia.
+- `src/database.js` - kalau berkas database utama dan cadangan `.bak` sama-sama rusak, bot tetap boot dengan database kosong dan error dicatat di log (sebelumnya crash saat startup).
+- `lib/function.js` - cek pembaruan tidak lagi melempar kalau `package.json` tidak bisa dibaca.
+- `src/message.js` - `buttonParamsJson` yang rusak tidak lagi menggagalkan pengiriman tombol/kartu.
+
+### Audit
+
+- Meninjau alur baca/tulis database, dashboard relay, clone bot, dan parsing JSON di jalur kritis; ditemukan dan diperbaiki empat titik parse tanpa pengaman. Tidak ada kerentanan baru.
+
 ## v3.13.0
 
 Rynn v3.13.0 memperkenalkan identitas visual baru dan perbaikan beberapa aspek kode.

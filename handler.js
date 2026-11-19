@@ -29,6 +29,7 @@ import { NEGARA, UNSUR, PLANET } from "./lib/data-dunia.js";
 import { HANGMAN_KATA } from "./lib/data-game.js";
 import { MBTI_PERTANYAAN, MBTI_TIPES, hitungMBTI } from "./lib/mbti.js";
 import { angkaKeKata, toRoman, fromRoman, rot13, morseEncode, morseDecode, binaryEncode, binaryDecode, hexEncode, hexDecode, ZODIAC, zodiacFor, convertUnit, cap } from "./lib/util-lokal.js";
+import { parseBulat, fpb, kpk, faktorPrima, isPrima, pembagiTerkecil, isPalindrom, isAnagram, formatRupiah, hitungDiskon, cicilanAnuitas, hitungBmi, siklusTidur, uuidV4 } from "./lib/kalkulator.js";
 import { FIRST_SETUP_MARKER, firstSetupStates, firstSetupStepText, sendFirstSetupIntro } from './src/setup-wizard.js';
 import { ytMp4, ytMp3, ytMp4Stream } from "./lib/scraper.js";
 import { GroupUpdate, LoadDataBase, extractNativeFlowResponseId } from "./src/message.js";
@@ -6254,6 +6255,8 @@ Select Bot Settings:
 │${setv} ${prefix}earrape (reply audio)
 │${setv} ${prefix}nightcore (reply audio)
 │${setv} ${prefix}getexif (reply sticker)
+│${setv} ${prefix}password
+│${setv} ${prefix}uuid
 ╰─┬────❍
 ╭─┴❍「 *AI* 」❍
 │${setv} ${prefix}ai (query)
@@ -6335,6 +6338,17 @@ Select Bot Settings:
 │${setv} ${prefix}soalppkn
 │${setv} ${prefix}namabayi
 │${setv} ${prefix}peribahasa
+│${setv} ${prefix}kpk
+│${setv} ${prefix}fpb
+│${setv} ${prefix}faktor
+│${setv} ${prefix}prima
+│${setv} ${prefix}palindrom
+│${setv} ${prefix}anagram
+│${setv} ${prefix}diskon
+│${setv} ${prefix}cicilan
+│${setv} ${prefix}bmi
+│${setv} ${prefix}jamtidur
+│${setv} ${prefix}base64
 ╰─┬────❍
 ╭─┴❍「 *FUN* 」❍
 │${setv} ${prefix}coba
@@ -6606,6 +6620,8 @@ Select Bot Settings:
 │${setv} ${prefix}earrape (reply audio)
 │${setv} ${prefix}nightcore (reply audio)
 │${setv} ${prefix}getexif (reply sticker)
+│${setv} ${prefix}password
+│${setv} ${prefix}uuid
 ╰──────❍`);
 				}
 				break;
@@ -6719,6 +6735,17 @@ Select Bot Settings:
 │${setv} ${prefix}soalppkn
 │${setv} ${prefix}namabayi
 │${setv} ${prefix}peribahasa
+│${setv} ${prefix}kpk
+│${setv} ${prefix}fpb
+│${setv} ${prefix}faktor
+│${setv} ${prefix}prima
+│${setv} ${prefix}palindrom
+│${setv} ${prefix}anagram
+│${setv} ${prefix}diskon
+│${setv} ${prefix}cicilan
+│${setv} ${prefix}bmi
+│${setv} ${prefix}jamtidur
+│${setv} ${prefix}base64
 ╰──────❍`);
 				}
 				break;
@@ -6792,6 +6819,17 @@ Select Bot Settings:
 │${setv} ${prefix}soalppkn
 │${setv} ${prefix}namabayi
 │${setv} ${prefix}peribahasa
+│${setv} ${prefix}kpk
+│${setv} ${prefix}fpb
+│${setv} ${prefix}faktor
+│${setv} ${prefix}prima
+│${setv} ${prefix}palindrom
+│${setv} ${prefix}anagram
+│${setv} ${prefix}diskon
+│${setv} ${prefix}cicilan
+│${setv} ${prefix}bmi
+│${setv} ${prefix}jamtidur
+│${setv} ${prefix}base64
 │${setv} ${prefix}quiz
 │${setv} ${prefix}team <n>
 │${setv} ${prefix}pair
@@ -7102,10 +7140,15 @@ Select Bot Settings:
 					const len = parseInt((text || "").trim(), 10) || 12;
 					if (len < 4 || len > 128) return m.reply("Panjang password harus antara 4 dan 128.");
 					const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+-=[]{}|;:,.<>?";
-					const bytes = new Uint8Array(len);
-					crypto.getRandomValues(bytes);
+					const batas = Math.floor(256 / charset.length) * charset.length;
+					const pilih = () => {
+						for (;;) {
+							const b = crypto.getRandomValues(new Uint8Array(1))[0];
+							if (b < batas) return charset[b % charset.length];
+						}
+					};
 					let out = "";
-					for (let i = 0; i < len; i++) out += charset[bytes[i] % charset.length];
+					for (let i = 0; i < len; i++) out += pilih();
 					m.reply(`*Password acak* (${len} karakter):\n\n${out}`);
 				}
 				break;
@@ -7756,6 +7799,118 @@ case "ibukota":
 						if (h < 0) h += 360;
 					}
 					return m.reply(`*Warna Acak*\n\nHEX: #${toHex(r)}${toHex(g)}${toHex(b)}\nRGB: rgb(${r}, ${g}, ${b})\nHSL: hsl(${Math.round(h)}, ${Math.round(s * 100)}%, ${Math.round(l * 100)}%)`);
+				}
+				break;
+			case "kpk":
+			case "fpb":
+				{
+					const arg = (text || "").trim();
+					if (!arg) return m.reply(`Contoh:\n.kpk 4 6 8\n.fpb 48 36 24`);
+					const angka = arg.split(/\s+/).map(parseBulat);
+					if (angka.length < 2) return m.reply("Butuh minimal 2 bilangan. Contoh: .kpk 4 6 8");
+					if (angka.length > 8) return m.reply("Maksimal 8 bilangan sekaligus.");
+					if (angka.some((n) => n === null)) return m.reply("Hanya bilangan bulat 1 sampai 10^12 yang boleh.");
+					if (command === "kpk") {
+						const hasil = kpk(angka);
+						return m.reply(hasil === null ? "Hasil terlalu besar untuk dihitung." : `*KPK* dari ${angka.join(", ")} = *${hasil.toLocaleString("id-ID")}*`);
+					}
+					return m.reply(`*FPB* dari ${angka.join(", ")} = *${fpb(angka).toLocaleString("id-ID")}*`);
+				}
+				break;
+			case "faktor":
+			case "faktorisasi":
+				{
+					const arg = (text || "").trim();
+					const n = parseBulat(arg);
+					if (n === null) return m.reply("Contoh: .faktor 360 (bilangan bulat 1 sampai 10^12)");
+					const hasil = [...faktorPrima(n)].map(([p, e]) => (e > 1 ? `${p}^${e}` : String(p))).join(" x ");
+					return m.reply(`*Faktorisasi Prima*\n\n${n.toLocaleString("id-ID")} = ${hasil}`);
+				}
+				break;
+			case "prima":
+				{
+					const arg = (text || "").trim();
+					const n = parseBulat(arg);
+					if (n === null) return m.reply("Contoh: .prima 97 (bilangan bulat 1 sampai 10^12)");
+					if (isPrima(n)) return m.reply(`*${n.toLocaleString("id-ID")}* adalah bilangan *prima*.`);
+					const pembagi = pembagiTerkecil(n);
+					return m.reply(pembagi === null ? `*${n.toLocaleString("id-ID")}* bukan bilangan prima.` : `*${n.toLocaleString("id-ID")}* bukan bilangan prima (habis dibagi ${pembagi}).`);
+				}
+				break;
+			case "palindrom":
+				{
+					const arg = (text || "").trim();
+					if (!arg) return m.reply("Contoh: .palindrom katak\nSpasi dan tanda baca diabaikan.");
+					return m.reply(isPalindrom(arg) ? `*${arg}* adalah *palindrom*.` : `*${arg}* bukan palindrom.`);
+				}
+				break;
+			case "anagram":
+				{
+					const arg = (text || "").trim();
+					if (!arg.includes("|")) return m.reply("Contoh: .anagram kucing | kucin\nPisahkan dua teks dengan | (garis tegak).");
+					const [a, b] = arg.split("|").map((s) => s.trim());
+					if (!a || !b) return m.reply("Kedua teks harus diisi.");
+					return m.reply(isAnagram(a, b) ? `*${a}* dan *${b}* adalah *anagram*.` : `*${a}* dan *${b}* bukan anagram.`);
+				}
+				break;
+			case "diskon":
+				{
+					const arg = (text || "").trim();
+					const mt = arg.match(/^(\d+(?:[.,]\d+)?)\s+(\d+(?:[.,]\d+)?)$/);
+					if (!mt) return m.reply("Contoh: .diskon 150000 25\nHitung harga setelah diskon (persen).");
+					const harga = Number(mt[1].replace(",", "."));
+					const persen = Number(mt[2].replace(",", "."));
+					if (!Number.isFinite(harga) || harga <= 0 || harga > 1e13) return m.reply("Harga harus bilangan positif.");
+					if (!Number.isFinite(persen) || persen < 0 || persen > 100) return m.reply("Persen diskon harus 0 sampai 100.");
+					const { hemat, bayar } = hitungDiskon(harga, persen);
+					return m.reply(`*Diskon ${persen.toLocaleString("id-ID")}%*\n\nHarga awal: ${formatRupiah(harga)}\nHemat: ${formatRupiah(hemat)}\n*Bayar: ${formatRupiah(bayar)}*`);
+				}
+				break;
+			case "cicilan":
+				{
+					const arg = (text || "").trim();
+					const mt = arg.match(/^(\d+(?:[.,]\d+)?)\s+(\d+(?:[.,]\d+)?)\s+(\d+)$/);
+					if (!mt) return m.reply("Contoh: .cicilan 5000000 12 12\nFormat: pokok bunga-tahunan-persen tenor-bulan\nMetode: anuitas (angsuran tetap).");
+					const pokok = Number(mt[1].replace(",", "."));
+					const bunga = Number(mt[2].replace(",", "."));
+					const bulan = Number(mt[3]);
+					if (!Number.isFinite(pokok) || pokok <= 0 || pokok > 1e13) return m.reply("Pokok harus bilangan positif.");
+					if (!Number.isFinite(bunga) || bunga < 0 || bunga > 100) return m.reply("Bunga tahunan harus 0 sampai 100 persen.");
+					if (!Number.isInteger(bulan) || bulan < 1 || bulan > 480) return m.reply("Tenor harus 1 sampai 480 bulan.");
+					const { angsuran, total, totalBunga } = cicilanAnuitas(pokok, bunga, bulan);
+					return m.reply(`*Simulasi Cicilan (Anuitas)*\n\nPokok: ${formatRupiah(pokok)}\nBunga: ${bunga.toLocaleString("id-ID")}%/tahun\nTenor: ${bulan} bulan\n\nAngsuran/bulan: *${formatRupiah(angsuran)}*\nTotal bayar: ${formatRupiah(total)}\nTotal bunga: ${formatRupiah(totalBunga)}`);
+				}
+				break;
+			case "bmi":
+				{
+					const arg = (text || "").trim();
+					const mt = arg.match(/^(\d+(?:[.,]\d+)?)\s+(\d+(?:[.,]\d+)?)$/);
+					if (!mt) return m.reply("Contoh: .bmi 65 170\nFormat: berat (kg) tinggi (cm)\nKategori mengikuti standar WHO.");
+					const berat = Number(mt[1].replace(",", "."));
+					const tinggi = Number(mt[2].replace(",", "."));
+					if (!Number.isFinite(berat) || berat < 20 || berat > 500) return m.reply("Berat badan harus 20 sampai 500 kg.");
+					if (!Number.isFinite(tinggi) || tinggi < 80 || tinggi > 250) return m.reply("Tinggi badan harus 80 sampai 250 cm.");
+					const { nilai, kategori } = hitungBmi(berat, tinggi);
+					return m.reply(`*BMI*\n\nBerat: ${berat.toLocaleString("id-ID")} kg\nTinggi: ${tinggi.toLocaleString("id-ID")} cm\nBMI: *${nilai.toFixed(2)}*\nKategori: ${kategori}\n\n_Standar WHO (bukan diagnosis medis)._`);
+				}
+				break;
+			case "jamtidur":
+				{
+					const arg = (text || "").trim();
+					if (!arg) return m.reply("Contoh: .jamtidur 23:00\nHitung waktu bangun ideal (siklus tidur 90 menit).");
+					const hasil = siklusTidur(arg);
+					if (!hasil) return m.reply("Format jam salah. Contoh: .jamtidur 23:00");
+					const baris = hasil.map((h) => `${h.siklus} siklus (${h.durasi}): bangun jam *${h.bangun}*`).join("\n");
+					return m.reply(`*Waktu Bangun Ideal*\n\nTidur jam ${arg} (+15 menit tertidur):\n\n${baris}\n\n_Estimasi, setiap orang berbeda._`);
+				}
+				break;
+			case "uuid":
+				{
+					const arg = (text || "").trim();
+					const jumlah = arg ? Number(arg) : 1;
+					if (!Number.isInteger(jumlah) || jumlah < 1 || jumlah > 5) return m.reply("Jumlah harus 1 sampai 5. Contoh: .uuid 3");
+					const daftar = Array.from({ length: jumlah }, () => uuidV4());
+					return m.reply(`*UUID v4:*\n\n${daftar.join("\n")}`);
 				}
 				break;
 			case "hangman":

@@ -1,0 +1,96 @@
+import { test } from "node:test";
+import assert from "node:assert/strict";
+import {
+	parseBulat,
+	gcdDua,
+	fpb,
+	kpk,
+	faktorPrima,
+	isPrima,
+	isPalindrom,
+	isAnagram,
+	hitungDiskon,
+	cicilanAnuitas,
+	hitungBmi,
+	siklusTidur,
+	uuidV4,
+} from "../lib/kalkulator.js";
+
+test("parseBulat mevalidasi rentang", () => {
+	assert.equal(parseBulat("12"), 12);
+	assert.equal(parseBulat("1.5"), null);
+	assert.equal(parseBulat("0"), null);
+	assert.equal(parseBulat("1e13"), null);
+	assert.equal(parseBulat("abc"), null);
+});
+
+test("gcd/kpk/fpb dasar", () => {
+	assert.equal(gcdDua(48, 36), 12);
+	assert.equal(fpb([48, 36, 24]), 12);
+	assert.equal(kpk([4, 6]), 12);
+	assert.equal(kpk([2, 3, 5]), 30);
+	assert.equal(kpk([7, 13]), 91);
+});
+
+test("faktorPrima mengurai dengan benar", () => {
+	assert.deepEqual([...faktorPrima(360)], [[2, 3], [3, 2], [5, 1]]);
+	assert.deepEqual([...faktorPrima(97)], [[97, 1]]);
+	assert.deepEqual([...faktorPrima(8)], [[2, 3]]);
+});
+
+test("isPrima", () => {
+	assert.equal(isPrima(2), true);
+	assert.equal(isPrima(97), true);
+	assert.equal(isPrima(1), false);
+	assert.equal(isPrima(100), false);
+	assert.equal(isPrima(9), false);
+});
+
+test("palindrom", () => {
+	assert.equal(isPalindrom("katak"), true);
+	assert.equal(isPalindrom("Ibu Ratna antar ubi"), true);
+	assert.equal(isPalindrom("halo"), false);
+	assert.equal(isPalindrom("a"), false);
+});
+
+test("anagram", () => {
+	assert.equal(isAnagram("kucing", "kucin"), false);
+	assert.equal(isAnagram("listen", "silent"), true);
+	assert.equal(isAnagram("aku", "kamu"), false);
+});
+
+test("hitungDiskon", () => {
+	assert.deepEqual(hitungDiskon(100000, 25), { hemat: 25000, bayar: 75000 });
+	assert.deepEqual(hitungDiskon(50000, 0), { hemat: 0, bayar: 50000 });
+});
+
+test("cicilanAnuitas tanpa bunga sama dengan bagi rata", () => {
+	const { angsuran, totalBunga } = cicilanAnuitas(1200000, 0, 12);
+	assert.equal(angsuran, 100000);
+	assert.equal(totalBunga, 0);
+});
+
+test("cicilanAnuitas dengan bunga positif", () => {
+	const { angsuran, total } = cicilanAnuitas(1000000, 12, 12);
+	assert.ok(angsuran > 1000000 / 12);
+	assert.ok(total > 1000000);
+});
+
+test("hitungBmi", () => {
+	const { nilai, kategori } = hitungBmi(70, 175);
+	assert.ok(Math.abs(nilai - 22.857) < 0.01);
+	assert.match(kategori, /Normal/);
+});
+
+test("siklusTidur menghasilkan 3 waktu bangun", () => {
+	const out = siklusTidur("23:00");
+	assert.equal(out.length, 3);
+	assert.equal(out[0].siklus, 4);
+	assert.equal(siklusTidur("99:99"), null);
+	assert.match(out[0].bangun, /^\d{2}:\d{2}$/);
+});
+
+test("uuidV4 mengikuti format UUID", () => {
+	const u = uuidV4();
+	assert.match(u, /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/);
+});

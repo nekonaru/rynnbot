@@ -277,9 +277,15 @@ class JsonDB {
 			} catch (e) {
 				const isBakExist = await this._fileExists(this.file + ".bak");
 				if (isBakExist) {
-					const rawBakData = await fs.promises.readFile(this.file + ".bak", "utf-8");
-					data = JSON.parse(rawBakData);
-					await this.write(data, { immediate: true });
+					try {
+						const rawBakData = await fs.promises.readFile(this.file + ".bak", "utf-8");
+						data = JSON.parse(rawBakData);
+						await this.write(data, { immediate: true });
+					} catch (bakErr) {
+						console.error(`❌ Database utama (${this.file}) dan cadangan .bak sama-sama rusak:`, bakErr);
+						data = this.data;
+						await this.write(this.data, { immediate: true });
+					}
 				} else {
 					data = this.data;
 					await this.write(this.data, { immediate: true });

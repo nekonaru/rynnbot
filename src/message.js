@@ -35,6 +35,17 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const handlerPath = fileURLToPath(new URL("../handler.js", import.meta.url));
 
+// buttonParamsJson bawaan bot selalu valid, tapi kalau suatu saat berisi JSON
+// rusak, fallback ke "{}" supaya pemrosesan pesan tidak crash.
+const parseButtonParams = (raw) => {
+	if (raw && typeof raw === "object") return raw;
+	try {
+		return JSON.parse(raw || "{}");
+	} catch {
+		return {};
+	}
+};
+
 let sockHandler = null;
 const groupMetadataTimers = {};
 const botStartTime = Date.now();
@@ -1455,7 +1466,7 @@ async function Solving(sock, store, sessionPath = "./rynn-session") {
 								buttons: buttons.map((a) => {
 									return {
 										name: a.name,
-										buttonParamsJson: JSON.stringify(a.buttonParamsJson ? (typeof a.buttonParamsJson === "string" ? JSON.parse(a.buttonParamsJson) : a.buttonParamsJson) : ""),
+										buttonParamsJson: JSON.stringify(a.buttonParamsJson ? parseButtonParams(a.buttonParamsJson) : ""),
 									};
 								}),
 							}),
@@ -1698,7 +1709,7 @@ async function Solving(sock, store, sessionPath = "./rynn-session") {
 				nativeFlowMessage: {
 					buttons: a.buttons.map((b) => ({
 						name: b.name,
-						buttonParamsJson: JSON.stringify(b.buttonParamsJson ? JSON.parse(b.buttonParamsJson) : ""),
+						buttonParamsJson: JSON.stringify(b.buttonParamsJson ? parseButtonParams(b.buttonParamsJson) : ""),
 					})),
 				},
 			};

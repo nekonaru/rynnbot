@@ -62,7 +62,9 @@ Berbasis Hitori Bot karya [Nazedev](https://github.com/nazedev/hitori), yang dir
 | Utilitas | **Kalender & hiburan** | `.cal` (kalender bulan), `.pantun` (pantun acak), `.b64` (encode/decode base64), `.password` (generate password acak) |
 | Utilitas | **Cek anggota** | `.admins` (daftar admin grup), `.saldo` (saldo limit/uang/status) |
 | Utilitas | **Belajar SMA** | `.soal` (bank soal campuran), `.soalmtk`, `.soalipa`, `.soalips`, `.soalbindon`, `.soalppkn`, `.namabayi` (nama bayi Indonesia + asal + arti) |
-| Utilitas | **Hiburan & pengetahuan** | `.fakta` (~487 fakta), `.puisi`, `.pantun`, `.zodiak`, `.wayang`, `.lagudaerah`, `.wisata` (~115 destinasi), `.peribahasa` (24 pepatah Indonesia), `.resep` (~83 resep) |
+| Utilitas | **Hiburan & pengetahuan** | `.fakta` (~487 fakta), `.puisi`, `.pantun`, `.zodiak`, `.wayang`, `.lagudaerah`, `.wisata` (~115 destinasi), `.peribahasa` (44 pepatah Indonesia), `.resep` (~83 resep) |
+| Utilitas | **Matematika & utilitas** | `.kpk`, `.fpb`, `.faktor` (faktorisasi prima), `.prima`, `.diskon`, `.cicilan` (simulasi anuitas), `.bmi`, `.jamtidur` (siklus 90 menit) |
+| Utilitas | **Kata & teks** | `.palindrom`, `.anagram`, `.balik`, `.hitungkata`, `.uuid` |
 | Utilitas | **Dunia & sains** | `.ibukota` (~180 negara), `.negara` (ibukota/mata uang/benua/populasi), `.unsur` (tabel periodik lengkap, 118 unsur), `.planet` (21 planet & exoplanet) |
 | Utilitas | **Konversi & angka** | `.umur`, `.terbilang`, `.roman`, `.konversi` (panjang/berat/suhu/luas/volume/kecepatan/energi/tekanan/data/waktu), `.morse`, `.binary`, `.hex`, `.rot13`, `.angkaacak`, `.pilih` |
 | Utilitas | **Lirik lagu** | `.lirik <artis> - <judul>` lewat Naze API |
@@ -479,7 +481,18 @@ Semua perintah memakai prefix default `.` `!` atau `+` (atur di `settings.js`).
 | `.unsur emas` | Tabel periodik mini |
 | `.planet mars` | Info planet tata surya |
 | `.hangman` | Tebak kata Indonesia |
-| `.peribahasa` | Pepatah dan peribahasa Indonesia |
+| `.peribahasa` | Pepatah dan peribahasa Indonesia (44) |
+| `.kpk 4 6 8` / `.fpb 48 36 24` | Kelipatan/faktor persekutuan terkecil & terbesar |
+| `.faktor 360` | Faktorisasi prima |
+| `.prima 97` | Cek bilangan prima |
+| `.palindrom katak` | Cek palindrom |
+| `.anagram kucing \| kucin` | Cek anagram |
+| `.diskon 150000 25` | Harga setelah diskon |
+| `.cicilan 5000000 12 12` | Simulasi cicilan anuitas (pokok bunga% tenor) |
+| `.bmi 65 170` | Kalkulator BMI (standar WHO) |
+| `.jamtidur 23:00` | Prediksi waktu bangun (siklus 90 menit) |
+| `.uuid 3` | UUID v4 acak |
+| `.base64` | Alias `.b64` (encode/decode base64) |
 | `.mode public` / `.mode self` | Mode publik / khusus owner |
 
 Daftar lengkap: jalankan `.menu` di WhatsApp.
