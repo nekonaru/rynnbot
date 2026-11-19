@@ -14,6 +14,10 @@ import {
 	hitungBmi,
 	siklusTidur,
 	uuidV4,
+	akar,
+	faktorial,
+	formatBigInt,
+	isoWeek,
 } from "../lib/kalkulator.js";
 
 test("parseBulat mevalidasi rentang", () => {
@@ -93,4 +97,31 @@ test("siklusTidur menghasilkan 3 waktu bangun", () => {
 test("uuidV4 mengikuti format UUID", () => {
 	const u = uuidV4();
 	assert.match(u, /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/);
+});
+
+test("akar", () => {
+	assert.deepEqual(akar(144), { eksak: true, hasil: 12 });
+	const r = akar(2);
+	assert.equal(r.eksak, false);
+	assert.ok(Math.abs(r.hasil - Math.SQRT2) < 1e-12);
+	assert.equal(akar(-1), null);
+});
+
+test("faktorial dengan BigInt", () => {
+	assert.equal(faktorial(0), 1n);
+	assert.equal(faktorial(5), 120n);
+	assert.equal(faktorial(20), 2432902008176640000n);
+	assert.equal(faktorial(201), null);
+	assert.equal(faktorial(2.5), null);
+});
+
+test("formatBigInt memakai titik sebagai pemisah", () => {
+	assert.equal(formatBigInt(1234567890n), "1.234.567.890");
+	assert.equal(formatBigInt(1000n), "1.000");
+	assert.equal(formatBigInt(42n), "42");
+});
+
+test("isoWeek", () => {
+	assert.equal(isoWeek(new Date(2026, 0, 1)), 1);
+	assert.equal(isoWeek(new Date(2026, 10, 20)), 47);
 });

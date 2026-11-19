@@ -1,5 +1,33 @@
 # Changelog
 
+## v3.16.0
+
+Rynn v3.16.0 menambahkan 8 perintah baru dengan 3 berkas data baru, dan memperketat audit menu.
+
+### Fitur baru
+
+- `.bahasa` - bahasa daerah Nusantara (7 bahasa: Jawa, Sunda, Minang, Batak Toba, Bali, Betawi, Manado). Kosakata umum yang diverifikasi.
+- `.danau` - 12 danau terkenal di Indonesia (Danau Toba, Singkarak, Maninjau, Sentani, Poso, Tempe, Kelimutu, Limboto, Tondano, Lindu, Paniai, Laut Tawar).
+- `.gunung` - 12 gunung terkenal di Indonesia (Puncak Jaya, Kerinci, Rinjani, Semeru, Slamet, Tambora, Merapi, Agung, Bromo, Galunggung, Anak Krakatau, Ijen).
+- `.akar` - akar kuadrat (akar tepat ditampilkan tanpa desimal).
+- `.faktorial` - faktorial dengan BigInt (sampai 200!).
+- `.hariini` - tanggal, waktu, dan nomor minggu (zona `global.timezone`, default Asia/Jakarta).
+- `.koin` - lempar koin (Angka/Gambar, hingga 10 koin).
+- `.acakkata` - mengacak huruf setiap kata.
+- Semua perintah baru tampil di `.allmenu`, submenu terkait, dan README.
+
+### Menu
+
+- `.kickall` dan `.update` yang selama ini tersembunyi kini tampil di `.ownermenu` dan `.allmenu` (bagian OWNER).
+- `.hariini` tampil di BOT, `.akar`/`.faktorial`/`.bahasa`/`.danau`/`.gunung` di EDUKASI, `.koin`/`.acakkata` di FUN.
+
+### Audit
+
+- Skrip audit menu dijalankan: semua perintah yang tampil di menu memiliki `case` yang sesuai (tidak ada yang menggantung).
+- 5 `case` dengan indentasi tidak konsisten diperbaiki (`team`, `fakta`, `ibukota`, `soal`, `kuliner`); inner switch tetap 6 tab.
+- `lib/kalkulator.js` ditambah `akar`, `faktorial` (BigInt), `formatBigInt`, `isoWeek`; 5 tes unit baru.
+- `npm run check` lolos, 27 tes unit lolos.
+
 ## v3.15.0
 
 Rynn v3.15.0 menambahkan submenu per kategori yang tertaut di `.allmenu` dan menu author, serta membersihkan data duplikat.

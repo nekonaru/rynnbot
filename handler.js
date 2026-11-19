@@ -29,7 +29,10 @@ import { NEGARA, UNSUR, PLANET } from "./lib/data-dunia.js";
 import { HANGMAN_KATA } from "./lib/data-game.js";
 import { MBTI_PERTANYAAN, MBTI_TIPES, hitungMBTI } from "./lib/mbti.js";
 import { angkaKeKata, toRoman, fromRoman, rot13, morseEncode, morseDecode, binaryEncode, binaryDecode, hexEncode, hexDecode, ZODIAC, zodiacFor, convertUnit, cap } from "./lib/util-lokal.js";
-import { parseBulat, fpb, kpk, faktorPrima, isPrima, pembagiTerkecil, isPalindrom, isAnagram, formatRupiah, hitungDiskon, cicilanAnuitas, hitungBmi, siklusTidur, uuidV4 } from "./lib/kalkulator.js";
+import { parseBulat, fpb, kpk, faktorPrima, isPrima, pembagiTerkecil, isPalindrom, isAnagram, formatRupiah, hitungDiskon, cicilanAnuitas, hitungBmi, siklusTidur, uuidV4, akar, faktorial, formatBigInt, isoWeek } from "./lib/kalkulator.js";
+import { BAHASA, cariBahasa } from "./lib/data-bahasa-daerah.js";
+import { DANAU } from "./lib/data-danau.js";
+import { GUNUNG } from "./lib/data-gunung.js";
 import { FIRST_SETUP_MARKER, firstSetupStates, firstSetupStepText, sendFirstSetupIntro } from './src/setup-wizard.js';
 import { ytMp4, ytMp3, ytMp4Stream } from "./lib/scraper.js";
 import { GroupUpdate, LoadDataBase, extractNativeFlowResponseId } from "./src/message.js";
@@ -6158,6 +6161,7 @@ Select Bot Settings:
 │${setv} ${prefix}poll (judul | opsi1 | opsi2)
 │${setv} ${prefix}gempa
 │${setv} ${prefix}kurs
+│${setv} ${prefix}hariini
 │${setv} ${prefix}stats
 │${setv} ${prefix}menfes (62xxx|fake name)
 │${setv} ${prefix}confes (62xxx|fake name)
@@ -6363,6 +6367,11 @@ Select Bot Settings:
 │${setv} ${prefix}cicilan
 │${setv} ${prefix}bmi
 │${setv} ${prefix}jamtidur
+│${setv} ${prefix}akar
+│${setv} ${prefix}faktorial
+│${setv} ${prefix}bahasa
+│${setv} ${prefix}danau
+│${setv} ${prefix}gunung
 │${setv} ${prefix}base64
 ╰─┬────❍
 ╭─┴❍「 *FUN* 」❍
@@ -6388,6 +6397,8 @@ Select Bot Settings:
 │${setv} ${prefix}pilih
 │${setv} ${prefix}angkaacak
 │${setv} ${prefix}warna
+│${setv} ${prefix}koin
+│${setv} ${prefix}acakkata
 ╰─┬────❍
 ╭─┴❍「 *RANDOM* 」❍
 │${setv} ${prefix}coffe
@@ -6441,6 +6452,8 @@ Select Bot Settings:
 │${setv} ${prefix}delsession
 │${setv} ${prefix}delsampah
 │${setv} ${prefix}upsw
+│${setv} ${prefix}kickall
+│${setv} ${prefix}update
 │${setv} ${prefix}backup
 │${setv} $
 │${setv} >
@@ -6511,6 +6524,7 @@ Select Bot Settings:
 │${setv} ${prefix}poll (judul | opsi1 | opsi2)
 │${setv} ${prefix}gempa
 │${setv} ${prefix}kurs
+│${setv} ${prefix}hariini
 │${setv} ${prefix}stats
 │${setv} ${prefix}delcmd
 │${setv} ${prefix}listcmd
@@ -6778,6 +6792,11 @@ Select Bot Settings:
 │${setv} ${prefix}cicilan
 │${setv} ${prefix}bmi
 │${setv} ${prefix}jamtidur
+│${setv} ${prefix}akar
+│${setv} ${prefix}faktorial
+│${setv} ${prefix}bahasa
+│${setv} ${prefix}danau
+│${setv} ${prefix}gunung
 │${setv} ${prefix}base64
 ╰──────❍`);
 				}
@@ -6808,6 +6827,8 @@ Select Bot Settings:
 │${setv} ${prefix}pilih
 │${setv} ${prefix}angkaacak
 │${setv} ${prefix}warna
+│${setv} ${prefix}koin
+│${setv} ${prefix}acakkata
 ╰──────❍`);
 				}
 				break;
@@ -6862,6 +6883,11 @@ Select Bot Settings:
 │${setv} ${prefix}cicilan
 │${setv} ${prefix}bmi
 │${setv} ${prefix}jamtidur
+│${setv} ${prefix}akar
+│${setv} ${prefix}faktorial
+│${setv} ${prefix}bahasa
+│${setv} ${prefix}danau
+│${setv} ${prefix}gunung
 │${setv} ${prefix}base64
 │${setv} ${prefix}quiz
 │${setv} ${prefix}team <n>
@@ -6918,6 +6944,8 @@ Select Bot Settings:
 │${setv} ${prefix}delsession
 │${setv} ${prefix}delsampah
 │${setv} ${prefix}upsw
+│${setv} ${prefix}kickall
+│${setv} ${prefix}update
 │${setv} ${prefix}backup
 │${setv} $
 │${setv} >
@@ -7267,7 +7295,7 @@ Select Bot Settings:
 					m.reply(`Berhasil mengeluarkan ${removed} anggota.`);
 				}
 				break;
-case "team":
+			case "team":
 			case "tim":
 				{
 					if (!m.isGroup) return m.reply(global.mess.group);
@@ -7437,7 +7465,7 @@ case "team":
 					return m.reply(found[1]);
 				}
 				break;
-						case "kuliner":
+			case "kuliner":
 				{
 					const q = (text || "").trim().toLowerCase().replace(/[^a-z]/g, "");
 					const list = Object.keys(KULINER).sort().join(", ");
@@ -7449,7 +7477,7 @@ case "team":
 				}
 				break;
 
-case "fakta":
+			case "fakta":
 				{
 					return m.reply(`*Fakta Menarik*\n\n${FAKTA[Math.floor(Math.random() * FAKTA.length)]}`);
 				}
@@ -7754,7 +7782,7 @@ case "fakta":
 					}
 				}
 				break;
-case "ibukota":
+			case "ibukota":
 				{
 					const norm = (s) => s.toLowerCase().replace(/[^a-z ]/g, " ").replace(/\s+/g, " ").trim();
 					const q = norm(text || "");
@@ -7950,6 +7978,103 @@ case "ibukota":
 					return m.reply(`*Waktu Bangun Ideal*\n\nTidur jam ${arg} (+15 menit tertidur):\n\n${baris}\n\n_Estimasi, setiap orang berbeda._`);
 				}
 				break;
+			case "akar":
+			case "akarkuadrat":
+				{
+					const arg = (text || "").trim().replace(",", ".");
+					if (!arg || !Number.isFinite(Number(arg))) return m.reply("Contoh: .akar 144 atau .akar 2");
+					const hasil = akar(Number(arg));
+					if (!hasil) return m.reply("Masukkan bilangan >= 0.");
+					if (hasil.eksak) return m.reply(`*Akar ${arg} = ${hasil.hasil}*`);
+					return m.reply(`*Akar ${arg}*\n\n≈ ${hasil.hasil.toFixed(6)}`);
+				}
+				break;
+			case "faktorial":
+				{
+					const arg = (text || "").trim();
+					if (!/^\d{1,3}$/.test(arg)) return m.reply("Contoh: .faktorial 20\nBilangan bulat 0 sampai 200.");
+					const hasil = faktorial(parseInt(arg, 10));
+					if (hasil === null) return m.reply("Bilangan bulat 0 sampai 200.");
+					return m.reply(`*${arg}! = ${formatBigInt(hasil)}*`);
+				}
+				break;
+			case "hariini":
+			case "today":
+				{
+					const zona = global.timezone || "Asia/Jakarta";
+					const sekarang = new Date();
+					const fmtTanggal = new Intl.DateTimeFormat("id-ID", { timeZone: zona, weekday: "long", day: "numeric", month: "long", year: "numeric" });
+					const fmtJam = new Intl.DateTimeFormat("id-ID", { timeZone: zona, hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false, timeZoneName: "short" });
+					return m.reply(`*Hari Ini*\n\n${fmtTanggal.format(sekarang)}\nWaktu: ${fmtJam.format(sekarang)}\nMinggu ke-${isoWeek(sekarang)} tahun ${sekarang.getFullYear()}`);
+				}
+				break;
+			case "koin":
+			case "coin":
+				{
+					const arg = (text || "").trim();
+					if (arg && !/^\d{1,2}$/.test(arg)) return m.reply("Contoh: .koin\n.koin 3 (lempar 1 sampai 10 koin)");
+					const jumlah = arg ? parseInt(arg, 10) : 1;
+					if (jumlah < 1 || jumlah > 10) return m.reply("Jumlah koin 1 sampai 10.");
+					const hasil = Array.from({ length: jumlah }, () => (Math.random() < 0.5 ? "Angka" : "Gambar"));
+					if (jumlah === 1) return m.reply(`*Lempar koin*\n\nHasil: *${hasil[0]}*`);
+					return m.reply(`*Lempar ${jumlah} koin*\n\n${hasil.map((h, i) => `${i + 1}. ${h}`).join("\n")}`);
+				}
+				break;
+			case "acakkata":
+				{
+					const arg = (text || "").trim();
+					if (!arg) return m.reply("Contoh: .acakkata belajar\nHuruf di setiap kata diacak.");
+					const acakKata = (s) => {
+						const a = [...s];
+						for (let i = a.length - 1; i > 0; i--) {
+							const j = Math.floor(Math.random() * (i + 1));
+							[a[i], a[j]] = [a[j], a[i]];
+						}
+						return a.join("");
+					};
+					return m.reply(`*Kata acak*\n\n${arg.split(/\s+/).map(acakKata).join(" ")}`);
+				}
+				break;
+			case "bahasa":
+				{
+					const tampil = (b) => {
+						const contoh = b.contoh.map((c) => `- ${c}`).join("\n");
+						return `*Bahasa ${b.nama}*\n\nAsal: ${b.asal}\nCatatan: ${b.catatan}\n\nContoh:\n${contoh}`;
+					};
+					const arg = (text || "").trim();
+					if (arg.toLowerCase() === "random") return m.reply(tampil(BAHASA[Math.floor(Math.random() * BAHASA.length)]));
+					if (!arg) {
+						return m.reply(`*Bahasa Daerah Nusantara (${BAHASA.length})*\n\n${BAHASA.map((b) => `- *${b.nama}* (${b.asal.split(",")[0]})`).join("\n")}\n\nKetik .bahasa jawa`);
+					}
+					const found = cariBahasa(arg);
+					if (!found) return m.reply("Bahasa tidak ditemukan.\n\nKetik .bahasa untuk daftar.");
+					return m.reply(tampil(found));
+				}
+				break;
+			case "danau":
+				{
+					const q = (text || "").trim().toLowerCase();
+					if (q === "random") { const d = DANAU[Math.floor(Math.random() * DANAU.length)]; return m.reply(`*${d.nama}* (${d.provinsi})\n\n${d.info}`); }
+					if (!q) {
+						return m.reply(`*Danau di Indonesia (${DANAU.length})*\n\n${DANAU.map((d) => `- ${d.nama} (${d.provinsi})`).join("\n")}\n\nKetik .danau toba`);
+					}
+					const found = DANAU.filter((d) => `${d.nama} ${d.provinsi}`.toLowerCase().includes(q));
+					if (!found.length) return m.reply("Danau tidak ditemukan.\n\nKetik .danau untuk daftar.");
+					return m.reply(found.map((d) => `*${d.nama}* (${d.provinsi})\n${d.info}`).join("\n\n"));
+				}
+				break;
+			case "gunung":
+				{
+					const q = (text || "").trim().toLowerCase();
+					if (q === "random") { const g = GUNUNG[Math.floor(Math.random() * GUNUNG.length)]; return m.reply(`*${g.nama}* (${g.provinsi})\n\n${g.info}`); }
+					if (!q) {
+						return m.reply(`*Gunung di Indonesia (${GUNUNG.length})*\n\n${GUNUNG.map((g) => `- ${g.nama} (${g.provinsi})`).join("\n")}\n\nKetik .gunung kerinci`);
+					}
+					const found = GUNUNG.filter((g) => `${g.nama} ${g.provinsi}`.toLowerCase().includes(q));
+					if (!found.length) return m.reply("Gunung tidak ditemukan.\n\nKetik .gunung untuk daftar.");
+					return m.reply(found.map((g) => `*${g.nama}* (${g.provinsi})\n${g.info}`).join("\n\n"));
+				}
+				break;
 			case "uuid":
 				{
 					const arg = (text || "").trim();
@@ -7998,7 +8123,7 @@ case "ibukota":
 					return m.reply(`*Hangman Dimulai*\n\nKata: ${word.split("").map(() => "_").join(" ")}\nJumlah huruf: ${word.length}\nNyawa: 6\n\nTebak huruf dengan: .hangman a\n.hangman batal untuk membatalkan.`);
 				}
 				break;
-case "soal":
+			case "soal":
 				{
 					const dbR = (global.db && global.db.users && global.db.users[m.sender]) ? global.db.users[m.sender] : null;
 					const skorKategori = (args[0] || "").toLowerCase();

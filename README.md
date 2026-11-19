@@ -66,9 +66,12 @@ Berbasis Hitori Bot karya [Nazedev](https://github.com/nazedev/hitori), yang dir
 | Utilitas | **Author & proyek** | `.author` (info pembuat), `.repo` (repositori), `.channel` (channel resmi), `.donasi` (dukungan), `.versi` (versi bot) |
 | Menu | **Submenu per kategori** | `.botmenu`, `.groupmenu` (`.grupmenu`), `.searchmenu`, `.downloadmenu`, `.quotesmenu`, `.toolsmenu`, `.aimenu`, `.randommenu`, `.stalkermenu`, `.animemenu`, `.gamemenu`, `.funmenu`, `.edukasimenu`, `.ownermenu`, `.authormenu` |
 | Utilitas | **Matematika & utilitas** | `.kpk`, `.fpb`, `.faktor` (faktorisasi prima), `.prima`, `.diskon`, `.cicilan` (simulasi anuitas), `.bmi`, `.jamtidur` (siklus 90 menit) |
-| Utilitas | **Kata & teks** | `.palindrom`, `.anagram`, `.balik`, `.hitungkata`, `.uuid` |
 | Utilitas | **Dunia & sains** | `.ibukota` (~180 negara), `.negara` (ibukota/mata uang/benua/populasi), `.unsur` (tabel periodik lengkap, 118 unsur), `.planet` (21 planet & exoplanet) |
-| Utilitas | **Konversi & angka** | `.umur`, `.terbilang`, `.roman`, `.konversi` (panjang/berat/suhu/luas/volume/kecepatan/energi/tekanan/data/waktu), `.morse`, `.binary`, `.hex`, `.rot13`, `.angkaacak`, `.pilih` |
+| Utilitas | **Konversi & angka** | `.umur`, `.terbilang`, `.roman`, `.konversi` (panjang/berat/suhu/luas/volume/kecepatan/energi/tekanan/data/waktu), `.morse`, `.binary`, `.hex`, `.rot13`, `.akar` (akar kuadrat), `.faktorial` |
+| Utilitas | **Bahasa & geografi** | `.bahasa` (7 bahasa daerah Nusantara), `.danau` (12 danau di Indonesia), `.gunung` (12 gunung di Indonesia) |
+| Utilitas | **Hari ini** | `.hariini` (tanggal, waktu, minggu ke-n) di zona `global.timezone` |
+| Utilitas | **Kata & teks** | `.palindrom`, `.anagram`, `.balik`, `.hitungkata`, `.uuid`, `.acakkata` (acak huruf kata) |
+| Utilitas | **Hiburan** | `.koin` (lempar koin), `.dadu`, `.angkaacak`, `.pilih` |
 | Utilitas | **Lirik lagu** | `.lirik <artis> - <judul>` lewat Naze API |
 | Game | **Kuis & tim** | `.quiz` (kuis pengetahuan umum, hadiah 50 uang), `.team` (bagi tim acak), `.pair` (pasangan acak di grup) |
 | Owner | **Keluar semua** | `.kickall confirm` (keluarkan semua non-admin, dengan konfirmasi) |
@@ -494,6 +497,14 @@ Semua perintah memakai prefix default `.` `!` atau `+` (atur di `settings.js`).
 | `.bmi 65 170` | Kalkulator BMI (standar WHO) |
 | `.jamtidur 23:00` | Prediksi waktu bangun (siklus 90 menit) |
 | `.uuid 3` | UUID v4 acak |
+| `.akar 144` | Akar kuadrat |
+| `.faktorial 20` | Faktorial (bilangan besar, hingga 200!) |
+| `.hariini` | Tanggal, waktu, nomor minggu (zona `global.timezone`) |
+| `.koin 3` | Lempar koin (Angka/Gambar) |
+| `.acakkata belajar` | Acak huruf setiap kata |
+| `.bahasa jawa` | Bahasa daerah Nusantara |
+| `.danau toba` | Info danau di Indonesia |
+| `.gunung kerinci` | Info gunung di Indonesia |
 | `.base64` | Alias `.b64` (encode/decode base64) |
 | `.author` | Info pembuat Rynn |
 | `.repo` | Repositori dan rilis Rynn |
