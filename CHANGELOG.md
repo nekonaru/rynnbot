@@ -1,5 +1,35 @@
 # Changelog
 
+## v3.15.0
+
+Rynn v3.15.0 menambahkan submenu per kategori yang tertaut di `.allmenu` dan menu author, serta membersihkan data duplikat.
+
+### Fitur baru
+
+- `.authormenu` - menu author (sama seperti `.edukasimenu`): `.author`, `.owner`, `.donasi`, `.repo`, `.channel`, `.versi`.
+- `.grupmenu` - alias Bahasa Indonesia untuk `.groupmenu`.
+- `.author` - info pembuat Rynn (nama, repositori, lisensi MIT, dukungan, channel WhatsApp).
+- `.repo` - tautan repositori dan halaman rilis Rynn.
+- `.channel` - tautan channel WhatsApp resmi Rynn.
+
+### Menu
+
+- `.allmenu` sekarang diakhiri bagian `SUBMENU` yang mendaftar semua menu kategori: `.botmenu`, `.groupmenu` (`.grupmenu`), `.searchmenu`, `.downloadmenu`, `.quotesmenu`, `.toolsmenu`, `.aimenu`, `.randommenu`, `.stalkermenu`, `.animemenu`, `.gamemenu`, `.funmenu`, `.edukasimenu`, `.ownermenu`, `.authormenu`.
+
+### Data
+
+- `FAKTA` diperluas dan dibersihkan: 464 entri tanpa duplikat, termasuk 18 fakta baru yang diverifikasi.
+- `PANTUN` dibersihkan dari duplikat: 125 menjadi 102.
+- `PUISI` dibersihkan dari duplikat: 100 menjadi 94.
+- `WISATA` - satu duplikat (Gunung Rinjani) dihapus, 114 destinasi.
+- `namabayi` (NAMA_BAYI_CEWE) - satu duplikat (Intan) dihapus, 60 nama.
+- `BANK SOAL` diperiksa, semua 209 soal unik.
+
+### Audit
+
+- Meninjau seluruh `case` di handler.js (624 total, termasuk alias); duplikat tersisa hanya sub-command game internal yang memang disengaja.
+- `npm run check` lolos, 23 tes unit lolos, CI hijau sebelum tag `v3.15.0`.
+
 ## v3.14.0
 
 Rynn v3.14.0 mengganti logo sementara dari v3.13.0 dengan desain final dan menambahkan 11 perintah baru.

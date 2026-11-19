@@ -2352,6 +2352,21 @@ const sock = async (sock, m, store) => {
 					m.reply(`Dukung Rynn supaya terus dikembangkan:\n\n☕ Saweria: https://saweria.co/nekonaruu\n💰 Sociabuzz: https://sociabuzz.com/nekonaru/donate\n🎁 Bagibagi: https://bagibagi.co/Nekonaru\n🐙 GitHub Sponsors: https://github.com/sponsors/nekonaru`);
 				}
 				break;
+			case "author":
+				{
+					m.reply(`*Author & Proyek Rynn*\n\nPembuat: Nekonaruu (github.com/nekonaru)\nRepositori: https://github.com/nekonaru/rynnbot\nLisensi: MIT\n\nDukungan:\nGitHub Sponsors: https://github.com/sponsors/nekonaru\nSaweria: https://saweria.co/nekonaruu\nSociabuzz: https://sociabuzz.com/nekonaru/donate\nBagibagi: https://bagibagi.co/Nekonaru\n\nChannel WhatsApp: ${global.my.ch}\nKetik .donasi untuk semua dukungan.`);
+				}
+				break;
+			case "repo":
+				{
+					m.reply(`Repositori Rynn:\nhttps://github.com/nekonaru/rynnbot\n\nRilis dan catatan pembaruan:\nhttps://github.com/nekonaru/rynnbot/releases`);
+				}
+				break;
+			case "channel":
+				{
+					m.reply(`Channel WhatsApp resmi Rynn:\n${global.my.ch}`);
+				}
+				break;
 
 			// Group Menu
 			case "add":
@@ -6430,6 +6445,23 @@ Select Bot Settings:
 │${setv} $
 │${setv} >
 │${setv} <
+╰─┬────❍
+╭─┴❍「 *SUBMENU* 」❍
+│${setv} ${prefix}botmenu
+│${setv} ${prefix}groupmenu / ${prefix}grupmenu
+│${setv} ${prefix}searchmenu
+│${setv} ${prefix}downloadmenu
+│${setv} ${prefix}quotesmenu
+│${setv} ${prefix}toolsmenu
+│${setv} ${prefix}aimenu
+│${setv} ${prefix}randommenu
+│${setv} ${prefix}stalkermenu
+│${setv} ${prefix}animemenu
+│${setv} ${prefix}gamemenu
+│${setv} ${prefix}funmenu
+│${setv} ${prefix}edukasimenu
+│${setv} ${prefix}ownermenu
+│${setv} ${prefix}authormenu
 ╰──────❍`;
 					await sock.sendMessageV3(m.chat, {
 						text: menunya,
@@ -6500,6 +6532,7 @@ Select Bot Settings:
 				}
 				break;
 			case "groupmenu":
+			case "grupmenu":
 				{
 					m.reply(`
 ╭──❍「 *GROUP* 」❍
@@ -6889,6 +6922,19 @@ Select Bot Settings:
 │${setv} $
 │${setv} >
 │${setv} <
+╰──────❍`);
+				}
+				break;
+			case "authormenu":
+				{
+					m.reply(`
+╭──❍「 *AUTHOR* 」❍
+│${setv} ${prefix}author
+│${setv} ${prefix}owner
+│${setv} ${prefix}donasi
+│${setv} ${prefix}repo
+│${setv} ${prefix}channel
+│${setv} ${prefix}versi
 ╰──────❍`);
 				}
 				break;
