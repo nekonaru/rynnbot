@@ -1,5 +1,36 @@
 # Changelog
 
+## v3.18.0
+
+Rynn v3.18.0 adalah pembaruan data terbesar: lebih dari 400 entri baru ditambahkan, dataset lama dibersihkan dari entri `undefined`, dan perintah `.statistikdata` ditambahkan.
+
+### Data baru
+
+- `lib/data-tambahan.js` (baru): 34 fakta umum terverifikasi, 150 kata Hangman, 20 pantun, 20 puisi, 21 resep, 13 peribahasa, dan 40 soal pilihan ganda (20 matematika, 10 IPA, 10 Bahasa Indonesia) dengan jawaban dan pembahasan terverifikasi.
+- `lib/data-kreatif.js` (baru): 40 pantun dan 30 puisi karya sendiri.
+- Gabungan ke dataset utama:
+  - FAKTA: 464 menjadi 498 (semua unik).
+  - PUISI: 94 menjadi 143.
+  - PANTUN: 102 menjadi 161.
+  - HANGMAN_KATA: 375 menjadi 420.
+  - RESEP: 85 menjadi 101.
+  - PERIBAHASA: 44 menjadi 57.
+  - SOAL: 209 menjadi 249 soal (matematika 60, IPA 68, IPS 42, Bahasa Indonesia 50, PPKn 29).
+  - Total entri pada dataset inti: 1.629.
+- Semua penggabungan memakai `dedupeArray` agar duplikat persis tidak masuk.
+
+### Fitur baru
+
+- `.statistikdata` - menampilkan jumlah entri semua dataset Rynn secara langsung dari data yang dimuat (selalu akurat setelah data berubah). Tampil di EDUKASI.
+
+### Audit dan perbaikan anomali
+
+- Ditemukan dan dihapus dua entri literal `undefined` pada data PUISI dan PANTUN bawaan (penyebab `.puisi` atau `.pantun` bisa menampilkan teks "undefined"). `dedupeArray` sekarang juga membuang entri null/undefined.
+- Validasi seluruh soal baru: 4 opsi, indeks jawaban 0-3, pembahasan ada, tidak ada pertanyaan duplikat.
+- Validasi pantun baru: tepat 4 baris, tanpa artefak teks.
+- Audit menu terhadap `case`: semua perintah menu punya implementasi.
+- `npm run check` lolos (107 file), 27 tes unit lolos, CI hijau sebelum tag `v3.18.0`.
+
 ## v3.17.0
 
 Rynn v3.17.0 menambahkan 5 perintah baru, 5 berkas data baru, dan menyelesaikan audit menyeluruh atas CI, dependensi, export, dan menu.

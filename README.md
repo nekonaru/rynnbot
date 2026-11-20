@@ -61,8 +61,9 @@ Berbasis Hitori Bot karya [Nazedev](https://github.com/nazedev/hitori), yang dir
 | Menu & Umum | **Hot reload** | `settings.js` dimuat ulang otomatis saat disimpan |
 | Utilitas | **Kalender & hiburan** | `.cal` (kalender bulan), `.pantun` (pantun acak), `.b64` (encode/decode base64), `.password` (generate password acak) |
 | Utilitas | **Cek anggota** | `.admins` (daftar admin grup), `.saldo` (saldo limit/uang/status) |
-| Utilitas | **Belajar SMA** | `.soal` (bank soal campuran), `.soalmtk`, `.soalipa`, `.soalips`, `.soalbindon`, `.soalppkn`, `.namabayi` (nama bayi Indonesia + asal + arti) |
-| Utilitas | **Hiburan & pengetahuan** | `.fakta` (464 fakta), `.puisi`, `.pantun`, `.zodiak`, `.wayang`, `.lagudaerah`, `.wisata` (114 destinasi), `.peribahasa` (44 pepatah Indonesia), `.resep` (85 resep) |
+| Utilitas | **Belajar SMA** | `.soal` (249 soal, bank soal campuran), `.soalmtk` (60 soal), `.soalipa` (68 soal), `.soalips` (42 soal), `.soalbindon` (50 soal), `.soalppkn` (29 soal), `.namabayi` (nama bayi Indonesia + asal + arti) |
+| Utilitas | **Hiburan & pengetahuan** | `.fakta` (498 fakta), `.puisi` (143 puisi), `.pantun` (161 pantun), `.zodiak`, `.wayang`, `.lagudaerah`, `.wisata` (114 destinasi), `.peribahasa` (57 pepatah Indonesia), `.resep` (101 resep) |
+| Utilitas | **Statistik data** | `.statistikdata` (jumlah seluruh entri data Rynn) |
 | Utilitas | **Author & proyek** | `.author` (info pembuat), `.repo` (repositori), `.channel` (channel resmi), `.donasi` (dukungan), `.versi` (versi bot) |
 | Menu | **Submenu per kategori** | `.botmenu`, `.groupmenu` (`.grupmenu`), `.searchmenu`, `.downloadmenu`, `.quotesmenu`, `.toolsmenu`, `.aimenu`, `.randommenu`, `.stalkermenu`, `.animemenu`, `.gamemenu`, `.funmenu`, `.edukasimenu`, `.ownermenu`, `.authormenu` |
 | Utilitas | **Matematika & utilitas** | `.kpk`, `.fpb`, `.faktor` (faktorisasi prima), `.prima`, `.diskon`, `.cicilan` (simulasi anuitas), `.bmi`, `.jamtidur` (siklus 90 menit) |
@@ -512,6 +513,7 @@ Semua perintah memakai prefix default `.` `!` atau `+` (atur di `settings.js`).
 | `.haribersejarah 17 agustus` | Peringatan hari bersejarah (tanpa argumen: hari ini) |
 | `.waktu tokyo` | Waktu di kota tertentu (tanpa argumen: 3 zona waktu Indonesia) |
 | `.surat lamaran` | Templat surat (lamaran/izin/undangan/kuasa/resmi) |
+| `.statistikdata` | Jumlah seluruh entri data Rynn |
 | `.base64` | Alias `.b64` (encode/decode base64) |
 | `.author` | Info pembuat Rynn |
 | `.repo` | Repositori dan rilis Rynn |

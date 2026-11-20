@@ -6382,6 +6382,7 @@ Select Bot Settings:
 │${setv} ${prefix}pulau
 │${setv} ${prefix}sungai
 │${setv} ${prefix}haribersejarah
+│${setv} ${prefix}statistikdata
 │${setv} ${prefix}base64
 ╰─┬────❍
 ╭─┴❍「 *FUN* 」❍
@@ -6812,6 +6813,7 @@ Select Bot Settings:
 │${setv} ${prefix}pulau
 │${setv} ${prefix}sungai
 │${setv} ${prefix}haribersejarah
+│${setv} ${prefix}statistikdata
 │${setv} ${prefix}base64
 ╰──────❍`);
 				}
@@ -6906,6 +6908,7 @@ Select Bot Settings:
 │${setv} ${prefix}pulau
 │${setv} ${prefix}sungai
 │${setv} ${prefix}haribersejarah
+│${setv} ${prefix}statistikdata
 │${setv} ${prefix}base64
 │${setv} ${prefix}quiz
 │${setv} ${prefix}team <n>
@@ -8150,6 +8153,40 @@ Select Bot Settings:
 					const found = cariSurat(q);
 					if (!found) return m.reply("Templat tidak ditemukan.\n\nKetik .surat untuk daftar.");
 					return m.reply(`*${found.nama}*\n\n${found.isi}\n\n_Templat contoh, sesuaikan dengan kebutuhanmu._`);
+				}
+				break;
+			case "statistikdata":
+				{
+					const baris = [
+						`Fakta: ${FAKTA.length}`,
+						`Puisi: ${PUISI.length}`,
+						`Pantun: ${PANTUN.length}`,
+						`Peribahasa: ${PERIBAHASA.length}`,
+						`Soal: ${Object.values(SOAL).reduce((n, arr) => n + arr.length, 0)} (${Object.keys(SOAL).length} kategori)`,
+						`Kata hangman: ${HANGMAN_KATA.length}`,
+						`Nama bayi: ${NAMA_BAYI_COWO.length + NAMA_BAYI_CEWE.length}`,
+						`Suku: ${Object.keys(SUKU).length}`,
+						`Kuliner: ${Object.keys(KULINER).length}`,
+						`Resep: ${Object.keys(RESEP).length}`,
+						`Lagu daerah: ${LAGU_DAERAH.length}`,
+						`Wisata: ${WISATA.length}`,
+						`Wayang: ${Object.keys(WAYANG).length}`,
+						`Provinsi: ${Object.keys(PROVINSI).length}`,
+						`Negara: ${Object.keys(NEGARA).length}`,
+						`Unsur: ${Object.keys(UNSUR).length}`,
+						`Planet: ${Object.keys(PLANET).length}`,
+						`Zodiak: ${ZODIAC.length}`,
+						`Bahasa daerah: ${BAHASA.length}`,
+						`Danau: ${DANAU.length}`,
+						`Gunung: ${GUNUNG.length}`,
+						`Pulau: ${PULAU.length}`,
+						`Sungai: ${SUNGAI.length}`,
+						`Hari bersejarah: ${HARI_BERSEJARAH.length}`,
+						`Kota waktu: ${KOTA_WAKTU.length}`,
+						`Templat surat: ${SURAT.length}`,
+					];
+					const total = baris.reduce((n, b) => n + (parseInt(b.split(": ")[1], 10) || 0), 0);
+					return m.reply(`*Statistik Data Rynn*\n\n${baris.join("\n")}\n\n*Total entri: ${total.toLocaleString("id-ID")}*`);
 				}
 				break;
 			case "uuid":
