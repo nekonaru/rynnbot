@@ -68,7 +68,9 @@ Berbasis Hitori Bot karya [Nazedev](https://github.com/nazedev/hitori), yang dir
 | Utilitas | **Matematika & utilitas** | `.kpk`, `.fpb`, `.faktor` (faktorisasi prima), `.prima`, `.diskon`, `.cicilan` (simulasi anuitas), `.bmi`, `.jamtidur` (siklus 90 menit) |
 | Utilitas | **Dunia & sains** | `.ibukota` (~180 negara), `.negara` (ibukota/mata uang/benua/populasi), `.unsur` (tabel periodik lengkap, 118 unsur), `.planet` (21 planet & exoplanet) |
 | Utilitas | **Konversi & angka** | `.umur`, `.terbilang`, `.roman`, `.konversi` (panjang/berat/suhu/luas/volume/kecepatan/energi/tekanan/data/waktu), `.morse`, `.binary`, `.hex`, `.rot13`, `.akar` (akar kuadrat), `.faktorial` |
-| Utilitas | **Bahasa & geografi** | `.bahasa` (7 bahasa daerah Nusantara), `.danau` (12 danau di Indonesia), `.gunung` (12 gunung di Indonesia) |
+| Utilitas | **Bahasa & geografi** | `.bahasa` (7 bahasa daerah Nusantara), `.danau` (12 danau), `.gunung` (12 gunung), `.pulau` (10 pulau), `.sungai` (10 sungai) |
+| Utilitas | **Waktu & sejarah** | `.hariini`, `.waktu` (12 kota), `.haribersejarah` (13 tanggal bersejarah Indonesia) |
+| Utilitas | **Templat surat** | `.surat` (lamaran kerja, izin, undangan rapat, kuasa, surat resmi) |
 | Utilitas | **Hari ini** | `.hariini` (tanggal, waktu, minggu ke-n) di zona `global.timezone` |
 | Utilitas | **Kata & teks** | `.palindrom`, `.anagram`, `.balik`, `.hitungkata`, `.uuid`, `.acakkata` (acak huruf kata) |
 | Utilitas | **Hiburan** | `.koin` (lempar koin), `.dadu`, `.angkaacak`, `.pilih` |
@@ -505,6 +507,11 @@ Semua perintah memakai prefix default `.` `!` atau `+` (atur di `settings.js`).
 | `.bahasa jawa` | Bahasa daerah Nusantara |
 | `.danau toba` | Info danau di Indonesia |
 | `.gunung kerinci` | Info gunung di Indonesia |
+| `.pulau jawa` | Info pulau di Indonesia |
+| `.sungai kapuas` | Info sungai di Indonesia |
+| `.haribersejarah 17 agustus` | Peringatan hari bersejarah (tanpa argumen: hari ini) |
+| `.waktu tokyo` | Waktu di kota tertentu (tanpa argumen: 3 zona waktu Indonesia) |
+| `.surat lamaran` | Templat surat (lamaran/izin/undangan/kuasa/resmi) |
 | `.base64` | Alias `.b64` (encode/decode base64) |
 | `.author` | Info pembuat Rynn |
 | `.repo` | Repositori dan rilis Rynn |

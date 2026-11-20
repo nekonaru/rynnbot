@@ -1,5 +1,28 @@
 # Changelog
 
+## v3.17.0
+
+Rynn v3.17.0 menambahkan 5 perintah baru, 5 berkas data baru, dan menyelesaikan audit menyeluruh atas CI, dependensi, export, dan menu.
+
+### Fitur baru
+
+- `.pulau` - 10 pulau terkenal di Indonesia (Sumatera, Jawa, Kalimantan, Sulawesi, Papua, Bali, Madura, Nusa Tenggara, Maluku, Bangka Belitung).
+- `.sungai` - 10 sungai terkenal di Indonesia (Kapuas, Batanghari, Bengawan Solo, Musi, Mahakam, Citarum, Brantas, Siak, Barito, Ciliwung).
+- `.haribersejarah` - 13 tanggal peringatan bersejarah yang umum di Indonesia; tanpa argumen menampilkan peringatan hari ini, `.haribersejarah list` menampilkan semua.
+- `.waktu` - waktu terkini di 12 kota memakai zona IANA; tanpa argumen menampilkan WIB/WITA/WIT.
+- `.surat` - 5 templat surat Bahasa Indonesia (lamaran kerja, izin, undangan rapat, kuasa, surat resmi) dengan placeholder.
+- Perintah baru tampil di `.allmenu`, submenu terkait, dan README.
+
+### Audit dan optimalisasi
+
+- CI workflow ditinjau: `npm ci` + `npm run check` + `npm test` + `npm audit` (advisory-only), Node 22, sesuai dengan lingkungan lokal Node 24.
+- 93 berkas terlacak: tidak ada berkas cadangan/log/sementara yang ikut tercommit.
+- 27 dependency runtime dicek: semuanya dipakai (import/require/dynamic import). Tidak ada dependency menganggur.
+- Audit export library: 15 symbol hanya dipakai internally; dibiarkan (bukan bug, penghapusan berisiko).
+- Audit menu terhadap `case`: semua perintah menu memiliki implementasi (tidak ada yang menggantung).
+- `npm run check` lolos (105 file), 27 tes unit lolos, CI hijau sebelum tag `v3.17.0`.
+- `npm audit --omit=dev`: tetap 30 advisory high dari `zod` lewat `@jimp/*` (sudah didokumentasikan dan tidak bisa diperbaiki tanpa merusak API jimp).
+
 ## v3.16.0
 
 Rynn v3.16.0 menambahkan 8 perintah baru dengan 3 berkas data baru, dan memperketat audit menu.

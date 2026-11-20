@@ -33,6 +33,11 @@ import { parseBulat, fpb, kpk, faktorPrima, isPrima, pembagiTerkecil, isPalindro
 import { BAHASA, cariBahasa } from "./lib/data-bahasa-daerah.js";
 import { DANAU } from "./lib/data-danau.js";
 import { GUNUNG } from "./lib/data-gunung.js";
+import { PULAU } from "./lib/data-pulau.js";
+import { SUNGAI } from "./lib/data-sungai.js";
+import { HARI_BERSEJARAH, cariHari, hariHariIni } from "./lib/data-hari-bersejarah.js";
+import { KOTA_WAKTU, cariKota, waktuDi } from "./lib/data-waktu.js";
+import { SURAT, cariSurat } from "./lib/data-surat.js";
 import { FIRST_SETUP_MARKER, firstSetupStates, firstSetupStepText, sendFirstSetupIntro } from './src/setup-wizard.js';
 import { ytMp4, ytMp3, ytMp4Stream } from "./lib/scraper.js";
 import { GroupUpdate, LoadDataBase, extractNativeFlowResponseId } from "./src/message.js";
@@ -6162,6 +6167,7 @@ Select Bot Settings:
 │${setv} ${prefix}gempa
 │${setv} ${prefix}kurs
 │${setv} ${prefix}hariini
+│${setv} ${prefix}waktu
 │${setv} ${prefix}stats
 │${setv} ${prefix}menfes (62xxx|fake name)
 │${setv} ${prefix}confes (62xxx|fake name)
@@ -6276,6 +6282,7 @@ Select Bot Settings:
 │${setv} ${prefix}getexif (reply sticker)
 │${setv} ${prefix}password
 │${setv} ${prefix}uuid
+│${setv} ${prefix}surat
 ╰─┬────❍
 ╭─┴❍「 *AI* 」❍
 │${setv} ${prefix}ai (query)
@@ -6372,6 +6379,9 @@ Select Bot Settings:
 │${setv} ${prefix}bahasa
 │${setv} ${prefix}danau
 │${setv} ${prefix}gunung
+│${setv} ${prefix}pulau
+│${setv} ${prefix}sungai
+│${setv} ${prefix}haribersejarah
 │${setv} ${prefix}base64
 ╰─┬────❍
 ╭─┴❍「 *FUN* 」❍
@@ -6525,6 +6535,7 @@ Select Bot Settings:
 │${setv} ${prefix}gempa
 │${setv} ${prefix}kurs
 │${setv} ${prefix}hariini
+│${setv} ${prefix}waktu
 │${setv} ${prefix}stats
 │${setv} ${prefix}delcmd
 │${setv} ${prefix}listcmd
@@ -6669,6 +6680,7 @@ Select Bot Settings:
 │${setv} ${prefix}getexif (reply sticker)
 │${setv} ${prefix}password
 │${setv} ${prefix}uuid
+│${setv} ${prefix}surat
 ╰──────❍`);
 				}
 				break;
@@ -6797,6 +6809,9 @@ Select Bot Settings:
 │${setv} ${prefix}bahasa
 │${setv} ${prefix}danau
 │${setv} ${prefix}gunung
+│${setv} ${prefix}pulau
+│${setv} ${prefix}sungai
+│${setv} ${prefix}haribersejarah
 │${setv} ${prefix}base64
 ╰──────❍`);
 				}
@@ -6888,6 +6903,9 @@ Select Bot Settings:
 │${setv} ${prefix}bahasa
 │${setv} ${prefix}danau
 │${setv} ${prefix}gunung
+│${setv} ${prefix}pulau
+│${setv} ${prefix}sungai
+│${setv} ${prefix}haribersejarah
 │${setv} ${prefix}base64
 │${setv} ${prefix}quiz
 │${setv} ${prefix}team <n>
@@ -8073,6 +8091,65 @@ Select Bot Settings:
 					const found = GUNUNG.filter((g) => `${g.nama} ${g.provinsi}`.toLowerCase().includes(q));
 					if (!found.length) return m.reply("Gunung tidak ditemukan.\n\nKetik .gunung untuk daftar.");
 					return m.reply(found.map((g) => `*${g.nama}* (${g.provinsi})\n${g.info}`).join("\n\n"));
+				}
+				break;
+			case "pulau":
+				{
+					const q = (text || "").trim().toLowerCase();
+					if (q === "random") { const p = PULAU[Math.floor(Math.random() * PULAU.length)]; return m.reply(`*${p.nama}*\n\n${p.info}`); }
+					if (!q) {
+						return m.reply(`*Pulau di Indonesia (${PULAU.length})*\n\n${PULAU.map((p) => `- ${p.nama}`).join("\n")}\n\nKetik .pulau jawa`);
+					}
+					const found = PULAU.filter((p) => p.nama.toLowerCase().includes(q));
+					if (!found.length) return m.reply("Pulau tidak ditemukan.\n\nKetik .pulau untuk daftar.");
+					return m.reply(found.map((p) => `*${p.nama}*\n${p.info}`).join("\n\n"));
+				}
+				break;
+			case "sungai":
+				{
+					const q = (text || "").trim().toLowerCase();
+					if (q === "random") { const s = SUNGAI[Math.floor(Math.random() * SUNGAI.length)]; return m.reply(`*${s.nama}* (${s.provinsi})\n\n${s.info}`); }
+					if (!q) {
+						return m.reply(`*Sungai di Indonesia (${SUNGAI.length})*\n\n${SUNGAI.map((s) => `- ${s.nama} (${s.provinsi})`).join("\n")}\n\nKetik .sungai kapuas`);
+					}
+					const found = SUNGAI.filter((s) => `${s.nama} ${s.provinsi}`.toLowerCase().includes(q));
+					if (!found.length) return m.reply("Sungai tidak ditemukan.\n\nKetik .sungai untuk daftar.");
+					return m.reply(found.map((s) => `*${s.nama}* (${s.provinsi})\n${s.info}`).join("\n\n"));
+				}
+				break;
+			case "haribersejarah":
+				{
+					const q = (text || "").trim().toLowerCase();
+					if (q === "list" || q === "semua") {
+						return m.reply(`*Hari Bersejarah (${HARI_BERSEJARAH.length})*\n\n${HARI_BERSEJARAH.map((h) => `- *${h.tanggal}*: ${h.info}`).join("\n")}`);
+					}
+					const ditemukan = q ? cariHari(q) : hariHariIni();
+					if (!ditemukan) return m.reply(q ? "Tanggal tidak ditemukan.\n\nKetik .haribersejarah list" : "Hari ini tidak ada catatan dalam daftar.\n\nKetik .haribersejarah 17 agustus\nKetik .haribersejarah list");
+					return m.reply(`*${ditemukan.tanggal}*\n\n${ditemukan.info}`);
+				}
+				break;
+			case "waktu":
+				{
+					const arg = (text || "").trim();
+					if (arg) {
+						const kota = cariKota(arg);
+						if (!kota) return m.reply(`Kota tidak ditemukan.\n\nKetik .waktu untuk daftar kota.`);
+						const jam = waktuDi(kota.zona);
+						return m.reply(`*Waktu di ${kota.nama}*\n\n${jam}${kota.label ? " (" + kota.label + ")" : ""}\nZona: ${kota.zona}`);
+					}
+					const baris = KOTA_WAKTU.filter((k) => k.label).map((k) => `${k.nama}: *${waktuDi(k.zona)}* ${k.label}`).join("\n");
+					return m.reply(`*Waktu Saat Ini*\n\n${baris}\n\nKota lain: ${KOTA_WAKTU.filter((k) => !k.label).map((k) => k.nama.toLowerCase()).join(", ")}\nContoh: .waktu tokyo`);
+				}
+				break;
+			case "surat":
+				{
+					const q = (text || "").trim().toLowerCase();
+					if (!q) {
+						return m.reply(`*Templat Surat (${SURAT.length})*\n\n${SURAT.map((s) => `- ${s.nama} (.surat ${s.kunci})`).join("\n")}\n\nKetik .surat lamaran`);
+					}
+					const found = cariSurat(q);
+					if (!found) return m.reply("Templat tidak ditemukan.\n\nKetik .surat untuk daftar.");
+					return m.reply(`*${found.nama}*\n\n${found.isi}\n\n_Templat contoh, sesuaikan dengan kebutuhanmu._`);
 				}
 				break;
 			case "uuid":
