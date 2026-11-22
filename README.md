@@ -68,7 +68,7 @@ Berbasis Hitori Bot karya [Nazedev](https://github.com/nazedev/hitori), yang dir
 | Menu | **Submenu per kategori** | `.botmenu`, `.groupmenu` (`.grupmenu`), `.searchmenu`, `.downloadmenu`, `.quotesmenu`, `.toolsmenu`, `.aimenu`, `.randommenu`, `.stalkermenu`, `.animemenu`, `.gamemenu`, `.funmenu`, `.edukasimenu`, `.ownermenu`, `.authormenu` |
 | Utilitas | **Matematika & utilitas** | `.kpk`, `.fpb`, `.faktor` (faktorisasi prima), `.prima`, `.diskon`, `.cicilan` (simulasi anuitas), `.bmi`, `.jamtidur` (siklus 90 menit) |
 | Utilitas | **Dunia & sains** | `.ibukota` (~180 negara), `.negara` (ibukota/mata uang/benua/populasi), `.unsur` (tabel periodik lengkap, 118 unsur), `.planet` (21 planet & exoplanet) |
-| Utilitas | **Konversi & angka** | `.umur`, `.terbilang`, `.roman`, `.konversi` (panjang/berat/suhu/luas/volume/kecepatan/energi/tekanan/data/waktu), `.morse`, `.binary`, `.hex`, `.rot13`, `.akar` (akar kuadrat), `.faktorial` |
+| Utilitas | **Konversi & angka** | `.umur`, `.terbilang`, `.roman`, `.konversi` (panjang/berat/suhu/luas/volume/kecepatan/energi/tekanan/data/waktu), `.morse`, `.binary`, `.hex`, `.rot13`, `.akar` (akar kuadrat), `.faktorial`, `.fibonacci`, `.primaantara`, `.selisihhari` |
 | Utilitas | **Bahasa & geografi** | `.bahasa` (7 bahasa daerah Nusantara), `.danau` (12 danau), `.gunung` (12 gunung), `.pulau` (10 pulau), `.sungai` (10 sungai) |
 | Utilitas | **Waktu & sejarah** | `.hariini`, `.waktu` (12 kota), `.haribersejarah` (13 tanggal bersejarah Indonesia) |
 | Utilitas | **Templat surat** | `.surat` (lamaran kerja, izin, undangan rapat, kuasa, surat resmi) |
@@ -514,6 +514,9 @@ Semua perintah memakai prefix default `.` `!` atau `+` (atur di `settings.js`).
 | `.waktu tokyo` | Waktu di kota tertentu (tanpa argumen: 3 zona waktu Indonesia) |
 | `.surat lamaran` | Templat surat (lamaran/izin/undangan/kuasa/resmi) |
 | `.statistikdata` | Jumlah seluruh entri data Rynn |
+| `.selisihhari 2026-01-01 2026-12-31` | Selisih hari antara dua tanggal |
+| `.fibonacci 10` | Deret Fibonacci (BigInt, sampai 100 suku) |
+| `.primaantara 1 100` | Bilangan prima dalam rentang (maksimal 10.000 bilangan) |
 | `.base64` | Alias `.b64` (encode/decode base64) |
 | `.author` | Info pembuat Rynn |
 | `.repo` | Repositori dan rilis Rynn |

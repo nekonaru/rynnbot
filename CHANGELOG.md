@@ -1,5 +1,28 @@
 # Changelog
 
+## v3.19.0
+
+Rynn v3.19.0 menambahkan optimisasi memori untuk sesi game dan tiga perintah matematika/tanggal baru.
+
+### Fitur baru
+
+- `.selisihhari YYYY-MM-DD YYYY-MM-DD` - selisih hari kalender antara dua tanggal (memakai UTC agar tidak terpengaruh waktu musim panas).
+- `.fibonacci [n]` - deret Fibonacci pertama dengan BigInt (1 sampai 100 suku, default 10).
+- `.primaantara <a> <b>` - bilangan prima dalam rentang tertutup, dibatasi 10.000 bilangan untuk menjaga respons.
+- Ketiga perintah tampil di `.allmenu` dan `.edukasimenu`.
+
+### Optimisasi
+
+- State sesi `quizState`, `mbtiState`, `hangmanState`, dan `soalState` sekarang dibersihkan otomatis setiap 5 menit oleh pembersih berbasis interval dengan `unref()`. Sebelumnya entri yang ditinggalkan user bertahan di memori selamanya pada bot publik.
+- Pembersih hanya menghapus entri yang sudah lebih tua dari 15 menit (sesuai masa berlaku sesi di handler).
+
+### Audit
+
+- Meninjau semua jalur state global di handler.js; menemukan empat Map sesi tanpa pembersih otomatis (diperbaiki di rilis ini).
+- Audit menu terhadap `case`: semua perintah di menu punya implementasi.
+- 3 tes unit baru untuk selisih hari, Fibonacci, dan rentang prima (total 30 tes).
+- `npm run check` lolos, 30 tes lolos, CI hijau sebelum tag `v3.19.0`.
+
 ## v3.18.0
 
 Rynn v3.18.0 adalah pembaruan data terbesar: lebih dari 400 entri baru ditambahkan, dataset lama dibersihkan dari entri `undefined`, dan perintah `.statistikdata` ditambahkan.

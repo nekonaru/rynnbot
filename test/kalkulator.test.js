@@ -18,6 +18,9 @@ import {
 	faktorial,
 	formatBigInt,
 	isoWeek,
+	selisihHari,
+	fibonacci,
+	primaAntara,
 } from "../lib/kalkulator.js";
 
 test("parseBulat mevalidasi rentang", () => {
@@ -124,4 +127,23 @@ test("formatBigInt memakai titik sebagai pemisah", () => {
 test("isoWeek", () => {
 	assert.equal(isoWeek(new Date(2026, 0, 1)), 1);
 	assert.equal(isoWeek(new Date(2026, 10, 20)), 47);
+});
+
+test("selisihHari", () => {
+	assert.equal(selisihHari("2026-01-01", "2026-01-11"), 10);
+	assert.equal(selisihHari("2026-12-31", "2026-01-01"), -364);
+	assert.equal(selisihHari("2026-01-01", "2026-01-01"), 0);
+	assert.equal(selisihHari("bukan", "2026-01-01"), null);
+});
+
+test("fibonacci", () => {
+	assert.deepEqual(fibonacci(1), [0n]);
+	assert.deepEqual(fibonacci(6), [0n, 1n, 1n, 2n, 3n, 5n]);
+	assert.equal(fibonacci(101), null);
+});
+
+test("primaAntara", () => {
+	assert.deepEqual(primaAntara(1, 10), [2, 3, 5, 7]);
+	assert.deepEqual(primaAntara(14, 16), []);
+	assert.equal(primaAntara(1, 20000), null);
 });

@@ -29,7 +29,7 @@ import { NEGARA, UNSUR, PLANET } from "./lib/data-dunia.js";
 import { HANGMAN_KATA } from "./lib/data-game.js";
 import { MBTI_PERTANYAAN, MBTI_TIPES, hitungMBTI } from "./lib/mbti.js";
 import { angkaKeKata, toRoman, fromRoman, rot13, morseEncode, morseDecode, binaryEncode, binaryDecode, hexEncode, hexDecode, ZODIAC, zodiacFor, convertUnit, cap } from "./lib/util-lokal.js";
-import { parseBulat, fpb, kpk, faktorPrima, isPrima, pembagiTerkecil, isPalindrom, isAnagram, formatRupiah, hitungDiskon, cicilanAnuitas, hitungBmi, siklusTidur, uuidV4, akar, faktorial, formatBigInt, isoWeek } from "./lib/kalkulator.js";
+import { parseBulat, fpb, kpk, faktorPrima, isPrima, pembagiTerkecil, isPalindrom, isAnagram, formatRupiah, hitungDiskon, cicilanAnuitas, hitungBmi, siklusTidur, uuidV4, akar, faktorial, formatBigInt, isoWeek, selisihHari, fibonacci, primaAntara } from "./lib/kalkulator.js";
 import { BAHASA, cariBahasa } from "./lib/data-bahasa-daerah.js";
 import { DANAU } from "./lib/data-danau.js";
 import { GUNUNG } from "./lib/data-gunung.js";
@@ -69,6 +69,22 @@ import {
 	tarBackup,
 	rotateBackups,
 } from "./lib/function.js";
+
+// Optimisasi memori: sesi game/tes yang ditinggalkan user dibersihkan otomatis.
+// Tanpa ini, entri Map bertahan selamanya pada bot publik yang banyak dipakai.
+if (!global._stateSweeper) {
+	global._stateSweeper = setInterval(() => {
+		const batas = Date.now() - 15 * 60 * 1000;
+		for (const nama of ["quizState", "mbtiState", "hangmanState", "soalState"]) {
+			const peta = global[nama];
+			if (!(peta instanceof Map)) continue;
+			for (const [kunci, nilai] of peta) {
+				if (!nilai || typeof nilai.at !== "number" || nilai.at < batas) peta.delete(kunci);
+			}
+		}
+	}, 5 * 60 * 1000);
+	global._stateSweeper.unref?.();
+}
 
 const require = createRequire(import.meta.url);
 const __filename = fileURLToPath(import.meta.url);
@@ -6383,6 +6399,9 @@ Select Bot Settings:
 │${setv} ${prefix}sungai
 │${setv} ${prefix}haribersejarah
 │${setv} ${prefix}statistikdata
+│${setv} ${prefix}selisihhari
+│${setv} ${prefix}fibonacci
+│${setv} ${prefix}primaantara
 │${setv} ${prefix}base64
 ╰─┬────❍
 ╭─┴❍「 *FUN* 」❍
@@ -6814,6 +6833,9 @@ Select Bot Settings:
 │${setv} ${prefix}sungai
 │${setv} ${prefix}haribersejarah
 │${setv} ${prefix}statistikdata
+│${setv} ${prefix}selisihhari
+│${setv} ${prefix}fibonacci
+│${setv} ${prefix}primaantara
 │${setv} ${prefix}base64
 ╰──────❍`);
 				}
@@ -6909,6 +6931,9 @@ Select Bot Settings:
 │${setv} ${prefix}sungai
 │${setv} ${prefix}haribersejarah
 │${setv} ${prefix}statistikdata
+│${setv} ${prefix}selisihhari
+│${setv} ${prefix}fibonacci
+│${setv} ${prefix}primaantara
 │${setv} ${prefix}base64
 │${setv} ${prefix}quiz
 │${setv} ${prefix}team <n>
@@ -8153,6 +8178,40 @@ Select Bot Settings:
 					const found = cariSurat(q);
 					if (!found) return m.reply("Templat tidak ditemukan.\n\nKetik .surat untuk daftar.");
 					return m.reply(`*${found.nama}*\n\n${found.isi}\n\n_Templat contoh, sesuaikan dengan kebutuhanmu._`);
+				}
+				break;
+			case "selisihhari":
+				{
+					const arg = (text || "").trim();
+					const mt = arg.match(/^(\d{4}-\d{2}-\d{2})\s+(\d{4}-\d{2}-\d{2})$/);
+					if (!mt) return m.reply("Contoh: .selisihhari 2026-01-01 2026-12-31\nFormat: YYYY-MM-DD YYYY-MM-DD");
+					const selisih = selisihHari(mt[1], mt[2]);
+					if (selisih === null) return m.reply("Tanggal tidak valid.");
+					const hari = Math.abs(selisih);
+					const keterangan = selisih < 0 ? "tanggal kedua sebelum tanggal pertama" : selisih > 0 ? "tanggal kedua setelah tanggal pertama" : "kedua tanggal sama";
+					return m.reply(`*Selisih Tanggal*\n\n${mt[1]} ke ${mt[2]}: *${hari.toLocaleString("id-ID")} hari* (${keterangan})`);
+				}
+				break;
+			case "fibonacci":
+				{
+					const arg = (text || "").trim();
+					if (arg && !/^\d{1,3}$/.test(arg)) return m.reply("Contoh: .fibonacci 10 (1 sampai 100 suku)");
+					const n = arg ? parseInt(arg, 10) : 10;
+					const deret = fibonacci(n);
+					if (!deret) return m.reply("Jumlah suku 1 sampai 100.");
+					return m.reply(`*Deret Fibonacci (${n} suku)*\n\n${deret.map(formatBigInt).join(", ")}`);
+				}
+				break;
+			case "primaantara":
+				{
+					const arg = (text || "").trim();
+					const mt = arg.match(/^(\d+)\s+(\d+)$/);
+					if (!mt) return m.reply("Contoh: .primaantara 1 100\nRentang maksimal 10.000 bilangan.");
+					const hasil = primaAntara(Number(mt[1]), Number(mt[2]));
+					if (hasil === null) return m.reply("Rentang tidak valid. Maksimal 10.000 bilangan, batas atas 10^12.");
+					if (!hasil.length) return m.reply("Tidak ada bilangan prima dalam rentang itu.");
+					const tampil = hasil.length > 50 ? hasil.slice(0, 50).join(", ") + `, ... (${hasil.length} prima)` : hasil.join(", ");
+					return m.reply(`*Prima antara ${mt[1]} dan ${mt[2]}* (${hasil.length})\n\n${tampil}`);
 				}
 				break;
 			case "statistikdata":
