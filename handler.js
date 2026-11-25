@@ -39,6 +39,7 @@ import { HARI_BERSEJARAH, cariHari, hariHariIni } from "./lib/data-hari-bersejar
 import { KOTA_WAKTU, cariKota, waktuDi } from "./lib/data-waktu.js";
 import { SURAT, cariSurat } from "./lib/data-surat.js";
 import { kataBilangan, ucapanWaktu, hurufKe, angkaKeHuruf } from "./lib/bilangan.js";
+import { formatTanggal, formatWaktu, potongTeks, hitungKata } from "./lib/teks.js";
 import { FIRST_SETUP_MARKER, firstSetupStates, firstSetupStepText, sendFirstSetupIntro } from './src/setup-wizard.js';
 import { ytMp4, ytMp3, ytMp4Stream } from "./lib/scraper.js";
 import { GroupUpdate, LoadDataBase, extractNativeFlowResponseId } from "./src/message.js";
@@ -6409,6 +6410,9 @@ Select Bot Settings:
 │${setv} ${prefix}terbilang2
 │${setv} ${prefix}hurufke
 │${setv} ${prefix}sapaan
+│${setv} ${prefix}format
+│${setv} ${prefix}potong
+│${setv} ${prefix}hitungteks
 │${setv} ${prefix}base64
 ╰─┬────❍
 ╭─┴❍「 *FUN* 」❍
@@ -6849,6 +6853,9 @@ Select Bot Settings:
 │${setv} ${prefix}terbilang2
 │${setv} ${prefix}hurufke
 │${setv} ${prefix}sapaan
+│${setv} ${prefix}format
+│${setv} ${prefix}potong
+│${setv} ${prefix}hitungteks
 │${setv} ${prefix}base64
 ╰──────❍`);
 				}
@@ -6953,6 +6960,9 @@ Select Bot Settings:
 │${setv} ${prefix}terbilang2
 │${setv} ${prefix}hurufke
 │${setv} ${prefix}sapaan
+│${setv} ${prefix}format
+│${setv} ${prefix}potong
+│${setv} ${prefix}hitungteks
 │${setv} ${prefix}base64
 │${setv} ${prefix}quiz
 │${setv} ${prefix}team <n>
@@ -8197,6 +8207,38 @@ Select Bot Settings:
 					const found = cariSurat(q);
 					if (!found) return m.reply("Templat tidak ditemukan.\n\nKetik .surat untuk daftar.");
 					return m.reply(`*${found.nama}*\n\n${found.isi}\n\n_Templat contoh, sesuaikan dengan kebutuhanmu._`);
+				}
+				break;
+			case "format":
+			case "formattanggal":
+				{
+					const arg = (text || "").trim();
+					const mt = arg.match(/^(\d{4}-\d{2}-\d{2})(?:\s+([\d:.]+))?(?:\s+([A-Za-z_/]+))?$/);
+					if (!mt) return m.reply("Contoh:\n.format 2026-11-26\n.format 2026-11-26 10:30 UTC\n.format 2026-11-26 10:30 Asia/Tokyo");
+					const tanggal = mt[2] ? `${mt[1]}T${mt[2].replace(".", ":")}${/Z|[+-]\d{2}:?\d{2}$/.test(mt[2]) ? "" : "Z"}` : `${mt[1]}T12:00:00Z`;
+					const zona = mt[3] || global.timezone || "Asia/Jakarta";
+					const tgl = formatTanggal(tanggal, { zona, denganHari: true });
+					const jam = formatWaktu(tanggal, zona);
+					if (!tgl || !jam) return m.reply("Zona waktu atau tanggal tidak valid.");
+					return m.reply(`*${tgl}*\nJam: *${jam}* (${zona})`);
+				}
+				break;
+			case "potong":
+			case "potongteks":
+				{
+					const arg = (text || "").trim();
+					const mt = arg.match(/^(\d+)\s+([\s\S]+)$/);
+					if (!mt) return m.reply("Contoh: .potong 20 kalimat yang ingin dipotong");
+					const panjang = parseInt(mt[1], 10);
+					if (panjang < 1 || panjang > 500) return m.reply("Panjang 1 sampai 500 karakter.");
+					return m.reply(potongTeks(mt[2], panjang));
+				}
+				break;
+			case "hitungteks":
+				{
+					if (!text) return m.reply("Contoh: .hitungteks halo dunia apa kabar");
+					const h = hitungKata(text);
+					return m.reply(`*Statistik Teks*\n\nKata: ${h.kata}\nKarakter (dengan spasi): ${h.karakter}\nKarakter (tanpa spasi): ${h.karakterTanpaSpasi}\nKalimat: ${h.kalimat}`);
 				}
 				break;
 			case "terbilang2":

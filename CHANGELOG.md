@@ -1,5 +1,23 @@
 # Changelog
 
+## v3.22.0
+
+Rynn v3.22.0 menambahkan modul utilitas teks dan tiga perintah baru, setelah audit lanjutan atas string dan format data.
+
+### Fitur baru
+
+- `.format` (alias `.formattanggal`) - format tanggal dan waktu untuk zona tertentu (`Asia/Tokyo`, `UTC`, dan lain-lain), memakai `global.timezone` sebagai default.
+- `.potong` (alias `.potongteks`) - memotong teks sampai panjang tertentu dengan elipsis.
+- `.hitungteks` - statistik kata, karakter dengan/tanpa spasi, dan kalimat.
+- Ketiga perintah tampil di `.allmenu` dan `.edukasimenu`.
+
+### Audit
+
+- Memindai seluruh file `.js` untuk placeholder dan artefak teks: semua kecocokan `undefined` adalah kode JavaScript yang sah (pengecekan nilai), bukan error.
+- Modul baru `lib/teks.js` dengan 5 tes unit: saat pengembangan satu expectation test diperbaiki setelah hasil aktual terbukti benar (karakter tanpa spasi).
+- Audit menu terhadap `case`: 640 case, 332 perintah menu unik, semua punya implementasi.
+- Total tes sekarang **42 lolos**. `npm run check` lolos (109 file). CI hijau sebelum tag `v3.22.0`.
+
 ## v3.21.0
 
 Rynn v3.21.0 menambahkan modul bilangan Bahasa Indonesia dan tiga perintah baru, setelah audit data lanjutan.

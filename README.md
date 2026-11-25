@@ -73,7 +73,7 @@ Berbasis Hitori Bot karya [Nazedev](https://github.com/nazedev/hitori), yang dir
 | Utilitas | **Waktu & sejarah** | `.hariini`, `.waktu` (12 kota), `.haribersejarah` (13 tanggal bersejarah Indonesia) |
 | Utilitas | **Templat surat** | `.surat` (lamaran kerja, izin, undangan rapat, kuasa, surat resmi) |
 | Utilitas | **Hari ini** | `.hariini` (tanggal, waktu, minggu ke-n) di zona `global.timezone` |
-| Utilitas | **Kata & teks** | `.palindrom`, `.anagram`, `.balik`, `.hitungkata`, `.uuid`, `.acakkata` (acak huruf kata) |
+| Utilitas | **Kata & teks** | `.palindrom`, `.anagram`, `.balik`, `.uuid`, `.acakkata`, `.format` (format tanggal + zona), `.potong`, `.hitungteks` |
 | Utilitas | **Hiburan** | `.koin` (lempar koin), `.dadu`, `.angkaacak`, `.pilih` |
 | Utilitas | **Lirik lagu** | `.lirik <artis> - <judul>` lewat Naze API |
 | Game | **Kuis & tim** | `.quiz` (kuis pengetahuan umum, hadiah 50 uang), `.team` (bagi tim acak), `.pair` (pasangan acak di grup) |
@@ -523,6 +523,9 @@ Semua perintah memakai prefix default `.` `!` atau `+` (atur di `settings.js`).
 | `.terbilang2 1234567` | Bilangan menjadi kata Indonesia (0-999 miliar) |
 | `.hurufke 1` / `.hurufke z` | Konversi nomor dan huruf alfabet |
 | `.sapaan 8` | Ucapan waktu (pagi/siang/sore/malam) |
+| `.format 2026-11-26 10:30 Asia/Tokyo` | Format tanggal dan waktu per zona |
+| `.potong 20 teks yang panjang` | Potong teks dengan elipsis |
+| `.hitungteks halo dunia` | Statistik kata, karakter, dan kalimat |
 | `.base64` | Alias `.b64` (encode/decode base64) |
 | `.author` | Info pembuat Rynn |
 | `.repo` | Repositori dan rilis Rynn |
