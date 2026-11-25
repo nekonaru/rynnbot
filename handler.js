@@ -38,6 +38,7 @@ import { SUNGAI } from "./lib/data-sungai.js";
 import { HARI_BERSEJARAH, cariHari, hariHariIni } from "./lib/data-hari-bersejarah.js";
 import { KOTA_WAKTU, cariKota, waktuDi } from "./lib/data-waktu.js";
 import { SURAT, cariSurat } from "./lib/data-surat.js";
+import { kataBilangan, ucapanWaktu, hurufKe, angkaKeHuruf } from "./lib/bilangan.js";
 import { FIRST_SETUP_MARKER, firstSetupStates, firstSetupStepText, sendFirstSetupIntro } from './src/setup-wizard.js';
 import { ytMp4, ytMp3, ytMp4Stream } from "./lib/scraper.js";
 import { GroupUpdate, LoadDataBase, extractNativeFlowResponseId } from "./src/message.js";
@@ -6405,6 +6406,9 @@ Select Bot Settings:
 │${setv} ${prefix}statistik
 │${setv} ${prefix}pecahan
 │${setv} ${prefix}progress
+│${setv} ${prefix}terbilang2
+│${setv} ${prefix}hurufke
+│${setv} ${prefix}sapaan
 │${setv} ${prefix}base64
 ╰─┬────❍
 ╭─┴❍「 *FUN* 」❍
@@ -6842,6 +6846,9 @@ Select Bot Settings:
 │${setv} ${prefix}statistik
 │${setv} ${prefix}pecahan
 │${setv} ${prefix}progress
+│${setv} ${prefix}terbilang2
+│${setv} ${prefix}hurufke
+│${setv} ${prefix}sapaan
 │${setv} ${prefix}base64
 ╰──────❍`);
 				}
@@ -6943,6 +6950,9 @@ Select Bot Settings:
 │${setv} ${prefix}statistik
 │${setv} ${prefix}pecahan
 │${setv} ${prefix}progress
+│${setv} ${prefix}terbilang2
+│${setv} ${prefix}hurufke
+│${setv} ${prefix}sapaan
 │${setv} ${prefix}base64
 │${setv} ${prefix}quiz
 │${setv} ${prefix}team <n>
@@ -8187,6 +8197,39 @@ Select Bot Settings:
 					const found = cariSurat(q);
 					if (!found) return m.reply("Templat tidak ditemukan.\n\nKetik .surat untuk daftar.");
 					return m.reply(`*${found.nama}*\n\n${found.isi}\n\n_Templat contoh, sesuaikan dengan kebutuhanmu._`);
+				}
+				break;
+			case "terbilang2":
+			case "katabilangan":
+				{
+					const arg = (text || "").trim().replace(/\./g, "").replace(",", ".");
+					if (!arg || !Number.isFinite(Number(arg))) return m.reply("Contoh: .terbilang2 1234567\nBilangan 0 sampai 999.999.999.999.");
+					const hasil = kataBilangan(Number(arg));
+					if (!hasil) return m.reply("Bilangan 0 sampai 999.999.999.999.");
+					return m.reply(`*${arg}* = ${hasil}`);
+				}
+				break;
+			case "hurufke":
+				{
+					const arg = (text || "").trim();
+					if (arg && /^\d+$/.test(arg)) {
+						const huruf = hurufKe(parseInt(arg, 10));
+						return m.reply(huruf ? `*${arg}* = *${huruf}*` : "Nomor harus 1 sampai 26.");
+					}
+					if (arg && /^[a-z]$/i.test(arg)) {
+						const nomor = angkaKeHuruf(arg);
+						return m.reply(`*${arg.toUpperCase()}* = *${nomor}*`);
+					}
+					return m.reply("Contoh: .hurufke 1\n.hurufke z");
+				}
+				break;
+			case "sapaan":
+				{
+					const arg = (text || "").trim();
+					const jam = arg ? parseInt(arg, 10) : new Date().getHours();
+					const sapa = ucapanWaktu(jam);
+					if (!sapa) return m.reply("Jam harus 0 sampai 23. Contoh: .sapaan 8");
+					return m.reply(`${sapa}${arg ? ` (jam ${jam}:00)` : "!"}`);
 				}
 				break;
 			case "statistik":

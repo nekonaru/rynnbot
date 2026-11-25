@@ -68,7 +68,7 @@ Berbasis Hitori Bot karya [Nazedev](https://github.com/nazedev/hitori), yang dir
 | Menu | **Submenu per kategori** | `.botmenu`, `.groupmenu` (`.grupmenu`), `.searchmenu`, `.downloadmenu`, `.quotesmenu`, `.toolsmenu`, `.aimenu`, `.randommenu`, `.stalkermenu`, `.animemenu`, `.gamemenu`, `.funmenu`, `.edukasimenu`, `.ownermenu`, `.authormenu` |
 | Utilitas | **Matematika & utilitas** | `.kpk`, `.fpb`, `.faktor` (faktorisasi prima), `.prima`, `.diskon`, `.cicilan` (simulasi anuitas), `.bmi`, `.jamtidur` (siklus 90 menit) |
 | Utilitas | **Dunia & sains** | `.ibukota` (~180 negara), `.negara` (ibukota/mata uang/benua/populasi), `.unsur` (tabel periodik lengkap, 118 unsur), `.planet` (21 planet & exoplanet) |
-| Utilitas | **Konversi & angka** | `.umur`, `.terbilang`, `.roman`, `.konversi` (panjang/berat/suhu/luas/volume/kecepatan/energi/tekanan/data/waktu), `.morse`, `.binary`, `.hex`, `.rot13`, `.akar` (akar kuadrat), `.faktorial`, `.fibonacci`, `.primaantara`, `.statistik`, `.pecahan`, `.progress`, `.selisihhari` |
+| Utilitas | **Konversi & angka** | `.umur`, `.terbilang`, `.roman`, `.konversi` (panjang/berat/suhu/luas/volume/kecepatan/energi/tekanan/data/waktu), `.morse`, `.binary`, `.hex`, `.rot13`, `.akar`, `.faktorial`, `.fibonacci`, `.primaantara`, `.statistik`, `.pecahan`, `.progress`, `.selisihhari`, `.terbilang2` (0-999 miliar), `.hurufke`, `.sapaan` |
 | Utilitas | **Bahasa & geografi** | `.bahasa` (7 bahasa daerah Nusantara), `.danau` (12 danau), `.gunung` (12 gunung), `.pulau` (10 pulau), `.sungai` (10 sungai) |
 | Utilitas | **Waktu & sejarah** | `.hariini`, `.waktu` (12 kota), `.haribersejarah` (13 tanggal bersejarah Indonesia) |
 | Utilitas | **Templat surat** | `.surat` (lamaran kerja, izin, undangan rapat, kuasa, surat resmi) |
@@ -520,6 +520,9 @@ Semua perintah memakai prefix default `.` `!` atau `+` (atur di `settings.js`).
 | `.statistik 4 7 2 9` | Statistik dasar (total, rata-rata, median, min, maks) |
 | `.pecahan 12/18` | Menyederhanakan pecahan |
 | `.progress 7 10` | Bilah progres dan persentase |
+| `.terbilang2 1234567` | Bilangan menjadi kata Indonesia (0-999 miliar) |
+| `.hurufke 1` / `.hurufke z` | Konversi nomor dan huruf alfabet |
+| `.sapaan 8` | Ucapan waktu (pagi/siang/sore/malam) |
 | `.base64` | Alias `.b64` (encode/decode base64) |
 | `.author` | Info pembuat Rynn |
 | `.repo` | Repositori dan rilis Rynn |

@@ -1,5 +1,23 @@
 # Changelog
 
+## v3.21.0
+
+Rynn v3.21.0 menambahkan modul bilangan Bahasa Indonesia dan tiga perintah baru, setelah audit data lanjutan.
+
+### Fitur baru
+
+- `.terbilang2` (alias `.katabilangan`) - mengubah bilangan 0 sampai 999.999.999.999 menjadi kata Bahasa Indonesia, termasuk "seribu" dan "seratus satu".
+- `.hurufke` - konversi dua arah antara nomor 1-26 dan huruf A-Z.
+- `.sapaan [jam]` - ucapan waktu (Selamat pagi/siang/sore/malam); tanpa argumen memakai jam lokal.
+- Ketiga perintah tampil di `.allmenu` dan `.edukasimenu`.
+
+### Audit
+
+- Memeriksa 181 negara di `data-dunia.js`: semua punya ibukota; nama Tiongkok memakai kunci `tiongkok` (bukan `china`), tidak ada yang hilang.
+- Memeriksa 38 provinsi: semua field terisi.
+- Menemukan dan memperbaiki dua bug pada modul `lib/bilangan.js` saat pengembangan: ejaan "seratus satu"/"seribu" dan offset konversi huruf; keduanya tertangkap oleh tes unit sebelum rilis.
+- 4 tes unit baru; total sekarang **37 tes lolos**. `npm run check` lolos (106 file). CI hijau sebelum tag `v3.21.0`.
+
 ## v3.20.0
 
 Rynn v3.20.0 menambahkan tiga perintah hitung baru, memperbaiki path thumbnail saat bot dijalankan dari direktori lain, dan menyelesaikan audit lanjutan.
