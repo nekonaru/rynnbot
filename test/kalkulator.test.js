@@ -21,6 +21,9 @@ import {
 	selisihHari,
 	fibonacci,
 	primaAntara,
+	statistik,
+	sederhanakanPecahan,
+	progres,
 } from "../lib/kalkulator.js";
 
 test("parseBulat mevalidasi rentang", () => {
@@ -146,4 +149,22 @@ test("primaAntara", () => {
 	assert.deepEqual(primaAntara(1, 10), [2, 3, 5, 7]);
 	assert.deepEqual(primaAntara(14, 16), []);
 	assert.equal(primaAntara(1, 20000), null);
+});
+
+test("statistik dasar", () => {
+	assert.deepEqual(statistik([4, 7, 2, 9, 3]), {
+		jumlah: 5, total: 25, rataRata: 5, median: 4, min: 2, max: 9,
+	});
+	assert.deepEqual(statistik([1, 3]), { jumlah: 2, total: 4, rataRata: 2, median: 2, min: 1, max: 3 });
+	assert.equal(statistik([]), null);
+});
+
+test("sederhanakanPecahan", () => {
+	assert.deepEqual(sederhanakanPecahan(12, 18), { pembilang: 2, penyebut: 3, desimal: 12 / 18 });
+	assert.equal(sederhanakanPecahan(1, 0), null);
+});
+
+test("progres", () => {
+	assert.deepEqual(progres(7, 10), { persen: 70, bar: "██████████████░░░░░░" });
+	assert.equal(progres(11, 10), null);
 });

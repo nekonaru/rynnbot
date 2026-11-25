@@ -67,9 +67,12 @@ global.database = {
 global.listv = ["•", "◦", "▸", "◆", "✦", "»", "›", "·", "+", "=", "*", "°", "○", "●", "◉", "◈", "▪", "➤", "❖", "∙"];
 
 // Thumbnail bersifat opsional: kalau src/media/rynn.png tidak ada, bot tetap jalan.
+// Path relatif terhadap direktori proyek (bukan cwd), agar bot tetap bisa
+// dijalankan lewat "node /path/rynnbot/index.js" dari folder mana pun.
 let thumbnail = null;
+const thumbnailPath = path.join(__dirname, "src", "media", "rynn.png");
 try {
-	thumbnail = fs.readFileSync("./src/media/rynn.png");
+	thumbnail = fs.readFileSync(thumbnailPath);
 } catch {
 	console.warn("[WARNING] src/media/rynn.png not found. Quoted messages will be sent without a thumbnail image.");
 }

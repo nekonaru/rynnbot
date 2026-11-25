@@ -1,5 +1,27 @@
 # Changelog
 
+## v3.20.0
+
+Rynn v3.20.0 menambahkan tiga perintah hitung baru, memperbaiki path thumbnail saat bot dijalankan dari direktori lain, dan menyelesaikan audit lanjutan.
+
+### Fitur baru
+
+- `.statistik <bilangan...>` - statistik dasar: jumlah, total, rata-rata, median, minimum, maksimum (maksimal 1000 bilangan).
+- `.pecahan` (alias `.sederhanakan`) - menyederhanakan pecahan lewat FPB, menampilkan bentuk sederhana dan desimal.
+- `.progress` (alias `.progres`) - bilah progres 20 karakter dan persentase dari pasangan selesai/total.
+- Ketiga perintah tampil di `.allmenu` dan `.edukasimenu`.
+
+### Perbaikan
+
+- `settings.js` - path `src/media/rynn.png` sekarang relatif terhadap direktori proyek (`__dirname`), bukan terhadap cwd. Sebelumnya thumbnail gagal dimuat bila bot dijalankan dari folder lain.
+
+### Audit
+
+- Validasi seluruh 249 soal: struktur 4 opsi, indeks jawaban 0-3, pembahasan, dan jawaban tidak kosong. Semua lolos.
+- Meninjau jalur berkas relatif di handler.js dan settings.js; perbaikan path thumbnail diterapkan.
+- Audit menu terhadap `case`: semua perintah di menu punya implementasi (631 case, 326 perintah menu unik).
+- 3 tes unit baru: total sekarang 33 tes, semua lolos. `npm run check` lolos (105 file).
+
 ## v3.19.0
 
 Rynn v3.19.0 menambahkan optimisasi memori untuk sesi game dan tiga perintah matematika/tanggal baru.

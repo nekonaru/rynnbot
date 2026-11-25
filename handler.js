@@ -29,7 +29,7 @@ import { NEGARA, UNSUR, PLANET } from "./lib/data-dunia.js";
 import { HANGMAN_KATA } from "./lib/data-game.js";
 import { MBTI_PERTANYAAN, MBTI_TIPES, hitungMBTI } from "./lib/mbti.js";
 import { angkaKeKata, toRoman, fromRoman, rot13, morseEncode, morseDecode, binaryEncode, binaryDecode, hexEncode, hexDecode, ZODIAC, zodiacFor, convertUnit, cap } from "./lib/util-lokal.js";
-import { parseBulat, fpb, kpk, faktorPrima, isPrima, pembagiTerkecil, isPalindrom, isAnagram, formatRupiah, hitungDiskon, cicilanAnuitas, hitungBmi, siklusTidur, uuidV4, akar, faktorial, formatBigInt, isoWeek, selisihHari, fibonacci, primaAntara } from "./lib/kalkulator.js";
+import { parseBulat, fpb, kpk, faktorPrima, isPrima, pembagiTerkecil, isPalindrom, isAnagram, formatRupiah, hitungDiskon, cicilanAnuitas, hitungBmi, siklusTidur, uuidV4, akar, faktorial, formatBigInt, isoWeek, selisihHari, fibonacci, primaAntara, statistik, sederhanakanPecahan, progres } from "./lib/kalkulator.js";
 import { BAHASA, cariBahasa } from "./lib/data-bahasa-daerah.js";
 import { DANAU } from "./lib/data-danau.js";
 import { GUNUNG } from "./lib/data-gunung.js";
@@ -6402,6 +6402,9 @@ Select Bot Settings:
 │${setv} ${prefix}selisihhari
 │${setv} ${prefix}fibonacci
 │${setv} ${prefix}primaantara
+│${setv} ${prefix}statistik
+│${setv} ${prefix}pecahan
+│${setv} ${prefix}progress
 │${setv} ${prefix}base64
 ╰─┬────❍
 ╭─┴❍「 *FUN* 」❍
@@ -6836,6 +6839,9 @@ Select Bot Settings:
 │${setv} ${prefix}selisihhari
 │${setv} ${prefix}fibonacci
 │${setv} ${prefix}primaantara
+│${setv} ${prefix}statistik
+│${setv} ${prefix}pecahan
+│${setv} ${prefix}progress
 │${setv} ${prefix}base64
 ╰──────❍`);
 				}
@@ -6934,6 +6940,9 @@ Select Bot Settings:
 │${setv} ${prefix}selisihhari
 │${setv} ${prefix}fibonacci
 │${setv} ${prefix}primaantara
+│${setv} ${prefix}statistik
+│${setv} ${prefix}pecahan
+│${setv} ${prefix}progress
 │${setv} ${prefix}base64
 │${setv} ${prefix}quiz
 │${setv} ${prefix}team <n>
@@ -8178,6 +8187,40 @@ Select Bot Settings:
 					const found = cariSurat(q);
 					if (!found) return m.reply("Templat tidak ditemukan.\n\nKetik .surat untuk daftar.");
 					return m.reply(`*${found.nama}*\n\n${found.isi}\n\n_Templat contoh, sesuaikan dengan kebutuhanmu._`);
+				}
+				break;
+			case "statistik":
+				{
+					const arg = (text || "").trim();
+					const angka = arg.split(/[\s,]+/).filter(Boolean).map((s) => Number(s.replace(",", ".")));
+					const hasil = statistik(angka);
+					if (!hasil) return m.reply("Contoh: .statistik 4 7 2 9 3\nMasukkan sampai 1000 bilangan.");
+					const r = (n) => Number(n.toFixed(4)).toLocaleString("id-ID");
+					return m.reply(`*Statistik Data*\n\nJumlah: ${hasil.jumlah}\nTotal: ${r(hasil.total)}\nRata-rata: ${r(hasil.rataRata)}\nMedian: ${r(hasil.median)}\nMinimum: ${r(hasil.min)}\nMaksimum: ${r(hasil.max)}`);
+				}
+				break;
+			case "pecahan":
+			case "sederhanakan":
+				{
+					const arg = (text || "").trim();
+					const mt = arg.match(/^(-?\d+)\s*[/:]\s*(-?\d+)$/);
+					if (!mt) return m.reply("Contoh: .pecahan 12/18 atau .pecahan 12 18");
+					const hasil = sederhanakanPecahan(Number(mt[1]), Number(mt[2]));
+					if (!hasil) return m.reply("Penyebut tidak boleh nol.");
+					return m.reply(`*Pecahan*\n\n${mt[1]}/${mt[2]} = *${hasil.pembilang}/${hasil.penyebut}*\nDesimal: ${Number(hasil.desimal.toFixed(6))}`);
+				}
+				break;
+			case "progress":
+			case "progres":
+				{
+					const arg = (text || "").trim();
+					const mt = arg.match(/^([\d.,]+)\s+([\d.,]+)$/);
+					if (!mt) return m.reply("Contoh: .progress 7 10\nFormat: selesai total");
+					const selesai = Number(mt[1].replace(",", "."));
+					const total = Number(mt[2].replace(",", "."));
+					const hasil = progres(selesai, total);
+					if (!hasil) return m.reply("Nilai selesai harus antara 0 dan total, total harus positif.");
+					return m.reply(`*Progres*\n\n[${hasil.bar}] ${hasil.persen.toFixed(1)}%\n${selesai.toLocaleString("id-ID")} dari ${total.toLocaleString("id-ID")}`);
 				}
 				break;
 			case "selisihhari":
