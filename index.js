@@ -508,7 +508,7 @@ async function startRynnBot() {
 				console.log("Koneksi timeout, mencoba menyambung ulang...");
 				reconnect();
 			} else if (reason === DisconnectReason.badSession) {
-				console.log("Hapus sesi dan scan lagi...");
+				console.log("Sesi rusak, mencoba menyambung ulang otomatis...");
 				reconnect();
 			} else if (reason === DisconnectReason.connectionReplaced) {
 				console.log("Tutup sesi yang sedang berjalan dulu...");

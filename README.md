@@ -74,6 +74,7 @@ Berbasis Hitori Bot karya [Nazedev](https://github.com/nazedev/hitori), yang dir
 | Utilitas | **Templat surat** | `.surat` (lamaran kerja, izin, undangan rapat, kuasa, surat resmi) |
 | Utilitas | **Hari ini** | `.hariini` (tanggal, waktu, minggu ke-n) di zona `global.timezone` |
 | Utilitas | **Kata & teks** | `.palindrom`, `.anagram`, `.balik`, `.uuid`, `.acakkata`, `.format` (format tanggal + zona), `.potong`, `.hitungteks` |
+| Utilitas | **Pengembang** | `.hash` (md5/sha1/sha256/sha512), `.urlcode` (encode/decode URL), `.json` (validasi & format JSON) |
 | Utilitas | **Hiburan** | `.koin` (lempar koin), `.dadu`, `.angkaacak`, `.pilih` |
 | Utilitas | **Lirik lagu** | `.lirik <artis> - <judul>` lewat Naze API |
 | Game | **Kuis & tim** | `.quiz` (kuis pengetahuan umum, hadiah 50 uang), `.team` (bagi tim acak), `.pair` (pasangan acak di grup) |
@@ -526,6 +527,9 @@ Semua perintah memakai prefix default `.` `!` atau `+` (atur di `settings.js`).
 | `.format 2026-11-26 10:30 Asia/Tokyo` | Format tanggal dan waktu per zona |
 | `.potong 20 teks yang panjang` | Potong teks dengan elipsis |
 | `.hitungteks halo dunia` | Statistik kata, karakter, dan kalimat |
+| `.hash sha256 halo` | Hash teks (md5, sha1, sha256, sha512) |
+| `.urlcode encode a b&c=d` | Encode/decode URL |
+| `.json rapi {"a":1}` | Validasi dan format JSON |
 | `.base64` | Alias `.b64` (encode/decode base64) |
 | `.author` | Info pembuat Rynn |
 | `.repo` | Repositori dan rilis Rynn |

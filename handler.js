@@ -40,6 +40,7 @@ import { KOTA_WAKTU, cariKota, waktuDi } from "./lib/data-waktu.js";
 import { SURAT, cariSurat } from "./lib/data-surat.js";
 import { kataBilangan, ucapanWaktu, hurufKe, angkaKeHuruf } from "./lib/bilangan.js";
 import { formatTanggal, formatWaktu, potongTeks, hitungKata } from "./lib/teks.js";
+import { hashTeks, urlEncode, urlDecode, validasiJson } from "./lib/devutils.js";
 import { FIRST_SETUP_MARKER, firstSetupStates, firstSetupStepText, sendFirstSetupIntro } from './src/setup-wizard.js';
 import { ytMp4, ytMp3, ytMp4Stream } from "./lib/scraper.js";
 import { GroupUpdate, LoadDataBase, extractNativeFlowResponseId } from "./src/message.js";
@@ -6413,6 +6414,9 @@ Select Bot Settings:
 │${setv} ${prefix}format
 │${setv} ${prefix}potong
 │${setv} ${prefix}hitungteks
+│${setv} ${prefix}hash
+│${setv} ${prefix}urlcode
+│${setv} ${prefix}json
 │${setv} ${prefix}base64
 ╰─┬────❍
 ╭─┴❍「 *FUN* 」❍
@@ -6856,6 +6860,9 @@ Select Bot Settings:
 │${setv} ${prefix}format
 │${setv} ${prefix}potong
 │${setv} ${prefix}hitungteks
+│${setv} ${prefix}hash
+│${setv} ${prefix}urlcode
+│${setv} ${prefix}json
 │${setv} ${prefix}base64
 ╰──────❍`);
 				}
@@ -6963,6 +6970,9 @@ Select Bot Settings:
 │${setv} ${prefix}format
 │${setv} ${prefix}potong
 │${setv} ${prefix}hitungteks
+│${setv} ${prefix}hash
+│${setv} ${prefix}urlcode
+│${setv} ${prefix}json
 │${setv} ${prefix}base64
 │${setv} ${prefix}quiz
 │${setv} ${prefix}team <n>
@@ -8207,6 +8217,43 @@ Select Bot Settings:
 					const found = cariSurat(q);
 					if (!found) return m.reply("Templat tidak ditemukan.\n\nKetik .surat untuk daftar.");
 					return m.reply(`*${found.nama}*\n\n${found.isi}\n\n_Templat contoh, sesuaikan dengan kebutuhanmu._`);
+				}
+				break;
+			case "hash":
+				{
+					const arg = (text || "").trim();
+					const mt = arg.match(/^(sha256|sha512|sha1|md5)?\s*([\s\S]*)$/i);
+					if (!mt || !mt[2].trim()) return m.reply("Contoh:\n.hash halo\n.hash sha512 halo\nAlgoritma: md5, sha1, sha256, sha512");
+					const hasil = hashTeks(mt[1] || "sha256", mt[2].trim());
+					if (!hasil) return m.reply("Algoritma tidak didukung atau teks terlalu panjang.");
+					return m.reply(`*Hash ${(mt[1] || "sha256").toLowerCase()}*\n\n\`${hasil}\``);
+				}
+				break;
+			case "urlcode":
+				{
+					const arg = (text || "").trim();
+					const mt = arg.match(/^(encode|decode)\s+([\s\S]+)$/i);
+					if (!mt) return m.reply("Contoh:\n.urlcode encode a b&c=d\n.urlcode decode a%20b%26c%3Dd");
+					const hasil = mt[1].toLowerCase() === "encode" ? urlEncode(mt[2]) : urlDecode(mt[2]);
+					if (hasil === null) return m.reply("Input tidak valid atau terlalu panjang.");
+					return m.reply(`*Hasil ${mt[1].toLowerCase()}:*\n\n${hasil}`);
+				}
+				break;
+			case "json":
+			case "cekjson":
+				{
+					const arg = (text || "").trim();
+					if (!arg) return m.reply("Contoh: .json {\"a\":1}\n.json rapi {\"a\":1}");
+					let rapi = false;
+					let isi = arg;
+					if (/^rapi\s+/i.test(arg)) {
+						rapi = true;
+						isi = arg.replace(/^rapi\s+/i, "");
+					}
+					const hasil = validasiJson(isi, { rapi });
+					if (!hasil.ok) return m.reply(`JSON tidak valid:\n${hasil.alasan}`);
+					if (rapi) return m.reply(`*JSON Rapi*\n\n\`\`\`json\n${hasil.hasil}\n\`\`\``);
+					return m.reply(`*JSON valid* (${hasil.tipe}).\n\nKetik .json rapi <json> untuk merapikannya.`);
 				}
 				break;
 			case "format":

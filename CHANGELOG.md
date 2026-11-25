@@ -1,5 +1,27 @@
 # Changelog
 
+## v3.23.0
+
+Rynn v3.23.0 menambahkan tiga utilitas pengembang dan memperbaiki log reconnect yang menyesatkan.
+
+### Fitur baru
+
+- `.hash [algoritma] <teks>` - hash lokal md5, sha1, sha256 (default), atau sha512; tanpa jaringan dan tanpa penyimpanan input.
+- `.urlcode encode|decode <teks>` - encode/decode URL lokal.
+- `.json <json>` (alias `.cekjson`) - validasi JSON; `.json rapi <json>` menampilkan hasil format indentation.
+- Ketiga perintah tampil di `.allmenu` dan `.edukasimenu`.
+
+### Perbaikan
+
+- `index.js` - log saat `badSession` tidak lagi mengatakan "Hapus sesi dan scan lagi" (kode hanya melakukan reconnect otomatis). Perilaku reconnect tidak diubah untuk menghindari penghapusan sesi yang berisiko.
+
+### Audit
+
+- Meninjau jalur startup dan reconnect di `index.js`: DNS kustom, cleanup temp, state DB/store, pairing code, reconnect dengan backoff, pengingat, dan GC. Tidak ditemukan perubahan yang diperlukan selain pesan log di atas.
+- Modul baru `lib/devutils.js` dengan 3 tes unit (total 45 tes lolos).
+- Audit menu terhadap `case`: 644 case, 335 perintah menu unik, semua punya implementasi.
+- `npm run check` lolos (110 file). CI hijau sebelum tag `v3.23.0`.
+
 ## v3.22.0
 
 Rynn v3.22.0 menambahkan modul utilitas teks dan tiga perintah baru, setelah audit lanjutan atas string dan format data.
