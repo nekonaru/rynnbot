@@ -6194,6 +6194,7 @@ Select Bot Settings:
 │${setv} ${prefix}kurs
 │${setv} ${prefix}hariini
 │${setv} ${prefix}waktu
+│${setv} ${prefix}ekonomi
 │${setv} ${prefix}stats
 │${setv} ${prefix}menfes (62xxx|fake name)
 │${setv} ${prefix}confes (62xxx|fake name)
@@ -6592,6 +6593,7 @@ Select Bot Settings:
 │${setv} ${prefix}kurs
 │${setv} ${prefix}hariini
 │${setv} ${prefix}waktu
+│${setv} ${prefix}ekonomi
 │${setv} ${prefix}stats
 │${setv} ${prefix}delcmd
 │${setv} ${prefix}listcmd
@@ -8580,6 +8582,11 @@ Select Bot Settings:
 					const hasil = progres(selesai, total);
 					if (!hasil) return m.reply("Nilai selesai harus antara 0 dan total, total harus positif.");
 					return m.reply(`*Progres*\n\n[${hasil.bar}] ${hasil.persen.toFixed(1)}%\n${selesai.toLocaleString("id-ID")} dari ${total.toLocaleString("id-ID")}`);
+				}
+				break;
+			case "ekonomi":
+				{
+					return m.reply(`*Ekonomi Rynn*\n\n• Beli limit: 1 limit = 500 uang (.buy limit <jumlah>)\n• Klaim harian: +10 limit dan +10.000 uang (.daily)\n• Transfer: .transfer limit|uang @tag jumlah\n• Kuis: +50 uang per jawaban benar (.quiz)\n• Soal SMA: +25 uang per jawaban benar (.soal)\n• Hangman: +100 uang bila menang (.hangman)\n\nSaldo: ${db.users[m.sender] ? db.users[m.sender].money.toLocaleString("id-ID") : "0"} uang, ${db.users[m.sender] ? db.users[m.sender].limit.toLocaleString("id-ID") : 0} limit`);
 				}
 				break;
 			case "selisihhari":

@@ -1,5 +1,26 @@
 # Changelog
 
+## v3.32.0
+
+Rynn v3.32.0 menutup celah ekonomi yang bisa disalahgunakan dan menambah perintah ringkasan ekonomi.
+
+### Perbaikan keamanan ekonomi
+
+- `lib/game.js` `buy`: jumlah kini harus bilangan bulat 1 sampai 9.999.999. Sebelumnya `.buy limit -100` bisa menambah uang karena jumlah negatif lolos (uang dikurangi nilai negatif).
+- `transfer`: kondisi `!args[1].length > 7` yang selalu salah diganti pemeriksaan target yang benar; jumlah divalidasi; `m.mentionedJid` yang tidak ada tidak lagi melempar; pesan kekurangan kini memakai `\n` (sebelumnya tertulis `\Uang` sehingga baris menyatu).
+- `addMoney` dan `addLimit`: menolak nilai negatif, bukan bilangan bulat, dan user yang tidak ada. Sebelumnya `parseInt("abc")` bisa menghasilkan `NaN` pada saldo.
+- `daily`: user tanpa `lastclaim` kini tetap bisa klaim; sebelumnya perhitungan menghasilkan `NaN` sehingga klaim gagal.
+
+### Fitur baru
+
+- `.ekonomi` - ringkasan harga limit (1 limit = 500 uang), klaim harian (+10 limit dan +10.000 uang), hadiah kuis (+50), soal (+25), hangman (+100), serta saldo dan limit user. Semua angka diambil dari kode yang ada.
+
+### Audit
+
+- 6 tes regresi ekonomi baru membuktikan jumlah negatif, nol, dan `abc` tidak mengubah saldo, transfer gagal aman, serta klaim harian tanpa `lastclaim` berhasil.
+- Total tes sekarang **83 lolos**. `npm run check` lolos (127 file).
+- Audit menu terhadap `case`: 660 case, 350 perintah menu unik, semua punya implementasi. CI hijau sebelum tag `v3.32.0`.
+
 ## v3.31.0
 
 Rynn v3.31.0 adalah ekspansi data terbesar: 465 entri baru ditambahkan dan dideduplikasi otomatis ke dataset inti.
