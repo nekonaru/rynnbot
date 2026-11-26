@@ -49,6 +49,10 @@ import { FAUNA, FLORA, cariFauna, cariFlora } from "./lib/data-fauna-flora.js";
 import { formatUptime, statusApiKey, laporanDiagnosa } from "./lib/diagnosa.js";
 import { keBasis, dariBasis, konversiBasis } from "./lib/basis.js";
 import { slug } from "./lib/slug.js";
+import { daftarKategori, daftarSubkategori, halamanRumus, cariRumus, rumusAcak, rumusDetail, statistikRumus, formatRumus } from "./lib/rumus/index.js";
+import { daftarCommand, daftarKategoriCommand, cariCommand, infoCommand, jumlahCase } from "./lib/command-registry.js";
+import { API_COMMANDS } from "./lib/api-commands.js";
+import { cekAkses, aturAkses, matikanPerintah, hidupkanPerintah, aturCooldown } from "./lib/access.js";
 import { FIRST_SETUP_MARKER, firstSetupStates, firstSetupStepText, sendFirstSetupIntro } from './src/setup-wizard.js';
 import { ytMp4, ytMp3, ytMp4Stream } from "./lib/scraper.js";
 import { GroupUpdate, LoadDataBase, extractNativeFlowResponseId } from "./src/message.js";
@@ -731,8 +735,9 @@ const sock = async (sock, m, store) => {
 		if (m.isBot) return;
 		if (isBan && !isCreator) return;
 
-		// Filter Set Api Key
-		if (cases.includes(command) && isCmd && command !== "setapikey") {
+		// Filter Set Api Key: hanya perintah yang benar-benar memakai API yang diblokir.
+		// Perintah lokal (.rumus, .statistik, .kalkulator, dan sebagainya) tetap jalan tanpa key.
+		if (isCmd && API_COMMANDS.has(command) && command !== "setapikey") {
 			const currentKey = global.APIKeys && global.APIs ? global.APIKeys[global.APIs.naze] : "";
 			if (!currentKey || currentKey === "YOUR_API_KEY" || !currentKey?.startsWith("nz-")) {
 				return m.reply("Apikey Naze belum di-set.\nIsi NAZE_API_KEY di file .env (lihat .env.example), atau gunakan perintah\n.setapikey key_nya\n\nAmbil key di : https://naze.dev/profile");
@@ -751,6 +756,12 @@ const sock = async (sock, m, store) => {
 			if (set.antispam && antiSpam.isFiltered(m.sender)) {
 				console.log(chalk.bgRed("[ SPAM ] : "), chalk.black(chalk.bgHex("#1CFFF7")(`From -> ${m.sender}`), chalk.bgHex("#E015FF")(` In ${m.isGroup ? m.chat : "Private Chat"}`)));
 				return m.reply("「 ❗ 」Beri Jeda 5 Detik Per Command Kak");
+			}
+
+			// Kontrol akses per perintah: role, perintah dimatikan, dan cooldown.
+			if (isCmd && command && !isCreator) {
+				const cek = cekAkses({ db, chat: m.chat, sender: m.sender, command, isCreator, isAdmin: Boolean(m.isAdmin), isPremium, isVip });
+				if (!cek.ok) return m.reply(cek.alasan);
 			}
 
 			if (command && set.didyoumean) {
@@ -6198,6 +6209,13 @@ Select Bot Settings:
 │${setv} ${prefix}ekonomi
 │${setv} ${prefix}gameinfo
 │${setv} ${prefix}panduan
+│${setv} ${prefix}streak
+│${setv} ${prefix}rankgame
+│${setv} ${prefix}cari
+│${setv} ${prefix}bantuan
+│${setv} ${prefix}kategori
+│${setv} ${prefix}menu <kategori>
+│${setv} ${prefix}statistikbot
 │${setv} ${prefix}stats
 │${setv} ${prefix}menfes (62xxx|fake name)
 │${setv} ${prefix}confes (62xxx|fake name)
@@ -6526,6 +6544,10 @@ Select Bot Settings:
 │${setv} ${prefix}kickall
 │${setv} ${prefix}update
 │${setv} ${prefix}backup
+│${setv} ${prefix}akses
+│${setv} ${prefix}matikan
+│${setv} ${prefix}hidupkan
+│${setv} ${prefix}cooldown
 │${setv} $
 │${setv} >
 │${setv} <
@@ -6600,6 +6622,13 @@ Select Bot Settings:
 │${setv} ${prefix}ekonomi
 │${setv} ${prefix}gameinfo
 │${setv} ${prefix}panduan
+│${setv} ${prefix}streak
+│${setv} ${prefix}rankgame
+│${setv} ${prefix}cari
+│${setv} ${prefix}bantuan
+│${setv} ${prefix}kategori
+│${setv} ${prefix}menu <kategori>
+│${setv} ${prefix}statistikbot
 │${setv} ${prefix}stats
 │${setv} ${prefix}delcmd
 │${setv} ${prefix}listcmd
@@ -7091,6 +7120,10 @@ Select Bot Settings:
 │${setv} ${prefix}kickall
 │${setv} ${prefix}update
 │${setv} ${prefix}backup
+│${setv} ${prefix}akses
+│${setv} ${prefix}matikan
+│${setv} ${prefix}hidupkan
+│${setv} ${prefix}cooldown
 │${setv} $
 │${setv} >
 │${setv} <
@@ -7537,33 +7570,43 @@ Select Bot Settings:
 				break;
 			case "rumus":
 				{
-					const kategori = (text || "").trim().toLowerCase();
-					const data = {
-						matematika: "*Rumus Matematika*\n\n- Luas segitiga: 1/2 x alas x tinggi\n- Keliling segitiga: a + b + c\n- Keliling lingkaran: 2 x pi x r (pi = 3,14)\n- Luas lingkaran: pi x r x r\n- Pythagoras: c2 = a2 + b2\n- Volume kubus: s x s x s\n- Luas persegi panjang: p x l\n- Keliling persegi panjang: 2 x (p + l)\n- Rata-rata: jumlah data / banyak data\n- Persentase: (bagian / keseluruhan) x 100\n- Skala: jarak peta / jarak sebenarnya\n- Perbandingan senilai: a / b = c / d",
-						fisika: "*Rumus Fisika*\n\n- Gerak lurus: s = v x t\n- Kecepatan: v = s / t\n- Percepatan: a = (v2 - v1) / t\n- Gaya: F = m x a\n- Energi kinetik: Ek = 1/2 x m x v2\n- Tekanan: P = F / A\n- Usaha: W = F x s\n- Daya: P = W / t\n- Hukum Ohm: V = I x R\n- Rangkaian seri: R total = R1 + R2 + ...\n- Rangkaian paralel: 1/R total = 1/R1 + 1/R2 + ...\n- Daya listrik: P = V x I\n- Energi listrik: W = P x t",
-						kimia: "*Rumus Kimia*\n\n- Massa jenis: rho = m / V\n- Molaritas: M = mol / volume (liter)\n- Mol: mol = massa / Mr\n- pH asam: pH = -log [H+]\n- Hukum Avogadro: V sebanding mol (pada P dan T sama)\n- Hukum kekekalan massa: massa sebelum reaksi = massa sesudah reaksi\n- Hukum gas ideal: PV = nRT\n- Pengenceran: M1 x V1 = M2 x V2\n- pOH: pOH = -log [OH-]\n- pH + pOH = 14",
-						indonesia: "*Bahasa Indonesia*\n\n- Unsur intrinsik: tema, amanat, tokoh, latar, alur, sudut pandang, gaya bahasa\n- Majas: metafora (kiasan), simile (perbandingan), hiperbola (berlebihan), personifikasi (benda dihidupkan)\n- Jenis kalimat: deklaratif (berita), interogatif (tanya), imperatif (perintah), eksklamatif (seru)\n- Paragraf: deduktif (utama di awal), induktif (utama di akhir), campuran\n- Jenis puisi: bebas, terikat\n- Unsur ekstrinsik: latar belakang penulis dan kondisi sosial",
-						statistika: "*Rumus Statistika*\n\n- Rata-rata (mean): jumlah data / banyak data\n- Median: nilai tengah data terurut (ganjil), atau rata-rata dua nilai tengah (genap)\n- Modus: nilai yang paling sering muncul\n- Jangkauan (range): nilai terbesar - nilai terkecil\n- Kuartil 1 (Q1): nilai pada 1/4 data terurut\n- Kuartil 2 (Q2): sama dengan median\n- Kuartil 3 (Q3): nilai pada 3/4 data terurut\n- Hampar (IQR): Q3 - Q1\n- Varians: rata-rata kuadrat selisih data dari mean\n- Simpangan baku: akar varians",
-						trigonometri: "*Rumus Trigonometri*\n\n- sin A = depan / miring\n- cos A = samping / miring\n- tan A = depan / samping\n- sin^2 A + cos^2 A = 1\n- tan A = sin A / cos A\n- Luas segitiga: 1/2 x a x b x sin C\n- sin (A + B) = sin A cos B + cos A sin B\n- cos (A + B) = cos A cos B - sin A sin B\n- Aturan sinus: a / sin A = b / sin B = c / sin C\n- Aturan cosinus: c2 = a2 + b2 - 2ab cos C\n- sin (A - B) = sin A cos B - cos A sin B",
-						aljabar: "*Rumus Aljabar*\n\n- Diskriminan: D = b^2 - 4ac\n- Akar persamaan kuadrat: x = (-b ± akar(D)) / 2a\n- Jumlah akar: -b / a\n- Hasil kali akar: c / a\n- Deret aritmetika: Un = a + (n-1)b ; Sn = n/2 x (2a + (n-1)b)\n- Deret geometri: Un = a x r^(n-1) ; Sn = a x (r^n - 1) / (r - 1)\n- (a + b)^2 = a^2 + 2ab + b^2\n- (a - b)^2 = a^2 - 2ab + b^2\n- Selisih kuadrat: a^2 - b^2 = (a-b)(a+b)\n- (a + b + c)^2 = a^2 + b^2 + c^2 + 2ab + 2ac + 2bc",
-						geometri: "*Rumus Geometri Lanjutan*\n\n- Volume tabung: pi x r^2 x t\n- Luas permukaan tabung: 2 x pi x r x (r + t)\n- Volume kerucut: 1/3 x pi x r^2 x t\n- Luas permukaan kerucut: pi x r x (r + s)\n- Volume bola: 4/3 x pi x r^3\n- Luas permukaan bola: 4 x pi x r^2\n- Volume limas: 1/3 x luas alas x tinggi\n- Volume prisma: luas alas x tinggi\n- Keliling persegi panjang: 2 x (p + l)\n- Luas segitiga siku-siku: 1/2 x a x t\n- Keliling lingkaran: 2 x pi x r",
-						peluang: "*Rumus Peluang*\n\n- Peluang: P(A) = n(A) / n(S)\n- Peluang komplemen: P(A') = 1 - P(A)\n- Faktorial: n! = n x (n-1) x ... x 1\n- 0! = 1\n- Permutasi: P(n, r) = n! / (n-r)!\n- Kombinasi: C(n, r) = n! / (r! x (n-r)!)\n- Permutasi siklis: (n-1)!\n- Peluang gabungan bebas: P(A dan B) = P(A) x P(B)\n- Peluang gabungan lepas: P(A atau B) = P(A) + P(B)\n- Peluang gabungan tidak lepas: P(A atau B) = P(A) + P(B) - P(A dan B)",
-						matriks: "*Rumus Matriks*\n\n- Determinan 2x2: |a b; c d| = a d - b c\n- Invers 2x2: (1/D) x |d -b; -c a|\n- Transpose: baris menjadi kolom\n- Perkalian matriks: baris ke-i kali kolom ke-j\n- Penjumlahan matriks: elemen sesuai posisi\n- Perkalian skalar: c x M = c kali setiap elemen\n- Determinan 3x3 (metode Sarrus): salin dua kolom pertama ke kanan\n- Kesamaan matriks: elemen sesuai posisi sama",
-						vektor: "*Rumus Vektor*\n\n- Panjang vektor a = (a1, a2): |a| = akar(a1^2 + a2^2)\n- Dot product: a.b = a1*b1 + a2*b2\n- Sudut antara vektor: cos theta = a.b / (|a| x |b|)\n- Vektor satuan: a / |a|\n- Penjumlahan vektor: komponen per komponen\n- Selisih vektor: a - b = (a1-b1, a2-b2)\n- Proyeksi skalar: a.b / |b|\n- Proyeksi vektor: (a.b / |b|^2) x b",
-						basis: "*Rumus Sistem Bilangan*\n\n- Biner: basis 2 (0 dan 1)\n- Oktal: basis 8 (0 sampai 7)\n- Desimal: basis 10 (0 sampai 9)\n- Heksadesimal: basis 16 (0-9, A-F)\n- Konversi desimal ke biner: bagi 2 berturut-turut, baca sisa dari bawah ke atas\n- 1011 (biner) = 1 x 8 + 0 x 4 + 1 x 2 + 1 x 1 = 11 (desimal)\n- 1A (hex) = 1 x 16 + 10 = 26 (desimal)\n- 255 (desimal) = FF (hex) = 11111111 (biner)",
-						biologi: "*Rumus Biologi*\n\n- Fotosintesis: 6 CO2 + 6 H2O -> C6H12O6 + 6 O2\n- Respirasi: C6H12O6 + 6 O2 -> 6 CO2 + 6 H2O + energi\n- Rantai makanan: produsen -> konsumen primer -> konsumen sekunder\n- Foto sintesis dipengaruhi cahaya, klorofil, dan CO2\n- Pembelahan sel: mitosis (tubuh) dan meiosis (sel kelamin)\n- Jaringan tumbuhan: epidermis, parenkim, kolenkim, sklerenkim\n- Jaringan hewan: epitel, ikat, otot, saraf",
-						termodinamika: "*Rumus Termodinamika*\n\n- Kalor: Q = m x c x delta T\n- Kalor lebur: Q = m x L\n- Pemuaian panjang: delta L = alpha x L0 x delta T\n- Usaha: W = P x delta V\n- Hukum Hooke: F = k x delta x\n- Mesin Carnot: efisiensi = 1 - T rendah / T tinggi\n- Energi dalam: delta U = Q - W",
-						kalkulus: "*Rumus Turunan & Integral*\n\n- Turunan x^n: d/dx x^n = n x x^(n-1)\n- Turunan konstanta: d/dx k = 0\n- Turunan sin x: cos x\n- Turunan cos x: -sin x\n- Turunan ln x: 1 / x\n- Turunan e^x: e^x\n- Turunan tan x: sec^2 x\n- Integral x^n: x^(n+1) / (n+1) + C (n bukan -1)\n- Integral 1/x: ln|x| + C\n- Integral e^x: e^x + C\n- Integral sin x: -cos x + C\n- Integral cos x: sin x + C"
-					};
-					if (kategori === "random") {
-						const keys2 = Object.keys(data);
-						const found2 = data[keys2[Math.floor(Math.random() * keys2.length)]];
-						return m.reply(found2);
+					const arg = (text || "").trim();
+					if (!arg || /^(list|kategori|statistik)$/i.test(arg)) {
+						const daftar = daftarKategori();
+						if (/^statistik$/i.test(arg)) {
+							const baris = daftar.map((k) => `- *${k.kategori}*: ${k.jumlah} rumus (${k.subkategori.length} subkategori)`).join("\n");
+							return m.reply(`*Statistik Rumus*\n\n${baris}\n\nTotal: ${statistikRumus().total.toLocaleString("id-ID")} rumus`);
+						}
+						const baris = daftar.map((k) => `- *${k.kategori}*: ${k.jumlah} rumus`).join("\n");
+						return m.reply(`*Kategori Rumus (${daftar.length})*\n\n${baris}\n\nContoh:\n.rumus matematika 1\n.rumus cari energi\n.rumus random fisika`);
 					}
-					if (!kategori) return m.reply("Contoh: .rumus matematika\n\nPilihan: matematika, fisika, kimia, indonesia, statistika, trigonometri, aljabar, geometri, peluang, matriks, vektor, kalkulus, basis, biologi, termodinamika");
-					const found = data[kategori];
-					if (!found) return m.reply("Kategori tidak ditemukan.\n\nPilihan: matematika, fisika, kimia, indonesia, statistika, trigonometri, aljabar, geometri, peluang, matriks, vektor, kalkulus, basis, biologi, termodinamika");
-					return m.reply(found);
+					if (/^cari\s+/i.test(arg)) {
+						const hasil = cariRumus(arg.replace(/^cari\s+/i, ""));
+						if (!hasil.length) return m.reply("Rumus tidak ditemukan.");
+						const baris = hasil.map((r) => `- *${r.nama}* [${r.id}]\n  ${r.rumus}`).join("\n");
+						return m.reply(`*Hasil Pencarian*\n\n${baris}\n\n${hasil.length} rumus ditampilkan (maksimal 20).`);
+					}
+					if (/^detail\s+/i.test(arg)) {
+						const r = rumusDetail(arg.replace(/^detail\s+/i, ""));
+						return r ? m.reply(formatRumus(r)) : m.reply("ID rumus tidak ditemukan.");
+					}
+					if (/^sub\s+/i.test(arg)) {
+						const kategori = arg.replace(/^sub\s+/i, "").toLowerCase();
+						const subs = daftarSubkategori(kategori);
+						return subs.length ? m.reply(`*Subkategori ${kategori}*\n\n${subs.map((s) => "- " + s).join("\n")}\n\nKetik .rumus <subkategori> 1`) : m.reply("Kategori tidak ditemukan.");
+					}
+					if (/^random(?:\s+(.+))?$/i.test(arg)) {
+						const kategori = (arg.match(/^random\s+(.+)$/i) || [])[1];
+						const r = rumusAcak(kategori);
+						return r ? m.reply(formatRumus(r)) : m.reply("Kategori tidak ditemukan.");
+					}
+					const mt = arg.match(/^(\S+)(?:\s+(\d+))?$/);
+					if (!mt) return m.reply("Contoh: .rumus matematika 1\n.rumus cari energi\n.rumus random fisika");
+					const halaman = halamanRumus(mt[1], mt[2] ? parseInt(mt[2], 10) : 1);
+					if (!halaman) return m.reply("Kategori atau subkategori tidak ditemukan.\nKetik .rumus untuk daftar kategori.");
+					const baris = halaman.entri.map((r, i) => `${(halaman.halaman - 1) * 12 + i + 1}. *${r.nama}*\n   ${r.rumus}\n   ${r.variabel} [${r.id}]`).join("\n");
+					const lanjut = halaman.halaman < halaman.totalHalaman ? `\nKetik .rumus ${halaman.kategori} ${halaman.halaman + 1} untuk halaman berikutnya.` : "";
+					return m.reply(`*Rumus ${halaman.kategori}*\n\n${baris}\n\nHalaman ${halaman.halaman}/${halaman.totalHalaman} dari ${halaman.total} rumus.${lanjut}`);
 				}
 				break;
 			case "hitung":
@@ -8590,6 +8633,102 @@ Select Bot Settings:
 					const hasil = progres(selesai, total);
 					if (!hasil) return m.reply("Nilai selesai harus antara 0 dan total, total harus positif.");
 					return m.reply(`*Progres*\n\n[${hasil.bar}] ${hasil.persen.toFixed(1)}%\n${selesai.toLocaleString("id-ID")} dari ${total.toLocaleString("id-ID")}`);
+				}
+				break;
+			case "akses":
+				{
+					if (!isCreator) return m.reply(global.mess.owner);
+					const mt = (text || "").trim().split(/\s+/);
+					if (mt.length !== 2 || !aturAkses(db, mt[0].toLowerCase(), mt[1].toLowerCase())) return m.reply("Contoh: .akses hitung premium\nRole: free, premium, vip, admin, owner");
+					return m.reply(`Akses .${mt[0].toLowerCase()} diubah menjadi *${mt[1].toLowerCase()}*`);
+				}
+				break;
+			case "matikan":
+			case "hidupkan":
+				{
+					if (!isCreator && !m.isAdmin) return m.reply(global.mess.admin);
+					const perintah = (text || "").trim().toLowerCase().replace(/^\./, "");
+					if (!perintah) return m.reply(`Contoh: ${prefix}${command} rumus`);
+					const aktif = command === "matikan";
+					if (aktif) matikanPerintah(db, m.chat, perintah);
+					else hidupkanPerintah(db, m.chat, perintah);
+					return m.reply(`Perintah .${perintah} ${aktif ? "dimatikan" : "dihidupkan"} ${m.isGroup ? "di grup ini" : "di chat ini"}.`);
+				}
+				break;
+			case "cooldown":
+				{
+					if (!isCreator) return m.reply(global.mess.owner);
+					const mt = (text || "").trim().split(/\s+/);
+					if (mt.length !== 2 || !aturCooldown(db, mt[0].toLowerCase(), parseInt(mt[1], 10))) return m.reply("Contoh: .cooldown rumus 5\nDetik: 0 sampai 3600");
+					return m.reply(`Cooldown .${mt[0].toLowerCase()} diatur ${mt[1]} detik.`);
+				}
+				break;
+			case "streak":
+				{
+					const user = db.users[m.sender] || {};
+					const streak = Number(user.streak) || 0;
+					const hari = streak % 7;
+					return m.reply(`*Streak Klaim Harian*\n\nBeruntun: *${streak} hari*\nBonus berikutnya pada hari ke-7.\nKlaim sekarang: .daily`);
+				}
+				break;
+			case "rankgame":
+				{
+					const hit = global.db && global.db.hit ? global.db.hit : {};
+					const game = ["slot", "casino", "samgong", "dadu", "quiz", "soal", "hangman", "tebakangka", "rampok", "begal", "cangkulan", "tictactoe"];
+					const baris = game.map((g) => `- .${g}: ${(hit[g] || 0).toLocaleString("id-ID")}x`).join("\n");
+					return m.reply(`*Peringkat Game*\n\n${baris}`);
+				}
+				break;
+			case "cari":
+				{
+					const q = (text || "").trim();
+					if (!q) return m.reply("Contoh: .cari rumus\n.cari kurs\nCari perintah dan rumus berdasarkan kata kunci.");
+					const cmd = cariCommand(q);
+					const rum = cariRumus(q, 8);
+					const bagian = [];
+					if (cmd.length) bagian.push(`*Perintah (${cmd.length})*\n${cmd.map((c) => `- .${c.command} (${c.kategori})${c.deskripsi ? ": " + c.deskripsi : ""}`).join("\n")}`);
+					if (rum.length) bagian.push(`*Rumus (${rum.length} ditampilkan)*\n${rum.map((r) => `- *${r.nama}*: ${r.rumus} [${r.id}]`).join("\n")}`);
+					return m.reply(bagian.length ? `*Hasil Pencarian: ${q}*\n\n${bagian.join("\n\n")}` : "Tidak ditemukan perintah atau rumus yang cocok.");
+				}
+				break;
+			case "bantuan":
+			case "commandinfo":
+				{
+					const q = (text || "").trim();
+					if (!q) return m.reply("Contoh: .bantuan rumus\n.bantuan math");
+					const info = infoCommand(q);
+					if (!info) return m.reply("Perintah tidak ditemukan.\nKetik .cari <kata> untuk mencari.");
+					const detail = rumusDetail(q.toUpperCase());
+					return m.reply(`*Bantuan: .${info.command}*\n\nKategori: ${info.kategori}\n${info.deskripsi ? "Fungsi: " + info.deskripsi + "\n" : ""}Contoh: .${info.command}${detail ? "\n\nRumus terkait: " + detail.rumus : ""}`);
+				}
+				break;
+			case "kategori":
+				{
+					const daftar = daftarKategoriCommand();
+					return m.reply(`*Kategori Perintah (${daftar.length})*\n\n${daftar.map((k) => `- *${k.kategori}*: ${k.jumlah} perintah`).join("\n")}\n\nKetik .menu <kategori> untuk submenu.`);
+				}
+				break;
+			case "menu":
+				{
+					const k = (text || "").trim().toLowerCase();
+					const peta = {
+						bot: "botmenu", grup: "groupmenu", group: "groupmenu", search: "searchmenu",
+						download: "downloadmenu", quotes: "quotesmenu", tools: "toolsmenu", ai: "aimenu",
+						random: "randommenu", stalker: "stalkermenu", anime: "animemenu", game: "gamemenu",
+						fun: "funmenu", edukasi: "edukasimenu", pendidikan: "edukasimenu", owner: "ownermenu", author: "authormenu",
+					};
+					if (!k) return m.reply(`Ketik .menu <kategori>.\n\nPilihan: ${Object.keys(peta).join(", ")}`);
+					const submenu = peta[k];
+					return submenu ? m.reply(`Untuk kategori *${k}*, ketik *.${submenu}*\n\nAtau ketik .allmenu untuk semua perintah.`) : m.reply(`Kategori tidak ditemukan.\n\nPilihan: ${Object.keys(peta).join(", ")}`);
+				}
+				break;
+			case "statistikbot":
+			case "topcmd":
+				{
+					const hit = global.db && global.db.hit ? global.db.hit : {};
+					const entri = Object.entries(hit).filter(([k, v]) => /^[a-z0-9_]+$/i.test(k) && Number.isFinite(v)).sort((a, b) => b[1] - a[1]).slice(0, 10);
+					const baris = entri.map(([k, v], i) => `${i + 1}. .${k}: ${v.toLocaleString("id-ID")}x`).join("\n");
+					return m.reply(`*Statistik Bot*\n\nTotal perintah hari ini: ${(hit.todaycmd || 0).toLocaleString("id-ID")}\nTotal semua: ${(hit.totalcmd || 0).toLocaleString("id-ID")}\nPerintah teratas:\n\n${baris || "(belum ada data)"}\n\nPerintah terdaftar: ${jumlahCase()}`);
 				}
 				break;
 			case "panduan":

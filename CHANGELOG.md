@@ -1,5 +1,41 @@
 # Changelog
 
+## v4.0.0
+
+Rynn v4.0.0 adalah pembaruan mayor: sistem rumus terstruktur dengan 1.210 entri, penemuan perintah, kontrol akses per perintah, dan perbaikan gate API yang selama ini memblokir perintah lokal.
+
+### Sistem rumus baru
+
+- Rumus dipindahkan dari blok hardcoded di `handler.js` ke `lib/rumus/index.js` dan `lib/rumus/tambahan.js`.
+- 20 kategori, 1.210 rumus terstruktur: setiap entri punya `id`, kategori, subkategori, nama, rumus, variabel, satuan, syarat, contoh, dan level.
+- Kategori terbesar: matematika 145, aljabar 137, kimia 119, geometri 112. Kategori baru: ekonomi, geografi, teknik, komputer, kesehatan, musik, sistem bilangan, dan lain-lain.
+- `.rumus` kini menampilkan daftar kategori; `.rumus <kategori> <halaman>` menampilkan 12 rumus per halaman; `.rumus cari`, `.rumus detail <id>`, `.rumus random [kategori]`, `.rumus sub <kategori>`, dan `.rumus statistik` tersedia.
+- Semua rumus memakai rumus standar atau bentuk ulangnya, bukan data karangan.
+
+### Penemuan perintah
+
+- Registry perintah dibangun otomatis dari blok menu yang sudah ada (`lib/command-registry.js`), sehingga tidak ada daftar perintah ganda.
+- Perintah baru: `.cari`, `.bantuan`, `.kategori`, `.menu <kategori>`, `.statistikbot`, `.topcmd`.
+
+### Kontrol akses dan keamanan
+
+- Perintah baru: `.akses <cmd> <role>`, `.matikan <cmd>`, `.hidupkan <cmd>`, `.cooldown <cmd> <detik>`.
+- Role: free, premium, vip, admin, owner. Owner selalu lolos; admin bisa menghidupkan perintah yang dimatikan.
+- Gate `NAZE_API_KEY` tidak lagi memblokir semua perintah. Hanya perintah yang benar-benar memakai API yang ditolak saat key kosong; perintah lokal seperti `.rumus` dan `.statistik` tetap jalan.
+
+### Progression
+
+- `.daily` kini mencatat streak dan memberi bonus 5.000 uang pada hari ke-7.
+- `.streak` menampilkan streak klaim harian.
+- `.rankgame` menampilkan peringkat pemakaian game dari `db.hit`.
+
+### Audit dan pengujian
+
+- 8 tes baru untuk sistem rumus dan registry, 3 tes kontrol akses, 1 tes gate API. Total **99 tes lolos**.
+- `npm run check` lolos (137 file).
+- Audit menu terhadap `case`: 622 case, 364 perintah menu unik, semua punya implementasi.
+- CI hijau sebelum tag `v4.0.0`.
+
 ## v3.35.0
 
 Rynn v3.35.0 memperkuat penulisan `.env` dan menambah perintah slug.
