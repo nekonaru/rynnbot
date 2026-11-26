@@ -62,14 +62,14 @@ Berbasis Hitori Bot karya [Nazedev](https://github.com/nazedev/hitori), yang dir
 | Menu & Umum | **Penemuan perintah** | `.cari <kata>` (cari perintah dan rumus), `.bantuan <cmd>`, `.kategori`, `.menu <kategori>`, `.statistikbot`, `.topcmd` |
 | Menu & Umum | **Kontrol akses** | `.akses <cmd> <role>`, `.matikan <cmd>`, `.hidupkan <cmd>`, `.cooldown <cmd> <detik>` |
 | Menu & Umum | **Progression** | `.streak` (klaim harian beruntun), `.rankgame` (peringkat game) |
-| Utilitas | **Sistem rumus** | `.rumus` dengan 20 kategori dan 1.210 rumus: halaman 12 entri, `.rumus cari`, `.rumus detail <id>`, `.rumus random [kategori]`, `.rumus sub <kategori>`, `.rumus statistik` |
+| Utilitas | **Sistem rumus** | `.rumus` dengan 20 kategori dan 1.773 rumus: halaman 12 entri, `.rumus cari`, `.rumus detail <id>`, `.rumus random [kategori]`, `.rumus sub <kategori>`, `.rumus statistik` |
 | Menu & Umum | **Diagnosa** | `.diagnosa` (owner): cek Node.js, ffmpeg, status kunci API tanpa menampilkan nilai, tipe database, zona waktu, jumlah entri data |
 | Menu & Umum | **Ekonomi** | `.ekonomi` (harga limit, hadiah kuis/soal/hangman, saldo), `.gameinfo` (cooldown dan aturan game) |
 | Menu & Umum | **Panduan** | `.panduan` (langkah mulai pakai, prefix, submenu, perintah owner) |
 | Utilitas | **Kalender & hiburan** | `.cal` (kalender bulan), `.pantun` (pantun acak), `.b64` (encode/decode base64), `.password` (generate password acak) |
 | Utilitas | **Cek anggota** | `.admins` (daftar admin grup), `.saldo` (saldo limit/uang/status) |
-| Utilitas | **Belajar SMA** | `.soal` (294 soal, bank soal campuran), `.soalmtk` (70 soal), `.soalipa` (74 soal), `.soalips` (52 soal), `.soalbindon` (59 soal), `.soalppkn` (39 soal), `.namabayi` (nama bayi Indonesia + asal + arti) |
-| Utilitas | **Hiburan & pengetahuan** | `.fakta` (547 fakta), `.puisi` (155 puisi), `.pantun` (195 pantun), `.zodiak`, `.wayang`, `.lagudaerah`, `.wisata` (109 destinasi), `.peribahasa` (65 pepatah Indonesia), `.resep` (115 resep), `.kuliner` (136 kuliner daerah) |
+| Utilitas | **Belajar SMA** | `.soal` (357 soal, bank soal campuran), `.soalmtk` (120 soal), `.soalipa` (79 soal), `.soalips` (56 soal), `.soalbindon` (63 soal), `.soalppkn` (43 soal), `.namabayi` (nama bayi Indonesia + asal + arti) |
+| Utilitas | **Hiburan & pengetahuan** | `.fakta` (651 fakta), `.puisi` (155 puisi), `.pantun` (219 pantun), `.zodiak`, `.wayang`, `.lagudaerah`, `.wisata` (109 destinasi), `.peribahasa` (67 pepatah Indonesia), `.resep` (130 resep), `.kuliner` (140 kuliner daerah) |
 | Utilitas | **Statistik data** | `.statistikdata` (jumlah seluruh entri data Rynn) |
 | Utilitas | **Author & proyek** | `.author` (info pembuat), `.repo` (repositori), `.channel` (channel resmi), `.donasi` (dukungan), `.versi` (versi bot) |
 | Menu | **Submenu per kategori** | `.botmenu`, `.groupmenu` (`.grupmenu`), `.searchmenu`, `.downloadmenu`, `.quotesmenu`, `.toolsmenu`, `.aimenu`, `.randommenu`, `.stalkermenu`, `.animemenu`, `.gamemenu`, `.funmenu`, `.edukasimenu`, `.ownermenu`, `.authormenu` |
@@ -543,6 +543,7 @@ Semua perintah memakai prefix default `.` `!` atau `+` (atur di `settings.js`).
 | `.matikan rumus` / `.hidupkan rumus` | Nonaktifkan atau aktifkan perintah di grup |
 | `.cooldown rumus 5` | Atur jeda perintah (owner) |
 | `.streak` | Klaim harian beruntun |
+| `.quest` | Quest harian tiga misi (+1.000 uang, +5 limit) |
 | `.rankgame` | Peringkat game |
 | `.basis 1010 2 16` | Konversi bilangan antarbasis 2-36 |
 | `.durasi 3661` | Format jumlah detik menjadi hari/jam/menit/detik |

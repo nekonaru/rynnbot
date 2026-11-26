@@ -1,5 +1,30 @@
 # Changelog
 
+## v4.1.0
+
+Rynn v4.1.0 menyelesaikan rancangan akhir v4: ekspansi rumus lanjutan, quest harian, dan batch data final.
+
+### Sistem rumus
+
+- Ekspansi kedua menambah 563 rumus, total sekarang **1.773 rumus** dalam 20 kategori.
+- Kategori yang sebelumnya kecil kini jauh lebih besar: fisika 143, komputer 157, musik 136, sistem bilangan 109, biologi 91, teknik 78, ekonomi 76, statistik 72, dan lain-lain.
+- Semua entri tetap memakai rumus standar atau bentuk ulangnya, dengan `id` unik dan field lengkap.
+
+### Fitur baru
+
+- `.quest` dengan tiga misi harian: pakai perintah edukasi, main satu game, dan klaim harian. Hadiah +1.000 uang dan +5 limit, diklaim dengan `.quest claim`.
+- Progres quest ditandai otomatis dari kategori perintah di registry, tanpa perintah tambahan.
+
+### Data
+
+- Batch final `lib/data-final.js`: 110 fakta, 24 pantun, 20 puisi, 198 kata Hangman, 50 soal matematika, 13 soal lainnya, 15 peribahasa, 15 resep, 15 kuliner, dan 15 wisata.
+- Dataset inti sesudah deduplikasi: FAKTA 651, PANTUN 219, HANGMAN 515, RESEP 130, KULINER 140, SOAL 357, PERIBAHASA 67.
+
+### Audit
+
+- 2 tes unit quest baru; total **101 tes lolos**. `npm run check` lolos (140 file).
+- Tes integritas data dan rumus tetap lolos; tidak ada duplikat atau entri rusak. CI hijau sebelum tag `v4.1.0`.
+
 ## v4.0.0
 
 Rynn v4.0.0 adalah pembaruan mayor: sistem rumus terstruktur dengan 1.210 entri, penemuan perintah, kontrol akses per perintah, dan perbaikan gate API yang selama ini memblokir perintah lokal.

@@ -53,6 +53,7 @@ import { daftarKategori, daftarSubkategori, halamanRumus, cariRumus, rumusAcak, 
 import { daftarCommand, daftarKategoriCommand, cariCommand, infoCommand, jumlahCase } from "./lib/command-registry.js";
 import { API_COMMANDS } from "./lib/api-commands.js";
 import { cekAkses, aturAkses, matikanPerintah, hidupkanPerintah, aturCooldown } from "./lib/access.js";
+import { lihatQuest, tandaiQuest, klaimQuest } from "./lib/quest.js";
 import { FIRST_SETUP_MARKER, firstSetupStates, firstSetupStepText, sendFirstSetupIntro } from './src/setup-wizard.js';
 import { ytMp4, ytMp3, ytMp4Stream } from "./lib/scraper.js";
 import { GroupUpdate, LoadDataBase, extractNativeFlowResponseId } from "./src/message.js";
@@ -752,6 +753,10 @@ const sock = async (sock, m, store) => {
 			if (cases.includes(command)) {
 				cmdAdd(db.hit);
 				cmdAddHit(db.hit, command);
+				const kategori = infoCommand(command)?.kategori || "";
+				if (command === "daily") tandaiQuest(db, m.sender, "harian");
+				else if (kategori === "EDUKASI") tandaiQuest(db, m.sender, "edukasi");
+				else if (kategori === "GAME") tandaiQuest(db, m.sender, "game");
 			}
 			if (set.antispam && antiSpam.isFiltered(m.sender)) {
 				console.log(chalk.bgRed("[ SPAM ] : "), chalk.black(chalk.bgHex("#1CFFF7")(`From -> ${m.sender}`), chalk.bgHex("#E015FF")(` In ${m.isGroup ? m.chat : "Private Chat"}`)));
@@ -6210,6 +6215,7 @@ Select Bot Settings:
 │${setv} ${prefix}gameinfo
 │${setv} ${prefix}panduan
 │${setv} ${prefix}streak
+│${setv} ${prefix}quest
 │${setv} ${prefix}rankgame
 │${setv} ${prefix}cari
 │${setv} ${prefix}bantuan
@@ -6623,6 +6629,7 @@ Select Bot Settings:
 │${setv} ${prefix}gameinfo
 │${setv} ${prefix}panduan
 │${setv} ${prefix}streak
+│${setv} ${prefix}quest
 │${setv} ${prefix}rankgame
 │${setv} ${prefix}cari
 │${setv} ${prefix}bantuan
@@ -8633,6 +8640,17 @@ Select Bot Settings:
 					const hasil = progres(selesai, total);
 					if (!hasil) return m.reply("Nilai selesai harus antara 0 dan total, total harus positif.");
 					return m.reply(`*Progres*\n\n[${hasil.bar}] ${hasil.persen.toFixed(1)}%\n${selesai.toLocaleString("id-ID")} dari ${total.toLocaleString("id-ID")}`);
+				}
+				break;
+			case "quest":
+				{
+					const arg = (text || "").trim().toLowerCase();
+					if (arg === "claim") {
+						return klaimQuest(db, m.sender) ? m.reply("Hadiah quest diambil: +1.000 uang dan +5 limit.") : m.reply("Quest belum selesai atau hadiah sudah diambil.");
+					}
+					const q = lihatQuest(db, m.sender);
+					const centang = (v) => (v ? "sudah" : "belum");
+					return m.reply(`*Quest Harian*\n\n1. Pakai perintah edukasi: ${centang(q.edukasi)}\n2. Main satu game: ${centang(q.game)}\n3. Klaim harian: ${centang(q.harian)}\n\nHadiah: +1.000 uang dan +5 limit.\n${q.siap ? "Semua misi selesai. Ketik .quest claim untuk mengambil hadiah." : q.diklaim ? "Hadiah hari ini sudah diambil." : "Selesaikan semua misi untuk mengambil hadiah."}`);
 				}
 				break;
 			case "akses":
