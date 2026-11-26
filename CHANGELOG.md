@@ -1,5 +1,37 @@
 # Changelog
 
+## v3.31.0
+
+Rynn v3.31.0 adalah ekspansi data terbesar: 465 entri baru ditambahkan dan dideduplikasi otomatis ke dataset inti.
+
+### Data baru (`lib/data-ekspansi.js`)
+
+- 50 fakta umum baru.
+- 40 pantun dan 40 puisi karya sendiri.
+- 227 kata Hangman baru (semuanya satu kata, tanpa duplikat).
+- 8 peribahasa klasik baru.
+- 15 resep, 15 kuliner daerah, dan 20 destinasi wisata.
+- 50 soal pilihan ganda baru (10 per kategori: matematika, IPA, IPS, Bahasa Indonesia, PPKn) dengan pembahasan.
+
+### Dataset inti sesudah digabung
+
+- FAKTA 498 → **547**
+- PUISI 143 → **155**
+- PANTUN 161 → **195**
+- HANGMAN_KATA 420 → **496**
+- PERIBAHASA 57 → **65**
+- RESEP 101 → **115**
+- KULINER 101 → **136**
+- WISATA 114 → **109** (duplikat nama dibuang saat penggabungan)
+- SOAL 249 → **294** (matematika 70, IPA 74, IPS 52, Bahasa Indonesia 59, PPKn 39)
+- Total entri pada delapan dataset inti di atas: **2.112**.
+
+### Audit
+
+- Validasi pra-gabung menemukan 33 baris pantun yang `\n`-nya tertulis sebagai `\HurufBesar`, 11 kata Hangman berupa dua kata, dan 3 duplikat internal. Semua diperbaiki sebelum penggabungan.
+- Lima soal baru ternyata duplikat pertanyaan lama; dibuang otomatis oleh `dedupeArray`, sehingga tidak ada soal ganda.
+- Tes integritas data di CI tetap lolos; total tes **77 lolos**, `npm run check` lolos (127 file).
+
 ## v3.30.0
 
 Rynn v3.30.0 menambahkan konversi basis bilangan dan format durasi, dengan memakai ulang fungsi yang sudah teruji.

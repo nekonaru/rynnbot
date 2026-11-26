@@ -62,8 +62,8 @@ Berbasis Hitori Bot karya [Nazedev](https://github.com/nazedev/hitori), yang dir
 | Menu & Umum | **Diagnosa** | `.diagnosa` (owner): cek Node.js, ffmpeg, status kunci API tanpa menampilkan nilai, tipe database, zona waktu, jumlah entri data |
 | Utilitas | **Kalender & hiburan** | `.cal` (kalender bulan), `.pantun` (pantun acak), `.b64` (encode/decode base64), `.password` (generate password acak) |
 | Utilitas | **Cek anggota** | `.admins` (daftar admin grup), `.saldo` (saldo limit/uang/status) |
-| Utilitas | **Belajar SMA** | `.soal` (249 soal, bank soal campuran), `.soalmtk` (60 soal), `.soalipa` (68 soal), `.soalips` (42 soal), `.soalbindon` (50 soal), `.soalppkn` (29 soal), `.namabayi` (nama bayi Indonesia + asal + arti) |
-| Utilitas | **Hiburan & pengetahuan** | `.fakta` (498 fakta), `.puisi` (143 puisi), `.pantun` (161 pantun), `.zodiak`, `.wayang`, `.lagudaerah`, `.wisata` (114 destinasi), `.peribahasa` (57 pepatah Indonesia), `.resep` (101 resep) |
+| Utilitas | **Belajar SMA** | `.soal` (294 soal, bank soal campuran), `.soalmtk` (70 soal), `.soalipa` (74 soal), `.soalips` (52 soal), `.soalbindon` (59 soal), `.soalppkn` (39 soal), `.namabayi` (nama bayi Indonesia + asal + arti) |
+| Utilitas | **Hiburan & pengetahuan** | `.fakta` (547 fakta), `.puisi` (155 puisi), `.pantun` (195 pantun), `.zodiak`, `.wayang`, `.lagudaerah`, `.wisata` (109 destinasi), `.peribahasa` (65 pepatah Indonesia), `.resep` (115 resep), `.kuliner` (136 kuliner daerah) |
 | Utilitas | **Statistik data** | `.statistikdata` (jumlah seluruh entri data Rynn) |
 | Utilitas | **Author & proyek** | `.author` (info pembuat), `.repo` (repositori), `.channel` (channel resmi), `.donasi` (dukungan), `.versi` (versi bot) |
 | Menu | **Submenu per kategori** | `.botmenu`, `.groupmenu` (`.grupmenu`), `.searchmenu`, `.downloadmenu`, `.quotesmenu`, `.toolsmenu`, `.aimenu`, `.randommenu`, `.stalkermenu`, `.animemenu`, `.gamemenu`, `.funmenu`, `.edukasimenu`, `.ownermenu`, `.authormenu` |
@@ -492,7 +492,7 @@ Semua perintah memakai prefix default `.` `!` atau `+` (atur di `settings.js`).
 | `.unsur emas` | Tabel periodik mini |
 | `.planet mars` | Info planet tata surya |
 | `.hangman` | Tebak kata Indonesia |
-| `.peribahasa` | Pepatah dan peribahasa Indonesia (44) |
+| `.peribahasa` | Pepatah dan peribahasa Indonesia (65) |
 | `.kpk 4 6 8` / `.fpb 48 36 24` | Kelipatan/faktor persekutuan terkecil & terbesar |
 | `.faktor 360` | Faktorisasi prima |
 | `.prima 97` | Cek bilangan prima |
