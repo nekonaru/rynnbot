@@ -47,6 +47,7 @@ import { det2, invers2, kali2, transpose2 } from "./lib/matriks.js";
 import { dotVektor, crossVektor, panjangVektor, kompleksTambah, kompleksKurang, kompleksKali, kompleksBagi, kompleksKonjugat, kompleksModulus } from "./lib/vektor-kompleks.js";
 import { FAUNA, FLORA, cariFauna, cariFlora } from "./lib/data-fauna-flora.js";
 import { formatUptime, statusApiKey, laporanDiagnosa } from "./lib/diagnosa.js";
+import { keBasis, dariBasis, konversiBasis } from "./lib/basis.js";
 import { FIRST_SETUP_MARKER, firstSetupStates, firstSetupStepText, sendFirstSetupIntro } from './src/setup-wizard.js';
 import { ytMp4, ytMp3, ytMp4Stream } from "./lib/scraper.js";
 import { GroupUpdate, LoadDataBase, extractNativeFlowResponseId } from "./src/message.js";
@@ -6435,6 +6436,8 @@ Select Bot Settings:
 │${setv} ${prefix}hewan
 │${setv} ${prefix}tumbuhan
 │${setv} ${prefix}diagnosa
+│${setv} ${prefix}basis
+│${setv} ${prefix}durasi
 │${setv} ${prefix}base64
 ╰─┬────❍
 ╭─┴❍「 *FUN* 」❍
@@ -6893,6 +6896,8 @@ Select Bot Settings:
 │${setv} ${prefix}hewan
 │${setv} ${prefix}tumbuhan
 │${setv} ${prefix}diagnosa
+│${setv} ${prefix}basis
+│${setv} ${prefix}durasi
 │${setv} ${prefix}base64
 ╰──────❍`);
 				}
@@ -7015,6 +7020,8 @@ Select Bot Settings:
 │${setv} ${prefix}hewan
 │${setv} ${prefix}tumbuhan
 │${setv} ${prefix}diagnosa
+│${setv} ${prefix}basis
+│${setv} ${prefix}durasi
 │${setv} ${prefix}base64
 │${setv} ${prefix}quiz
 │${setv} ${prefix}team <n>
@@ -8607,6 +8614,26 @@ Select Bot Settings:
 					if (!hasil.length) return m.reply("Tidak ada bilangan prima dalam rentang itu.");
 					const tampil = hasil.length > 50 ? hasil.slice(0, 50).join(", ") + `, ... (${hasil.length} prima)` : hasil.join(", ");
 					return m.reply(`*Prima antara ${mt[1]} dan ${mt[2]}* (${hasil.length})\n\n${tampil}`);
+				}
+				break;
+			case "basis":
+				{
+					const arg = (text || "").trim();
+					const mt = arg.match(/^(\S+)\s+(\d{1,2})\s+(\d{1,2})$/);
+					if (!mt) return m.reply("Contoh: .basis 1010 2 16\nFormat: nilai basis-asal basis-tujuan (2 sampai 36)");
+					const hasil = konversiBasis(mt[1], parseInt(mt[2], 10), parseInt(mt[3], 10));
+					if (hasil === null) return m.reply("Nilai tidak valid untuk basis asal, atau basis di luar 2-36.");
+					const desimal = dariBasis(mt[1], parseInt(mt[2], 10));
+					return m.reply(`*Konversi Basis*\n\n${mt[1].toUpperCase()} (basis ${mt[2]}) = *${hasil}* (basis ${mt[3]})\nDesimal: ${desimal.toLocaleString("id-ID")}`);
+				}
+				break;
+			case "durasi":
+				{
+					const arg = (text || "").trim().replace(",", ".");
+					if (!arg || !Number.isFinite(Number(arg)) || Number(arg) < 0) return m.reply("Contoh: .durasi 3661\nMasukkan jumlah detik (boleh desimal).");
+					const detik = Number(arg);
+					if (detik > 31536000000) return m.reply("Durasi terlalu besar (maksimal 1000 tahun).");
+					return m.reply(`*Durasi*\n\n${detik.toLocaleString("id-ID")} detik = *${formatUptime(detik * 1000)}*`);
 				}
 				break;
 			case "diagnosa":

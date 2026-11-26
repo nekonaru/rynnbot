@@ -70,7 +70,7 @@ Berbasis Hitori Bot karya [Nazedev](https://github.com/nazedev/hitori), yang dir
 | Utilitas | **Matematika & utilitas** | `.kpk`, `.fpb`, `.faktor`, `.prima`, `.diskon`, `.cicilan`, `.bmi`, `.jamtidur`, `.akar`, `.faktorial` |
 | Utilitas | **Geometri & aljabar** | `.luas`, `.volume`, `.kuadrat`, `.deret`, `.linear`, `.persen`, `.matriks` (2x2), `.vektor` (dot/cross/panjang), `.kompleks` (tambah/kurang/kali/bagi/konjugat/modulus) |
 | Utilitas | **Dunia & sains** | `.ibukota` (~180 negara), `.negara` (ibukota/mata uang/benua/populasi), `.unsur` (tabel periodik lengkap, 118 unsur), `.planet` (21 planet & exoplanet) |
-| Utilitas | **Konversi & angka** | `.umur`, `.terbilang`, `.roman`, `.konversi` (panjang/berat/suhu/luas/volume/kecepatan/energi/tekanan/data/waktu), `.morse`, `.binary`, `.hex`, `.rot13`, `.akar`, `.faktorial`, `.fibonacci`, `.primaantara`, `.statistik`, `.pecahan`, `.progress`, `.selisihhari`, `.terbilang2` (0-999 miliar), `.hurufke`, `.sapaan` |
+| Utilitas | **Konversi & angka** | `.umur`, `.terbilang`, `.roman`, `.konversi` (panjang/berat/suhu/luas/volume/kecepatan/energi/tekanan/data/waktu), `.morse`, `.binary`, `.hex`, `.rot13`, `.akar`, `.faktorial`, `.fibonacci`, `.primaantara`, `.statistik`, `.pecahan`, `.progress`, `.selisihhari`, `.terbilang2` (0-999 miliar), `.hurufke`, `.sapaan`, `.basis` (2-36), `.durasi` |
 | Utilitas | **Bahasa & geografi** | `.bahasa` (7 bahasa daerah Nusantara), `.danau` (12 danau), `.gunung` (12 gunung), `.pulau` (10 pulau), `.sungai` (10 sungai), `.hewan` (16 fauna), `.tumbuhan` (16 flora) |
 | Utilitas | **Waktu & sejarah** | `.hariini`, `.waktu` (12 kota), `.haribersejarah` (13 tanggal bersejarah Indonesia) |
 | Utilitas | **Templat surat** | `.surat` (lamaran kerja, izin, undangan rapat, kuasa, surat resmi) |
@@ -520,6 +520,8 @@ Semua perintah memakai prefix default `.` `!` atau `+` (atur di `settings.js`).
 | `.surat lamaran` | Templat surat (lamaran/izin/undangan/kuasa/resmi) |
 | `.statistikdata` | Jumlah seluruh entri data Rynn |
 | `.diagnosa` | Cek lingkungan runtime (owner, tanpa menampilkan kunci) |
+| `.basis 1010 2 16` | Konversi bilangan antarbasis 2-36 |
+| `.durasi 3661` | Format jumlah detik menjadi hari/jam/menit/detik |
 | `.selisihhari 2026-01-01 2026-12-31` | Selisih hari antara dua tanggal |
 | `.fibonacci 10` | Deret Fibonacci (BigInt, sampai 100 suku) |
 | `.primaantara 1 100` | Bilangan prima dalam rentang (maksimal 10.000 bilangan) |

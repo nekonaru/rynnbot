@@ -1,5 +1,22 @@
 # Changelog
 
+## v3.30.0
+
+Rynn v3.30.0 menambahkan konversi basis bilangan dan format durasi, dengan memakai ulang fungsi yang sudah teruji.
+
+### Fitur baru
+
+- `.basis <nilai> <dari> <ke>` - konversi bilangan antarbasis 2 sampai 36, lengkap dengan nilai desimal.
+- `.durasi <detik>` - format durasi (hari/jam/menit/detik) memakai `formatUptime` dari modul diagnosa yang sudah teruji.
+- Keduanya tampil di `.allmenu` dan `.edukasimenu`.
+
+### Audit
+
+- Modul baru `lib/basis.js` dengan 3 tes unit (konversi ke basis, dari basis, dan antarbasis). Validasi digit dan batas 16 karakter mencegah hasil di luar bilangan aman.
+- `formatUptime` kini dipakai ulang oleh `.durasi` dan `.diagnosa`, sehingga satu implementasi yang diuji dipakai dua tempat.
+- Total tes sekarang **77 lolos**. `npm run check` lolos (125 file).
+- Audit menu terhadap `case`: 659 case, 349 perintah menu unik, semua punya implementasi. CI hijau sebelum tag `v3.30.0`.
+
 ## v3.29.0
 
 Rynn v3.29.0 menambahkan perintah diagnosa runtime untuk owner dan memperkuat jaminan bahwa balasan perintah tidak menampilkan nilai kunci API.
