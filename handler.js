@@ -6195,6 +6195,7 @@ Select Bot Settings:
 │${setv} ${prefix}hariini
 │${setv} ${prefix}waktu
 │${setv} ${prefix}ekonomi
+│${setv} ${prefix}gameinfo
 │${setv} ${prefix}stats
 │${setv} ${prefix}menfes (62xxx|fake name)
 │${setv} ${prefix}confes (62xxx|fake name)
@@ -6594,6 +6595,7 @@ Select Bot Settings:
 │${setv} ${prefix}hariini
 │${setv} ${prefix}waktu
 │${setv} ${prefix}ekonomi
+│${setv} ${prefix}gameinfo
 │${setv} ${prefix}stats
 │${setv} ${prefix}delcmd
 │${setv} ${prefix}listcmd
@@ -8582,6 +8584,11 @@ Select Bot Settings:
 					const hasil = progres(selesai, total);
 					if (!hasil) return m.reply("Nilai selesai harus antara 0 dan total, total harus positif.");
 					return m.reply(`*Progres*\n\n[${hasil.bar}] ${hasil.persen.toFixed(1)}%\n${selesai.toLocaleString("id-ID")} dari ${total.toLocaleString("id-ID")}`);
+				}
+				break;
+			case "gameinfo":
+				{
+					return m.reply(`*Info Game Rynn*\n\n• .daily: klaim tiap 24 jam, +10 limit dan +10.000 uang\n• .rampok: cooldown 1 jam, butuh target user, ambil sampai 9.999 uang\n• .begal: cooldown 1 jam, bisa dapat uang atau justru kehilangan\n• .slot: 1 limit per putaran; tiga lambang sama memberi 0-9 limit dan 0-4.500 uang\n• .casino: taruhan uang, 1 limit per putaran\n• .samgong: taruhan minimal 5.000 uang, 1 limit per putaran\n\nSemua hadiah diambil dari aturan yang berlaku di bot.`);
 				}
 				break;
 			case "ekonomi":

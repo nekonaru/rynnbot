@@ -1,5 +1,24 @@
 # Changelog
 
+## v3.33.0
+
+Rynn v3.33.0 melanjutkan penutupan anomali ekonomi di game dan menambah perintah info game.
+
+### Perbaikan game
+
+- `gameMerampok`: pemain baru tanpa `lastrampok` kini bisa merampok (sebelumnya perhitungan `NaN` membuat klaim selalu gagal). Limit hanya dipotong setelah target tervalidasi; target tanpa mention tidak lagi melempar error. Cooldown tidak memotong limit.
+- `gameBegal`: `lastbegal` yang belum ada tidak lagi menghasilkan `NaN`; limit hanya dipotong saat permainan benar-benar dijalankan, bukan saat masih cooldown.
+- Kedua perbaikan dibuktikan dengan tes regresi baru.
+
+### Fitur baru
+
+- `.gameinfo` - ringkasan cooldown dan hadiah: daily 24 jam (+10 limit, +10.000 uang), rampok 1 jam (maks 9.999 uang), begal 1 jam (bisa rugi atau untung), slot (1 limit, 0-9 limit dan 0-4.500 uang), casino, dan samgong (taruhan minimal 5.000). Angka diambil dari kode yang berlaku.
+
+### Audit
+
+- 2 tes regresi game baru; total sekarang **85 tes lolos**. `npm run check` lolos (127 file).
+- Audit menu terhadap `case`: 661 case, 351 perintah menu unik, semua punya implementasi. CI hijau sebelum tag `v3.33.0`.
+
 ## v3.32.0
 
 Rynn v3.32.0 menutup celah ekonomi yang bisa disalahgunakan dan menambah perintah ringkasan ekonomi.

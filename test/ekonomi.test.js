@@ -2,7 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import fs from "fs";
 import path from "path";
-import { buy, transfer, addMoney, addLimit, daily } from "../lib/game.js";
+import { buy, transfer, addMoney, addLimit, daily, gameMerampok, gameBegal } from "../lib/game.js";
 
 fs.unwatchFile(path.resolve("settings.js"));
 
@@ -79,5 +79,42 @@ test("daily bisa diklaim saat lastclaim belum ada", async () => {
 	const m = pesan();
 	await daily(m, db);
 	assert.equal(db.users.saya.money, 10000);
+	assert.equal(db.users.saya.limit, 10);
+});
+
+const pesanGrup = (target) => ({
+	sender: "saya", isGroup: true, mentionedJid: target ? [target] : [], quoted: null,
+	chat: "grp", prefix: ".", command: "rampok", balasan: [], reply(s) { this.balasan.push(String(s)); return { key: "k" }; },
+});
+
+test("merampok bisa dijalankan pemain baru dan tidak memotong limit saat gagal", async () => {
+	const db = buat(0, 10);
+	db.users["kamu@s.whatsapp.net"].money = 20000;
+	delete db.users.saya.lastrampok;
+	let m = pesanGrup(null);
+	await gameMerampok(m, db);
+	assert.match(m.balasan[0], /Tag salah satu/);
+	assert.equal(db.users.saya.limit, 10, "limit tidak boleh dipotong saat target belum ada");
+
+	m = pesanGrup("kamu@s.whatsapp.net");
+	await gameMerampok(m, db);
+	assert.equal(db.users.saya.limit, 9);
+	assert.ok(db.users.saya.money > 0);
+	assert.ok(db.users.saya.lastrampok > 0);
+
+	const sebelum = db.users.saya.limit;
+	m = pesanGrup("kamu@s.whatsapp.net");
+	await gameMerampok(m, db);
+	assert.match(m.balasan[0], /sudah merampok/i);
+	assert.equal(db.users.saya.limit, sebelum, "cooldown tidak boleh memotong limit");
+});
+
+test("begal tidak memotong limit saat masih cooldown", async () => {
+	const db = buat(0, 10);
+	db.users.saya.lastbegal = Date.now();
+	const conn = { decodeJid: async () => "bot@s.whatsapp.net" };
+	const m = pesanGrup();
+	await gameBegal(conn, m, db);
+	assert.match(m.balasan[0], /Silahkan tunggu/);
 	assert.equal(db.users.saya.limit, 10);
 });

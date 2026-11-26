@@ -60,7 +60,7 @@ Berbasis Hitori Bot karya [Nazedev](https://github.com/nazedev/hitori), yang dir
 | Menu & Umum | **CLI interaktif** | Wizard setup pertama, manajer pengaturan, dashboard status, pembaca log |
 | Menu & Umum | **Hot reload** | `settings.js` dimuat ulang otomatis saat disimpan |
 | Menu & Umum | **Diagnosa** | `.diagnosa` (owner): cek Node.js, ffmpeg, status kunci API tanpa menampilkan nilai, tipe database, zona waktu, jumlah entri data |
-| Menu & Umum | **Ekonomi** | `.ekonomi` (harga limit, hadiah kuis/soal/hangman, saldo) |
+| Menu & Umum | **Ekonomi** | `.ekonomi` (harga limit, hadiah kuis/soal/hangman, saldo), `.gameinfo` (cooldown dan aturan game) |
 | Utilitas | **Kalender & hiburan** | `.cal` (kalender bulan), `.pantun` (pantun acak), `.b64` (encode/decode base64), `.password` (generate password acak) |
 | Utilitas | **Cek anggota** | `.admins` (daftar admin grup), `.saldo` (saldo limit/uang/status) |
 | Utilitas | **Belajar SMA** | `.soal` (294 soal, bank soal campuran), `.soalmtk` (70 soal), `.soalipa` (74 soal), `.soalips` (52 soal), `.soalbindon` (59 soal), `.soalppkn` (39 soal), `.namabayi` (nama bayi Indonesia + asal + arti) |
@@ -522,6 +522,7 @@ Semua perintah memakai prefix default `.` `!` atau `+` (atur di `settings.js`).
 | `.statistikdata` | Jumlah seluruh entri data Rynn |
 | `.diagnosa` | Cek lingkungan runtime (owner, tanpa menampilkan kunci) |
 | `.ekonomi` | Ringkasan harga limit, hadiah, dan saldo |
+| `.gameinfo` | Cooldown dan aturan game (daily, rampok, begal, slot, casino, samgong) |
 | `.basis 1010 2 16` | Konversi bilangan antarbasis 2-36 |
 | `.durasi 3661` | Format jumlah detik menjadi hari/jam/menit/detik |
 | `.selisihhari 2026-01-01 2026-12-31` | Selisih hari antara dua tanggal |
