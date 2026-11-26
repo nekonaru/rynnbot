@@ -1,5 +1,22 @@
 # Changelog
 
+## v3.35.0
+
+Rynn v3.35.0 memperkuat penulisan `.env` dan menambah perintah slug.
+
+### Perbaikan
+
+- `src/env.js`: `writeEnvValue` sekarang memvalidasi nama variabel dan menolak nilai yang mengandung baris baru, sehingga nilai kunci tidak bisa merusak berkas `.env`. Fungsi `parseEnv` dan `serializeEnvLine` diekspor agar bisa diuji tanpa menyentuh `.env` asli.
+
+### Fitur baru
+
+- `.slug <teks>` - membuat slug ramah URL (huruf kecil, spasi jadi tanda hubung, aksen dinormalisasi). Bisa memakai pemisah kustom: `.slug pemisah _ Nama Di Sini`.
+
+### Audit
+
+- 2 tes unit `.env` dan 2 tes unit slug; total sekarang **91 tes lolos**. `npm run check` lolos (130 file).
+- Audit menu terhadap `case`: 663 case, 353 perintah menu unik, semua punya implementasi. CI hijau sebelum tag `v3.35.0`.
+
 ## v3.34.0
 
 Rynn v3.34.0 menyelesaikan dua anomali game terakhir dan menambah panduan singkat.

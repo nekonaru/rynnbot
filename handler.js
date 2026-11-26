@@ -48,6 +48,7 @@ import { dotVektor, crossVektor, panjangVektor, kompleksTambah, kompleksKurang, 
 import { FAUNA, FLORA, cariFauna, cariFlora } from "./lib/data-fauna-flora.js";
 import { formatUptime, statusApiKey, laporanDiagnosa } from "./lib/diagnosa.js";
 import { keBasis, dariBasis, konversiBasis } from "./lib/basis.js";
+import { slug } from "./lib/slug.js";
 import { FIRST_SETUP_MARKER, firstSetupStates, firstSetupStepText, sendFirstSetupIntro } from './src/setup-wizard.js';
 import { ytMp4, ytMp3, ytMp4Stream } from "./lib/scraper.js";
 import { GroupUpdate, LoadDataBase, extractNativeFlowResponseId } from "./src/message.js";
@@ -6441,6 +6442,7 @@ Select Bot Settings:
 │${setv} ${prefix}diagnosa
 │${setv} ${prefix}basis
 │${setv} ${prefix}durasi
+│${setv} ${prefix}slug
 │${setv} ${prefix}base64
 ╰─┬────❍
 ╭─┴❍「 *FUN* 」❍
@@ -6904,6 +6906,7 @@ Select Bot Settings:
 │${setv} ${prefix}diagnosa
 │${setv} ${prefix}basis
 │${setv} ${prefix}durasi
+│${setv} ${prefix}slug
 │${setv} ${prefix}base64
 ╰──────❍`);
 				}
@@ -7028,6 +7031,7 @@ Select Bot Settings:
 │${setv} ${prefix}diagnosa
 │${setv} ${prefix}basis
 │${setv} ${prefix}durasi
+│${setv} ${prefix}slug
 │${setv} ${prefix}base64
 │${setv} ${prefix}quiz
 │${setv} ${prefix}team <n>
@@ -8635,6 +8639,16 @@ Select Bot Settings:
 					if (!hasil.length) return m.reply("Tidak ada bilangan prima dalam rentang itu.");
 					const tampil = hasil.length > 50 ? hasil.slice(0, 50).join(", ") + `, ... (${hasil.length} prima)` : hasil.join(", ");
 					return m.reply(`*Prima antara ${mt[1]} dan ${mt[2]}* (${hasil.length})\n\n${tampil}`);
+				}
+				break;
+			case "slug":
+				{
+					const arg = (text || "").trim();
+					if (!arg) return m.reply("Contoh: .slug Halo Dunia 123\nBuat teks menjadi slug URL.");
+					const mt = arg.match(/^(?:pemisah\s+(\S+)\s+)?([\s\S]+)$/);
+					const hasil = slug(mt[2], mt[1] || "-");
+					if (hasil === null) return m.reply("Input harus berupa teks.");
+					return m.reply(`*Slug:*\n\n\`${hasil || "(kosong)"}\``);
 				}
 				break;
 			case "basis":

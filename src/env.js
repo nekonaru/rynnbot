@@ -7,7 +7,7 @@ const ENV_FILE = path.resolve(__dirname, "..", ".env");
 
 const LINE_RE = /^\s*([A-Za-z_][A-Za-z0-9_]*)\s*=/;
 
-function parseEnv(content) {
+export function parseEnv(content) {
 	const entries = new Map();
 	for (const rawLine of content.split(/\r?\n/)) {
 		const line = rawLine.trim();
@@ -35,7 +35,15 @@ export function readEnvValue(name) {
 	}
 }
 
+export function serializeEnvLine(name, value) {
+	if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(String(name))) throw new Error("Nama variabel .env tidak valid");
+	const teks = String(value);
+	if (/[\r\n]/.test(teks)) throw new Error("Nilai .env tidak boleh mengandung baris baru");
+	return `${name}=${teks}`;
+}
+
 export function writeEnvValue(name, value) {
+	const serialized = serializeEnvLine(name, value);
 	const stringValue = String(value);
 	let lines = [];
 	try {
@@ -43,7 +51,6 @@ export function writeEnvValue(name, value) {
 	} catch {}
 
 	const keyRe = new RegExp(`^\\s*${name}\\s*=`);
-	const serialized = `${name}=${stringValue}`;
 	let replaced = false;
 	lines = lines.map((line) => {
 		if (keyRe.test(line)) {
