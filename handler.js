@@ -41,6 +41,7 @@ import { SURAT, cariSurat } from "./lib/data-surat.js";
 import { kataBilangan, ucapanWaktu, hurufKe, angkaKeHuruf } from "./lib/bilangan.js";
 import { formatTanggal, formatWaktu, potongTeks, hitungKata } from "./lib/teks.js";
 import { hashTeks, urlEncode, urlDecode, validasiJson } from "./lib/devutils.js";
+import { luasBangun, volumeBangun, akarKuadrat } from "./lib/geometri.js";
 import { FIRST_SETUP_MARKER, firstSetupStates, firstSetupStepText, sendFirstSetupIntro } from './src/setup-wizard.js';
 import { ytMp4, ytMp3, ytMp4Stream } from "./lib/scraper.js";
 import { GroupUpdate, LoadDataBase, extractNativeFlowResponseId } from "./src/message.js";
@@ -6417,6 +6418,9 @@ Select Bot Settings:
 │${setv} ${prefix}hash
 │${setv} ${prefix}urlcode
 │${setv} ${prefix}json
+│${setv} ${prefix}luas
+│${setv} ${prefix}volume
+│${setv} ${prefix}kuadrat
 │${setv} ${prefix}base64
 ╰─┬────❍
 ╭─┴❍「 *FUN* 」❍
@@ -6863,6 +6867,9 @@ Select Bot Settings:
 │${setv} ${prefix}hash
 │${setv} ${prefix}urlcode
 │${setv} ${prefix}json
+│${setv} ${prefix}luas
+│${setv} ${prefix}volume
+│${setv} ${prefix}kuadrat
 │${setv} ${prefix}base64
 ╰──────❍`);
 				}
@@ -6973,6 +6980,9 @@ Select Bot Settings:
 │${setv} ${prefix}hash
 │${setv} ${prefix}urlcode
 │${setv} ${prefix}json
+│${setv} ${prefix}luas
+│${setv} ${prefix}volume
+│${setv} ${prefix}kuadrat
 │${setv} ${prefix}base64
 │${setv} ${prefix}quiz
 │${setv} ${prefix}team <n>
@@ -8217,6 +8227,41 @@ Select Bot Settings:
 					const found = cariSurat(q);
 					if (!found) return m.reply("Templat tidak ditemukan.\n\nKetik .surat untuk daftar.");
 					return m.reply(`*${found.nama}*\n\n${found.isi}\n\n_Templat contoh, sesuaikan dengan kebutuhanmu._`);
+				}
+				break;
+			case "luas":
+				{
+					const arg = (text || "").trim();
+					const bagian = arg.split(/[\s,]+/).filter(Boolean);
+					const jenis = bagian.shift();
+					const angka = bagian.map((s) => Number(s));
+					const hasil = luasBangun(jenis, ...angka);
+					if (!hasil) return m.reply(`Contoh:\n.luas persegi 5\n.luas segitiga 6 4\n.luas trapesium 3 5 4\nJenis: persegi, persegi panjang, segitiga, lingkaran, jajargenjang, trapesium, layang-layang, belah ketupat`);
+					return m.reply(`*Luas ${jenis.toLowerCase()}*\n\nRumus: ${hasil.rumus}\n${hasil.label}\n\nHasil: *${Number(hasil.hasil.toFixed(4)).toLocaleString("id-ID")}* satuan luas`);
+				}
+				break;
+			case "volume":
+				{
+					const arg = (text || "").trim();
+					const bagian = arg.split(/[\s,]+/).filter(Boolean);
+					const jenis = bagian.shift();
+					const angka = bagian.map((s) => Number(s));
+					const hasil = volumeBangun(jenis, ...angka);
+					if (!hasil) return m.reply(`Contoh:\n.volume kubus 3\n.volume tabung 2 7\n.volume bola 5\nJenis: kubus, balok, prisma, silinder/tabung, kerucut, bola, limas`);
+					return m.reply(`*Volume ${jenis.toLowerCase()}*\n\nRumus: ${hasil.rumus}\n${hasil.label}\n\nHasil: *${Number(hasil.hasil.toFixed(4)).toLocaleString("id-ID")}* satuan volume`);
+				}
+				break;
+			case "kuadrat":
+				{
+					const arg = (text || "").trim();
+					const bagian = arg.split(/[\s,]+/).filter(Boolean).map(Number);
+					if (bagian.length !== 3 || bagian.some((n) => !Number.isFinite(n))) return m.reply("Contoh: .kuadrat 1 -5 6\nFormat: a b c untuk persamaan ax^2 + bx + c = 0");
+					const hasil = akarKuadrat(...bagian);
+					if (!hasil) return m.reply("Nilai a tidak boleh nol dan semua harus bilangan.");
+					const baris = hasil.tipe === "kompleks"
+						? `Bagian real: ${Number(hasil.real.toFixed(4))}\nBagian imajiner: ${Number(hasil.imajiner.toFixed(4))}i`
+						: hasil.akar.map((x, i) => `x${i + 1} = ${Number(x.toFixed(4))}`).join("\n");
+					return m.reply(`*Akar Persamaan Kuadrat*\n\n${bagian[1] > 0 ? "x^2 + " + bagian[1] + "x" : "x^2 " + bagian[1] + "x"} ${bagian[2] > 0 ? "+ " + bagian[2] : bagian[2]} = 0\nDiskriminan: ${hasil.diskriminan}\nJenis akar: ${hasil.tipe === "dua" ? "dua akar real" : hasil.tipe === "satu" ? "satu akar real kembar" : "dua akar kompleks"}\n\n${baris}`);
 				}
 				break;
 			case "hash":

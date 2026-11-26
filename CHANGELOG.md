@@ -1,5 +1,23 @@
 # Changelog
 
+## v3.24.0
+
+Rynn v3.24.0 menambahkan tiga perintah geometri/aljabar dan memperbaiki satu anomali numerik yang tertangkap oleh tes unit.
+
+### Fitur baru
+
+- `.luas <jenis> <ukuran...>` - luas 8 bangun datar (persegi, persegi panjang, segitiga, lingkaran, jajargenjang, trapesium, layang-layang, belah ketupat).
+- `.volume <jenis> <ukuran...>` - volume 7 bangun ruang (kubus, balok, prisma, silinder/tabung, kerucut, bola, limas).
+- `.kuadrat <a> <b> <c>` - akar persamaan kuadrat `ax^2 + bx + c = 0`, termasuk akar kembar dan akar kompleks.
+- Ketiga perintah tampil di `.allmenu` dan `.edukasimenu`.
+
+### Audit
+
+- Menguji 12 konversi satuan di `convertUnit` (`lib/util-lokal.js`): 11 sesuai harapan. Kasus `1 gb -> mb = 1000` ternyata benar karena repo memakai satuan desimal SI (`kb=1e3`, `mb=1e6`), bukan bug; tidak diubah.
+- Modul baru `lib/geometri.js` dengan 3 tes unit. Tes menemukan akar kompleks mengembalikan `-0` ketika `b=0`; dinormalisasi menjadi `0`.
+- Audit menu terhadap `case`: 647 case, 338 perintah menu unik, semua punya implementasi.
+- Total tes sekarang **48 lolos**. `npm run check` lolos (112 file). CI hijau sebelum tag `v3.24.0`.
+
 ## v3.23.0
 
 Rynn v3.23.0 menambahkan tiga utilitas pengembang dan memperbaiki log reconnect yang menyesatkan.
