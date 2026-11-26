@@ -6196,6 +6196,7 @@ Select Bot Settings:
 │${setv} ${prefix}waktu
 │${setv} ${prefix}ekonomi
 │${setv} ${prefix}gameinfo
+│${setv} ${prefix}panduan
 │${setv} ${prefix}stats
 │${setv} ${prefix}menfes (62xxx|fake name)
 │${setv} ${prefix}confes (62xxx|fake name)
@@ -6596,6 +6597,7 @@ Select Bot Settings:
 │${setv} ${prefix}waktu
 │${setv} ${prefix}ekonomi
 │${setv} ${prefix}gameinfo
+│${setv} ${prefix}panduan
 │${setv} ${prefix}stats
 │${setv} ${prefix}delcmd
 │${setv} ${prefix}listcmd
@@ -8584,6 +8586,11 @@ Select Bot Settings:
 					const hasil = progres(selesai, total);
 					if (!hasil) return m.reply("Nilai selesai harus antara 0 dan total, total harus positif.");
 					return m.reply(`*Progres*\n\n[${hasil.bar}] ${hasil.persen.toFixed(1)}%\n${selesai.toLocaleString("id-ID")} dari ${total.toLocaleString("id-ID")}`);
+				}
+				break;
+			case "panduan":
+				{
+					return m.reply(`*Panduan Singkat Rynn*\n\n1. Isi kunci di .env (lihat .env.example), lalu jalankan bot di Termux/Linux.\n2. Pairing WhatsApp lewat kode yang muncul saat start atau perintah setup CLI: rynn setup.\n3. Prefix yang aktif: ${global.listprefix.join(" ")}\n4. Ketik .allmenu untuk semua perintah, atau .edukasimenu / .gamemenu / .toolsmenu untuk per kategori.\n5. Owner: .diagnosa (cek lingkungan), .backup (cadangkan data), .update (perbarui dari GitHub).\n6. Ekonomi: .ekonomi dan .gameinfo.\n\nDukungan: .donasi | Info pembuat: .author`);
 				}
 				break;
 			case "gameinfo":

@@ -2,7 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import fs from "fs";
 import path from "path";
-import { buy, transfer, addMoney, addLimit, daily, gameMerampok, gameBegal } from "../lib/game.js";
+import { buy, transfer, addMoney, addLimit, daily, gameMerampok, gameBegal, gameSlot, gameCasinoSolo } from "../lib/game.js";
 
 fs.unwatchFile(path.resolve("settings.js"));
 
@@ -116,5 +116,32 @@ test("begal tidak memotong limit saat masih cooldown", async () => {
 	const m = pesanGrup();
 	await gameBegal(conn, m, db);
 	assert.match(m.balasan[0], /Silahkan tunggu/);
+	assert.equal(db.users.saya.limit, 10);
+});
+
+test("slot menyiapkan data bot bila belum ada", async () => {
+	const db = buat(1000, 10);
+	db.set = {};
+	const conn = { user: { id: "bot@s.whatsapp.net" }, decodeJid: async () => "bot@s.whatsapp.net", sendMessage: async () => {} };
+	const m = { ...pesanGrup(), chat: "grp" };
+	await gameSlot(conn, m, db);
+	assert.ok(db.set["bot@s.whatsapp.net"], "data bot harus dibuat");
+	assert.equal(db.users.saya.limit, 9);
+});
+
+test("casino menerima mode all dan menolak angka invalid", async () => {
+	const conn = { user: { id: "bot@s.whatsapp.net" }, decodeJid: async () => "bot@s.whatsapp.net" };
+	let db = buat(1000, 10);
+	db.set = {};
+	let m = pesan("saya", ["all"]);
+	await gameCasinoSolo(conn, m, ".", db);
+	assert.match(m.balasan[0], /Casino/);
+	assert.equal(db.users.saya.limit, 9);
+
+	db = buat(1000, 10);
+	db.set = {};
+	m = pesan("saya", ["abc"]);
+	await gameCasinoSolo(conn, m, ".", db);
+	assert.match(m.balasan[0], /bilangan bulat/);
 	assert.equal(db.users.saya.limit, 10);
 });

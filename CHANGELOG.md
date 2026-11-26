@@ -1,5 +1,24 @@
 # Changelog
 
+## v3.34.0
+
+Rynn v3.34.0 menyelesaikan dua anomali game terakhir dan menambah panduan singkat.
+
+### Perbaikan game
+
+- `gameCasinoSolo`: mode `all` yang selama ini ditolak kini berfungsi; jumlah divalidasi sebagai bilangan bulat 1 sampai 9.999.999. Data bot dibuat otomatis bila belum ada.
+- `gameSlot`: data bot dibuat otomatis bila belum ada, sehingga limit tidak lagi dipotong sebelum gagal karena `db.set[bot]` undefined.
+
+### Fitur baru
+
+- `.panduan` - langkah mulai pakai Rynn: kunci di `.env`, pairing, prefix aktif, submenu, perintah owner (`.diagnosa`, `.backup`, `.update`), ekonomi, donasi, dan info pembuat.
+
+### Audit
+
+- 2 tes regresi baru: `casino all` diterima dan angka invalid ditolak; `slot` tidak gagal walau data bot belum ada.
+- Total tes sekarang **87 lolos**. `npm run check` lolos (127 file).
+- Audit menu terhadap `case` tetap bersih. CI hijau sebelum tag `v3.34.0`.
+
 ## v3.33.0
 
 Rynn v3.33.0 melanjutkan penutupan anomali ekonomi di game dan menambah perintah info game.
