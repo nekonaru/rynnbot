@@ -1,5 +1,22 @@
 # Changelog
 
+## v3.28.0
+
+Rynn v3.28.0 menambahkan data fauna/flora Indonesia dan tes integritas data permanen di CI.
+
+### Fitur baru
+
+- `.hewan` - 16 fauna khas Indonesia (Komodo, orangutan, gajah Sumatera, harimau Sumatera, badak Jawa, cendrawasih, kasuari, arwana, duyung, anoa, babirusa, tarsius, penyu hijau, elang Jawa, loris, ikan todak). Mode: daftar, cari nama, `random`, `list`.
+- `.tumbuhan` - 16 flora khas Indonesia (Rafflesia, bunga bangkai, anggrek bulan, kantong semar, jati, meranti, rotan, bambu, padi, kopi Gayo, teh, cengkeh, pala, lada, vanili, melati). Mode sama seperti `.hewan`.
+- Keduanya tampil di `.allmenu` dan `.edukasimenu`.
+
+### Data dan audit
+
+- Berkas baru `lib/data-fauna-flora.js` berisi 32 entri; semua fakta bersifat umum dan tidak memakai angka populasi terkini.
+- Tes baru `test/data-integrity.test.js` berjalan di CI: memeriksa tidak ada entri `undefined`/null atau duplikat persis pada 12 array data, pantun tepat 4 baris, 249 soal valid, resep/peribahasa lengkap, serta jumlah provinsi/negara/unsur/planet. Tes ini mencegah kambuhnya anomali entri `undefined` yang ditemukan pada v3.18.0.
+- Total tes sekarang **71 lolos**. `npm run check` lolos (121 file).
+- Audit menu terhadap `case`: 655 case, 346 perintah menu unik, semua punya implementasi. CI hijau sebelum tag `v3.28.0`.
+
 ## v3.27.0
 
 Rynn v3.27.0 menambahkan perintah vektor dan bilangan kompleks setelah audit integritas import seluruh modul.

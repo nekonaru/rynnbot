@@ -45,6 +45,7 @@ import { luasBangun, volumeBangun, akarKuadrat } from "./lib/geometri.js";
 import { deretAritmetika, deretGeometri, linearSatu, persenDari, persenPerubahan } from "./lib/deret.js";
 import { det2, invers2, kali2, transpose2 } from "./lib/matriks.js";
 import { dotVektor, crossVektor, panjangVektor, kompleksTambah, kompleksKurang, kompleksKali, kompleksBagi, kompleksKonjugat, kompleksModulus } from "./lib/vektor-kompleks.js";
+import { FAUNA, FLORA, cariFauna, cariFlora } from "./lib/data-fauna-flora.js";
 import { FIRST_SETUP_MARKER, firstSetupStates, firstSetupStepText, sendFirstSetupIntro } from './src/setup-wizard.js';
 import { ytMp4, ytMp3, ytMp4Stream } from "./lib/scraper.js";
 import { GroupUpdate, LoadDataBase, extractNativeFlowResponseId } from "./src/message.js";
@@ -6430,6 +6431,8 @@ Select Bot Settings:
 │${setv} ${prefix}matriks
 │${setv} ${prefix}vektor
 │${setv} ${prefix}kompleks
+│${setv} ${prefix}hewan
+│${setv} ${prefix}tumbuhan
 │${setv} ${prefix}base64
 ╰─┬────❍
 ╭─┴❍「 *FUN* 」❍
@@ -6885,6 +6888,8 @@ Select Bot Settings:
 │${setv} ${prefix}matriks
 │${setv} ${prefix}vektor
 │${setv} ${prefix}kompleks
+│${setv} ${prefix}hewan
+│${setv} ${prefix}tumbuhan
 │${setv} ${prefix}base64
 ╰──────❍`);
 				}
@@ -7004,6 +7009,8 @@ Select Bot Settings:
 │${setv} ${prefix}matriks
 │${setv} ${prefix}vektor
 │${setv} ${prefix}kompleks
+│${setv} ${prefix}hewan
+│${setv} ${prefix}tumbuhan
 │${setv} ${prefix}base64
 │${setv} ${prefix}quiz
 │${setv} ${prefix}team <n>
@@ -8248,6 +8255,30 @@ Select Bot Settings:
 					const found = cariSurat(q);
 					if (!found) return m.reply("Templat tidak ditemukan.\n\nKetik .surat untuk daftar.");
 					return m.reply(`*${found.nama}*\n\n${found.isi}\n\n_Templat contoh, sesuaikan dengan kebutuhanmu._`);
+				}
+				break;
+			case "hewan":
+				{
+					const q = (text || "").trim().toLowerCase();
+					if (q === "random") { const h = FAUNA[Math.floor(Math.random() * FAUNA.length)]; return m.reply(`*${h.nama}*\n${h.asal}\n\n${h.info}`); }
+					if (!q) {
+						return m.reply(`*Fauna Indonesia (${FAUNA.length})*\n\n${FAUNA.map((h) => `- ${h.nama}`).join(", ")}\n\nKetik .hewan komodo`);
+					}
+					const found = q === "list" || q === "semua" ? FAUNA : FAUNA.filter((h) => h.nama.toLowerCase().includes(q) || h.asal.toLowerCase().includes(q));
+					if (!found.length) return m.reply("Hewan tidak ditemukan.\n\nKetik .hewan untuk daftar.");
+					return m.reply(found.map((h) => `*${h.nama}* (${h.asal})\n${h.info}`).join("\n\n"));
+				}
+				break;
+			case "tumbuhan":
+				{
+					const q = (text || "").trim().toLowerCase();
+					if (q === "random") { const t = FLORA[Math.floor(Math.random() * FLORA.length)]; return m.reply(`*${t.nama}*\n${t.asal}\n\n${t.info}`); }
+					if (!q) {
+						return m.reply(`*Flora Indonesia (${FLORA.length})*\n\n${FLORA.map((t) => `- ${t.nama}`).join(", ")}\n\nKetik .tumbuhan rafflesia`);
+					}
+					const found = q === "list" || q === "semua" ? FLORA : FLORA.filter((t) => t.nama.toLowerCase().includes(q) || t.asal.toLowerCase().includes(q));
+					if (!found.length) return m.reply("Tumbuhan tidak ditemukan.\n\nKetik .tumbuhan untuk daftar.");
+					return m.reply(found.map((t) => `*${t.nama}* (${t.asal})\n${t.info}`).join("\n\n"));
 				}
 				break;
 			case "vektor":

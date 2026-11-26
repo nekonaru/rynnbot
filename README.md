@@ -70,7 +70,7 @@ Berbasis Hitori Bot karya [Nazedev](https://github.com/nazedev/hitori), yang dir
 | Utilitas | **Geometri & aljabar** | `.luas`, `.volume`, `.kuadrat`, `.deret`, `.linear`, `.persen`, `.matriks` (2x2), `.vektor` (dot/cross/panjang), `.kompleks` (tambah/kurang/kali/bagi/konjugat/modulus) |
 | Utilitas | **Dunia & sains** | `.ibukota` (~180 negara), `.negara` (ibukota/mata uang/benua/populasi), `.unsur` (tabel periodik lengkap, 118 unsur), `.planet` (21 planet & exoplanet) |
 | Utilitas | **Konversi & angka** | `.umur`, `.terbilang`, `.roman`, `.konversi` (panjang/berat/suhu/luas/volume/kecepatan/energi/tekanan/data/waktu), `.morse`, `.binary`, `.hex`, `.rot13`, `.akar`, `.faktorial`, `.fibonacci`, `.primaantara`, `.statistik`, `.pecahan`, `.progress`, `.selisihhari`, `.terbilang2` (0-999 miliar), `.hurufke`, `.sapaan` |
-| Utilitas | **Bahasa & geografi** | `.bahasa` (7 bahasa daerah Nusantara), `.danau` (12 danau), `.gunung` (12 gunung), `.pulau` (10 pulau), `.sungai` (10 sungai) |
+| Utilitas | **Bahasa & geografi** | `.bahasa` (7 bahasa daerah Nusantara), `.danau` (12 danau), `.gunung` (12 gunung), `.pulau` (10 pulau), `.sungai` (10 sungai), `.hewan` (16 fauna), `.tumbuhan` (16 flora) |
 | Utilitas | **Waktu & sejarah** | `.hariini`, `.waktu` (12 kota), `.haribersejarah` (13 tanggal bersejarah Indonesia) |
 | Utilitas | **Templat surat** | `.surat` (lamaran kerja, izin, undangan rapat, kuasa, surat resmi) |
 | Utilitas | **Hari ini** | `.hariini` (tanggal, waktu, minggu ke-n) di zona `global.timezone` |
@@ -510,6 +510,8 @@ Semua perintah memakai prefix default `.` `!` atau `+` (atur di `settings.js`).
 | `.bahasa jawa` | Bahasa daerah Nusantara |
 | `.danau toba` | Info danau di Indonesia |
 | `.gunung kerinci` | Info gunung di Indonesia |
+| `.hewan komodo` | Fauna khas Indonesia (16 entri) |
+| `.tumbuhan rafflesia` | Flora khas Indonesia (16 entri) |
 | `.pulau jawa` | Info pulau di Indonesia |
 | `.sungai kapuas` | Info sungai di Indonesia |
 | `.haribersejarah 17 agustus` | Peringatan hari bersejarah (tanpa argumen: hari ini) |
