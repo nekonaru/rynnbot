@@ -46,6 +46,7 @@ import { deretAritmetika, deretGeometri, linearSatu, persenDari, persenPerubahan
 import { det2, invers2, kali2, transpose2 } from "./lib/matriks.js";
 import { dotVektor, crossVektor, panjangVektor, kompleksTambah, kompleksKurang, kompleksKali, kompleksBagi, kompleksKonjugat, kompleksModulus } from "./lib/vektor-kompleks.js";
 import { FAUNA, FLORA, cariFauna, cariFlora } from "./lib/data-fauna-flora.js";
+import { formatUptime, statusApiKey, laporanDiagnosa } from "./lib/diagnosa.js";
 import { FIRST_SETUP_MARKER, firstSetupStates, firstSetupStepText, sendFirstSetupIntro } from './src/setup-wizard.js';
 import { ytMp4, ytMp3, ytMp4Stream } from "./lib/scraper.js";
 import { GroupUpdate, LoadDataBase, extractNativeFlowResponseId } from "./src/message.js";
@@ -6433,6 +6434,7 @@ Select Bot Settings:
 │${setv} ${prefix}kompleks
 │${setv} ${prefix}hewan
 │${setv} ${prefix}tumbuhan
+│${setv} ${prefix}diagnosa
 │${setv} ${prefix}base64
 ╰─┬────❍
 ╭─┴❍「 *FUN* 」❍
@@ -6890,6 +6892,7 @@ Select Bot Settings:
 │${setv} ${prefix}kompleks
 │${setv} ${prefix}hewan
 │${setv} ${prefix}tumbuhan
+│${setv} ${prefix}diagnosa
 │${setv} ${prefix}base64
 ╰──────❍`);
 				}
@@ -7011,6 +7014,7 @@ Select Bot Settings:
 │${setv} ${prefix}kompleks
 │${setv} ${prefix}hewan
 │${setv} ${prefix}tumbuhan
+│${setv} ${prefix}diagnosa
 │${setv} ${prefix}base64
 │${setv} ${prefix}quiz
 │${setv} ${prefix}team <n>
@@ -8603,6 +8607,39 @@ Select Bot Settings:
 					if (!hasil.length) return m.reply("Tidak ada bilangan prima dalam rentang itu.");
 					const tampil = hasil.length > 50 ? hasil.slice(0, 50).join(", ") + `, ... (${hasil.length} prima)` : hasil.join(", ");
 					return m.reply(`*Prima antara ${mt[1]} dan ${mt[2]}* (${hasil.length})\n\n${tampil}`);
+				}
+				break;
+			case "diagnosa":
+			case "healthcheck":
+				{
+					if (!isCreator) return m.reply(global.mess.owner);
+					let ffmpegAda = false;
+					try {
+						execSync(process.platform === "win32" ? "where ffmpeg" : "command -v ffmpeg", { stdio: "ignore" });
+						ffmpegAda = true;
+					} catch {}
+					const pathDb = String(global.database?.path || "");
+					const dbTipe = /^mongodb/i.test(pathDb) ? "MongoDB" : /^mysql/i.test(pathDb) ? "MySQL" : /^postgres/i.test(pathDb) ? "PostgreSQL" : "lokal (JSON)";
+					const totalData = FAKTA.length + PUISI.length + PANTUN.length + PERIBAHASA.length +
+						Object.values(SOAL).reduce((n, arr) => n + arr.length, 0) + HANGMAN_KATA.length +
+						Object.keys(RESEP).length + Object.keys(SUKU).length + Object.keys(KULINER).length +
+						LAGU_DAERAH.length + WISATA.length + Object.keys(WAYANG).length + Object.keys(PROVINSI).length +
+						Object.keys(NEGARA).length + Object.keys(UNSUR).length + Object.keys(PLANET).length + ZODIAC.length +
+						BAHASA.length + DANAU.length + GUNUNG.length + PULAU.length + SUNGAI.length + HARI_BERSEJARAH.length + FAUNA.length + FLORA.length;
+					const baris = laporanDiagnosa({
+						nodeVersion: process.version,
+						platform: process.platform,
+						uptimeMs: process.uptime() * 1000,
+						ffmpeg: ffmpegAda,
+						naze: Boolean(global.APIKeys?.["https://naze.dev/api/v1"]),
+						neosantara: Boolean(global.APIKeys?.["https://api.neosantara.xyz/v1"]),
+						dbTipe,
+						mode: sock.public ? "public" : "self",
+						prefix: set.multiprefix ? global.listprefix : [prefix],
+						zona: global.timezone || "Asia/Jakarta",
+						totalData,
+					});
+					return m.reply(`*Diagnosa Rynn*\n\n${baris.join("\n")}\n\n_Kunci API hanya dilaporkan statusnya, nilainya tidak pernah ditampilkan._`);
 				}
 				break;
 			case "statistikdata":

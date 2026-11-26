@@ -1,5 +1,21 @@
 # Changelog
 
+## v3.29.0
+
+Rynn v3.29.0 menambahkan perintah diagnosa runtime untuk owner dan memperkuat jaminan bahwa balasan perintah tidak menampilkan nilai kunci API.
+
+### Fitur baru
+
+- `.diagnosa` (alias `.healthcheck`, khusus owner) - laporan Node.js, platform, uptime, keberadaan ffmpeg, status `NAZE_API_KEY` dan `NEOSANTARA_API_KEY` (hanya "terisi"/"kosong"), tipe database, mode bot, prefix, zona waktu, dan jumlah entri data. Nilai kunci tidak pernah dicetak.
+- Tampil di `.allmenu` dan submenu terkait.
+
+### Audit
+
+- Audit statis terhadap balasan perintah: tiga kecocokan aturan ternyata hanya menyebut **nama** variabel key (`NAZE_API_KEY`, `NEOSANTARA_API_KEY`) dalam pesan "belum di-set", bukan nilai; tidak ada kebocoran.
+- Modul baru `lib/diagnosa.js` dengan 3 tes unit, termasuk tes bahwa laporan tidak mengandung awalan kunci `nz-`.
+- Total tes sekarang **74 lolos**. `npm run check` lolos (123 file).
+- Audit menu terhadap `case` tetap bersih.
+
 ## v3.28.0
 
 Rynn v3.28.0 menambahkan data fauna/flora Indonesia dan tes integritas data permanen di CI.

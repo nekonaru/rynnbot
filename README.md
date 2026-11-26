@@ -59,6 +59,7 @@ Berbasis Hitori Bot karya [Nazedev](https://github.com/nazedev/hitori), yang dir
 | Menu & Umum | **Menu dan bantuan** | Menu berkategori, daftar perintah, info bot, ping |
 | Menu & Umum | **CLI interaktif** | Wizard setup pertama, manajer pengaturan, dashboard status, pembaca log |
 | Menu & Umum | **Hot reload** | `settings.js` dimuat ulang otomatis saat disimpan |
+| Menu & Umum | **Diagnosa** | `.diagnosa` (owner): cek Node.js, ffmpeg, status kunci API tanpa menampilkan nilai, tipe database, zona waktu, jumlah entri data |
 | Utilitas | **Kalender & hiburan** | `.cal` (kalender bulan), `.pantun` (pantun acak), `.b64` (encode/decode base64), `.password` (generate password acak) |
 | Utilitas | **Cek anggota** | `.admins` (daftar admin grup), `.saldo` (saldo limit/uang/status) |
 | Utilitas | **Belajar SMA** | `.soal` (249 soal, bank soal campuran), `.soalmtk` (60 soal), `.soalipa` (68 soal), `.soalips` (42 soal), `.soalbindon` (50 soal), `.soalppkn` (29 soal), `.namabayi` (nama bayi Indonesia + asal + arti) |
@@ -518,6 +519,7 @@ Semua perintah memakai prefix default `.` `!` atau `+` (atur di `settings.js`).
 | `.waktu tokyo` | Waktu di kota tertentu (tanpa argumen: 3 zona waktu Indonesia) |
 | `.surat lamaran` | Templat surat (lamaran/izin/undangan/kuasa/resmi) |
 | `.statistikdata` | Jumlah seluruh entri data Rynn |
+| `.diagnosa` | Cek lingkungan runtime (owner, tanpa menampilkan kunci) |
 | `.selisihhari 2026-01-01 2026-12-31` | Selisih hari antara dua tanggal |
 | `.fibonacci 10` | Deret Fibonacci (BigInt, sampai 100 suku) |
 | `.primaantara 1 100` | Bilangan prima dalam rentang (maksimal 10.000 bilangan) |
