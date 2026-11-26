@@ -42,6 +42,7 @@ import { kataBilangan, ucapanWaktu, hurufKe, angkaKeHuruf } from "./lib/bilangan
 import { formatTanggal, formatWaktu, potongTeks, hitungKata } from "./lib/teks.js";
 import { hashTeks, urlEncode, urlDecode, validasiJson } from "./lib/devutils.js";
 import { luasBangun, volumeBangun, akarKuadrat } from "./lib/geometri.js";
+import { deretAritmetika, deretGeometri, linearSatu, persenDari, persenPerubahan } from "./lib/deret.js";
 import { FIRST_SETUP_MARKER, firstSetupStates, firstSetupStepText, sendFirstSetupIntro } from './src/setup-wizard.js';
 import { ytMp4, ytMp3, ytMp4Stream } from "./lib/scraper.js";
 import { GroupUpdate, LoadDataBase, extractNativeFlowResponseId } from "./src/message.js";
@@ -6421,6 +6422,9 @@ Select Bot Settings:
 │${setv} ${prefix}luas
 │${setv} ${prefix}volume
 │${setv} ${prefix}kuadrat
+│${setv} ${prefix}deret
+│${setv} ${prefix}linear
+│${setv} ${prefix}persen
 │${setv} ${prefix}base64
 ╰─┬────❍
 ╭─┴❍「 *FUN* 」❍
@@ -6870,6 +6874,9 @@ Select Bot Settings:
 │${setv} ${prefix}luas
 │${setv} ${prefix}volume
 │${setv} ${prefix}kuadrat
+│${setv} ${prefix}deret
+│${setv} ${prefix}linear
+│${setv} ${prefix}persen
 │${setv} ${prefix}base64
 ╰──────❍`);
 				}
@@ -6983,6 +6990,9 @@ Select Bot Settings:
 │${setv} ${prefix}luas
 │${setv} ${prefix}volume
 │${setv} ${prefix}kuadrat
+│${setv} ${prefix}deret
+│${setv} ${prefix}linear
+│${setv} ${prefix}persen
 │${setv} ${prefix}base64
 │${setv} ${prefix}quiz
 │${setv} ${prefix}team <n>
@@ -8227,6 +8237,54 @@ Select Bot Settings:
 					const found = cariSurat(q);
 					if (!found) return m.reply("Templat tidak ditemukan.\n\nKetik .surat untuk daftar.");
 					return m.reply(`*${found.nama}*\n\n${found.isi}\n\n_Templat contoh, sesuaikan dengan kebutuhanmu._`);
+				}
+				break;
+			case "deret":
+				{
+					const arg = (text || "").trim();
+					const mt = arg.match(/^(aritmetika|geometri|ar|geo)\s+(-?[\d.,]+)\s+(-?[\d.,]+)\s+(\d+)$/i);
+					if (!mt) return m.reply("Contoh:\n.deret aritmetika 2 3 5\n.deret geometri 2 3 4\nFormat: jenis suku-pertama beda/rasio jumlah-suku");
+					const a = Number(mt[2].replace(",", "."));
+					const b = Number(mt[3].replace(",", "."));
+					const n = parseInt(mt[4], 10);
+					const geo = /^(geometri|geo)$/i.test(mt[1]);
+					const hasil = geo ? deretGeometri(a, b, n) : deretAritmetika(a, b, n);
+					if (!hasil) return m.reply("Suku harus 1 sampai 1000 dan hasil tidak boleh terlalu besar.");
+					const r = (v) => Number(v.toFixed(4)).toLocaleString("id-ID");
+					return m.reply(`*Deret ${geo ? "Geometri" : "Aritmetika"}*\n\nSuku pertama: ${r(a)}\n${geo ? "Rasio" : "Beda"}: ${r(b)}\nJumlah suku: ${n}\n\nSuku ke-${n}: *${r(hasil.sukuKe)}*\nJumlah ${n} suku: *${r(hasil.jumlah)}*`);
+				}
+				break;
+			case "linear":
+				{
+					const arg = (text || "").trim();
+					const mt = arg.match(/^(-?[\d.,]+)\s+(-?[\d.,]+)\s+(-?[\d.,]+)$/);
+					if (!mt) return m.reply("Contoh: .linear 2 3 11\nFormat: a b c untuk persamaan ax + b = c");
+					const hasil = linearSatu(...mt.slice(1).map((s) => Number(s.replace(",", "."))));
+					if (!hasil) return m.reply("Semua nilai harus bilangan.");
+					if (hasil.tipe === "identitas") return m.reply("Persamaan berlaku untuk semua x (identitas).");
+					if (hasil.tipe === "inkonsisten") return m.reply("Persamaan tidak punya solusi (inkonsisten).");
+					return m.reply(`*Persamaan Linear*\n\nSolusi: *x = ${Number(hasil.x.toFixed(4)).toLocaleString("id-ID")}*`);
+				}
+				break;
+			case "persen":
+				{
+					const arg = (text || "").trim();
+					const angka = (s) => Number(String(s).replace(",", "."));
+					const mtNaik = arg.match(/^naik\s+(-?[\d.,]+)\s+(-?[\d.,]+)$/i);
+					if (mtNaik) {
+						const dari = angka(mtNaik[1]);
+						const ke = angka(mtNaik[2]);
+						const hasil = persenPerubahan(dari, ke);
+						if (hasil === null) return m.reply("Nilai awal tidak boleh nol.");
+						return m.reply(`*Perubahan Persen*\n\nDari ${dari.toLocaleString("id-ID")} ke ${ke.toLocaleString("id-ID")}: *${Number(hasil.toFixed(4)).toLocaleString("id-ID")}%*\n${hasil >= 0 ? "Naik" : "Turun"} ${Number(Math.abs(hasil).toFixed(4)).toLocaleString("id-ID")}%`);
+					}
+					const mt = arg.match(/^(-?[\d.,]+)\s+(-?[\d.,]+)$/);
+					if (!mt) return m.reply("Contoh:\n.persen 25 200\n.persen naik 100 125");
+					const bagian = angka(mt[1]);
+					const total = angka(mt[2]);
+					const hasil = persenDari(bagian, total);
+					if (hasil === null) return m.reply("Total tidak boleh nol.");
+					return m.reply(`*Persen*\n\n${bagian.toLocaleString("id-ID")} dari ${total.toLocaleString("id-ID")} = *${Number(hasil.toFixed(4)).toLocaleString("id-ID")}%*`);
 				}
 				break;
 			case "luas":

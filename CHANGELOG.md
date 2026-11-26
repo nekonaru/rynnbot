@@ -1,5 +1,24 @@
 # Changelog
 
+## v3.25.0
+
+Rynn v3.25.0 menambahkan empat perintah aljabar/deret setelah audit roundtrip terhadap fungsi encoding.
+
+### Fitur baru
+
+- `.deret aritmetika|geometri <a> <b> <n>` - suku ke-n dan jumlah n suku; alias `ar` dan `geo`.
+- `.linear <a> <b> <c>` - penyelesai `ax + b = c`, termasuk kasus identitas dan inkonsisten.
+- `.persen <bagian> <total>` - persentase suatu bagian dari total.
+- `.persen naik <dari> <ke>` - persentase perubahan (positif berarti naik, negatif berarti turun).
+- Keempat mode tampil di `.allmenu` dan `.edukasimenu` lewat tiga perintah baru.
+
+### Audit
+
+- Menulis tes roundtrip untuk `morseEncode`/`morseDecode`, `binaryEncode`/`binaryDecode`, `hexEncode`/`hexDecode`, `rot13`, `toRoman`/`fromRoman`, dan `zodiacFor` di `lib/util-lokal.js`: 6 tes lolos, tidak ada anomali.
+- Modul baru `lib/deret.js` dengan 4 tes unit; total sekarang **58 tes lolos**.
+- Audit menu terhadap `case`: 650 case, 341 perintah menu unik, semua punya implementasi.
+- `npm run check` lolos (115 file). CI hijau sebelum tag `v3.25.0`.
+
 ## v3.24.0
 
 Rynn v3.24.0 menambahkan tiga perintah geometri/aljabar dan memperbaiki satu anomali numerik yang tertangkap oleh tes unit.
