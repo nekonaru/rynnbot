@@ -59,13 +59,15 @@ const FIELD_MAP = {
 		serialize: (val) => String(val),
 		section: "global.limit",
 	},
-	// Naze API key hidup di .env (NAZE_API_KEY), tidak pernah di settings.js.
+	// API key hidup di .env (NAZE_API_KEY / NEOSANTARA_API_KEY), tidak pernah di settings.js.
 	// Ditangani terpisah di readSetting/writeSetting/writeSettings.
 	nazeApiKey: null,
+	neosantaraApiKey: null,
 };
 
 export function readSetting(key) {
 	if (key === "nazeApiKey") return readEnvValue("NAZE_API_KEY");
+	if (key === "neosantaraApiKey") return readEnvValue("NEOSANTARA_API_KEY");
 	const field = FIELD_MAP[key];
 	if (!field) return undefined;
 
@@ -125,6 +127,10 @@ export function writeSetting(key, value) {
 		writeEnvValue("NAZE_API_KEY", value.trim());
 		return;
 	}
+	if (key === "neosantaraApiKey") {
+		writeEnvValue("NEOSANTARA_API_KEY", value.trim());
+		return;
+	}
 	const field = FIELD_MAP[key];
 	if (!field) throw new Error(`Unknown setting key: ${key}`);
 
@@ -178,6 +184,10 @@ export function writeSettings(config) {
 	for (const [key, value] of Object.entries(config)) {
 		if (key === "nazeApiKey") {
 			if (value && String(value).trim()) writeEnvValue("NAZE_API_KEY", String(value).trim());
+			continue;
+		}
+		if (key === "neosantaraApiKey") {
+			if (value && String(value).trim()) writeEnvValue("NEOSANTARA_API_KEY", String(value).trim());
 			continue;
 		}
 		const field = FIELD_MAP[key];

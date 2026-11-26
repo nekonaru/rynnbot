@@ -1,5 +1,25 @@
 # Changelog
 
+## v3.26.0
+
+Rynn v3.26.0 menambahkan operasi matriks 2x2 dan memperbaiki pengelolaan kedua API key di CLI.
+
+### Fitur baru
+
+- `.matriks det|invers|transpose|kali <a b c d> [e f g h]` - operasi matriks 2x2; input baris demi baris. Invers menolak determinan nol.
+- Perintah tampil di `.allmenu` dan `.edukasimenu`.
+
+### Perbaikan
+
+- CLI (`src/cli/settings-parser.js`, `src/cli/settings-menu.js`) sekarang bisa membaca dan menulis **NEOSANTARA_API_KEY** lewat menu API Keys, sama seperti `NAZE_API_KEY`. Sebelumnya hanya Naze yang bisa diatur dari CLI, sehingga kunci Neosantara harus disunting manual di `.env`.
+
+### Audit
+
+- Meninjau seluruh `FIELD_MAP` di parser pengaturan: field `tempatStore` sudah usang (settings.js memakai `global.database`), tetapi dibiarkan agar tidak mengubah perilaku; tidak dipakai lagi oleh alur aktif.
+- Modul baru `lib/matriks.js` dengan 4 tes unit; total sekarang **62 tes lolos**.
+- Audit menu terhadap `case`: 651 case, 342 perintah menu unik, semua punya implementasi.
+- `npm run check` lolos (118 file). CI hijau sebelum tag `v3.26.0`.
+
 ## v3.25.0
 
 Rynn v3.25.0 menambahkan empat perintah aljabar/deret setelah audit roundtrip terhadap fungsi encoding.

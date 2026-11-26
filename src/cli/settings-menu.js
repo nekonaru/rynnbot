@@ -221,14 +221,20 @@ async function apiKeySettings() {
 		sectionHeader("API Keys");
 
 		const apiKey = readSetting("nazeApiKey");
+		const neoKey = readSetting("neosantaraApiKey");
 		const masked = (key) => (key ? key.slice(0, 6) + "••••••" : theme.muted("(belum diisi)"));
 
 		console.log(`  ${theme.primary("•")} ${theme.dim("Naze API".padEnd(20))} ${theme.bold(masked(apiKey))}`);
+		console.log(`  ${theme.primary("•")} ${theme.dim("Neosantara API".padEnd(20))} ${theme.bold(masked(neoKey))}`);
 		console.log("");
 
 		const choice = await select({
 			message: "Pilih aksi:",
-			choices: [{ name: "Ubah Naze API Key", value: "naze" }, backChoice("Kembali")],
+			choices: [
+				{ name: "Ubah Naze API Key", value: "naze" },
+				{ name: "Ubah Neosantara API Key", value: "neo" },
+				backChoice("Kembali"),
+			],
 		});
 
 		if (choice === BACK_VALUE) {
@@ -247,6 +253,20 @@ async function apiKeySettings() {
 				continue;
 			}
 			writeSetting("nazeApiKey", finalVal);
+			logSuccess("API key tersimpan ke .env");
+		}
+
+		if (choice === "neo") {
+			const val = await input({
+				message: "Neosantara API Key:",
+				default: neoKey || "",
+			});
+			const finalVal = val.trim();
+			if (!finalVal) {
+				logWarning("API Key kosong. Key yang lama dibiarkan.");
+				continue;
+			}
+			writeSetting("neosantaraApiKey", finalVal);
 			logSuccess("API key tersimpan ke .env");
 		}
 	}

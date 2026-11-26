@@ -43,6 +43,7 @@ import { formatTanggal, formatWaktu, potongTeks, hitungKata } from "./lib/teks.j
 import { hashTeks, urlEncode, urlDecode, validasiJson } from "./lib/devutils.js";
 import { luasBangun, volumeBangun, akarKuadrat } from "./lib/geometri.js";
 import { deretAritmetika, deretGeometri, linearSatu, persenDari, persenPerubahan } from "./lib/deret.js";
+import { det2, invers2, kali2, transpose2 } from "./lib/matriks.js";
 import { FIRST_SETUP_MARKER, firstSetupStates, firstSetupStepText, sendFirstSetupIntro } from './src/setup-wizard.js';
 import { ytMp4, ytMp3, ytMp4Stream } from "./lib/scraper.js";
 import { GroupUpdate, LoadDataBase, extractNativeFlowResponseId } from "./src/message.js";
@@ -6425,6 +6426,7 @@ Select Bot Settings:
 │${setv} ${prefix}deret
 │${setv} ${prefix}linear
 │${setv} ${prefix}persen
+│${setv} ${prefix}matriks
 │${setv} ${prefix}base64
 ╰─┬────❍
 ╭─┴❍「 *FUN* 」❍
@@ -6877,6 +6879,7 @@ Select Bot Settings:
 │${setv} ${prefix}deret
 │${setv} ${prefix}linear
 │${setv} ${prefix}persen
+│${setv} ${prefix}matriks
 │${setv} ${prefix}base64
 ╰──────❍`);
 				}
@@ -6993,6 +6996,7 @@ Select Bot Settings:
 │${setv} ${prefix}deret
 │${setv} ${prefix}linear
 │${setv} ${prefix}persen
+│${setv} ${prefix}matriks
 │${setv} ${prefix}base64
 │${setv} ${prefix}quiz
 │${setv} ${prefix}team <n>
@@ -8237,6 +8241,32 @@ Select Bot Settings:
 					const found = cariSurat(q);
 					if (!found) return m.reply("Templat tidak ditemukan.\n\nKetik .surat untuk daftar.");
 					return m.reply(`*${found.nama}*\n\n${found.isi}\n\n_Templat contoh, sesuaikan dengan kebutuhanmu._`);
+				}
+				break;
+			case "matriks":
+				{
+					const arg = (text || "").trim();
+					const mt = arg.match(/^(det|invers|transpose|kali)\s+(-?[\d.,]+)\s+(-?[\d.,]+)\s+(-?[\d.,]+)\s+(-?[\d.,]+)(?:\s+(-?[\d.,]+)\s+(-?[\d.,]+)\s+(-?[\d.,]+)\s+(-?[\d.,]+))?$/i);
+					if (!mt) return m.reply("Contoh:\n.matriks det 2 3 1 4\n.matriks invers 2 3 1 4\n.matriks transpose 1 2 3 4\n.matriks kali 1 2 3 4 5 6 7 8\nInput: a b c d (baris demi baris)");
+					const angka = (s) => Number(String(s).replace(",", "."));
+					const A = [angka(mt[2]), angka(mt[3]), angka(mt[4]), angka(mt[5])];
+					const B = mt[6] ? [angka(mt[6]), angka(mt[7]), angka(mt[8]), angka(mt[9])] : null;
+					const mode = mt[1].toLowerCase();
+					const r = (v) => Number(v.toFixed(4)).toLocaleString("id-ID");
+					const tampil = (m) => `[ ${r(m[0])}  ${r(m[1])} ]\n[ ${r(m[2])}  ${r(m[3])} ]`;
+					if (mode === "det") {
+						const hasil = det2(A);
+						return hasil === null ? m.reply("Matriks tidak valid.") : m.reply(`*Determinan*\n\n${tampil(A)}\n\nDet = *${r(hasil)}*`);
+					}
+					if (mode === "invers") {
+						const hasil = invers2(A);
+						return hasil === null ? m.reply("Determinan nol, matriks tidak punya invers.") : m.reply(`*Invers Matriks*\n\n${tampil(hasil)}`);
+					}
+					if (mode === "transpose") {
+						return m.reply(`*Transpose*\n\n${tampil(transpose2(A))}`);
+					}
+					const hasil = kali2(A, B);
+					return hasil === null ? m.reply("Perkalian butuh dua matriks 2x2.") : m.reply(`*Hasil Perkalian A x B*\n\n${tampil(hasil)}`);
 				}
 				break;
 			case "deret":
