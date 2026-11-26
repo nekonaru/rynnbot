@@ -1,5 +1,22 @@
 # Changelog
 
+## v3.27.0
+
+Rynn v3.27.0 menambahkan perintah vektor dan bilangan kompleks setelah audit integritas import seluruh modul.
+
+### Fitur baru
+
+- `.vektor dot|cross|panjang <bilangan...>` - dot product 2D/3D, cross product 3D, dan panjang vektor.
+- `.kompleks tambah|kurang|kali|bagi|konjugat|modulus <a bi> [c di]` - operasi bilangan kompleks; pembagian oleh nol ditolak.
+- Keduanya tampil di `.allmenu` dan `.edukasimenu`.
+
+### Audit
+
+- Script audit import lintas modul: **343** named import diverifikasi terhadap export asalnya; nol export hilang dan nol berkas tujuan hilang. (Parser audit diperbaiki untuk mengenali `export async function`, yang awalnya menghasilkan 7 false positive.)
+- Modul baru `lib/vektor-kompleks.js` dengan 4 tes unit; total sekarang **66 tes lolos**.
+- Audit menu terhadap `case`: 653 case, 344 perintah menu unik, semua punya implementasi.
+- `npm run check` lolos (120 file). CI hijau sebelum tag `v3.27.0`.
+
 ## v3.26.0
 
 Rynn v3.26.0 menambahkan operasi matriks 2x2 dan memperbaiki pengelolaan kedua API key di CLI.

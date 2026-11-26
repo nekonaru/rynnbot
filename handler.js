@@ -44,6 +44,7 @@ import { hashTeks, urlEncode, urlDecode, validasiJson } from "./lib/devutils.js"
 import { luasBangun, volumeBangun, akarKuadrat } from "./lib/geometri.js";
 import { deretAritmetika, deretGeometri, linearSatu, persenDari, persenPerubahan } from "./lib/deret.js";
 import { det2, invers2, kali2, transpose2 } from "./lib/matriks.js";
+import { dotVektor, crossVektor, panjangVektor, kompleksTambah, kompleksKurang, kompleksKali, kompleksBagi, kompleksKonjugat, kompleksModulus } from "./lib/vektor-kompleks.js";
 import { FIRST_SETUP_MARKER, firstSetupStates, firstSetupStepText, sendFirstSetupIntro } from './src/setup-wizard.js';
 import { ytMp4, ytMp3, ytMp4Stream } from "./lib/scraper.js";
 import { GroupUpdate, LoadDataBase, extractNativeFlowResponseId } from "./src/message.js";
@@ -6427,6 +6428,8 @@ Select Bot Settings:
 │${setv} ${prefix}linear
 │${setv} ${prefix}persen
 │${setv} ${prefix}matriks
+│${setv} ${prefix}vektor
+│${setv} ${prefix}kompleks
 │${setv} ${prefix}base64
 ╰─┬────❍
 ╭─┴❍「 *FUN* 」❍
@@ -6880,6 +6883,8 @@ Select Bot Settings:
 │${setv} ${prefix}linear
 │${setv} ${prefix}persen
 │${setv} ${prefix}matriks
+│${setv} ${prefix}vektor
+│${setv} ${prefix}kompleks
 │${setv} ${prefix}base64
 ╰──────❍`);
 				}
@@ -6997,6 +7002,8 @@ Select Bot Settings:
 │${setv} ${prefix}linear
 │${setv} ${prefix}persen
 │${setv} ${prefix}matriks
+│${setv} ${prefix}vektor
+│${setv} ${prefix}kompleks
 │${setv} ${prefix}base64
 │${setv} ${prefix}quiz
 │${setv} ${prefix}team <n>
@@ -8241,6 +8248,51 @@ Select Bot Settings:
 					const found = cariSurat(q);
 					if (!found) return m.reply("Templat tidak ditemukan.\n\nKetik .surat untuk daftar.");
 					return m.reply(`*${found.nama}*\n\n${found.isi}\n\n_Templat contoh, sesuaikan dengan kebutuhanmu._`);
+				}
+				break;
+			case "vektor":
+				{
+					const arg = (text || "").trim();
+					const mt = arg.match(/^(dot|cross|panjang)\s+(-?[\d.,]+(?:\s+-?[\d.,]+)+)$/i);
+					if (!mt) return m.reply("Contoh:\n.vektor dot 1 2 3 4 5 6\n.vektor cross 1 0 0 0 1 0\n.vektor panjang 3 4");
+					const angka = (s) => Number(String(s).replace(",", "."));
+					const nilai = mt[2].split(/\s+/).map(angka);
+					const r = (v) => Number(v.toFixed(4)).toLocaleString("id-ID");
+					const mode = mt[1].toLowerCase();
+					if (mode === "panjang") {
+						const hasil = panjangVektor(nilai);
+						return hasil === null ? m.reply("Vektor harus 2 atau 3 dimensi.") : m.reply(`*Panjang Vektor*\n\n[${nilai.map(r).join(", ")}] = *${r(hasil)}*`);
+					}
+					const tengah = nilai.length / 2;
+					if (!Number.isInteger(tengah) || nilai.length < 2 || nilai.length > 6) return m.reply("Dot/cross butuh dua vektor dengan dimensi sama.");
+					const a = nilai.slice(0, tengah);
+					const b = nilai.slice(tengah);
+					if (mode === "dot") {
+						const hasil = dotVektor(a, b);
+						return hasil === null ? m.reply("Dimensi vektor tidak valid.") : m.reply(`*Dot Product*\n\n[${a.map(r).join(", ")}] · [${b.map(r).join(", ")}] = *${r(hasil)}*`);
+					}
+					const hasil = crossVektor(a, b);
+					return hasil === null ? m.reply("Cross product hanya untuk vektor 3 dimensi.") : m.reply(`*Cross Product*\n\n[${a.map(r).join(", ")}] x [${b.map(r).join(", ")}] = *[${hasil.map(r).join(", ")}]*`);
+				}
+				break;
+			case "kompleks":
+				{
+					const arg = (text || "").trim();
+					const mt = arg.match(/^(tambah|kurang|kali|bagi|konjugat|modulus)\s+(-?[\d.,]+)\s+(-?[\d.,]+)(?:\s+(-?[\d.,]+)\s+(-?[\d.,]+))?$/i);
+					if (!mt) return m.reply("Contoh:\n.kompleks kali 1 2 3 4\n.kompleks modulus 3 4\nFormat: a bi [c di]");
+					const angka = (s) => Number(String(s).replace(",", "."));
+					const a = [angka(mt[2]), angka(mt[3])];
+					const b = mt[4] ? [angka(mt[4]), angka(mt[5])] : null;
+					const r = (v) => Number(v.toFixed(4)).toLocaleString("id-ID");
+					const tampil = ([re, im]) => `${re < 0 ? "(" + r(re) + ")" : r(re)} ${im < 0 ? "- " + r(Math.abs(im)) : "+ " + r(im)}i`;
+					const mode = mt[1].toLowerCase();
+					if (mode === "konjugat") return m.reply(`*Konjugat*\n\n${tampil(kompleksKonjugat(a))}`);
+					if (mode === "modulus") return m.reply(`*Modulus*\n\n|${tampil(a)}| = *${r(kompleksModulus(a))}*`);
+					const operasi = { tambah: kompleksTambah, kurang: kompleksKurang, kali: kompleksKali, bagi: kompleksBagi }[mode];
+					if (!b) return m.reply("Operasi ini butuh dua bilangan kompleks.");
+					const hasil = operasi(a, b);
+					if (hasil === null) return m.reply(mode === "bagi" ? "Pembagi tidak boleh nol." : "Input tidak valid.");
+					return m.reply(`*${mode[0].toUpperCase() + mode.slice(1)}*\n\n${tampil(a)} ${mode} ${tampil(b)} = *${tampil(hasil)}*`);
 				}
 				break;
 			case "matriks":

@@ -67,7 +67,7 @@ Berbasis Hitori Bot karya [Nazedev](https://github.com/nazedev/hitori), yang dir
 | Utilitas | **Author & proyek** | `.author` (info pembuat), `.repo` (repositori), `.channel` (channel resmi), `.donasi` (dukungan), `.versi` (versi bot) |
 | Menu | **Submenu per kategori** | `.botmenu`, `.groupmenu` (`.grupmenu`), `.searchmenu`, `.downloadmenu`, `.quotesmenu`, `.toolsmenu`, `.aimenu`, `.randommenu`, `.stalkermenu`, `.animemenu`, `.gamemenu`, `.funmenu`, `.edukasimenu`, `.ownermenu`, `.authormenu` |
 | Utilitas | **Matematika & utilitas** | `.kpk`, `.fpb`, `.faktor`, `.prima`, `.diskon`, `.cicilan`, `.bmi`, `.jamtidur`, `.akar`, `.faktorial` |
-| Utilitas | **Geometri & aljabar** | `.luas` (8 bangun datar), `.volume` (7 bangun ruang), `.kuadrat`, `.deret`, `.linear`, `.persen`, `.matriks` (determinan/invers/transpose/perkalian 2x2) |
+| Utilitas | **Geometri & aljabar** | `.luas`, `.volume`, `.kuadrat`, `.deret`, `.linear`, `.persen`, `.matriks` (2x2), `.vektor` (dot/cross/panjang), `.kompleks` (tambah/kurang/kali/bagi/konjugat/modulus) |
 | Utilitas | **Dunia & sains** | `.ibukota` (~180 negara), `.negara` (ibukota/mata uang/benua/populasi), `.unsur` (tabel periodik lengkap, 118 unsur), `.planet` (21 planet & exoplanet) |
 | Utilitas | **Konversi & angka** | `.umur`, `.terbilang`, `.roman`, `.konversi` (panjang/berat/suhu/luas/volume/kecepatan/energi/tekanan/data/waktu), `.morse`, `.binary`, `.hex`, `.rot13`, `.akar`, `.faktorial`, `.fibonacci`, `.primaantara`, `.statistik`, `.pecahan`, `.progress`, `.selisihhari`, `.terbilang2` (0-999 miliar), `.hurufke`, `.sapaan` |
 | Utilitas | **Bahasa & geografi** | `.bahasa` (7 bahasa daerah Nusantara), `.danau` (12 danau), `.gunung` (12 gunung), `.pulau` (10 pulau), `.sungai` (10 sungai) |
@@ -538,6 +538,8 @@ Semua perintah memakai prefix default `.` `!` atau `+` (atur di `settings.js`).
 | `.linear 2 3 11` | Solusi persamaan ax + b = c |
 | `.persen 25 200` / `.persen naik 100 125` | Persen dari atau persentase perubahan |
 | `.matriks det 2 3 1 4` | Operasi matriks 2x2 (det/invers/transpose/kali) |
+| `.vektor dot 1 2 3 4 5 6` | Dot/cross product dan panjang vektor |
+| `.kompleks kali 1 2 3 4` | Operasi bilangan kompleks |
 | `.base64` | Alias `.b64` (encode/decode base64) |
 | `.author` | Info pembuat Rynn |
 | `.repo` | Repositori dan rilis Rynn |
