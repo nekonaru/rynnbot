@@ -1,4 +1,4 @@
-﻿import { performance } from "node:perf_hooks";
+import { performance } from "node:perf_hooks";
 const mulai = performance.now();
 await import("../lib/rumus/index.js");
 await import("../lib/data-umum.js");

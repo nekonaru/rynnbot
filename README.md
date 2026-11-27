@@ -58,6 +58,12 @@ Berbasis Hitori Bot karya [Nazedev](https://github.com/nazedev/hitori), yang dir
 |----------|-------|-----------|
 | Menu & Umum | **Menu dan bantuan** | Menu berkategori, daftar perintah, info bot, ping |
 | Menu & Umum | **CLI interaktif** | Wizard setup pertama, manajer pengaturan, dashboard status, pembaca log |
+| Menu & Umum | **Navigasi v8** | `.jelajah`, `.cmdbaru`, `.peta`, `.aliasglobal`, `.statcmd` |
+| Menu & Umum | **Catatan v8** | `.catat`, `.agenda`, `.ceklis`, `.template` |
+| Menu & Umum | **Owner v8** | `.audit`, `.backup jadwal`, `.aksesdefault`, `.blacklist`, `.whitelistcmd`, `.system` |
+| Menu & Umum | **Ekonomi v8** | `.bank`, `.tabung`, `.tarik`, `.pinjam`, `.lunas`, `.top`, `.dompetgrafik` |
+| Menu & Umum | **Game v8** | `.turnamen`, `.tebak riddle` |
+| Menu & Umum | **Data v8** | `.data cari`, `.data rekomendasi` |
 | Menu & Umum | **Eksplorasi perintah** | `.explore`, `.randomcmd`, `.riwayat`, `.shortcut`, `.pintasan`, `.dataset`, `.rekomendasi` |
 | Menu & Umum | **Produktivitas chat** | `.todo` (tugas pribadi), `.catatancari`, `.peraturan`, `.icebreak`, `.tabel` |
 | Menu & Umum | **Ekonomi lanjutan** | `.dompet`, `.topuang`, `.toplimit`, `.hadiah` |
@@ -545,6 +551,29 @@ Semua perintah memakai prefix default `.` `!` atau `+` (atur di `settings.js`).
 | `.ekonomi` | Ringkasan harga limit, hadiah, dan saldo |
 | `.gameinfo` | Cooldown dan aturan game (daily, rampok, begal, slot, casino, samgong) |
 | `.panduan` | Panduan singkat mulai pakai Rynn |
+| `.jelajah [kategori]` | Jelajah perintah per kategori |
+| `.cmdbaru` | Daftar perintah terbaru |
+| `.peta` | Peta seluruh kategori perintah |
+| `.aliasglobal <nama>` | Cek alias perintah |
+| `.statcmd <nama>` | Statistik pemakaian perintah |
+| `.catat <judul> <isi>` | Catatan pribadi terstruktur |
+| `.agenda` | Ringkasan tugas, catatan, dan pengingat |
+| `.ceklis <n>` | Tandai tugas selesai |
+| `.template <jenis>` | Template surat |
+| `.audit penuh` / `.audit bersihkan` | Log audit owner |
+| `.backup jadwal <jam>` | Catat jadwal backup harian |
+| `.aksesdefault <role>` | Role default perintah |
+| `.blacklist <cmd>` / `.whitelistcmd <cmd>` | Kelola perintah global |
+| `.system` | Info sistem dan versi |
+| `.bank` | Ringkasan saldo, tabungan, utang |
+| `.tabung <n>` / `.tarik <n>` | Kelola tabungan |
+| `.pinjam <n>` / `.lunas` | Pinjaman lokal |
+| `.top [mingguan]` | Peringkat uang atau limit |
+| `.dompetgrafik` | Ringkasan ekonomi berbentuk bilah |
+| `.turnamen <game>` | Panel turnamen grup |
+| `.tebak riddle` | Tebak peribahasa |
+| `.data cari <kata>` | Cari lintas data |
+| `.data rekomendasi <kata>` | Rekomendasi perintah data |
 | `.broadcast <pesan>` | Warning + konfirmasi, maksimal 10 grup, jeda 10 detik, owner saja |
 | `.logaudit [n]` | Log aksi owner, tersimpan di database lokal |
 | `.restore <berkas>` | Konfirmasi dua langkah sebelum menimpa database |

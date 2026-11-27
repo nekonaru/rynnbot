@@ -1,5 +1,34 @@
 # Changelog
 
+## v8.0.0
+
+Rynn v8.0.0 menambah 25 perintah baru untuk navigasi, catatan, owner, ekonomi, game, dan data, serta menyelesaikan sisa rancangan v7 berupa generator menu penuh, benchmark, dan coverage.
+
+### Perintah baru
+
+- Navigasi: `.jelajah`, `.cmdbaru`, `.peta`, `.aliasglobal`, `.statcmd`.
+- Catatan: `.catat`, `.agenda`, `.ceklis`, `.template`.
+- Owner: `.audit`, `.backup jadwal`, `.aksesdefault`, `.blacklist`, `.whitelistcmd`, `.system`.
+- Ekonomi: `.bank`, `.tabung`, `.tarik`, `.pinjam`, `.lunas`, `.top`, `.dompetgrafik`.
+- Game: `.turnamen`, `.tebak riddle`.
+- Data: `.data cari`, `.data rekomendasi`.
+
+### Pengamanan
+
+- Blacklist global per perintah kini ditegakkan di handler untuk user non-owner.
+- Pesan maintenance bisa dikustomisasi owner lewat `.maintenance pesan <teks>`.
+- Log audit mencatat akses default, blacklist, whitelist, jadwal backup, dan maintenance.
+
+### Audit
+
+- `npm run check` lolos (159 file), **108 tes lolos**.
+- Audit menu: 692 case, 393 perintah menu unik, semua punya implementasi.
+- CI hijau sebelum tag `v8.0.0`.
+
+### Batas target data
+
+- Target angka untuk wisata, resep, kuliner, hewan, tumbuhan, sejarah, tokoh, dan sejenisnya tidak dipaksa dengan entri karangan. Data tetap dibatasi pada yang dapat diverifikasi.
+
 ## v7.1.0
 
 Rynn v7.1.0 menyelesaikan sisa rancangan v7: perintah owner dengan konfirmasi, log audit, mode perbaikan, generator menu penuh, benchmark, dan coverage test.

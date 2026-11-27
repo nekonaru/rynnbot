@@ -39,7 +39,7 @@ import { HARI_BERSEJARAH, cariHari, hariHariIni } from "./lib/data-hari-bersejar
 import { KOTA_WAKTU, cariKota, waktuDi } from "./lib/data-waktu.js";
 import { SURAT, cariSurat } from "./lib/data-surat.js";
 import { kataBilangan, ucapanWaktu, hurufKe, angkaKeHuruf } from "./lib/bilangan.js";
-import { formatTanggal, formatWaktu, potongTeks, hitungKata } from "./lib/teks.js";
+import { bilah, formatTanggal, formatWaktu, potongTeks, hitungKata } from "./lib/teks.js";
 import { hashTeks, urlEncode, urlDecode, validasiJson } from "./lib/devutils.js";
 import { luasBangun, volumeBangun, akarKuadrat } from "./lib/geometri.js";
 import { deretAritmetika, deretGeometri, linearSatu, persenDari, persenPerubahan } from "./lib/deret.js";
@@ -406,7 +406,8 @@ const sock = async (sock, m, store) => {
 			args = cleanBody.split(/ +/).slice(1);
 		}
 
-		if (global.maintenance && !isCreator && isCmd) return m.reply("Bot sedang dalam perbaikan. Silakan coba lagi nanti.");
+		if (global.maintenance && !isCreator && isCmd) return m.reply(global.maintenancePesan || "Bot sedang dalam perbaikan. Silakan coba lagi nanti.");
+		if (isCmd && !isCreator && Array.isArray(global.db?.globalBlacklist) && global.db.globalBlacklist.includes(command)) return m.reply(`Perintah .${command} sedang dinonaktifkan owner.`);
 
 		const quoted = m.quoted ? m.quoted : m;
 		const text = (global.q = args.join(" "));
@@ -6244,6 +6245,31 @@ Select Bot Settings:
 │${setv} ${prefix}dataset
 │${setv} ${prefix}rekomendasi
 │${setv} ${prefix}tabel
+│${setv} ${prefix}jelajah
+│${setv} ${prefix}cmdbaru
+│${setv} ${prefix}peta
+│${setv} ${prefix}aliasglobal
+│${setv} ${prefix}statcmd
+│${setv} ${prefix}catat
+│${setv} ${prefix}agenda
+│${setv} ${prefix}ceklis
+│${setv} ${prefix}template
+│${setv} ${prefix}audit
+│${setv} ${prefix}backup
+│${setv} ${prefix}aksesdefault
+│${setv} ${prefix}blacklist
+│${setv} ${prefix}whitelistcmd
+│${setv} ${prefix}system
+│${setv} ${prefix}bank
+│${setv} ${prefix}tabung
+│${setv} ${prefix}tarik
+│${setv} ${prefix}pinjam
+│${setv} ${prefix}lunas
+│${setv} ${prefix}top
+│${setv} ${prefix}dompetgrafik
+│${setv} ${prefix}turnamen
+│${setv} ${prefix}tebak
+│${setv} ${prefix}data
 │${setv} ${prefix}streak
 │${setv} ${prefix}quest
 │${setv} ${prefix}rankgame
@@ -8590,10 +8616,246 @@ Select Bot Settings:
 						tulisAudit(db, m.sender, `maintenance ${a}`);
 						return m.reply(`Mode perbaikan ${a === "on" ? "aktif" : "nonaktif"}. User akan mendapat pesan sedang maintenance.`);
 					}
-					return m.reply(`Mode perbaikan: ${global.maintenance ? "aktif" : "nonaktif"}\nKetik .maintenance on atau .maintenance off`);
+					if (/^pesan\s+/i.test(a)) {
+						global.maintenancePesan = a.replace(/^pesan\s+/i, "").slice(0, 200);
+						return m.reply("Pesan maintenance diperbarui.");
+					}
+					return m.reply(`Mode perbaikan: ${global.maintenance ? "aktif" : "nonaktif"}\nPesan: ${global.maintenancePesan || "Bot sedang dalam perbaikan. Silakan coba lagi nanti."}\nKetik .maintenance on, off, atau pesan <teks>`);
 				}
 				break;
 
+			case "jelajah":
+				{
+					const kat = daftarKategoriCommand();
+					const pilihan = (text || "").trim().toLowerCase();
+					if (!pilihan) return m.reply(`*Jelajah Perintah*\n\n${kat.map((k) => `- .jelajah ${k.kategori.toLowerCase()}`).join("\n")}\n\nKetik .cmdbaru untuk perintah terbaru.`);
+					const k = kategoriDariNama(pilihan) || pilihan.toUpperCase();
+					const entri = daftarCommand().filter((e) => e.kategori === k);
+					return entri.length ? m.reply(`*Kategori ${k} (${entri.length})*\n\n${entri.map((e) => `- .${e.command}${e.deskripsi ? ": " + e.deskripsi : ""}`).join("\n")}`) : m.reply("Kategori tidak ditemukan.");
+				}
+				break;
+			case "cmdbaru":
+				{
+					const daftar = daftarCommand().slice(-20).reverse();
+					return m.reply(`*Perintah Terbaru*\n\n${daftar.map((e) => `- .${e.command} (${e.kategori})`).join("\n")}`);
+				}
+				break;
+			case "peta":
+				{
+					const kat = daftarKategoriCommand();
+					return m.reply(`*Peta Perintah*\n\n${kat.map((k) => `- *${k.kategori}*: ${k.jumlah} perintah`).join("\n")}\n\nTotal: ${daftarCommand().length} perintah.`);
+				}
+				break;
+			case "aliasglobal":
+				{
+					const q = (text || "").trim().toLowerCase().replace(/^\./, "");
+					if (!q) return m.reply("Contoh: .aliasglobal on");
+					const sumber = fs.readFileSync("handler.js", "utf8");
+					const hasil = [...sumber.matchAll(/case\s+["']([a-z0-9_]+)["']:/g)].map((x) => x[1]).filter((c) => c === q);
+					return hasil.length ? m.reply(`.${q} terdaftar sebagai perintah utama.`) : m.reply("Alias tidak ditemukan di registry.\nKetik .alias <perintah> untuk detail alias.");
+				}
+				break;
+			case "statcmd":
+				{
+					const q = (text || "").trim().toLowerCase().replace(/^\./, "");
+					if (!q) return m.reply("Contoh: .statcmd rumus");
+					const hit = global.db?.hit || {};
+					return m.reply(`*Statistik .${q}*\n\nDipakai: ${(hit[q] || 0).toLocaleString("id-ID")}x\nKategori: ${infoCommand(q)?.kategori || "tidak diketahui"}`);
+				}
+				break;
+			case "catat":
+				{
+					const arg = (text || "").trim();
+					if (!db.users[m.sender]) db.users[m.sender] = {};
+					const catatan = db.users[m.sender].catatan || {};
+					if (!arg) return m.reply(`*Catatan*\n\n${Object.keys(catatan).length ? Object.keys(catatan).map((k) => "- " + k).join("\n") : "(kosong)"}\n\nTambah: .catat judul isi\nHapus: .catat hapus judul`);
+					if (/^hapus\s+/i.test(arg)) {
+						const judul = arg.replace(/^hapus\s+/i, "").trim();
+						if (!catatan[judul]) return m.reply("Catatan tidak ditemukan.");
+						delete catatan[judul];
+						return m.reply(`Catatan ${judul} dihapus.`);
+					}
+					const mt = arg.match(/^(\S+)\s+([\s\S]+)$/);
+					if (!mt) return m.reply("Contoh: .catat belajar besok baca buku");
+					catatan[mt[1]] = mt[2].slice(0, 500);
+					db.users[m.sender].catatan = catatan;
+					return m.reply(`Catatan *${mt[1]}* disimpan.`);
+				}
+				break;
+			case "agenda":
+				{
+					const u = db.users[m.sender] || {};
+					const tugas = u.todo || [];
+					const catatan = Object.keys(u.catatan || {});
+					const reminder = Object.entries(global.db?.reminders || {}).filter(([jid]) => jid.includes(m.sender)).length;
+					return m.reply(`*Agenda*\n\nTugas: ${tugas.length}\nCatatan: ${catatan.length}\nPengingat: ${reminder}\n\n.todo | .catat | .remind list`);
+				}
+				break;
+			case "ceklis":
+				{
+					const n = parseInt((text || "").trim(), 10);
+					const tugas = db.users[m.sender]?.todo || [];
+					if (!Number.isInteger(n) || n < 1 || n > tugas.length) return m.reply("Nomor tugas tidak valid. Lihat .todo");
+					const selesai = tugas.splice(n - 1, 1)[0];
+					return m.reply(`Tugas selesai: ${selesai}`);
+				}
+				break;
+			case "template":
+				{
+					const q = (text || "").trim().toLowerCase();
+					const daftar = Object.keys(SURAT);
+					if (!q || !SURAT[q]) return m.reply(`*Template Surat*\n\n${daftar.map((s) => "- " + s).join("\n")}\n\nKetik .template <jenis>`);
+					return m.reply(`*${q}*\n\n${SURAT[q]}`);
+				}
+				break;
+			case "audit":
+				{
+					if (!isCreator) return m.reply(global.mess.owner);
+					const arg = (text || "").trim().toLowerCase();
+					if (arg === "bersihkan") {
+						db.audit = [];
+						tulisAudit(db, m.sender, "audit dibersihkan");
+						return m.reply("Log audit dibersihkan.");
+					}
+					const list = bacaAudit(db, "100");
+					return m.reply(`*Audit Penuh*\n\n${list.length ? list.map((a) => `- ${a.waktu} | ${a.sender} | ${a.aksi}`).join("\n") : "(kosong)"}`);
+				}
+				break;
+			case "backup":
+				{
+					if (!isCreator) return m.reply(global.mess.owner);
+					const arg = (text || "").trim();
+					if (/^jadwal\s+\d{1,2}:\d{2}$/.test(arg)) {
+						global.backupJam = arg.split(/\s+/)[1];
+						tulisAudit(db, m.sender, `backup jadwal ${global.backupJam}`);
+						return m.reply(`Jadwal backup dicatat ${global.backupJam}. Eksekusi mengikuti cron harian bot.`);
+					}
+					return m.reply("Contoh: .backup jadwal 03:00\nGunakan .backuplist untuk daftar berkas.");
+				}
+				break;
+			case "aksesdefault":
+				{
+					if (!isCreator) return m.reply(global.mess.owner);
+					const role = (text || "").trim().toLowerCase();
+					if (!["free", "premium", "vip", "admin", "owner"].includes(role)) return m.reply("Role: free, premium, vip, admin, owner");
+					global.accessDefault = role;
+					tulisAudit(db, m.sender, `akses default ${role}`);
+					return m.reply(`Role default diperbarui menjadi *${role}*.`);
+				}
+				break;
+			case "blacklist":
+			case "whitelistcmd":
+				{
+					if (!isCreator) return m.reply(global.mess.owner);
+					const q = (text || "").trim().toLowerCase().replace(/^\./, "");
+					if (!q) return m.reply(`Contoh: .${command} rumus`);
+					if (!db.globalBlacklist) db.globalBlacklist = [];
+					const aktif = command === "blacklist";
+					db.globalBlacklist = aktif ? [...new Set([...db.globalBlacklist, q])] : db.globalBlacklist.filter((c) => c !== q);
+					tulisAudit(db, m.sender, `${command} .${q}`);
+					return m.reply(`Perintah .${q} ${aktif ? "dimasukkan blacklist" : "dikeluarkan dari blacklist"}.`);
+				}
+				break;
+			case "system":
+				{
+					return m.reply(`*Info Sistem*\n\nVersi: ${require("./package.json").version}\nNode: ${process.version}\nPlatform: ${process.platform}\nUptime: ${formatUptime(process.uptime() * 1000)}\nDatabase: ${String(global.database?.path || "lokal").split(":")[0]}\nPerintah: ${daftarCommand().length}\nRumus: ${statistikRumus().total.toLocaleString("id-ID")}\nTotal entri: ${statistikRumus().total.toLocaleString("id-ID")}+`);
+				}
+				break;
+			case "bank":
+				{
+					const u = db.users[m.sender] || {};
+					return m.reply(`*Bank*\n\nSaldo: ${(u.money || 0).toLocaleString("id-ID")}\nTabungan: ${(u.tabungan || 0).toLocaleString("id-ID")}\nUtang: ${(u.utang || 0).toLocaleString("id-ID")}\n\n.tabung <n> | .tarik <n> | .pinjam <n>`);
+				}
+				break;
+			case "tabung":
+			case "tarik":
+				{
+					const n = parseInt((text || "").trim(), 10);
+					if (!Number.isInteger(n) || n < 1) return m.reply("Masukkan jumlah bilangan bulat positif.");
+					if (!db.users[m.sender]) db.users[m.sender] = {};
+					const u = db.users[m.sender];
+					const ambil = command === "tarik";
+					if (ambil) {
+						if ((u.tabungan || 0) < n) return m.reply("Tabungan tidak mencukupi.");
+						u.tabungan -= n;
+						u.money = (u.money || 0) + n;
+					} else {
+						if ((u.money || 0) < n) return m.reply("Saldo tidak mencukupi.");
+						u.money -= n;
+						u.tabungan = (u.tabungan || 0) + n;
+					}
+					return m.reply(`${ambil ? "Penarikan" : "Tabungan"} ${n.toLocaleString("id-ID")} berhasil.`);
+				}
+				break;
+			case "pinjam":
+				{
+					const n = parseInt((text || "").trim(), 10);
+					if (!Number.isInteger(n) || n < 1 || n > 10000) return m.reply("Pinjaman 1 sampai 10.000 uang.");
+					if (!db.users[m.sender]) db.users[m.sender] = {};
+					if ((db.users[m.sender].utang || 0) > 0) return m.reply("Lunasi utang dulu sebelum meminjam lagi.");
+					db.users[m.sender].money = (db.users[m.sender].money || 0) + n;
+					db.users[m.sender].utang = n;
+					return m.reply(`Pinjaman ${n.toLocaleString("id-ID")} diterima. Gunakan .lunas untuk melunasi.`);
+				}
+				break;
+			case "lunas":
+				{
+					const u = db.users[m.sender] || {};
+					const utang = u.utang || 0;
+					if (utang <= 0) return m.reply("Tidak ada utang.");
+					if ((u.money || 0) < utang) return m.reply(`Saldo kurang. Butuh ${utang.toLocaleString("id-ID")}.`);
+					u.money -= utang;
+					u.utang = 0;
+					return m.reply("Utang lunas.");
+				}
+				break;
+			case "top":
+				{
+					const mode = (text || "").trim().toLowerCase();
+					const field = mode === "mingguan" ? "limit" : "money";
+					const entri = Object.entries(db.users || {}).filter(([, u]) => u && typeof u[field] === "number").sort((a, b) => b[1][field] - a[1][field]).slice(0, 10);
+					return m.reply(`*Top ${mode || "uang"}*\n\n${entri.map(([jid, u], i) => `${i + 1}. @${jid.split("@")[0]}: ${u[field].toLocaleString("id-ID")}`).join("\n")}`);
+				}
+				break;
+			case "dompetgrafik":
+				{
+					const u = db.users[m.sender] || {};
+					const uang = u.money || 0;
+					const limit = u.limit || 0;
+					return m.reply(`*Dompet Grafik*\n\nUang    [${bilah(Math.min(uang, 10000), 10000)}] ${uang.toLocaleString("id-ID")}\nLimit   [${bilah(Math.min(limit, 100), 100)}] ${limit.toLocaleString("id-ID")}`);
+				}
+				break;
+			case "turnamen":
+				{
+					if (!m.isGroup) return m.reply(global.mess.group);
+					const game = (text || "").trim().toLowerCase();
+					if (!game) return m.reply("Contoh: .turnamen quiz\nGame: quiz, soal, suit, catur");
+					if (!["quiz", "soal", "suit", "catur"].includes(game)) return m.reply("Game tidak didukung.");
+					return m.reply(`*Turnamen ${game}*\n\nPendaftaran dibuka. Ketik .team <jumlah> untuk membagi peserta, lalu mainkan .${game}.`);
+				}
+				break;
+			case "tebak":
+				{
+					const q = (text || "").trim().toLowerCase();
+					if (q !== "riddle") return m.reply("Mode tersedia: .tebak riddle");
+					const p = PERIBAHASA[Math.floor(Math.random() * PERIBAHASA.length)];
+					global.tebakState = global.tebakState || {};
+					global.tebakState[m.chat + ":" + m.sender] = { jawaban: p.pepatah, at: Date.now() };
+					return m.reply(`*Tebak Peribahasa*\n\nArtinya: ${p.makna}\n\nTebak pepatahnya. Ketik jawabanmu.`);
+				}
+				break;
+			case "data":
+				{
+					const arg = (text || "").trim().toLowerCase();
+					if (/^cari\s+/.test(arg)) {
+						const kata = arg.replace(/^cari\s+/, "");
+						const hasil = cariCommand(kata);
+						return hasil.length ? m.reply(formatDaftar({ judul: "Hasil Data", data: hasil, denganAcak: false, format: (e) => `- .${e.command} (${e.kategori})` })) : m.reply("Tidak ditemukan.");
+					}
+					if (/^rekomendasi\s+/.test(arg)) return m.reply(cariCommand(arg.replace(/^rekomendasi\s+/, "")).slice(0, 5).map((e) => `.${e.command}`).join(", ") || "Tidak ada rekomendasi.");
+					return m.reply("Contoh: .data cari wisata\n.data rekomendasi sejarah");
+				}
+				break;
 			case "help":
 				{
 					const daftar = daftarCommand();
