@@ -1,0 +1,5 @@
+#!/bin/sh
+# Gate lokal sebelum commit. Tanpa dependency tambahan.
+set -e
+npm run check
+npm test

@@ -1,9 +1,9 @@
 import "../settings.js";
+import { jalankanBerkunci } from "../lib/antrian.js";
 import fs from "fs";
 import path from "path";
 import chalk from "chalk";
 import crypto from "crypto";
-import { Jimp } from "jimp";
 import chokidar from "chokidar";
 import { Readable } from "stream";
 import { fileURLToPath } from "url";
@@ -784,11 +784,12 @@ async function MessagesUpsert(sock, message, store) {
 						continue;
 					}
 
+					const jalankan = () => sockHandler(sock, m, store);
 					if (sockHandler) {
-						sockHandler(sock, m, store).catch((e) => console.error("Kesalahan di sockHandler:", e));
+						jalankanBerkunci(m.sender || m.chat, jalankan).catch((e) => console.error("Kesalahan di sockHandler:", e));
 					} else {
 						await reloadHandler();
-						if (sockHandler) sockHandler(sock, m, store).catch((e) => console.error("Kesalahan di sockHandler:", e));
+						if (sockHandler) jalankanBerkunci(m.sender || m.chat, jalankan).catch((e) => console.error("Kesalahan di sockHandler:", e));
 					}
 				}
 
@@ -1777,6 +1778,7 @@ async function Solving(sock, store, sessionPath = "./rynn-session") {
 					meta = cached.meta;
 				} else {
 					try {
+						const { Jimp } = await import("jimp");
 						const image = await Jimp.read(thumbnailUrl || thumbnail);
 						meta.width = image.bitmap.width;
 						meta.height = image.bitmap.height;

@@ -37,6 +37,7 @@ const rl = readline.createInterface({
 const question = (text) => new Promise((resolve) => rl.question(text, resolve));
 const tempDir = path.join(__dirname, "database/temp");
 let pairingStarted = false;
+let versionWA = null;
 let setupServer = null;
 let phoneNumber;
 let reconnectAttempts = 0;
@@ -344,7 +345,8 @@ async function startRynnBot() {
 	}
 
 	const level = pino({ level: "silent" });
-	const { version } = await fetchLatestWaWebVersion();
+	versionWA ||= (await fetchLatestWaWebVersion()).version;
+	const version = versionWA;
 	if (pairingCode && !phoneNumber && !fs.existsSync("./rynn-session/creds.json")) {
 		fs.rmSync("./rynn-session", { recursive: true, force: true });
 		async function getPhoneNumber() {

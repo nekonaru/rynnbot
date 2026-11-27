@@ -81,6 +81,7 @@ Berbasis Hitori Bot karya [Nazedev](https://github.com/nazedev/hitori), yang dir
 | Menu & Umum | **Utilitas dan AI v11** | `.markdown`, `.tabel2`, `.diagram`, `.hitungpanjang`, `.indeksdata`, `.contohdata`, `.bantuansaya`, `.code`, `.dialog`, `.brainstorm`, `.kritik`, `.translateid`, `.airiwayat` |
 | Menu & Umum | **Owner dan statistik v11** | `.restartnow`, `.updatenow`, `.logunduh`, `.pengguna`, `.daftargroup`, `.databaseinfo`, `.maintenancewhy`, `.laporharian`, `.lapormingguan`, `.statistikgrup`, `.statistikpengguna`, `.statistikperintah`, `.statistikkinerja` |
 | Menu & Umum | **Arsitektur internal v11.1** | Dataset dimuat malas lewat `lib/data-state.js`, registry v2 dengan alias dan metadata, modul kategori di `lib/handler/`, benchmark startup, dan ambang coverage di CI |
+| Menu & Umum | **Audit dan optimalisasi v11.2** | Antrean per user, state game tanpa kebocoran, konfirmasi transfer batch, akses alias, import berat ditunda, Levenshtein dua baris, cache statistik rumus, dan ffmpeg non-blokir |
 | Menu & Umum | **Eksplorasi perintah** | `.explore`, `.randomcmd`, `.riwayat`, `.shortcut`, `.pintasan`, `.dataset`, `.rekomendasi` |
 | Menu & Umum | **Produktivitas chat** | `.todo` (tugas pribadi), `.catatancari`, `.peraturan`, `.icebreak`, `.tabel` |
 | Menu & Umum | **Ekonomi lanjutan** | `.dompet`, `.topuang`, `.toplimit`, `.hadiah` |

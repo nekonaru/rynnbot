@@ -3,14 +3,13 @@ import { pasangSweeperState } from "./lib/handler/state-sweeper.js";
 import { formatAchievement, formatLevel, formatLevelboard } from "./lib/handler/progres.js";
 import { parsePasanganGrafik, formatGrafik, formatPanjangTeks } from "./lib/handler/teks-lanjut.js";
 import { detailUmur, formatUmurDetail } from "./lib/handler/waktu.js";
-import { FAKTA, PUISI, PANTUN, SOAL, PERIBAHASA, NAMA_BAYI_COWO, NAMA_BAYI_CEWE, SUKU, KULINER, RESEP, LAGU_DAERAH, WISATA, WAYANG, PROVINSI, NEGARA, UNSUR, PLANET, HANGMAN_KATA, MBTI_PERTANYAAN, MBTI_TIPES, hitungMBTI, BAHASA, cariBahasa, DANAU, GUNUNG, PULAU, SUNGAI, HARI_BERSEJARAH, cariHari, hariHariIni, KOTA_WAKTU, cariKota, waktuDi, SURAT, cariSurat, FAUNA, FLORA, cariFauna, cariFlora, daftarKategori, daftarSubkategori, halamanRumus, cariRumus, rumusAcak, rumusDetail, statistikRumus, formatRumus, semuaRumus, API_COMMANDS, SEJARAH, TOKOH, OLAHRAGA, SINGKATAN, SINONIM, ANTONIM, MATAUANG, NEGARA_TAMBAHAN, SUKU_TAMBAHAN, BAHASA_TAMBAHAN, PLANET_TAMBAHAN, DANAU_TAMBAHAN, GUNUNG_TAMBAHAN, PULAU_TAMBAHAN, SUNGAI_TAMBAHAN, BUDAYA, siapkanData } from "./lib/data-state.js";
+import { FAKTA, PUISI, PANTUN, SOAL, PERIBAHASA, NAMA_BAYI_COWO, NAMA_BAYI_CEWE, SUKU, KULINER, RESEP, LAGU_DAERAH, WISATA, WAYANG, PROVINSI, NEGARA, UNSUR, PLANET, HANGMAN_KATA, MBTI_PERTANYAAN, MBTI_TIPES, hitungMBTI, BAHASA, cariBahasa, DANAU, GUNUNG, PULAU, SUNGAI, HARI_BERSEJARAH, cariHari, hariHariIni, KOTA_WAKTU, cariKota, waktuDi, SURAT, cariSurat, FAUNA, FLORA, daftarKategori, daftarSubkategori, halamanRumus, cariRumus, rumusAcak, rumusDetail, statistikRumus, formatRumus, semuaRumus, API_COMMANDS, SEJARAH, TOKOH, OLAHRAGA, SINGKATAN, SINONIM, ANTONIM, MATAUANG, BUDAYA, siapkanData } from "./lib/data-state.js";
 import { logInfo } from "./src/cli/helpers.js";
 import fs from "fs";
 import os from "os";
 import util from "util";
 import path from "path";
 import chalk from "chalk";
-import yts from "yt-search";
 import webp from "node-webpmux";
 import { Chess } from "chess.js";
 import { fileURLToPath } from "url";
@@ -18,7 +17,7 @@ import { createRequire } from "module";
 import { performance } from "perf_hooks";
 import { exec, execSync } from "child_process";
 import { parsePhoneNumber } from "awesome-phonenumber";
-import baileys, { generateWAMessageContent, jidNormalizedUser, getContentType, areJidsSameUser } from "baileys";
+import { generateWAMessageContent, jidNormalizedUser, getContentType, areJidsSameUser } from "baileys";
 
 import { UguuSe } from "./lib/uploader.js";
 import TicTacToe from "./lib/tictactoe.js";
@@ -31,29 +30,27 @@ import { bilah, formatTanggal, formatWaktu, potongTeks, hitungKata } from "./lib
 import { bagiKelompok, bagiTim, ukuranTimGame, formatPembagian } from "./lib/pembagian.js";
 import { buatBracket, catatMenang, formatBracket } from "./lib/turnamen.js";
 import { denganCache, bersihkanCache } from "./lib/cache.js";
-import { muatData } from "./lib/data-loader.js";
-import { muat } from "./lib/data-facade.js";
 import { hashTeks, urlEncode, urlDecode, validasiJson } from "./lib/devutils.js";
 import { luasBangun, volumeBangun, akarKuadrat } from "./lib/geometri.js";
 import { deretAritmetika, deretGeometri, linearSatu, persenDari, persenPerubahan } from "./lib/deret.js";
 import { det2, invers2, kali2, transpose2 } from "./lib/matriks.js";
 import { dotVektor, crossVektor, panjangVektor, kompleksTambah, kompleksKurang, kompleksKali, kompleksBagi, kompleksKonjugat, kompleksModulus } from "./lib/vektor-kompleks.js";
-import { formatUptime, statusApiKey, laporanDiagnosa } from "./lib/diagnosa.js";
-import { keBasis, dariBasis, konversiBasis } from "./lib/basis.js";
+import { formatUptime, laporanDiagnosa } from "./lib/diagnosa.js";
+import { dariBasis, konversiBasis } from "./lib/basis.js";
 import { slug } from "./lib/slug.js";
 import { daftarCommand, daftarKategoriCommand, cariCommand, infoCommand, jumlahCase } from "./lib/command-registry.js";
 import { cekAkses, aturAkses, matikanPerintah, hidupkanPerintah, aturCooldown } from "./lib/access.js";
 import { lihatQuest, tandaiQuest, klaimQuest } from "./lib/quest.js";
 import { bangunMenu, kategoriDariNama, ringkasanKategori } from "./lib/menu-builder.js";
-import { formatDaftar, formatDetail } from "./lib/daftar.js";
+import { formatDaftar } from "./lib/daftar.js";
 import { tulisAudit, bacaAudit } from "./lib/audit.js";
 import { FIRST_SETUP_MARKER, firstSetupStates, firstSetupStepText, sendFirstSetupIntro } from './src/setup-wizard.js';
-import { ytMp4, ytMp3, ytMp4Stream } from "./lib/scraper.js";
+import { ytMp3, ytMp4Stream } from "./lib/scraper.js";
 import { GroupUpdate, LoadDataBase, extractNativeFlowResponseId } from "./src/message.js";
 import { CloneBot, StopCloneBot, ListCloneBot } from "./src/clonebot.js";
-import { toAudio, toPTT, toVideo, toGif, toImage } from "./lib/converter.js";
+import { toAudio, toPTT, toGif, toImage } from "./lib/converter.js";
 import { cmdAdd, cmdAddHit, addExpired, getPosition, getExpired, getStatus, checkStatus } from "./src/database.js";
-import { rdGame, iGame, gameSlot, gameCasinoSolo, gameSamgongSolo, gameMerampok, gameBegal, daily, buy, setLimit, addLimit, addMoney, setMoney, transfer, Cangkulan, SnakeLadder, getChessAI } from "./lib/game.js";
+import { rdGame, iGame, gameSlot, gameCasinoSolo, gameSamgongSolo, gameMerampok, gameBegal, daily, buy, setLimit, addLimit, addMoney, transfer, Cangkulan, SnakeLadder, getChessAI } from "./lib/game.js";
 import {
 	getRandom,
 	getBuffer,
@@ -224,6 +221,17 @@ function getCasesArray() {
 	return casesArray;
 }
 
+// Metadata case dibentuk sekali per array, bukan tiap pesan.
+const metaCaseCache = new WeakMap();
+function metaCases(daftar) {
+	let hasil = metaCaseCache.get(daftar);
+	if (!hasil) {
+		hasil = { set: new Set(daftar), daftar: daftar.map((c) => ({ asli: c, kecil: c.toLowerCase() })) };
+		metaCaseCache.set(daftar, hasil);
+	}
+	return hasil;
+}
+
 const sock = async (sock, m, store) => {
 	await siapkanData();
 	let ownerNumber = global.owner || [];
@@ -231,6 +239,9 @@ const sock = async (sock, m, store) => {
 		if (!global.db) global.db = {};
 		if (!global.db.cases) global.db.cases = getCasesArray();
 		const cases = global.db.cases;
+	const meta = metaCases(cases);
+	const casesSet = meta.set;
+	const daftarCase = meta.daftar;
 
 		await LoadDataBase(sock, m);
 
@@ -740,7 +751,17 @@ const sock = async (sock, m, store) => {
 			if (set.autotyping) {
 				await sock.sendPresenceUpdate("composing", m.chat);
 			}
-			if (cases.includes(command)) {
+			if (set.antispam && antiSpam.isFiltered(m.sender)) {
+				console.log(chalk.bgRed("[ SPAM ] : "), chalk.black(chalk.bgHex("#1CFFF7")(`From -> ${m.sender}`), chalk.bgHex("#E015FF")(` In ${m.isGroup ? m.chat : "Private Chat"}`)));
+				return m.reply("「 ❗ 」Beri Jeda 5 Detik Per Command Kak");
+			}
+
+			// Kontrol akses per perintah: role, perintah dimatikan, dan cooldown.
+			if (isCmd && command && !isCreator) {
+				const cek = cekAkses({ db, chat: m.chat, sender: m.sender, command, isCreator, isAdmin: Boolean(m.isAdmin), isPremium, isVip });
+				if (!cek.ok) return m.reply(cek.alasan);
+			}
+			if (casesSet.has(command)) {
 				cmdAdd(db.hit);
 				cmdAddHit(db.hit, command);
 				if (!db.users[m.sender]) db.users[m.sender] = {};
@@ -752,30 +773,20 @@ const sock = async (sock, m, store) => {
 				else if (kategori === "EDUKASI") tandaiQuest(db, m.sender, "edukasi");
 				else if (kategori === "GAME") tandaiQuest(db, m.sender, "game");
 			}
-			if (set.antispam && antiSpam.isFiltered(m.sender)) {
-				console.log(chalk.bgRed("[ SPAM ] : "), chalk.black(chalk.bgHex("#1CFFF7")(`From -> ${m.sender}`), chalk.bgHex("#E015FF")(` In ${m.isGroup ? m.chat : "Private Chat"}`)));
-				return m.reply("「 ❗ 」Beri Jeda 5 Detik Per Command Kak");
-			}
-
-			// Kontrol akses per perintah: role, perintah dimatikan, dan cooldown.
-			if (isCmd && command && !isCreator) {
-				const cek = cekAkses({ db, chat: m.chat, sender: m.sender, command, isCreator, isAdmin: Boolean(m.isAdmin), isPremium, isVip });
-				if (!cek.ok) return m.reply(cek.alasan);
-			}
 
 			if (command && set.didyoumean) {
-				let isCommandValid = cases.some((c) => c.toLowerCase() === command.toLowerCase());
+				const cmdInput = command.toLowerCase();
+				let isCommandValid = casesSet.has(command);
 				if (!isCommandValid) {
 					let matches = [];
-					for (const c of cases) {
-						let cmdTarget = c.toLowerCase();
-						let cmdInput = command.toLowerCase();
+					for (const c of daftarCase) {
+						let cmdTarget = c.kecil;
 						let sim = similarity(cmdInput, cmdTarget);
 						let lengthDiff = Math.abs(cmdInput.length - cmdTarget.length);
 						let isStartsWith = cmdTarget.startsWith(cmdInput);
 						if (((sim >= almost && lengthDiff <= 3) || isStartsWith) && cmdInput !== cmdTarget) {
 							matches.push({
-								name: c,
+								name: c.asli,
 								score: isStartsWith ? parseInt(sim * 100) + 10 : parseInt(sim * 100),
 							});
 						}
@@ -2149,8 +2160,16 @@ const sock = async (sock, m, store) => {
 								}
 							}
 							break;
+						case "jadwal":
+							{
+								const jam = args[1];
+								if (!/^\d{1,2}:\d{2}$/.test(jam || "")) return m.reply("Contoh: .backup jadwal 03:00");
+								global.backupJam = jam;
+								tulisAudit(db, m.sender, `backup jadwal ${jam}`);
+								return m.reply(`Jadwal backup dicatat ${jam}. Eksekusi mengikuti cron harian bot.`);
+							}
 						default:
-							m.reply("Gunakan perintah:\n- backup all\n- backup auto\n- backup session\n- backup database");
+							m.reply("Gunakan perintah:\n- backup all\n- backup auto\n- backup session\n- backup database\n- backup jadwal <HH:MM>");
 					}
 				}
 				break;
@@ -2823,10 +2842,9 @@ const sock = async (sock, m, store) => {
 			case "profile":
 			case "cek":
 				{
-					const user = Object.keys(db.users);
 					const infoUser = db.users[m.sender];
 					await m.reply(
-						`*👤Profile @${m.sender.split("@")[0]} :*\n🐋User Bot : ${user.includes(m.sender) ? "True" : "False"}\n🔥User : ${isVip ? "VIP" : isPremium ? "PREMIUM" : "FREE"}${isPremium ? `\n⏳Expired : ${checkStatus(m.sender, premium) ? formatDate(getExpired(m.sender, db.premium)) : "-"}` : ""}\n🎫Limit : ${infoUser.limit}\n💰Uang : ${infoUser ? infoUser.money.toLocaleString("id-ID") : "0"}`,
+						`*👤Profile @${m.sender.split("@")[0]} :*\n🐋User Bot : ${infoUser ? "True" : "False"}\n🔥User : ${isVip ? "VIP" : isPremium ? "PREMIUM" : "FREE"}${isPremium ? `\n⏳Expired : ${checkStatus(m.sender, premium) ? formatDate(getExpired(m.sender, db.premium)) : "-"}` : ""}\n🎫Limit : ${infoUser.limit}\n💰Uang : ${infoUser ? infoUser.money.toLocaleString("id-ID") : "0"}`,
 					);
 				}
 				break;
@@ -3968,7 +3986,7 @@ Select Bot Settings:
 						fileListContent += `file '${framePaths[framePaths.length - 1]}'\n`;
 						fileListContent += `duration 3\n`;
 						fs.writeFileSync(fileListPath, fileListContent);
-						execSync(`ffmpeg -y -f concat -safe 0 -i "${fileListPath}" -vf 'fps=30' -c:v libx264 -preset veryfast -pix_fmt yuv420p -t 00:00:10 "${outputVideoPath}"`);
+						await new Promise((resolve, reject) => exec(`ffmpeg -y -f concat -safe 0 -i "${fileListPath}" -vf 'fps=30' -c:v libx264 -preset veryfast -pix_fmt yuv420p -t 00:00:10 "${outputVideoPath}"`, (err) => (err ? reject(err) : resolve())));
 						await sock.sendAsSticker(m.chat, outputVideoPath, m, {
 							packname,
 							author,
@@ -4388,6 +4406,7 @@ Select Bot Settings:
 					const queryYts = extractUrl(text, "youtu") || text;
 					m.react("⏳");
 					try {
+						const yts = (await import("yt-search")).default;
 						const res = await yts.search(queryYts);
 						const hasil = pickRandom(res.all);
 						const teksnya = `*📍Title:* ${hasil.title || "Tidak tersedia"}\n*✏Description:* ${hasil.description || "Tidak tersedia"}\n*🌟Channel:* ${hasil.author?.name || "Tidak tersedia"}\n*⏳Duration:* ${hasil.seconds || "Tidak tersedia"} second (${hasil.timestamp || "Tidak tersedia"})\n*🔎Source:* ${hasil.url || "Tidak tersedia"}\n\n_note : jika ingin mendownload silahkan_\n_pilih ${prefix}ytmp3 url_video atau ${prefix}ytmp4 url_video_`;
@@ -6141,6 +6160,17 @@ Select Bot Settings:
 							set.template = parseInt(args[1], 10);
 							m.reply(`Sukses Mengubah Template Menu\nTemplate : ${set.template == 1 ? "Button Menu" : set.template == 2 ? "List Menu" : set.template == 3 ? "Document Menu" : set.template == 4 ? "Location Menu" : "Button Menu"}`);
 						} else m.reply(`Template Menu:\n- 1 (Button Menu)\n- 2 (List Menu)\n- 3 (Document Menu)\n- 4 (Location Menu)\n\nExample: ${prefix + command} set 1`);
+					} else if (args[0]) {
+						const k = args[0].toLowerCase();
+						const peta = {
+							bot: "botmenu", grup: "groupmenu", group: "groupmenu", search: "searchmenu",
+							download: "downloadmenu", quotes: "quotesmenu", tools: "toolsmenu", ai: "aimenu",
+							random: "randommenu", stalker: "stalkermenu", anime: "animemenu", game: "gamemenu",
+							fun: "funmenu", edukasi: "edukasimenu", pendidikan: "edukasimenu", owner: "ownermenu", author: "authormenu",
+						};
+						const submenu = kategoriDariNama(k);
+						const teks = submenu ? bangunMenu(submenu, setv, prefix) : null;
+						return teks ? m.reply(teks) : m.reply(`Kategori tidak ditemukan. Pilihan: ${Object.keys(peta).join(", ")}`);
 					} else
 						await templateMenu(sock, set.template, m, prefix, setv, db, {
 							locale_day,
@@ -8167,7 +8197,7 @@ Select Bot Settings:
 				break;
 			case "luas":
 				{
-					const arg = (text || "").trim();
+					const arg = (text || "").trim().replace(/persegi\s+panjang/gi, "persegipanjang");
 					const bagian = arg.split(/[\s,]+/).filter(Boolean);
 					const jenis = bagian.shift();
 					const angka = bagian.map((s) => Number(s));
@@ -8792,18 +8822,6 @@ Select Bot Settings:
 					return m.reply(`*Audit Penuh*\n\n${list.length ? list.map((a) => `- ${a.waktu} | ${a.sender} | ${a.aksi}`).join("\n") : "(kosong)"}`);
 				}
 				break;
-			case "backup":
-				{
-					if (!isCreator) return m.reply(global.mess.owner);
-					const arg = (text || "").trim();
-					if (/^jadwal\s+\d{1,2}:\d{2}$/.test(arg)) {
-						global.backupJam = arg.split(/\s+/)[1];
-						tulisAudit(db, m.sender, `backup jadwal ${global.backupJam}`);
-						return m.reply(`Jadwal backup dicatat ${global.backupJam}. Eksekusi mengikuti cron harian bot.`);
-					}
-					return m.reply("Contoh: .backup jadwal 03:00\nGunakan .backuplist untuk daftar berkas.");
-				}
-				break;
 			case "aksesdefault":
 				{
 					if (!isCreator) return m.reply(global.mess.owner);
@@ -8901,8 +8919,8 @@ Select Bot Settings:
 					const q = (text || "").trim().toLowerCase();
 					if (q !== "riddle") return m.reply("Mode tersedia: .tebak riddle");
 					const p = PERIBAHASA[Math.floor(Math.random() * PERIBAHASA.length)];
-					global.tebakState = global.tebakState || {};
-					global.tebakState[m.chat + ":" + m.sender] = { jawaban: p.pepatah, at: Date.now() };
+					global.tebakState = global.tebakState || new Map();
+					global.tebakState.set(m.chat + ":" + m.sender, { jawaban: p.pepatah, at: Date.now() });
 					return m.reply(`*Tebak Peribahasa*\n\nArtinya: ${p.makna}\n\nTebak pepatahnya. Ketik jawabanmu.`);
 				}
 				break;
@@ -9129,7 +9147,7 @@ Select Bot Settings:
 						if (!state?.bracket) return m.reply("Bracket belum dibuat.");
 						const babak = parseInt(bagian[1], 10);
 						const index = parseInt(bagian[2], 10) - 1;
-						const pemenang = bagian.slice(3).join(" ").replace(/^@/, "");
+						const pemenang = bagian.slice(3).join(" ");
 						if (!Number.isInteger(babak) || !Number.isInteger(index) || !pemenang) return m.reply("Contoh: .turnamen menang 1 1 @pemain");
 						const hasil = catatMenang(state.bracket, babak, index, pemenang);
 						if (!hasil.ok) return m.reply(hasil.alasan);
@@ -9308,6 +9326,22 @@ Select Bot Settings:
 				break;
 			case "transferbatch":
 				{
+					const konfirmasi = (text || "").trim().match(/^confirm\s+(\S+)$/i);
+					if (konfirmasi) {
+						const peta = global.transferPending || new Map();
+						const pending = peta.get(m.sender);
+						if (!pending || pending.token !== konfirmasi[1] || Date.now() - pending.at > 300000) return m.reply("Token konfirmasi tidak valid atau sudah kedaluwarsa.");
+						const total = pending.nominal * pending.target.length;
+						const u = db.users[m.sender] || {};
+						if ((u.money || 0) < total) return m.reply(`Saldo kurang. Butuh ${total.toLocaleString("id-ID")}.`);
+						u.money -= total;
+						for (const tujuan of pending.target) {
+							if (!db.users[tujuan]) db.users[tujuan] = { limit: 0, money: 0 };
+							db.users[tujuan].money = (db.users[tujuan].money || 0) + pending.nominal;
+						}
+						peta.delete(m.sender);
+						return m.reply(`Transfer ${total.toLocaleString("id-ID")} ke ${pending.target.length} target berhasil.`);
+					}
 					const mt = (text || "").trim().split(/\s+/);
 					const nominal = parseInt(mt[mt.length - 1], 10);
 					const target = mt.slice(0, -1).map((s) => s.replace(/[^0-9]/g, "") + "@s.whatsapp.net").filter((s) => s.includes("@") && s.length > 10);
@@ -9316,7 +9350,8 @@ Select Bot Settings:
 					const u = db.users[m.sender] || {};
 					if ((u.money || 0) < total) return m.reply(`Saldo kurang. Butuh ${total.toLocaleString("id-ID")}.`);
 					const token = Math.random().toString(36).slice(2, 8).toUpperCase();
-					global.transferPending = { sender: m.sender, target, nominal, token, at: Date.now() };
+					global.transferPending = global.transferPending || new Map();
+					global.transferPending.set(m.sender, { sender: m.sender, target, nominal, token, at: Date.now() });
 					return m.reply(`*KONFIRMASI TRANSFER*\n\n${target.length} target x ${nominal.toLocaleString("id-ID")} = ${total.toLocaleString("id-ID")}\nKetik .transferbatch confirm ${token} dalam 5 menit.`);
 				}
 				break;
@@ -9332,15 +9367,19 @@ Select Bot Settings:
 					const pool = SOAL.matematika && SOAL.matematika.length ? SOAL.matematika : Object.values(SOAL)[0];
 					if (!pool || !pool.length) return m.reply("Bank soal kosong.");
 					const soal = pool[Math.floor(Math.random() * pool.length)];
-					global.quizState = global.quizState || {};
-					global.quizState[m.sender] = { soal, benar: 0, at: Date.now() };
+					global.quizBeruntunState = global.quizBeruntunState || new Map();
+					global.quizBeruntunState.set(m.sender, { soal, benar: 0, at: Date.now() });
 					return m.reply(`*Quiz Beruntun*\n\n${soal.q}\n\n${soal.o.map((o, i) => `${String.fromCharCode(65 + i)}. ${o}`).join("\n")}\n\nJawab: .quizjawab a/b/c/d`);
 				}
 				break;
 			case "quizjawab":
 				{
-					const q = global.quizState?.[m.sender];
-					if (!q || Date.now() - q.at > 300000) return m.reply("Belum ada quiz aktif. Ketik .quizberuntun");
+					const q = global.quizBeruntunState?.get(m.sender);
+					if (!q) return m.reply("Belum ada quiz aktif. Ketik .quizberuntun");
+					if (Date.now() - q.at > 300000) {
+						global.quizBeruntunState.delete(m.sender);
+						return m.reply("Quiz beruntun kedaluwarsa. Ketik .quizberuntun");
+					}
 					const jawab = (text || "").trim().toLowerCase();
 					if (!/^[a-d]$/.test(jawab)) return m.reply("Jawab dengan a, b, c, atau d.");
 					const idx = jawab.charCodeAt(0) - 97;
@@ -9348,17 +9387,22 @@ Select Bot Settings:
 						q.benar++;
 						return m.reply(`Benar. Skor sementara: ${q.benar}`);
 					}
-					delete global.quizState[m.sender];
+					global.quizBeruntunState?.delete(m.sender);
 					return m.reply(`Salah. Jawaban benar: ${String.fromCharCode(65 + q.soal.a)}. Skor akhir: ${q.benar}`);
 				}
 				break;
 			case "tebakjawab":
 				{
-					const p = global.tebakState?.[m.chat + ":" + m.sender];
-					if (!p || Date.now() - p.at > 300000) return m.reply("Belum ada tebak riddle aktif. Ketik .tebak riddle");
+					const kunciTebak = m.chat + ":" + m.sender;
+					const p = global.tebakState?.get(kunciTebak);
+					if (!p) return m.reply("Belum ada tebak riddle aktif. Ketik .tebak riddle");
+					if (Date.now() - p.at > 300000) {
+						global.tebakState.delete(kunciTebak);
+						return m.reply("Tebak riddle kedaluwarsa. Ketik .tebak riddle");
+					}
 					const jawab = (text || "").trim().toLowerCase().replace(/[^a-z ]/g, "");
 					const benar = p.jawaban.toLowerCase().replace(/[^a-z ]/g, "");
-					delete global.tebakState[m.chat + ":" + m.sender];
+					global.tebakState?.delete(m.chat + ":" + m.sender);
 					return jawab.includes(benar) || benar.includes(jawab) ? m.reply("Benar!" ) : m.reply(`Salah. Jawaban: ${p.jawaban}`);
 				}
 				break;
@@ -9929,10 +9973,12 @@ Select Bot Settings:
 				{
 					const kata = (text || "").trim().toLowerCase();
 					if (!/^[a-z]{3,10}$/.test(kata)) return m.reply("Contoh: .wordle kucing\nKata 3 sampai 10 huruf.");
-					if (!global.wordleState) global.wordleState = {};
+					if (!global.wordleState) global.wordleState = new Map();
 					const kunci = m.chat + ":" + m.sender;
-					if (!global.wordleState[kunci]) {
-						global.wordleState[kunci] = { kata, tebakan: [], at: Date.now() };
+					const lama = global.wordleState.get(kunci);
+					if (lama && Date.now() - lama.at > 15 * 60 * 1000) global.wordleState.delete(kunci);
+					if (!global.wordleState.has(kunci)) {
+						global.wordleState.set(kunci, { kata, tebakan: [], at: Date.now() });
 						return m.reply(`*Wordle*\n\nKata ${kata.length} huruf. Tebak dengan .wordlejawab <kata>\nPetunjuk: [v] huruf tepat, ~ huruf ada di tempat lain, x tidak ada.`);
 					}
 					return m.reply("Sudah ada Wordle aktif. Tebak dengan .wordlejawab <kata>");
@@ -9941,14 +9987,14 @@ Select Bot Settings:
 			case "wordlejawab":
 				{
 					const kunci = m.chat + ":" + m.sender;
-					const state = global.wordleState?.[kunci];
+					const state = global.wordleState?.get(kunci);
 					if (!state) return m.reply("Belum ada Wordle. Ketik .wordle <kata>");
 					const tebakan = (text || "").trim().toLowerCase();
 					if (tebakan.length !== state.kata.length) return m.reply(`Tebakan harus ${state.kata.length} huruf.`);
 					state.tebakan.push(tebakan);
 					const petunjuk = [...tebakan].map((c, i) => (state.kata[i] === c ? "[v]" : state.kata.includes(c) ? "~" : "x")).join("");
 					if (tebakan === state.kata) {
-						delete global.wordleState[kunci];
+						global.wordleState?.delete(kunci);
 						return m.reply(`*Benar!*\n${petunjuk}\nTebakan: ${state.tebakan.length}`);
 					}
 					return m.reply(`${petunjuk}\nTebakan ke-${state.tebakan.length}.`);
@@ -10207,21 +10253,6 @@ Select Bot Settings:
 				{
 					const daftar = daftarKategoriCommand();
 					return m.reply(`*Kategori Perintah (${daftar.length})*\n\n${daftar.map((k) => `- *${k.kategori}*: ${k.jumlah} perintah`).join("\n")}\n\nKetik .menu <kategori> untuk submenu.`);
-				}
-				break;
-			case "menu":
-				{
-					const k = (text || "").trim().toLowerCase();
-					const peta = {
-						bot: "botmenu", grup: "groupmenu", group: "groupmenu", search: "searchmenu",
-						download: "downloadmenu", quotes: "quotesmenu", tools: "toolsmenu", ai: "aimenu",
-						random: "randommenu", stalker: "stalkermenu", anime: "animemenu", game: "gamemenu",
-						fun: "funmenu", edukasi: "edukasimenu", pendidikan: "edukasimenu", owner: "ownermenu", author: "authormenu",
-					};
-					if (!k) return m.reply(`Ketik .menu <kategori>.\n\nPilihan: ${Object.keys(peta).join(", ")}`);
-					const submenu = kategoriDariNama(k);
-					const teks = submenu ? bangunMenu(submenu, setv, prefix) : null;
-					return teks ? m.reply(teks) : m.reply(`Kategori tidak ditemukan.\n\nPilihan: ${Object.keys({ bot: 1, grup: 1, search: 1, download: 1, quotes: 1, tools: 1, ai: 1, random: 1, stalker: 1, anime: 1, game: 1, fun: 1, edukasi: 1, owner: 1 }).join(", ")}`);
 				}
 				break;
 			case "statistikbot":
