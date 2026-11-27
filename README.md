@@ -67,6 +67,7 @@ Berbasis Hitori Bot karya [Nazedev](https://github.com/nazedev/hitori), yang dir
 | Menu & Umum | **Pembagian dan turnamen** | `.bagi <anggota> <kelompok>` (per kelompok, sisa, distribusi), `.team <game> <pemain>` (ukuran ML 5, PUBG/FF 4), `.turnamen buat|daftar|mulai|bracket|menang|juara|reset` sampai juara |
 | Menu & Umum | **AI teks** | `.ringkas`, `.ide`, `.paragraf`, `.judulkan`, `.tanya`, `.terjemah`, `.teks` |
 | Menu & Umum | **Kalender dan jadwal** | `.kalender [YYYY-MM]`, `.jadwal <jam> <tugas>`, `.notifikasi on|off` |
+| Menu & Umum | **Perintah akhir v9** | `.diam`, `.ownerlist`, `.sesihapus`, `.akseswarisan`, `.tabungtarget`, `.bungapinjam`, `.hadiahevent`, `.topbulanan`, `.transferbatch`, `.uanglog`, `.quizberuntun`, `.quizjawab`, `.tebakjawab`, `.rankmingguan`, `.statistiklanjut`, `.matriks3`, `.turunan`, `.integral`, `.koordinat`, `.datasetpenuh` |
 | Menu & Umum | **Eksplorasi perintah** | `.explore`, `.randomcmd`, `.riwayat`, `.shortcut`, `.pintasan`, `.dataset`, `.rekomendasi` |
 | Menu & Umum | **Produktivitas chat** | `.todo` (tugas pribadi), `.catatancari`, `.peraturan`, `.icebreak`, `.tabel` |
 | Menu & Umum | **Ekonomi lanjutan** | `.dompet`, `.topuang`, `.toplimit`, `.hadiah` |
@@ -554,6 +555,25 @@ Semua perintah memakai prefix default `.` `!` atau `+` (atur di `settings.js`).
 | `.ekonomi` | Ringkasan harga limit, hadiah, dan saldo |
 | `.gameinfo` | Cooldown dan aturan game (daily, rampok, begal, slot, casino, samgong) |
 | `.panduan` | Panduan singkat mulai pakai Rynn |
+| `.diam on\|off` | Mode diam, hanya owner dibalas |
+| `.ownerlist` | Daftar owner |
+| `.sesihapus <nama>` | Hapus sesi lokal dengan konfirmasi nama |
+| `.akseswarisan on\|off` | Warisan role default |
+| `.tabungtarget <nominal> [nama]` | Target tabungan |
+| `.bungapinjam <persen>` | Bunga pinjaman lokal (owner) |
+| `.hadiahevent <teks>` | Pengumuman hadiah event (owner) |
+| `.topbulanan` | Peringkat bulanan |
+| `.transferbatch @a @b <n>` | Transfer banyak target dengan konfirmasi |
+| `.uanglog` | Riwayat uang |
+| `.quizberuntun` / `.quizjawab <a-d>` | Kuis beruntun dengan skor |
+| `.tebakjawab <teks>` | Jawab tebak peribahasa |
+| `.rankmingguan` | Peringkat mingguan |
+| `.statistiklanjut <angka...>` | Varians, simpangan baku, rentang |
+| `.matriks3 <9 angka>` | Determinan 3x3 |
+| `.turunan <a> <n>` | Turunan polinomial |
+| `.integral <a> <n>` | Integral polinomial |
+| `.koordinat <lat1 lon1 lat2 lon2>` | Jarak haversine |
+| `.datasetpenuh` | Daftar kategori rumus |
 | `.bagi 38 5` | Bagi 38 anggota ke 5 kelompok, tampil sisa dan distribusi |
 | `.team mobile legend 20` | Bagi pemain sesuai ukuran tim game |
 | `.turnamen buat` / `.turnamen daftar` / `.turnamen mulai` | Buat, daftar peserta, dan mulai bracket |

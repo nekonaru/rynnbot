@@ -1,5 +1,28 @@
 # Changelog
 
+## v9.1.0
+
+Rynn v9.1.0 menuntaskan sisa rancangan v9: lazy loader, fuzz dan property test, serta 20 perintah lanjutan.
+
+### Perintah baru
+
+- Owner: `.diam`, `.ownerlist`, `.sesihapus`, `.akseswarisan`, `.bungapinjam`, `.hadiahevent`.
+- Ekonomi: `.tabungtarget`, `.topbulanan`, `.transferbatch` dengan konfirmasi, `.uanglog`.
+- Game: `.quizberuntun`, `.quizjawab`, `.tebakjawab`, `.rankmingguan`.
+- Statistik: `.statistiklanjut`, `.matriks3`, `.turunan`, `.integral`, `.koordinat`, `.datasetpenuh`.
+
+### Optimalisasi
+
+- `lib/data-loader.js` menyediakan `muatData(nama)` untuk pemuatan modul data malas.
+- `lib/cache.js` dipakai `.cari` dengan TTL 60 detik.
+- Fuzz dan property test: `fpb x kpk = a x b', pembagian selalu habis, dan bracket selalu cukup.
+
+### Audit
+
+- 5 tes fuzz dan property baru; total **118 tes lolos**. `npm run check` lolos (165 file).
+- Audit menu: 722 case, 448 perintah menu unik, semua punya implementasi.
+- CI hijau sebelum tag `v9.1.0`.
+
 ## v9.0.0
 
 Rynn v9.0.0 menambah pembagian kelompok dan tim game, sistem turnamen lengkap sampai juara, perintah AI teks, kalender, jadwal, cache pencarian, dan coverage di CI.

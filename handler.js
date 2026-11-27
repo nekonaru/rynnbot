@@ -43,6 +43,7 @@ import { bilah, formatTanggal, formatWaktu, potongTeks, hitungKata } from "./lib
 import { bagiKelompok, bagiTim, ukuranTimGame, formatPembagian } from "./lib/pembagian.js";
 import { buatBracket, catatMenang, formatBracket } from "./lib/turnamen.js";
 import { denganCache } from "./lib/cache.js";
+import { muatData } from "./lib/data-loader.js";
 import { hashTeks, urlEncode, urlDecode, validasiJson } from "./lib/devutils.js";
 import { luasBangun, volumeBangun, akarKuadrat } from "./lib/geometri.js";
 import { deretAritmetika, deretGeometri, linearSatu, persenDari, persenPerubahan } from "./lib/deret.js";
@@ -6259,6 +6260,26 @@ Select Bot Settings:
 │${setv} ${prefix}kalender
 │${setv} ${prefix}jadwal
 │${setv} ${prefix}notifikasi
+│${setv} ${prefix}diam
+│${setv} ${prefix}ownerlist
+│${setv} ${prefix}sesihapus
+│${setv} ${prefix}akseswarisan
+│${setv} ${prefix}tabungtarget
+│${setv} ${prefix}bungapinjam
+│${setv} ${prefix}hadiahevent
+│${setv} ${prefix}topbulanan
+│${setv} ${prefix}transferbatch
+│${setv} ${prefix}uanglog
+│${setv} ${prefix}quizberuntun
+│${setv} ${prefix}quizjawab
+│${setv} ${prefix}tebakjawab
+│${setv} ${prefix}rankmingguan
+│${setv} ${prefix}statistiklanjut
+│${setv} ${prefix}matriks3
+│${setv} ${prefix}turunan
+│${setv} ${prefix}integral
+│${setv} ${prefix}koordinat
+│${setv} ${prefix}datasetpenuh
 │${setv} ${prefix}team <game> <pemain>
 │${setv} ${prefix}turnamen buat
 │${setv} ${prefix}jelajah
@@ -9151,6 +9172,192 @@ Select Bot Settings:
 					if (!db.users[m.sender]) db.users[m.sender] = {};
 					db.users[m.sender].notifikasi = a === "on";
 					return m.reply(`Notifikasi ${a === "on" ? "aktif" : "nonaktif"}.`);
+				}
+				break;
+			case "diam":
+				{
+					if (!isCreator) return m.reply(global.mess.owner);
+					const a = (text || "").trim().toLowerCase();
+					if (!["on", "off"].includes(a)) return m.reply("Ketik .diam on atau .diam off");
+					global.diamMode = a === "on";
+					return m.reply(`Mode diam ${a === "on" ? "aktif" : "nonaktif"}.`);
+				}
+				break;
+			case "ownerlist":
+				{
+					return m.reply(`*Daftar Owner*\n\n${ownerNumber.map((o, i) => `${i + 1}. @${o.split("@")[0]}`).join("\n")}`);
+				}
+				break;
+			case "sesihapus":
+				{
+					if (!isCreator) return m.reply(global.mess.owner);
+					const nama = (text || "").trim().toLowerCase().replace(/^\./, "");
+					if (!/^[a-z0-9_-]+$/.test(nama)) return m.reply("Nama sesi tidak valid.");
+					const target = path.join("./rynn-session", nama);
+					if (!fs.existsSync(target)) return m.reply("Sesi tidak ditemukan.");
+					fs.rmSync(target, { recursive: true, force: true });
+					return m.reply(`Sesi ${nama} dihapus.`);
+				}
+				break;
+			case "akseswarisan":
+				{
+					if (!isCreator) return m.reply(global.mess.owner);
+					const a = (text || "").trim().toLowerCase();
+					if (!["on", "off"].includes(a)) return m.reply("Ketik .akseswarisan on atau off");
+					global.accessWarisan = a === "on";
+					return m.reply(`Warisan role default ${a === "on" ? "aktif" : "nonaktif"}.`);
+				}
+				break;
+			case "tabungtarget":
+				{
+					const mt = (text || "").trim().split(/\s+/);
+					if (!db.users[m.sender]) db.users[m.sender] = {};
+					const u = db.users[m.sender];
+					if (!mt[0]) {
+						const t = u.targetTabungan;
+						return t ? `*Target Tabungan*\n\nNama: ${t.nama}\nNominal: ${t.nominal.toLocaleString("id-ID")}\nTerkumpul: ${(u.tabungan || 0).toLocaleString("id-ID")}` : "Belum ada target. Contoh: .tabungtarget 500000 liburan";
+					}
+					const nominal = parseInt(mt[0], 10);
+					if (!Number.isInteger(nominal) || nominal < 1) return m.reply("Nominal tidak valid.");
+					u.targetTabungan = { nominal, nama: mt.slice(1).join(" ") || "target" };
+					return m.reply(`Target *${u.targetTabungan.nama}* ${nominal.toLocaleString("id-ID")} disimpan.`);
+				}
+				break;
+			case "bungapinjam":
+				{
+					if (!isCreator) return m.reply(global.mess.owner);
+					const b = Number((text || "").trim());
+					if (!Number.isFinite(b) || b < 0 || b > 100) return m.reply("Bunga 0 sampai 100 persen.");
+					global.bungaPinjam = b;
+					return m.reply(`Bunga pinjaman ${b} persen per periode.`);
+				}
+				break;
+			case "hadiahevent":
+				{
+					if (!isCreator) return m.reply(global.mess.owner);
+					const isi = (text || "").trim();
+					if (!isi) return m.reply("Contoh: .hadiahevent Lomba hari ini 5000 uang");
+					global.hadiahEvent = isi.slice(0, 200);
+					return m.reply("Pengumuman hadiah event disimpan.");
+				}
+				break;
+			case "topbulanan":
+				{
+					const entri = Object.entries(db.users || {}).filter(([, u]) => u && typeof u.money === "number").sort((a, b) => b[1].money - a[1].money).slice(0, 10);
+					return m.reply(`*Top Bulanan*\n\n${entri.map(([jid, u], i) => `${i + 1}. @${jid.split("@")[0]}: ${u.money.toLocaleString("id-ID")}`).join("\n") || "(kosong)"}`);
+				}
+				break;
+			case "transferbatch":
+				{
+					const mt = (text || "").trim().split(/\s+/);
+					const nominal = parseInt(mt[mt.length - 1], 10);
+					const target = mt.slice(0, -1).map((s) => s.replace(/[^0-9]/g, "") + "@s.whatsapp.net").filter((s) => s.includes("@") && s.length > 10);
+					if (!Number.isInteger(nominal) || nominal < 1 || target.length < 1 || target.length > 5) return m.reply("Contoh: .transferbatch @6281 @6282 100 (maksimal 5 target)");
+					const total = nominal * target.length;
+					const u = db.users[m.sender] || {};
+					if ((u.money || 0) < total) return m.reply(`Saldo kurang. Butuh ${total.toLocaleString("id-ID")}.`);
+					const token = Math.random().toString(36).slice(2, 8).toUpperCase();
+					global.transferPending = { sender: m.sender, target, nominal, token, at: Date.now() };
+					return m.reply(`*KONFIRMASI TRANSFER*\n\n${target.length} target x ${nominal.toLocaleString("id-ID")} = ${total.toLocaleString("id-ID")}\nKetik .transferbatch confirm ${token} dalam 5 menit.`);
+				}
+				break;
+			case "uanglog":
+				{
+					const u = db.users[m.sender] || {};
+					const log = Array.isArray(u.uangLog) ? u.uangLog.slice(-10).reverse() : [];
+					return m.reply(`*Riwayat Uang*\n\n${log.length ? log.join("\n") : "(belum ada)"}`);
+				}
+				break;
+			case "quizberuntun":
+				{
+					const pool = SOAL.matematika && SOAL.matematika.length ? SOAL.matematika : Object.values(SOAL)[0];
+					if (!pool || !pool.length) return m.reply("Bank soal kosong.");
+					const soal = pool[Math.floor(Math.random() * pool.length)];
+					global.quizState = global.quizState || {};
+					global.quizState[m.sender] = { soal, benar: 0, at: Date.now() };
+					return m.reply(`*Quiz Beruntun*\n\n${soal.q}\n\n${soal.o.map((o, i) => `${String.fromCharCode(65 + i)}. ${o}`).join("\n")}\n\nJawab: .quizjawab a/b/c/d`);
+				}
+				break;
+			case "quizjawab":
+				{
+					const q = global.quizState?.[m.sender];
+					if (!q || Date.now() - q.at > 300000) return m.reply("Belum ada quiz aktif. Ketik .quizberuntun");
+					const jawab = (text || "").trim().toLowerCase();
+					if (!/^[a-d]$/.test(jawab)) return m.reply("Jawab dengan a, b, c, atau d.");
+					const idx = jawab.charCodeAt(0) - 97;
+					if (idx === q.soal.a) {
+						q.benar++;
+						return m.reply(`Benar. Skor sementara: ${q.benar}`);
+					}
+					delete global.quizState[m.sender];
+					return m.reply(`Salah. Jawaban benar: ${String.fromCharCode(65 + q.soal.a)}. Skor akhir: ${q.benar}`);
+				}
+				break;
+			case "tebakjawab":
+				{
+					const p = global.tebakState?.[m.chat + ":" + m.sender];
+					if (!p || Date.now() - p.at > 300000) return m.reply("Belum ada tebak riddle aktif. Ketik .tebak riddle");
+					const jawab = (text || "").trim().toLowerCase().replace(/[^a-z ]/g, "");
+					const benar = p.jawaban.toLowerCase().replace(/[^a-z ]/g, "");
+					delete global.tebakState[m.chat + ":" + m.sender];
+					return jawab.includes(benar) || benar.includes(jawab) ? m.reply("Benar!" ) : m.reply(`Salah. Jawaban: ${p.jawaban}`);
+				}
+				break;
+			case "rankmingguan":
+				{
+					const hit = global.db?.hit || {};
+					const game = ["quiz", "soal", "hangman", "slot", "turnamen"];
+					return m.reply(`*Rank Mingguan*\n\n${game.map((g) => `- .${g}: ${(hit[g] || 0).toLocaleString("id-ID")}x`).join("\n")}`);
+				}
+				break;
+			case "statistiklanjut":
+				{
+					const angka = (text || "").trim().split(/[\s,]+/).filter(Boolean).map(Number).filter(Number.isFinite);
+					if (angka.length < 2) return m.reply("Contoh: .statistiklanjut 4 7 2 9 3");
+					const mean = angka.reduce((a, b) => a + b, 0) / angka.length;
+					const varians = angka.reduce((a, b) => a + (b - mean) ** 2, 0) / angka.length;
+					const simpangan = Math.sqrt(varians);
+					return m.reply(`*Statistik Lanjutan*\n\nJumlah: ${angka.length}\nRata-rata: ${mean.toFixed(4)}\nMinimum: ${Math.min(...angka)}\nMaksimum: ${Math.max(...angka)}\nRentang: ${Math.max(...angka) - Math.min(...angka)}\nVarians: ${varians.toFixed(4)}\nSimpangan baku: ${simpangan.toFixed(4)}`);
+				}
+				break;
+			case "matriks3":
+				{
+					const n = (text || "").trim().split(/[\s,]+/).filter(Boolean).map(Number);
+					if (n.length !== 9 || n.some((x) => !Number.isFinite(x))) return m.reply("Contoh: .matriks3 1 2 3 4 5 6 7 8 9");
+					const [a, b, c, d, e, f, g, h, i] = n;
+					const det = a * (e * i - f * h) - b * (d * i - f * g) + c * (d * h - e * g);
+					return m.reply(`*Matriks 3x3*\n\nDet: *${det}*`);
+				}
+				break;
+			case "turunan":
+				{
+					const mt = (text || "").trim().split(/\s+/).map(Number);
+					if (mt.length !== 2 || mt.some((x) => !Number.isFinite(x))) return m.reply("Contoh: .turunan 3 4");
+					return m.reply(`*Turunan*\n\nd/dx (${mt[0]} x^${mt[1]}) = *${mt[0] * mt[1]} x^${mt[1] - 1}*`);
+				}
+				break;
+			case "integral":
+				{
+					const mt = (text || "").trim().split(/\s+/).map(Number);
+					if (mt.length !== 2 || mt.some((x) => !Number.isFinite(x))) return m.reply("Contoh: .integral 3 4");
+					return m.reply(`*Integral*\n\n∫ ${mt[0]} x^${mt[1]} dx = *${mt[0] / (mt[1] + 1)} x^${mt[1] + 1} + C*`);
+				}
+				break;
+			case "koordinat":
+				{
+					const n = (text || "").trim().split(/[\s,]+/).filter(Boolean).map(Number);
+					if (n.length !== 4 || n.some((x) => !Number.isFinite(x))) return m.reply("Contoh: .koordinat -6.2 106.8 -7.2 112.7");
+					const R = 6371;
+					const rad = (x) => (x * Math.PI) / 180;
+					const dLat = rad(n[2] - n[0]);
+					const dLon = rad(n[3] - n[1]);
+					const a = Math.sin(dLat / 2) ** 2 + Math.cos(rad(n[0])) * Math.cos(rad(n[2])) * Math.sin(dLon / 2) ** 2;
+					return m.reply(`*Jarak*\n\n${(2 * R * Math.asin(Math.sqrt(a))).toFixed(2)} km`);
+				}
+				break;
+			case "datasetpenuh":
+				{
+					return m.reply(`*Dataset Penuh*\n\n${statistikRumus().perKategori ? Object.entries(statistikRumus().perKategori).map(([k, v]) => `- ${k}: ${v} rumus`).join("\n") : ""}\n\nKetik .statistikdata penuh untuk dataset teks.`);
 				}
 				break;
 			case "bantuan":
