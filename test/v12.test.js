@@ -94,6 +94,7 @@ test("belajar memilih kartu dan kuis adaptif", () => {
 	assert.equal(kuisAdaptif([{ q: 1 }, { q: 2 }], 6).q, 2);
 	assert.equal(formatPeta(petaMateri({ a: [1, 2] })), "- a: 2 soal");
 	assert.deepEqual(rangkumCatatan([{ isi: "x" }]), ["x"]);
+	assert.deepEqual(rangkumCatatan({ belajar: "besok baca buku" }), ["belajar: besok baca buku"]);
 });
 
 test("produktivitas mengagenda dan menghitung tugas", () => {
@@ -147,6 +148,13 @@ test("panel lokal melayani health dan berkas statis", async () => {
 	assert.equal(gagal.status, 401);
 	const html = await fetch(`http://127.0.0.1:${info.port}/`);
 	assert.match(await html.text(), /Rynn Panel/);
+	assert.equal(html.headers.get("referrer-policy"), "no-referrer");
+	const logo = await fetch(`http://127.0.0.1:${info.port}/rynn-icon.svg`);
+	assert.equal(logo.status, 200);
+	const lagi = bukaPanel({ port: 7790, db: {} });
+	assert.equal(lagi.port, info.port);
+	assert.equal(lagi.sudah, true);
 	assert.equal(tutupPanel(), true);
+	await new Promise((r) => setTimeout(r, 30));
 	assert.equal(panelAktif(), false);
 });

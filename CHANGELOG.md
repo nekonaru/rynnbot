@@ -2,8 +2,6 @@
 
 ## v12.0.0
 
-﻿## v12.0.0
-
 Rynn v12.0.0 adalah update besar besaran yang menambah 68 perintah baru dan memperkenalkan Rynn Design System pada tiga permukaan: percakapan WhatsApp, CLI, dan panel lokal.
 
 ### Desain dan UX
@@ -31,7 +29,7 @@ Rynn v12.0.0 adalah update besar besaran yang menambah 68 perintah baru dan memp
 
 - 12 tes unit baru di `test/v12.test.js`, termasuk uji endpoint panel lokal. Total **150 tes lolos**.
 - `npm run check` lolos (196 file). Audit menu: 870 case, 595 perintah menu unik, semua punya implementasi.
-- Coverage: 89,30 persen baris, 77,81 persen cabang, 84,38 persen fungsi.
+- Coverage: 89,31 persen baris, 78,10 persen cabang, 84,44 persen fungsi.
 - Semua balasan baru memakai renderer terpadu dan Bahasa Indonesia. Tidak ada emoji pada dokumen dan release notes.
 
 ### Batas
@@ -42,7 +40,7 @@ Rynn v12.0.0 adalah update besar besaran yang menambah 68 perintah baru dan memp
 
 ## v11.2.0
 
-﻿Rynn v11.2.0 adalah rilis audit dan optimalisasi mendalam. Fokusnya adalah membuat fitur yang sudah ada berjalan lebih native, ringan, dan lancar tanpa menambah kategori perintah baru.
+Rynn v11.2.0 adalah rilis audit dan optimalisasi mendalam. Fokusnya adalah membuat fitur yang sudah ada berjalan lebih native, ringan, dan lancar tanpa menambah kategori perintah baru.
 
 ### Perbaikan anomali
 

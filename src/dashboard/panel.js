@@ -1,5 +1,5 @@
 // Panel lokal Rynn v12. Memakai modul http bawaan Node, tanpa dependency baru.
-// Token hanya dipakai untuk query string, bukan disimpan permanen.
+// Token hanya dipakai untuk sesi ini dan tidak dikirim ke situs lain.
 
 import http from "http";
 import fs from "fs";
@@ -10,11 +10,13 @@ import { fileURLToPath } from "url";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 let server = null;
 let tokenAktif = null;
+let portAktif = null;
 
 const TIPE = {
 	".html": "text/html; charset=utf-8",
 	".css": "text/css; charset=utf-8",
 	".js": "text/javascript; charset=utf-8",
+	".svg": "image/svg+xml",
 };
 
 function dataRingkas(db) {
@@ -34,11 +36,12 @@ function dataRingkas(db) {
 }
 
 export function bukaPanel({ port = 7788, db = {} } = {}) {
-	if (server) return { token: tokenAktif, port, sudah: true };
+	if (server) return { token: tokenAktif, port: portAktif, sudah: true };
 	tokenAktif = crypto.randomBytes(12).toString("hex");
 
 	server = http.createServer((req, res) => {
-		const url = new URL(req.url, `http://localhost:${port}`);
+		const url = new URL(req.url, `http://localhost:${portAktif}`);
+		res.setHeader("Referrer-Policy", "no-referrer");
 		if (url.pathname === "/api/health") {
 			if (url.searchParams.get("token") !== tokenAktif) {
 				res.writeHead(401, { "content-type": "application/json" });
@@ -57,16 +60,20 @@ export function bukaPanel({ port = 7788, db = {} } = {}) {
 		fs.createReadStream(berkas).pipe(res);
 	});
 
+	portAktif = port;
 	server.listen(port, "127.0.0.1");
 	server.unref?.();
-	return { token: tokenAktif, port, sudah: false };
+	return { token: tokenAktif, port: portAktif, sudah: false };
 }
 
 export function tutupPanel() {
 	if (!server) return false;
-	server.close();
-	server = null;
-	tokenAktif = null;
+	server.closeAllConnections?.();
+	server.close(() => {
+		server = null;
+		tokenAktif = null;
+		portAktif = null;
+	});
 	return true;
 }
 

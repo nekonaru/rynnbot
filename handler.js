@@ -7098,6 +7098,8 @@ Select Bot Settings:
 					if (options.length < 2) return m.reply("Minimal 2 pilihan.");
 					if (options.length > 12) options.length = 12;
 					await sock.sendMessage(m.chat, { poll: { name: mt[1], values: options, selectableCount: 1 } });
+					if (!global.db.poll) global.db.poll = {};
+					global.db.poll[m.chat] = { nama: mt[1], pilihan: options, vote: [] };
 				}
 				break;
 			case "gempa":
@@ -9158,6 +9160,7 @@ Select Bot Settings:
 					else if (jenis === "tim" || jenis === "team") hasil = bagiTim(Number(mt[1]), Number(mt[2]));
 					else hasil = bagiKelompok(Number(mt[0]), Number(mt[1]));
 					if (!hasil) return m.reply("Contoh:\n.bagi 38 5\n.bagi kelas 38 5\n.bagi tim 20 5\n\nHarus bilangan bulat, kelompok tidak boleh lebih banyak dari anggota.");
+					if (m.isGroup && hasil.distribusi && db.groups[m.chat]) db.groups[m.chat].kelompok = hasil.distribusi.map((n, i) => `Kelompok ${i + 1}: ${n} anggota`);
 					return m.reply(formatPembagian(hasil));
 				}
 				break;
@@ -9922,7 +9925,7 @@ Select Bot Settings:
 					const n = parseInt(arg, 10);
 					if (!Number.isInteger(n) || n < 1 || (u.money || 0) < n) return m.reply("Nominal tidak valid atau saldo kurang.");
 					u.money -= n;
-					u.investasi = { pokok: n, hari: 0 };
+					u.investasi = { pokok: n, hari: 0, sejak: Date.now() };
 					return m.reply(`Investasi simulasi ${n.toLocaleString("id-ID")} dibuat. Bunga 1 persen per hari.`);
 				}
 				break;
@@ -10386,7 +10389,9 @@ Select Bot Settings:
 					const sisa = arg.split(/\s+/).slice(1);
 					if (sub === "buat") {
 						if (!isCreator && !m.isAdmin) return m.reply(global.mess.admin);
-						const t = buatTurnamen(db, m.chat, sisa.join(" ") || "Turnamen", sisa[0] || "single");
+						const mode = ["single", "double"].includes(sisa[sisa.length - 1]) ? sisa[sisa.length - 1] : "single";
+						const namaTurnamen = (mode === "single" ? sisa : sisa.slice(0, -1)).join(" ") || "Turnamen";
+						const t = buatTurnamen(db, m.chat, namaTurnamen, mode);
 						return kirimRespons(m, { judul: "Turnamen dibuat", isi: formatTurnamen(t, (x) => x) });
 					}
 					if (sub === "daftar" || sub === "peserta") {
@@ -10443,14 +10448,15 @@ Select Bot Settings:
 					const l = ligaAmbil(db, m.chat);
 					if (!l) return m.reply("Belum ada liga. Ketik .liga2 buat");
 					if (sub === "anggota") {
-						const nama = sisa[0]?.replace(/^@/, "");
-						if (!nama) return m.reply("Contoh: .liga2 anggota @nama");
-						l.anggota[m.sender] = l.anggota[m.sender] || [];
-						l.anggota[m.sender].push(nama);
+						const tim = sisa[0]?.replace(/^@/, "");
+						const nama = sisa[1]?.replace(/^@/, "");
+						if (!tim || !nama) return m.reply("Contoh: .liga2 anggota timA @nama");
+						l.anggota[tim] = l.anggota[tim] || [];
+						l.anggota[tim].push(nama);
 						return m.reply(`Pemain @${nama} masuk tim kamu.`);
 					}
 					if (sub === "transfer") {
-						const hasil = ligaTransfer(db, m.chat, sisa[0]?.replace(/^@/, ""), sisa[1]?.replace(/^@/, ""), sisa[2]);
+						const hasil = ligaTransfer(db, m.chat, sisa[0]?.replace(/^@/, ""), sisa[1]?.replace(/^@/, ""), sisa[2]?.replace(/^@/, ""));
 						return hasil ? m.reply("Transfer pemain berhasil.") : m.reply("Tim atau pemain tidak ditemukan.");
 					}
 					if (sub === "jadwal") {
@@ -10494,16 +10500,18 @@ Select Bot Settings:
 			case "teamrotasi":
 				{
 					const orang = (m.mentionedJid || []).map((j) => "@" + j.split("@")[0]);
-					const hasil = command === "teamrotasi" ? rotasiTim(global.timState || []) : timSeimbang(orang, parseInt((text || "").trim(), 10) || 2);
-					if (command === "teamseimbang") global.timState = orang;
+					const simpanTim = global.timState || (global.timState = {});
+					const hasil = command === "teamrotasi" ? rotasiTim(simpanTim[m.chat] || []) : timSeimbang(orang, parseInt((text || "").trim(), 10) || 2);
+					if (command === "teamseimbang") simpanTim[m.chat] = hasil;
 					return hasil ? m.reply(formatGrup(hasil)) : m.reply("Tidak ada tim tersimpan. Ketik .teamseimbang dulu.");
 				}
 				break;
 			case "teamlist":
 			case "teamhapus":
 				{
-					if (command === "teamhapus") { global.timState = []; return m.reply("Tim dihapus."); }
-					return m.reply(global.timState?.length ? formatGrup(global.timState, "Tim tersimpan") : "Belum ada tim tersimpan.");
+					const simpanTim = global.timState || (global.timState = {});
+					if (command === "teamhapus") { delete simpanTim[m.chat]; return m.reply("Tim dihapus."); }
+					return m.reply(simpanTim[m.chat]?.length ? formatGrup(simpanTim[m.chat], "Tim tersimpan") : "Belum ada tim tersimpan.");
 				}
 				break;
 			case "kelompokrekap":
