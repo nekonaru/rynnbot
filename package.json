@@ -1,6 +1,6 @@
 {
   "name": "rynnbot",
-  "version": "7.0.0",
+  "version": "7.1.0",
   "description": "Bot WhatsApp self-hosted dengan ratusan perintah, game, perkakas AI, CLI interaktif, dan penyimpanan multi-database",
   "keywords": [
     "whatsapp-bot",
@@ -38,7 +38,9 @@
     "cli": "node cli.js",
     "setup": "node cli.js --setup",
     "check": "node scripts/check.js",
-    "test": "node --test"
+    "test": "node --test",
+    "bench": "node scripts/bench.js",
+    "test:coverage": "node --test --experimental-test-coverage"
   },
   "dependencies": {
     "@hapi/boom": "^10.0.1",

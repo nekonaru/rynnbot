@@ -1,5 +1,27 @@
 # Changelog
 
+## v7.1.0
+
+Rynn v7.1.0 menyelesaikan sisa rancangan v7: perintah owner dengan konfirmasi, log audit, mode perbaikan, generator menu penuh, benchmark, dan coverage test.
+
+### Owner dan keamanan
+
+- `.broadcast` hanya owner. Perintah tanpa argumen menampilkan peringatan dan token konfirmasi. Eksekusi maksimal 10 grup dengan jeda 10 detik per pesan, berjalan di latar belakang agar handler tidak memblokir.
+- `.logaudit` hanya owner. Log tersimpan di database lokal yang tidak di-commit, berisi waktu, pengirim, dan aksi tanpa nilai rahasia. Aksi owner lain juga dicatat otomatis.
+- `.restore <berkas> confirm` memakai konfirmasi dua langkah, hanya menerima nama berkas aman di `./database`, lalu menyalin ke database aktif.
+- `.maintenance on|off` hanya owner. Saat aktif, semua perintah non-owner mendapat pesan "Bot sedang dalam perbaikan".
+
+### Menu dan alat
+
+- 15 blok submenu digantikan seluruhnya oleh `lib/menu-builder.js`. Registry tetap membaca entri dari `.allmenu`.
+- `scripts/bench.js` dan perintah `npm run bench` mengukur waktu muat data dan jumlah entri.
+- `npm run test:coverage` menjalankan tes dengan coverage bawaan Node.
+
+### Audit
+
+- 2 tes unit audit baru; total **108 tes lolos**. `npm run check` lolos (160 file).
+- Audit menu: 668 case, 393 perintah menu unik, semua punya implementasi. CI hijau sebelum tag `v7.1.0`.
+
 ## v7.0.0
 
 Rynn v7.0.0 menutup sisa target data dan menambah 19 perintah baru untuk navigasi, produktivitas, ekonomi, game, dan eksplorasi data.

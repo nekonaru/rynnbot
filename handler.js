@@ -57,6 +57,7 @@ import { lihatQuest, tandaiQuest, klaimQuest } from "./lib/quest.js";
 import { SEJARAH, TOKOH, OLAHRAGA, SINGKATAN, SINONIM, ANTONIM } from "./lib/data-v5.js";
 import { bangunMenu, kategoriDariNama, ringkasanKategori } from "./lib/menu-builder.js";
 import { formatDaftar, formatDetail } from "./lib/daftar.js";
+import { tulisAudit, bacaAudit } from "./lib/audit.js";
 import { MATAUANG, NEGARA_TAMBAHAN, SUKU_TAMBAHAN, BAHASA_TAMBAHAN, PLANET_TAMBAHAN, DANAU_TAMBAHAN, GUNUNG_TAMBAHAN, PULAU_TAMBAHAN, SUNGAI_TAMBAHAN, BUDAYA } from "./lib/data-edukasi.js";
 import { FIRST_SETUP_MARKER, firstSetupStates, firstSetupStepText, sendFirstSetupIntro } from './src/setup-wizard.js';
 import { ytMp4, ytMp3, ytMp4Stream } from "./lib/scraper.js";
@@ -404,6 +405,8 @@ const sock = async (sock, m, store) => {
 			command = cleanBody.split(/ +/).shift().toLowerCase();
 			args = cleanBody.split(/ +/).slice(1);
 		}
+
+		if (global.maintenance && !isCreator && isCmd) return m.reply("Bot sedang dalam perbaikan. Silakan coba lagi nanti.");
 
 		const quoted = m.quoted ? m.quoted : m;
 		const text = (global.q = args.join(" "));
@@ -6601,6 +6604,10 @@ Select Bot Settings:
 │${setv} ${prefix}backuplist
 │${setv} ${prefix}sesi
 │${setv} ${prefix}setmotd
+│${setv} ${prefix}broadcast
+│${setv} ${prefix}logaudit
+│${setv} ${prefix}restore
+│${setv} ${prefix}maintenance
 │${setv} $
 │${setv} >
 │${setv} <
@@ -6643,612 +6650,93 @@ Select Bot Settings:
 				break;
 			case "botmenu":
 				{
-					m.reply(`
-╭──❍「 *BOT* 」❍
-│${setv} ${prefix}profile
-│${setv} ${prefix}claim
-│${setv} ${prefix}buy [item] (nominal)
-│${setv} ${prefix}transfer
-│${setv} ${prefix}leaderboard
-│${setv} ${prefix}request (text)
-│${setv} ${prefix}react (emoji)
-│${setv} ${prefix}tagme
-│${setv} ${prefix}runtime
-│${setv} ${prefix}totalfitur
-│${setv} ${prefix}speed
-│${setv} ${prefix}ping
-│${setv} ${prefix}afk
-│${setv} ${prefix}rvo (reply pesan viewone)
-│${setv} ${prefix}inspect (url gc)
-│${setv} ${prefix}addmsg
-│${setv} ${prefix}delmsg
-│${setv} ${prefix}getmsg
-│${setv} ${prefix}listmsg
-│${setv} ${prefix}setcmd
-│${setv} ${prefix}remind
-│${setv} ${prefix}notes
-│${setv} ${prefix}poll (judul | opsi1 | opsi2)
-│${setv} ${prefix}gempa
-│${setv} ${prefix}kurs
-│${setv} ${prefix}hariini
-│${setv} ${prefix}waktu
-│${setv} ${prefix}ekonomi
-│${setv} ${prefix}gameinfo
-│${setv} ${prefix}panduan
-│${setv} ${prefix}explore
-│${setv} ${prefix}randomcmd
-│${setv} ${prefix}riwayat
-│${setv} ${prefix}shortcut
-│${setv} ${prefix}pintasan
-│${setv} ${prefix}todo
-│${setv} ${prefix}peraturan
-│${setv} ${prefix}icebreak
-│${setv} ${prefix}dompet
-│${setv} ${prefix}topuang
-│${setv} ${prefix}toplimit
-│${setv} ${prefix}hadiah
-│${setv} ${prefix}questmingguan
-│${setv} ${prefix}dailykalender
-│${setv} ${prefix}papanperingkat
-│${setv} ${prefix}trivia
-│${setv} ${prefix}dataset
-│${setv} ${prefix}rekomendasi
-│${setv} ${prefix}tabel
-│${setv} ${prefix}streak
-│${setv} ${prefix}quest
-│${setv} ${prefix}rankgame
-│${setv} ${prefix}cari
-│${setv} ${prefix}bantuan
-│${setv} ${prefix}kategori
-│${setv} ${prefix}menu <kategori>
-│${setv} ${prefix}statistikbot
-│${setv} ${prefix}help
-│${setv} ${prefix}cmdlist
-│${setv} ${prefix}saran
-│${setv} ${prefix}stats
-│${setv} ${prefix}delcmd
-│${setv} ${prefix}listcmd
-│${setv} ${prefix}lockcmd
-│${setv} ${prefix}q (reply pesan)
-│${setv} ${prefix}menfes (62xxx|fake name)
-│${setv} ${prefix}confes (62xxx|fake name)
-│${setv} ${prefix}roomai
-│${setv} ${prefix}jadibot 🔸️
-│${setv} ${prefix}stopjadibot
-│${setv} ${prefix}stopclonebot
-│${setv} ${prefix}listjadibot
-│${setv} ${prefix}listclonebot
-│${setv} ${prefix}donasi
-│${setv} ${prefix}addsewa
-│${setv} ${prefix}delsewa
-│${setv} ${prefix}listsewa
-╰──────❍`);
+					m.reply(bangunMenu("BOT", setv, prefix));
 				}
-				break;
+			break;
+
 			case "groupmenu":
-			case "grupmenu":
 				{
-					m.reply(`
-╭──❍「 *GROUP* 」❍
-│${setv} ${prefix}add (62xxx)
-│${setv} ${prefix}kick (@tag/62xxx)
-│${setv} ${prefix}promote (@tag/62xxx)
-│${setv} ${prefix}demote (@tag/62xxx)
-│${setv} ${prefix}warn (@tag/62xxx)
-│${setv} ${prefix}unwarn (@tag/62xxx)
-│${setv} ${prefix}setname (nama baru gc)
-│${setv} ${prefix}setdesc (desk)
-│${setv} ${prefix}setppgc (reply imgnya)
-│${setv} ${prefix}delete (reply pesan)
-│${setv} ${prefix}linkgrup
-│${setv} ${prefix}revoke
-│${setv} ${prefix}tagall
-│${setv} ${prefix}pin
-│${setv} ${prefix}unpin
-│${setv} ${prefix}hidetag
-│${setv} ${prefix}totag (reply pesan)
-│${setv} ${prefix}listonline
-│${setv} ${prefix}group set
-│${setv} ${prefix}group (khusus admin)
-╰──────❍`);
+					m.reply(bangunMenu("GROUP", setv, prefix));
 				}
-				break;
+			break;
+
 			case "searchmenu":
 				{
-					m.reply(`
-╭──❍「 *SEARCH* 」❍
-│${setv} ${prefix}ytsearch (query)
-│${setv} ${prefix}spotify (query)
-│${setv} ${prefix}pixiv (query)
-│${setv} ${prefix}pinterest (query)
-│${setv} ${prefix}wallpaper (query)
-│${setv} ${prefix}ringtone (query)
-│${setv} ${prefix}google (query)
-│${setv} ${prefix}gimage (query)
-│${setv} ${prefix}npm (query)
-│${setv} ${prefix}style (query)
-│${setv} ${prefix}cuaca (kota)
-│${setv} ${prefix}tenor (query)
-│${setv} ${prefix}urban (query)
-╰──────❍`);
+					m.reply(bangunMenu("SEARCH", setv, prefix));
 				}
-				break;
+			break;
+
 			case "downloadmenu":
 				{
-					m.reply(`
-╭──❍「 *DOWNLOAD* 」❍
-│${setv} ${prefix}ytmp3 (url)
-│${setv} ${prefix}ytmp4 (url)
-│${setv} ${prefix}instagram (url)
-│${setv} ${prefix}tiktok (url)
-│${setv} ${prefix}tiktokmp3 (url)
-│${setv} ${prefix}facebook (url)
-│${setv} ${prefix}spotifydl (url)
-│${setv} ${prefix}mediafire (url)
-╰──────❍`);
+					m.reply(bangunMenu("DOWNLOAD", setv, prefix));
 				}
-				break;
+			break;
+
 			case "quotesmenu":
 				{
-					m.reply(`
-╭──❍「 *QUOTES* 」❍
-│${setv} ${prefix}motivasi
-│${setv} ${prefix}quotes
-│${setv} ${prefix}truth
-│${setv} ${prefix}bijak
-│${setv} ${prefix}dare
-│${setv} ${prefix}bucin
-│${setv} ${prefix}renungan
-╰──────❍`);
+					m.reply(bangunMenu("QUOTES", setv, prefix));
 				}
-				break;
+			break;
+
 			case "toolsmenu":
 				{
-					m.reply(`
-╭──❍「 *TOOLS* 」❍
-│${setv} ${prefix}get (url) 🔸️
-│${setv} ${prefix}hd (reply pesan)
-│${setv} ${prefix}toaudio (reply pesan)
-│${setv} ${prefix}tomp3 (reply pesan)
-│${setv} ${prefix}tovn (reply pesan)
-│${setv} ${prefix}toimage (reply pesan)
-│${setv} ${prefix}toptv (reply pesan)
-│${setv} ${prefix}tourl (reply pesan)
-│${setv} ${prefix}tts (textnya)
-│${setv} ${prefix}toqr (textnya)
-│${setv} ${prefix}brat (textnya)
-│${setv} ${prefix}bratvid (textnya)
-│${setv} ${prefix}ssweb (url) 🔸️
-│${setv} ${prefix}sticker (send/reply img)
-│${setv} ${prefix}colong (reply stiker)
-│${setv} ${prefix}smeme (send/reply img)
-│${setv} ${prefix}dehaze (send/reply img)
-│${setv} ${prefix}colorize (send/reply img)
-│${setv} ${prefix}hitamkan (send/reply img)
-│${setv} ${prefix}emojimix 😂+💀
-│${setv} ${prefix}nulis
-│${setv} ${prefix}readmore text1|text2
-│${setv} ${prefix}qc (pesannya)
-│${setv} ${prefix}translate
-│${setv} ${prefix}wasted (send/reply img)
-│${setv} ${prefix}triggered (send/reply img)
-│${setv} ${prefix}shorturl (urlnya)
-│${setv} ${prefix}gitclone (urlnya)
-│${setv} ${prefix}fat (reply audio)
-│${setv} ${prefix}fast (reply audio)
-│${setv} ${prefix}bass (reply audio)
-│${setv} ${prefix}slow (reply audio)
-│${setv} ${prefix}tupai (reply audio)
-│${setv} ${prefix}deep (reply audio)
-│${setv} ${prefix}robot (reply audio)
-│${setv} ${prefix}blown (reply audio)
-│${setv} ${prefix}reverse (reply audio)
-│${setv} ${prefix}smooth (reply audio)
-│${setv} ${prefix}earrape (reply audio)
-│${setv} ${prefix}nightcore (reply audio)
-│${setv} ${prefix}getexif (reply sticker)
-│${setv} ${prefix}password
-│${setv} ${prefix}uuid
-│${setv} ${prefix}surat
-╰──────❍`);
+					m.reply(bangunMenu("TOOLS", setv, prefix));
 				}
-				break;
+			break;
+
 			case "aimenu":
 				{
-					m.reply(`
-╭──❍「 *AI* 」❍
-│${setv} ${prefix}ai (query)
-│${setv} ${prefix}gemini (query)
-│${setv} ${prefix}glm (query)
-│${setv} ${prefix}grok (query)
-│${setv} ${prefix}claude (query)
-│${setv} ${prefix}archipelago (query)
-│${setv} ${prefix}deepseek (query)
-╰──────❍`);
+					m.reply(bangunMenu("AI", setv, prefix));
 				}
-				break;
+			break;
+
 			case "randommenu":
 				{
-					m.reply(`
-╭──❍「 *RANDOM* 」❍
-│${setv} ${prefix}coffe
-╰──────❍`);
+					m.reply(bangunMenu("RANDOM", setv, prefix));
 				}
-				break;
+			break;
+
 			case "stalkermenu":
 				{
-					m.reply(`
-╭──❍「 *STALKER* 」❍
-│${setv} ${prefix}wastalk
-│${setv} ${prefix}githubstalk
-╰──────❍`);
+					m.reply(bangunMenu("STALKER", setv, prefix));
 				}
-				break;
+			break;
+
 			case "animemenu":
 				{
-					m.reply(`
-╭──❍「 *ANIME* 」❍
-│${setv} ${prefix}waifu
-│${setv} ${prefix}neko
-╰──────❍`);
+					m.reply(bangunMenu("ANIME", setv, prefix));
 				}
-				break;
+			break;
+
 			case "gamemenu":
 				{
-					m.reply(`
-╭──❍「 *GAME* 」❍
-│${setv} ${prefix}tictactoe
-│${setv} ${prefix}suit
-│${setv} ${prefix}slot
-│${setv} ${prefix}math (level)
-│${setv} ${prefix}begal
-│${setv} ${prefix}ulartangga
-│${setv} ${prefix}cangkulan
-│${setv} ${prefix}catur
-│${setv} ${prefix}casino (nominal)
-│${setv} ${prefix}samgong (nominal)
-│${setv} ${prefix}rampok (@tag)
-│${setv} ${prefix}tekateki
-│${setv} ${prefix}tebaklirik
-│${setv} ${prefix}tebakkata
-│${setv} ${prefix}tebakbom
-│${setv} ${prefix}susunkata
-│${setv} ${prefix}colorblind
-│${setv} ${prefix}tebakkimia
-│${setv} ${prefix}caklontong
-│${setv} ${prefix}tebakangka
-│${setv} ${prefix}tebaknegara
-│${setv} ${prefix}tebakgambar
-│${setv} ${prefix}tebakbendera
-│${setv} ${prefix}quiz
-│${setv} ${prefix}team <n>
-│${setv} ${prefix}pair
-│${setv} ${prefix}hangman
-╰──────❍
-╭─┴❍「 *EDUKASI* 」❍
-│${setv} ${prefix}rumus
-│${setv} ${prefix}hitung
-│${setv} ${prefix}suku
-│${setv} ${prefix}kuliner
-│${setv} ${prefix}hitungmundur
-│${setv} ${prefix}umur
-│${setv} ${prefix}terbilang
-│${setv} ${prefix}roman
-│${setv} ${prefix}konversi
-│${setv} ${prefix}morse
-│${setv} ${prefix}binary
-│${setv} ${prefix}hex
-│${setv} ${prefix}rot13
-│${setv} ${prefix}zodiak
-│${setv} ${prefix}wayang
-│${setv} ${prefix}lagudaerah
-│${setv} ${prefix}wisata
-│${setv} ${prefix}resep
-│${setv} ${prefix}provinsi
-│${setv} ${prefix}mbti
-│${setv} ${prefix}lirik
-│${setv} ${prefix}fakta
-│${setv} ${prefix}puisi
-│${setv} ${prefix}ibukota
-│${setv} ${prefix}negara
-│${setv} ${prefix}unsur
-│${setv} ${prefix}planet
-│${setv} ${prefix}balik
-│${setv} ${prefix}hitungkata
-│${setv} ${prefix}soal
-│${setv} ${prefix}soalmtk
-│${setv} ${prefix}soalipa
-│${setv} ${prefix}soalips
-│${setv} ${prefix}soalbindon
-│${setv} ${prefix}soalppkn
-│${setv} ${prefix}namabayi
-│${setv} ${prefix}peribahasa
-│${setv} ${prefix}kpk
-│${setv} ${prefix}fpb
-│${setv} ${prefix}faktor
-│${setv} ${prefix}prima
-│${setv} ${prefix}palindrom
-│${setv} ${prefix}anagram
-│${setv} ${prefix}diskon
-│${setv} ${prefix}cicilan
-│${setv} ${prefix}bmi
-│${setv} ${prefix}jamtidur
-│${setv} ${prefix}akar
-│${setv} ${prefix}faktorial
-│${setv} ${prefix}bahasa
-│${setv} ${prefix}danau
-│${setv} ${prefix}gunung
-│${setv} ${prefix}pulau
-│${setv} ${prefix}sungai
-│${setv} ${prefix}haribersejarah
-│${setv} ${prefix}statistikdata
-│${setv} ${prefix}selisihhari
-│${setv} ${prefix}fibonacci
-│${setv} ${prefix}primaantara
-│${setv} ${prefix}statistik
-│${setv} ${prefix}pecahan
-│${setv} ${prefix}progress
-│${setv} ${prefix}terbilang2
-│${setv} ${prefix}hurufke
-│${setv} ${prefix}sapaan
-│${setv} ${prefix}format
-│${setv} ${prefix}potong
-│${setv} ${prefix}hitungteks
-│${setv} ${prefix}hash
-│${setv} ${prefix}urlcode
-│${setv} ${prefix}json
-│${setv} ${prefix}luas
-│${setv} ${prefix}volume
-│${setv} ${prefix}kuadrat
-│${setv} ${prefix}deret
-│${setv} ${prefix}linear
-│${setv} ${prefix}persen
-│${setv} ${prefix}matriks
-│${setv} ${prefix}vektor
-│${setv} ${prefix}kompleks
-│${setv} ${prefix}hewan
-│${setv} ${prefix}tumbuhan
-│${setv} ${prefix}sejarah
-│${setv} ${prefix}tokoh
-│${setv} ${prefix}olahraga
-│${setv} ${prefix}singkatan
-│${setv} ${prefix}sinonim
-│${setv} ${prefix}antonim
-│${setv} ${prefix}kamus
-│${setv} ${prefix}matauang
-│${setv} ${prefix}budaya
-│${setv} ${prefix}tarian
-│${setv} ${prefix}rumahadat
-│${setv} ${prefix}alatmusik
-│${setv} ${prefix}batik
-│${setv} ${prefix}diagnosa
-│${setv} ${prefix}basis
-│${setv} ${prefix}durasi
-│${setv} ${prefix}slug
-│${setv} ${prefix}base64
-╰──────❍`);
+					m.reply(bangunMenu("GAME", setv, prefix));
 				}
-				break;
+			break;
+
 			case "funmenu":
 				{
-					m.reply(`
-╭──❍「 *FUN* 」❍
-│${setv} ${prefix}coba
-│${setv} ${prefix}dadu
-│${setv} ${prefix}bisakah (text)
-│${setv} ${prefix}apakah (text)
-│${setv} ${prefix}kapan (text)
-│${setv} ${prefix}siapa (text)
-│${setv} ${prefix}kerangajaib (text)
-│${setv} ${prefix}cekmati (nama lu)
-│${setv} ${prefix}ceksifat
-│${setv} ${prefix}cekkhodam (nama lu)
-│${setv} ${prefix}rate (reply pesan)
-│${setv} ${prefix}jodohku
-│${setv} ${prefix}jadian
-│${setv} ${prefix}fitnah
-│${setv} ${prefix}halah (text)
-│${setv} ${prefix}hilih (text)
-│${setv} ${prefix}huluh (text)
-│${setv} ${prefix}heleh (text)
-│${setv} ${prefix}holoh (text)
-│${setv} ${prefix}pilih
-│${setv} ${prefix}angkaacak
-│${setv} ${prefix}warna
-│${setv} ${prefix}koin
-│${setv} ${prefix}acakkata
-╰──────❍`);
+					m.reply(bangunMenu("FUN", setv, prefix));
 				}
-				break;
+			break;
+
 			case "edukasimenu":
 				{
-					m.reply(`
-╭─┴❍「 *EDUKASI* 」❍
-│${setv} ${prefix}rumus
-│${setv} ${prefix}hitung
-│${setv} ${prefix}suku
-│${setv} ${prefix}kuliner
-│${setv} ${prefix}hitungmundur
-│${setv} ${prefix}umur
-│${setv} ${prefix}terbilang
-│${setv} ${prefix}roman
-│${setv} ${prefix}konversi
-│${setv} ${prefix}morse
-│${setv} ${prefix}binary
-│${setv} ${prefix}hex
-│${setv} ${prefix}rot13
-│${setv} ${prefix}zodiak
-│${setv} ${prefix}wayang
-│${setv} ${prefix}lagudaerah
-│${setv} ${prefix}wisata
-│${setv} ${prefix}resep
-│${setv} ${prefix}provinsi
-│${setv} ${prefix}mbti
-│${setv} ${prefix}lirik
-│${setv} ${prefix}fakta
-│${setv} ${prefix}puisi
-│${setv} ${prefix}ibukota
-│${setv} ${prefix}negara
-│${setv} ${prefix}unsur
-│${setv} ${prefix}planet
-│${setv} ${prefix}balik
-│${setv} ${prefix}hitungkata
-│${setv} ${prefix}soal
-│${setv} ${prefix}soalmtk
-│${setv} ${prefix}soalipa
-│${setv} ${prefix}soalips
-│${setv} ${prefix}soalbindon
-│${setv} ${prefix}soalppkn
-│${setv} ${prefix}namabayi
-│${setv} ${prefix}peribahasa
-│${setv} ${prefix}kpk
-│${setv} ${prefix}fpb
-│${setv} ${prefix}faktor
-│${setv} ${prefix}prima
-│${setv} ${prefix}palindrom
-│${setv} ${prefix}anagram
-│${setv} ${prefix}diskon
-│${setv} ${prefix}cicilan
-│${setv} ${prefix}bmi
-│${setv} ${prefix}jamtidur
-│${setv} ${prefix}akar
-│${setv} ${prefix}faktorial
-│${setv} ${prefix}bahasa
-│${setv} ${prefix}danau
-│${setv} ${prefix}gunung
-│${setv} ${prefix}pulau
-│${setv} ${prefix}sungai
-│${setv} ${prefix}haribersejarah
-│${setv} ${prefix}statistikdata
-│${setv} ${prefix}selisihhari
-│${setv} ${prefix}fibonacci
-│${setv} ${prefix}primaantara
-│${setv} ${prefix}statistik
-│${setv} ${prefix}pecahan
-│${setv} ${prefix}progress
-│${setv} ${prefix}terbilang2
-│${setv} ${prefix}hurufke
-│${setv} ${prefix}sapaan
-│${setv} ${prefix}format
-│${setv} ${prefix}potong
-│${setv} ${prefix}hitungteks
-│${setv} ${prefix}hash
-│${setv} ${prefix}urlcode
-│${setv} ${prefix}json
-│${setv} ${prefix}luas
-│${setv} ${prefix}volume
-│${setv} ${prefix}kuadrat
-│${setv} ${prefix}deret
-│${setv} ${prefix}linear
-│${setv} ${prefix}persen
-│${setv} ${prefix}matriks
-│${setv} ${prefix}vektor
-│${setv} ${prefix}kompleks
-│${setv} ${prefix}hewan
-│${setv} ${prefix}tumbuhan
-│${setv} ${prefix}sejarah
-│${setv} ${prefix}tokoh
-│${setv} ${prefix}olahraga
-│${setv} ${prefix}singkatan
-│${setv} ${prefix}sinonim
-│${setv} ${prefix}antonim
-│${setv} ${prefix}kamus
-│${setv} ${prefix}matauang
-│${setv} ${prefix}budaya
-│${setv} ${prefix}tarian
-│${setv} ${prefix}rumahadat
-│${setv} ${prefix}alatmusik
-│${setv} ${prefix}batik
-│${setv} ${prefix}diagnosa
-│${setv} ${prefix}basis
-│${setv} ${prefix}durasi
-│${setv} ${prefix}slug
-│${setv} ${prefix}base64
-│${setv} ${prefix}quiz
-│${setv} ${prefix}team <n>
-│${setv} ${prefix}pair
-│${setv} ${prefix}hangman
-╰──────❍`);
+					m.reply(bangunMenu("EDUKASI", setv, prefix));
 				}
-				break;
+			break;
 			case "ownermenu":
 				{
-					m.reply(`
-╭──❍「 *OWNER* 」❍
-│${setv} ${prefix}bot [set]
-│${setv} ${prefix}setbio
-│${setv} ${prefix}setppbot
-│${setv} ${prefix}join
-│${setv} ${prefix}leave
-│${setv} ${prefix}block
-│${setv} ${prefix}listblock
-│${setv} ${prefix}openblock
-│${setv} ${prefix}listpc
-│${setv} ${prefix}listgc
-│${setv} ${prefix}ban
-│${setv} ${prefix}unban
-│${setv} ${prefix}mute
-│${setv} ${prefix}unmute
-│${setv} ${prefix}creategc
-│${setv} ${prefix}clearchat
-│${setv} ${prefix}addprem
-│${setv} ${prefix}delprem
-│${setv} ${prefix}listprem
-│${setv} ${prefix}addlimit
-│${setv} ${prefix}adduang
-│${setv} ${prefix}setbotmessages
-│${setv} ${prefix}setbotauthor
-│${setv} ${prefix}setbotname
-│${setv} ${prefix}setbotpackname
-│${setv} ${prefix}setapikey
-│${setv} ${prefix}setbotlimit
-│${setv} ${prefix}setbotmoney
-│${setv} ${prefix}setlocale
-│${setv} ${prefix}settimezone
-│${setv} ${prefix}addprefix
-│${setv} ${prefix}delprefix
-│${setv} ${prefix}addbadword
-│${setv} ${prefix}delbadword
-│${setv} ${prefix}addowner
-│${setv} ${prefix}delowner
-│${setv} ${prefix}whitelist
-│${setv} ${prefix}getmsgstore
-│${setv} ${prefix}bot --settings
-│${setv} ${prefix}bot settings
-│${setv} ${prefix}getsession
-│${setv} ${prefix}delsession
-│${setv} ${prefix}delsampah
-│${setv} ${prefix}upsw
-│${setv} ${prefix}kickall
-│${setv} ${prefix}update
-│${setv} ${prefix}backup
-│${setv} ${prefix}akses
-│${setv} ${prefix}matikan
-│${setv} ${prefix}hidupkan
-│${setv} ${prefix}cooldown
-│${setv} ${prefix}envstatus
-│${setv} ${prefix}backuplist
-│${setv} ${prefix}sesi
-│${setv} ${prefix}setmotd
-│${setv} $
-│${setv} >
-│${setv} <
-╰──────❍`);
+					m.reply(bangunMenu("OWNER", setv, prefix));
 				}
-				break;
+			break;
+
 			case "authormenu":
 				{
-					m.reply(`
-╭──❍「 *AUTHOR* 」❍
-│${setv} ${prefix}author
-│${setv} ${prefix}owner
-│${setv} ${prefix}donasi
-│${setv} ${prefix}repo
-│${setv} ${prefix}channel
-│${setv} ${prefix}versi
-╰──────❍`);
+					m.reply(bangunMenu("AUTHOR", setv, prefix));
 				}
-				break;
+			break;
+
 
 			case "remind":
 			case "reminds":
@@ -8767,6 +8255,7 @@ Select Bot Settings:
 					if (!isCreator) return m.reply(global.mess.owner);
 					const mt = (text || "").trim().split(/\s+/);
 					if (mt.length !== 2 || !aturAkses(db, mt[0].toLowerCase(), mt[1].toLowerCase())) return m.reply("Contoh: .akses hitung premium\nRole: free, premium, vip, admin, owner");
+					tulisAudit(db, m.sender, `akses .${mt[0].toLowerCase()} ${mt[1].toLowerCase()}`);
 					return m.reply(`Akses .${mt[0].toLowerCase()} diubah menjadi *${mt[1].toLowerCase()}*`);
 				}
 				break;
@@ -8779,6 +8268,7 @@ Select Bot Settings:
 					const aktif = command === "matikan";
 					if (aktif) matikanPerintah(db, m.chat, perintah);
 					else hidupkanPerintah(db, m.chat, perintah);
+					tulisAudit(db, m.sender, `${aktif ? "matikan" : "hidupkan"} .${perintah}`);
 					return m.reply(`Perintah .${perintah} ${aktif ? "dimatikan" : "dihidupkan"} ${m.isGroup ? "di grup ini" : "di chat ini"}.`);
 				}
 				break;
@@ -8787,6 +8277,7 @@ Select Bot Settings:
 					if (!isCreator) return m.reply(global.mess.owner);
 					const mt = (text || "").trim().split(/\s+/);
 					if (mt.length !== 2 || !aturCooldown(db, mt[0].toLowerCase(), parseInt(mt[1], 10))) return m.reply("Contoh: .cooldown rumus 5\nDetik: 0 sampai 3600");
+					tulisAudit(db, m.sender, `cooldown .${mt[0].toLowerCase()} ${mt[1]} detik`);
 					return m.reply(`Cooldown .${mt[0].toLowerCase()} diatur ${mt[1]} detik.`);
 				}
 				break;
@@ -9029,6 +8520,80 @@ Select Bot Settings:
 					return m.reply(`*Tabel*\n\n${items.map((v, i) => `${i + 1}. ${v}`).join("\n")}`);
 				}
 				break;
+			case "broadcast":
+				{
+					if (!isCreator) return m.reply(global.mess.owner);
+					const arg = (text || "").trim();
+					if (/^confirm\s+\S+$/i.test(arg)) {
+						const token = arg.split(/\s+/)[1];
+						const p = global.broadcastPending;
+						if (!p || p.token !== token || p.sender !== m.sender || Date.now() - p.at > 300000) return m.reply("Token broadcast tidak valid atau kedaluwarsa.");
+						global.broadcastPending = null;
+						const grup = Object.keys(global.db?.set || {}).filter((jid) => jid.endsWith("@g.us")).slice(0, 10);
+						if (!grup.length) return m.reply("Tidak ada grup yang tersedia.");
+						m.reply(`Broadcast dijadwalkan ke ${grup.length} grup, jeda 10 detik per pesan.`);
+						(async () => {
+							for (const jid of grup) {
+								try {
+									await sock.sendMessage(jid, { text: p.pesan });
+								} catch {}
+								await sleep(10000);
+							}
+							tulisAudit(db, m.sender, `broadcast ke ${grup.length} grup`);
+						})();
+						return;
+					}
+					if (!arg) return m.reply("Contoh: .broadcast Halo semua\nLalu .broadcast confirm <token>");
+					const token = Math.random().toString(36).slice(2, 8).toUpperCase();
+					global.broadcastPending = { sender: m.sender, pesan: arg.slice(0, 1000), token, at: Date.now() };
+					return m.reply(`*KONFIRMASI BROADCAST*\n\nPesan: ${arg.slice(0, 300)}\nBatas: maksimal 10 grup, jeda 10 detik per pesan, khusus owner.\nKetik .broadcast confirm ${token} dalam 5 menit.`);
+				}
+				break;
+			case "logaudit":
+				{
+					if (!isCreator) return m.reply(global.mess.owner);
+					const list = bacaAudit(db, (text || "").trim());
+					return m.reply(`*Log Audit*\n\n${list.length ? list.map((a) => `- ${a.waktu} | ${a.sender} | ${a.aksi}`).join("\n") : "(belum ada aksi tercatat)"}\n\nLog hanya tersimpan di database lokal, tidak pernah di-git.`);
+				}
+				break;
+			case "restore":
+				{
+					if (!isCreator) return m.reply(global.mess.owner);
+					const arg = (text || "").trim();
+					const aman = /^[\w.-]+\.(bak|json)$/;
+					if (/^confirm\s+\S+$/i.test(arg)) {
+						const token = arg.split(/\s+/)[1];
+						const p = global.restorePending;
+						if (!p || p.token !== token || p.sender !== m.sender || Date.now() - p.at > 300000) return m.reply("Token restore tidak valid atau kedaluwarsa.");
+						global.restorePending = null;
+						if (!aman.test(p.nama)) return m.reply("Nama berkas tidak valid.");
+						const sumber = path.join("./database", p.nama);
+						if (!fs.existsSync(sumber)) return m.reply("Berkas tidak ditemukan.");
+						fs.copyFileSync(sumber, "./database/database.json");
+						tulisAudit(db, m.sender, `restore ${p.nama}`);
+						return m.reply("Database dipulihkan. Restart bot agar data baru dipakai.");
+					}
+					if (!arg) return m.reply("Contoh: .restore database.json.bak\nLalu .restore confirm <token>");
+					if (!aman.test(arg)) return m.reply("Nama berkas tidak valid.\nGunakan nama seperti database.json.bak");
+					if (!fs.existsSync(path.join("./database", arg))) return m.reply("Berkas tidak ditemukan di ./database");
+					const token = Math.random().toString(36).slice(2, 8).toUpperCase();
+					global.restorePending = { sender: m.sender, nama: arg, token, at: Date.now() };
+					return m.reply(`*KONFIRMASI RESTORE*\n\nBerkas: ${arg}\nIni akan menimpa database aktif.\nKetik .restore confirm ${token} dalam 5 menit.`);
+				}
+				break;
+			case "maintenance":
+				{
+					if (!isCreator) return m.reply(global.mess.owner);
+					const a = (text || "").trim().toLowerCase();
+					if (a === "on" || a === "off") {
+						global.maintenance = a === "on";
+						tulisAudit(db, m.sender, `maintenance ${a}`);
+						return m.reply(`Mode perbaikan ${a === "on" ? "aktif" : "nonaktif"}. User akan mendapat pesan sedang maintenance.`);
+					}
+					return m.reply(`Mode perbaikan: ${global.maintenance ? "aktif" : "nonaktif"}\nKetik .maintenance on atau .maintenance off`);
+				}
+				break;
+
 			case "help":
 				{
 					const daftar = daftarCommand();

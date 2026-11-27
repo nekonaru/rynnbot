@@ -1,0 +1,12 @@
+﻿import { performance } from "node:perf_hooks";
+const mulai = performance.now();
+await import("../lib/rumus/index.js");
+await import("../lib/data-umum.js");
+const { statistikRumus } = await import("../lib/rumus/index.js");
+const { FAKTA, PANTUN, PUISI } = await import("../lib/data-umum.js");
+const { HANGMAN_KATA } = await import("../lib/data-game.js");
+const { SOAL } = await import("../lib/soal.js");
+console.log("Waktu muat data:", (performance.now() - mulai).toFixed(1), "ms");
+console.log("Fakta:", FAKTA.length, "Pantun:", PANTUN.length, "Puisi:", PUISI.length);
+console.log("Hangman:", HANGMAN_KATA.length, "Soal:", Object.values(SOAL).reduce((n, a) => n + a.length, 0));
+console.log("Rumus:", statistikRumus().total);

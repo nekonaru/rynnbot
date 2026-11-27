@@ -76,6 +76,7 @@ Berbasis Hitori Bot karya [Nazedev](https://github.com/nazedev/hitori), yang dir
 | Menu & Umum | **Diagnosa** | `.diagnosa` (owner): cek Node.js, ffmpeg, status kunci API tanpa menampilkan nilai, tipe database, zona waktu, jumlah entri data |
 | Menu & Umum | **Ekonomi** | `.ekonomi` (harga limit, hadiah kuis/soal/hangman, saldo), `.gameinfo` (cooldown dan aturan game) |
 | Menu & Umum | **Panduan** | `.panduan` (langkah mulai pakai, prefix, submenu, perintah owner) |
+| Menu & Umum | **Owner lanjutan** | `.broadcast confirm <token>` (maksimal 10 grup, jeda 10 detik), `.logaudit` (owner-only, tidak di-git), `.restore confirm <token>`, `.maintenance on\|off` (user mendapat pesan sedang maintenance) |
 | Utilitas | **Kalender & hiburan** | `.cal` (kalender bulan), `.pantun` (pantun acak), `.b64` (encode/decode base64), `.password` (generate password acak) |
 | Utilitas | **Cek anggota** | `.admins` (daftar admin grup), `.saldo` (saldo limit/uang/status) |
 | Utilitas | **Belajar SMA** | `.soal` (5.312 soal, bank soal campuran), `.hangman` (8.850 kata), `.soalmtk` (120 soal), `.soalipa` (79 soal), `.soalips` (56 soal), `.soalbindon` (63 soal), `.soalppkn` (43 soal), `.namabayi` (nama bayi Indonesia + asal + arti) |
@@ -544,6 +545,10 @@ Semua perintah memakai prefix default `.` `!` atau `+` (atur di `settings.js`).
 | `.ekonomi` | Ringkasan harga limit, hadiah, dan saldo |
 | `.gameinfo` | Cooldown dan aturan game (daily, rampok, begal, slot, casino, samgong) |
 | `.panduan` | Panduan singkat mulai pakai Rynn |
+| `.broadcast <pesan>` | Warning + konfirmasi, maksimal 10 grup, jeda 10 detik, owner saja |
+| `.logaudit [n]` | Log aksi owner, tersimpan di database lokal |
+| `.restore <berkas>` | Konfirmasi dua langkah sebelum menimpa database |
+| `.maintenance on\|off` | Mode perbaikan, user mendapat pesan sedang maintenance |
 | `.explore edukasi` | Jelajahi perintah per kategori |
 | `.randomcmd` | Perintah acak beserta contoh |
 | `.riwayat` | Riwayat perintah terakhir |
