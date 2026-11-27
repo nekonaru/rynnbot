@@ -1,0 +1,58 @@
+:root {
+  --ungu: #6D5AE6;
+  --ungu-gelap: #3B2E8C;
+  --krem: #FFF6E8;
+  --oranye: #FF9E5E;
+  --teks: #1B1530;
+  --latar: #F7F5FF;
+  --radius: 12px;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--latar);
+  color: var(--teks);
+  font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+.header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 24px 32px;
+  background: linear-gradient(135deg, var(--ungu-gelap), var(--ungu));
+  color: var(--krem);
+}
+.header h1 { margin: 0; font-size: 22px; }
+.header p { margin: 0; opacity: .85; }
+.logo { width: 48px; height: 48px; }
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+  padding: 24px 32px;
+}
+.card {
+  background: #fff;
+  border-radius: var(--radius);
+  padding: 20px;
+  box-shadow: 0 8px 24px rgba(59,46,140,.10);
+  animation: masuk .3s ease-out both;
+}
+.card h2 { margin: 0 0 12px; color: var(--ungu-gelap); font-size: 16px; }
+.list { margin: 0; padding-left: 20px; }
+.list li { padding: 4px 0; border-bottom: 1px solid var(--latar); }
+.skeleton {
+  height: 14px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--latar), #e8e3ff, var(--latar));
+  background-size: 200% 100%;
+  animation: kilau 1.2s linear infinite;
+  margin: 8px 0;
+}
+.bar { height: 10px; border-radius: 999px; background: var(--latar); overflow: hidden; }
+.bar > span { display: block; height: 100%; background: var(--oranye); transition: width .4s ease; }
+@keyframes masuk { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@keyframes kilau { to { background-position: -200% 0; } }
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; }
+}

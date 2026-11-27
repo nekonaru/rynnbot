@@ -1,5 +1,45 @@
 # Changelog
 
+## v12.0.0
+
+﻿## v12.0.0
+
+Rynn v12.0.0 adalah update besar besaran yang menambah 68 perintah baru dan memperkenalkan Rynn Design System pada tiga permukaan: percakapan WhatsApp, CLI, dan panel lokal.
+
+### Desain dan UX
+
+- `lib/design-token.js` memusatkan warna dari `assets/rynn-icon.svg`, ukuran, radius, dan batas pesan.
+- `lib/respons.js` menjadi renderer balasan tunggal: header, isi, catatan, aksi, dan footer. Daftar memakai 8 entri per halaman dengan penanda halaman.
+- `lib/animasi.js` mengatur typing 200-400 ms, progress bar teks tiga tahap, dan stiker animasi. Semua bisa dimatikan lewat `.modehemat on`.
+- Panel lokal di `src/dashboard/` memakai HTML, CSS, dan JavaScript murni serta modul `http` bawaan Node. Dibuka lewat `.dashboardbuka`, ditutup lewat `.dashboardtutup`, dan dilindungi token per sesi.
+- Alur dibuat jelas untuk first run, harian, maintenance, update, error, dan turnamen.
+
+### Perintah baru
+
+- Bantuan adaptif: `.bantuanku`, `.bantuangrup`, `.carifitur`, `.coba`, `.singkatan`, `.aksesku`, `.riwayatperintah`.
+- Kompetisi: `.turnamen2` (buat, daftar, tambah, seed, hasil, juara, arsip, ingat), `.liga2`, `.juaraboards`.
+- Kelompok dan tim: `.bagiacak`, `.bagiseimbang`, `.baginama`, `.teamseimbang`, `.teamrotasi`, `.teamlist`, `.teamhapus`, `.kelompokrekap`.
+- Ekonomi simulasi: `.investasihari`, `.tabunggrafik`, `.utangjadwal`, `.dompetriwayat`, `.pasarsimulasi`, `.sisaanggaran`, `.topdompet`.
+- Belajar: `.flashcardharian`, `.kuisadaptif`, `.kuisskor`, `.materipeta`, `.catattopik`, `.rangkumcatatan`, `.hafalanstreak`.
+- Produktivitas dan moderasi: `.agendaminggu`, `.absengrafik`, `.pollhasil`, `.rapatringkas`, `.notulencari`, `.tugastambah`, `.tugasselesai`, `.tugaslist`, `.peraturanversi`, `.peringatan`, `.peringatanlist`, `.moderasiskor`, `.laporstatus`, `.adminlog`.
+- Media: `.kartuwarna`, `.posterteks`, `.kartuucapan`, `.komikpendek`, `.galeri`, `.stikeranimasi`.
+- AI: `.aigaya`, `.aitopik`, `.aicontoh`, `.aibatalkan`, `.aikuota`, `.aibandingkan`.
+- Owner: `.health`, `.metrik`, `.logringkas`, `.auditcari`, `.diagnosapenuh`, `.modehemat`, `.cacheinfo`, `.memori`.
+- Panel: `.dashboardbuka`, `.dashboardtutup`.
+
+### Kualitas
+
+- 12 tes unit baru di `test/v12.test.js`, termasuk uji endpoint panel lokal. Total **150 tes lolos**.
+- `npm run check` lolos (196 file). Audit menu: 870 case, 595 perintah menu unik, semua punya implementasi.
+- Coverage: 89,30 persen baris, 77,81 persen cabang, 84,38 persen fungsi.
+- Semua balasan baru memakai renderer terpadu dan Bahasa Indonesia. Tidak ada emoji pada dokumen dan release notes.
+
+### Batas
+
+- Panel lokal berjalan di `127.0.0.1` dan tidak terekspos ke jaringan.
+- Nilai ekonomi adalah simulasi bot, bukan produk keuangan nyata.
+- Harga pada `.pasarsimulasi` adalah contoh, bukan data pasar.
+
 ## v11.2.0
 
 ﻿Rynn v11.2.0 adalah rilis audit dan optimalisasi mendalam. Fokusnya adalah membuat fitur yang sudah ada berjalan lebih native, ringan, dan lancar tanpa menambah kategori perintah baru.

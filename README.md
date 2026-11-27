@@ -81,6 +81,14 @@ Berbasis Hitori Bot karya [Nazedev](https://github.com/nazedev/hitori), yang dir
 | Menu & Umum | **Utilitas dan AI v11** | `.markdown`, `.tabel2`, `.diagram`, `.hitungpanjang`, `.indeksdata`, `.contohdata`, `.bantuansaya`, `.code`, `.dialog`, `.brainstorm`, `.kritik`, `.translateid`, `.airiwayat` |
 | Menu & Umum | **Owner dan statistik v11** | `.restartnow`, `.updatenow`, `.logunduh`, `.pengguna`, `.daftargroup`, `.databaseinfo`, `.maintenancewhy`, `.laporharian`, `.lapormingguan`, `.statistikgrup`, `.statistikpengguna`, `.statistikperintah`, `.statistikkinerja` |
 | Menu & Umum | **Arsitektur internal v11.1** | Dataset dimuat malas lewat `lib/data-state.js`, registry v2 dengan alias dan metadata, modul kategori di `lib/handler/`, benchmark startup, dan ambang coverage di CI |
+| Menu & Umum | **Desain dan UX v12** | Design token dari logo, renderer balasan tunggal, typing dan progress bar, panel lokal dengan `.dashboardbuka` |
+| Menu & Umum | **Kompetisi v12** | `.turnamen2`, `.liga2`, `.juaraboards` |
+| Menu & Umum | **Kelompok v12** | `.bagiacak`, `.bagiseimbang`, `.baginama`, `.teamseimbang`, `.teamrotasi`, `.teamlist`, `.teamhapus`, `.kelompokrekap` |
+| Menu & Umum | **Ekonomi v12** | `.investasihari`, `.tabunggrafik`, `.utangjadwal`, `.dompetriwayat`, `.pasarsimulasi`, `.sisaanggaran`, `.topdompet` |
+| Menu & Umum | **Belajar v12** | `.flashcardharian`, `.kuisadaptif`, `.kuisskor`, `.materipeta`, `.catattopik`, `.rangkumcatatan`, `.hafalanstreak` |
+| Menu & Umum | **Produktivitas v12** | `.agendaminggu`, `.absengrafik`, `.pollhasil`, `.rapatringkas`, `.notulencari`, `.tugastambah`, `.tugasselesai`, `.tugaslist`, `.peraturanversi`, `.peringatan`, `.peringatanlist`, `.moderasiskor`, `.laporstatus`, `.adminlog` |
+| Menu & Umum | **Media dan AI v12** | `.kartuwarna`, `.posterteks`, `.kartuucapan`, `.komikpendek`, `.galeri`, `.stikeranimasi`, `.aigaya`, `.aitopik`, `.aicontoh`, `.aibatalkan`, `.aikuota`, `.aibandingkan` |
+| Menu & Umum | **Owner v12** | `.health`, `.metrik`, `.logringkas`, `.auditcari`, `.diagnosapenuh`, `.modehemat`, `.cacheinfo`, `.memori`, `.dashboardbuka`, `.dashboardtutup` |
 | Menu & Umum | **Audit dan optimalisasi v11.2** | Antrean per user, state game tanpa kebocoran, konfirmasi transfer batch, akses alias, import berat ditunda, Levenshtein dua baris, cache statistik rumus, dan ffmpeg non-blokir |
 | Menu & Umum | **Eksplorasi perintah** | `.explore`, `.randomcmd`, `.riwayat`, `.shortcut`, `.pintasan`, `.dataset`, `.rekomendasi` |
 | Menu & Umum | **Produktivitas chat** | `.todo` (tugas pribadi), `.catatancari`, `.peraturan`, `.icebreak`, `.tabel` |
@@ -569,6 +577,19 @@ Semua perintah memakai prefix default `.` `!` atau `+` (atur di `settings.js`).
 | `.ekonomi` | Ringkasan harga limit, hadiah, dan saldo |
 | `.gameinfo` | Cooldown dan aturan game (daily, rampok, begal, slot, casino, samgong) |
 | `.panduan` | Panduan singkat mulai pakai Rynn |
+| `.bantuanku` / `.carifitur <kata>` / `.coba <perintah>` | Bantuan adaptif tanpa efek samping |
+| `.turnamen2 buat` / `.turnamen2 seed @a @b` / `.turnamen2 juara @nama` | Turnamen lanjutan dengan seed dan arsip |
+| `.liga2 buat` / `.liga2 anggota @nama` / `.liga2 skor` | Liga grup lanjutan |
+| `.bagiacak 3 @a @b @c @d @e @f` | Pembagian kelompok acak |
+| `.bagiseimbang 2 @a @b @c @d` | Tim seimbang |
+| `.investasihari` / `.tabunggrafik` | Ringkasan investasi dan progres tabungan simulasi |
+| `.flashcardharian` / `.kuisadaptif` | Kartu harian dan kuis adaptif |
+| `.tugastambah <tugas>` / `.tugaslist` / `.tugasselesai <id>` | Tugas pribadi |
+| `.posterteks <judul> <isi>` / `.kartuucapan <nama> <pesan>` | Kartu dan poster teks |
+| `.aigaya singkat <topik>` / `.aikuota` | Gaya jawaban AI dan kuota |
+| `.health` / `.metrik` / `.memori` | Ringkasan kesehatan bot, owner saja |
+| `.modehemat on` / `.modehemat off` | Matikan typing dan animasi |
+| `.dashboardbuka` / `.dashboardtutup` | Panel lokal di 127.0.0.1 dengan token sesi |
 | `npm run bench` | Bandingkan waktu muat data eager dan malas |
 | `npm run test:coverage` | Jalankan tes dengan ambang baris 80, cabang 75, fungsi 75 |
 | `.presensi hadir` / `.kuorum 10` | Presensi dan cek kuorum grup |
