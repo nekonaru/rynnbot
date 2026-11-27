@@ -54,6 +54,8 @@ import { daftarCommand, daftarKategoriCommand, cariCommand, infoCommand, jumlahC
 import { API_COMMANDS } from "./lib/api-commands.js";
 import { cekAkses, aturAkses, matikanPerintah, hidupkanPerintah, aturCooldown } from "./lib/access.js";
 import { lihatQuest, tandaiQuest, klaimQuest } from "./lib/quest.js";
+import { SEJARAH, TOKOH, OLAHRAGA, SINGKATAN, SINONIM, ANTONIM } from "./lib/data-v5.js";
+import { bangunMenu, kategoriDariNama, ringkasanKategori } from "./lib/menu-builder.js";
 import { FIRST_SETUP_MARKER, firstSetupStates, firstSetupStepText, sendFirstSetupIntro } from './src/setup-wizard.js';
 import { ytMp4, ytMp3, ytMp4Stream } from "./lib/scraper.js";
 import { GroupUpdate, LoadDataBase, extractNativeFlowResponseId } from "./src/message.js";
@@ -6222,6 +6224,9 @@ Select Bot Settings:
 │${setv} ${prefix}kategori
 │${setv} ${prefix}menu <kategori>
 │${setv} ${prefix}statistikbot
+│${setv} ${prefix}help
+│${setv} ${prefix}cmdlist
+│${setv} ${prefix}saran
 │${setv} ${prefix}stats
 │${setv} ${prefix}menfes (62xxx|fake name)
 │${setv} ${prefix}confes (62xxx|fake name)
@@ -6463,6 +6468,13 @@ Select Bot Settings:
 │${setv} ${prefix}kompleks
 │${setv} ${prefix}hewan
 │${setv} ${prefix}tumbuhan
+│${setv} ${prefix}sejarah
+│${setv} ${prefix}tokoh
+│${setv} ${prefix}olahraga
+│${setv} ${prefix}singkatan
+│${setv} ${prefix}sinonim
+│${setv} ${prefix}antonim
+│${setv} ${prefix}kamus
 │${setv} ${prefix}diagnosa
 │${setv} ${prefix}basis
 │${setv} ${prefix}durasi
@@ -6554,6 +6566,10 @@ Select Bot Settings:
 │${setv} ${prefix}matikan
 │${setv} ${prefix}hidupkan
 │${setv} ${prefix}cooldown
+│${setv} ${prefix}envstatus
+│${setv} ${prefix}backuplist
+│${setv} ${prefix}sesi
+│${setv} ${prefix}setmotd
 │${setv} $
 │${setv} >
 │${setv} <
@@ -6636,6 +6652,9 @@ Select Bot Settings:
 │${setv} ${prefix}kategori
 │${setv} ${prefix}menu <kategori>
 │${setv} ${prefix}statistikbot
+│${setv} ${prefix}help
+│${setv} ${prefix}cmdlist
+│${setv} ${prefix}saran
 │${setv} ${prefix}stats
 │${setv} ${prefix}delcmd
 │${setv} ${prefix}listcmd
@@ -6939,6 +6958,13 @@ Select Bot Settings:
 │${setv} ${prefix}kompleks
 │${setv} ${prefix}hewan
 │${setv} ${prefix}tumbuhan
+│${setv} ${prefix}sejarah
+│${setv} ${prefix}tokoh
+│${setv} ${prefix}olahraga
+│${setv} ${prefix}singkatan
+│${setv} ${prefix}sinonim
+│${setv} ${prefix}antonim
+│${setv} ${prefix}kamus
 │${setv} ${prefix}diagnosa
 │${setv} ${prefix}basis
 │${setv} ${prefix}durasi
@@ -7064,6 +7090,13 @@ Select Bot Settings:
 │${setv} ${prefix}kompleks
 │${setv} ${prefix}hewan
 │${setv} ${prefix}tumbuhan
+│${setv} ${prefix}sejarah
+│${setv} ${prefix}tokoh
+│${setv} ${prefix}olahraga
+│${setv} ${prefix}singkatan
+│${setv} ${prefix}sinonim
+│${setv} ${prefix}antonim
+│${setv} ${prefix}kamus
 │${setv} ${prefix}diagnosa
 │${setv} ${prefix}basis
 │${setv} ${prefix}durasi
@@ -7131,6 +7164,10 @@ Select Bot Settings:
 │${setv} ${prefix}matikan
 │${setv} ${prefix}hidupkan
 │${setv} ${prefix}cooldown
+│${setv} ${prefix}envstatus
+│${setv} ${prefix}backuplist
+│${setv} ${prefix}sesi
+│${setv} ${prefix}setmotd
 │${setv} $
 │${setv} >
 │${setv} <
@@ -8697,6 +8734,162 @@ Select Bot Settings:
 					return m.reply(`*Peringkat Game*\n\n${baris}`);
 				}
 				break;
+			case "envstatus":
+				{
+					if (!isCreator) return m.reply(global.mess.owner);
+					const nama = ["MONGODB_URL", "NAZE_API_KEY", "NEOSANTARA_API_KEY", "NUMBER_BOT", "OWNER_NUMBER", "ADMIN_KEY", "DASHBOARD_ENABLED", "ALLOW_REMOTE_EXEC", "ALLOW_INSECURE_TLS"];
+					return m.reply(`*Status Variabel .env*\n\n${nama.map((k) => `- *${k}*: ${process.env[k] || global[k] ? "terisi" : "kosong"}`).join("\n")}\n\nNilai tidak pernah ditampilkan.`);
+				}
+				break;
+			case "backuplist":
+				{
+					if (!isCreator) return m.reply(global.mess.owner);
+					let daftar = [];
+					try {
+						daftar = fs.readdirSync("./backup").filter((f) => fs.statSync(path.join("./backup", f)).isFile()).slice(-15);
+					} catch {}
+					return m.reply(`*Daftar Backup*\n\n${daftar.length ? daftar.map((f) => "- " + f).join("\n") : "(belum ada berkas)"}\n\nLokasi: ./backup`);
+				}
+				break;
+			case "sesi":
+				{
+					if (!isCreator) return m.reply(global.mess.owner);
+					let jumlah = 0;
+					try { jumlah = fs.readdirSync("./rynn-session").length; } catch {}
+					return m.reply(`*Info Sesi*\n\nBerkas sesi lokal: ${jumlah}\nTipe database: ${String(global.database?.path || "lokal").split(":")[0]}\nMode: ${sock.public ? "public" : "self"}\nNomor bot: ${global.number_bot || "(default)"}`);
+				}
+				break;
+			case "setmotd":
+				{
+					if (!isCreator) return m.reply(global.mess.owner);
+					const pesan = (text || "").trim();
+					if (!pesan) return m.reply("Contoh: .setmotd Selamat datang di Rynn");
+					global.motd = pesan.slice(0, 200);
+					return m.reply("Pesan hari ini diperbarui.");
+				}
+				break;
+			case "help":
+				{
+					const daftar = daftarCommand();
+					const top = Object.entries(global.db?.hit || {}).filter(([k, v]) => /^[a-z0-9_]+$/i.test(k) && Number.isFinite(v)).sort((a, b) => b[1] - a[1]).slice(0, 8).map(([k]) => `.${k}`);
+					return m.reply(`*Bantuan Rynn*${global.motd ? "\n\n" + global.motd : ""}\n\nKetik .allmenu untuk semua perintah.\nKetik .kategori untuk daftar kategori.\nKetik .cari <kata> untuk mencari perintah dan rumus.\nKetik .bantuan <perintah> untuk detail satu perintah.\n\nTotal perintah menu: ${daftar.length}\nPerintah sering dipakai: ${top.join(", ") || "(belum ada data)"}\n\nPanduan: .panduan`);
+				}
+				break;
+			case "contoh":
+				{
+					const q = (text || "").trim().toLowerCase().replace(/^\./, "");
+					if (!q) return m.reply("Contoh: .contoh rumus\n.contoh statistik");
+					const info = infoCommand(q);
+					const rumus = q.split(" ")[0];
+					const contohRumus = {
+						rumus: ".rumus matematika 1\n.rumus cari energi\n.rumus random fisika",
+						statistik: ".statistik 4 7 2 9 3",
+						cari: ".cari rumus\n.cari kurs",
+						matriks: ".matriks det 2 3 1 4",
+						hitung: ".hitung (2+3)*4",
+						sejarah: ".sejarah 17 agustus",
+					};
+					const isi = contohRumus[rumus] || (info ? "." + info.command + (info.deskripsi ? " " + info.deskripsi : "") : "Contoh belum tersedia.\nKetik .bantuan " + q);
+					return m.reply(`*Contoh .${q}*\n\n${isi}`);
+				}
+				break;
+			case "alias":
+				{
+					const q = (text || "").trim().toLowerCase().replace(/^\./, "");
+					if (!q) return m.reply("Contoh: .alias rumus\nKetik .cmdlist untuk daftar perintah.");
+					const sumber = fs.readFileSync("handler.js", "utf8");
+					const blok = sumber.split(/(?=^\t\t\tcase ["'])/gm).find((b) => new RegExp(`^\\t\\t\\tcase ["']${q}["']`).test(b));
+					if (!blok) return m.reply("Perintah tidak ditemukan.");
+					const alias = [...blok.matchAll(/^\t\t\tcase\s+["']([a-z0-9_]+)["']:/gm)].map((m) => m[1]);
+					return m.reply(`*Alias .${q}*\n\n${alias.map((a) => "- ." + a).join("\n")}`);
+				}
+				break;
+			case "cmdlist":
+				{
+					const kategori = (text || "").trim().toLowerCase();
+					if (kategori) {
+						const k = kategoriDariNama(kategori) || kategori.toUpperCase();
+						const entri = daftarCommand().filter((e) => e.kategori === k);
+						return entri.length ? m.reply(`*Perintah ${k} (${entri.length})*\n\n${entri.map((e) => "- ." + e.command).join("\n")}`) : m.reply("Kategori tidak ditemukan.");
+					}
+					return m.reply(ringkasanKategori());
+				}
+				break;
+			case "saran":
+				{
+					const q = (text || "").trim().toLowerCase().replace(/^\./, "");
+					if (!q) return m.reply("Contoh: .saran rumuss");
+					const semua = daftarCommand().map((e) => e.command);
+				 const mirip = semua.map((c) => [c, similarity(q, c)]).sort((a, b) => b[1] - a[1]).slice(0, 8).filter(([, n]) => n > 0.3);
+					return mirip.length ? m.reply(`*Mungkin maksudmu:*\n\n${mirip.map(([c, n]) => `- .${c} (${(n * 100).toFixed(0)}% mirip)`).join("\n")}`) : m.reply("Tidak ada saran yang mirip.\nKetik .cari <kata> untuk mencari.");
+				}
+				break;
+			case "sejarah":
+				{
+					const q = (text || "").trim().toLowerCase();
+					if (!q) return m.reply(`*Peristiwa Sejarah (${SEJARAH.length})*\n\n${SEJARAH.map((s) => `- ${s.tanggal}`).join("\n")}\n\nKetik .sejarah 17 agustus`);
+					if (q === "random") { const s = SEJARAH[Math.floor(Math.random() * SEJARAH.length)]; return m.reply(`*${s.tanggal}*\n\n${s.info}`); }
+					const found = SEJARAH.filter((s) => s.tanggal.toLowerCase().includes(q) || s.info.toLowerCase().includes(q));
+					if (!found.length) return m.reply("Peristiwa tidak ditemukan.");
+					return m.reply(found.map((s) => `*${s.tanggal}*\n${s.info}`).join("\n\n"));
+				}
+				break;
+			case "tokoh":
+				{
+					const q = (text || "").trim().toLowerCase();
+					if (!q) return m.reply(`*Tokoh Indonesia (${TOKOH.length})*\n\n${TOKOH.map((t) => `- ${t.nama}`).join(", ")}\n\nKetik .tokoh kartini`);
+					if (q === "random") { const t = TOKOH[Math.floor(Math.random() * TOKOH.length)]; return m.reply(`*${t.nama}*\n\n${t.peran}`); }
+					const found = TOKOH.filter((t) => t.nama.toLowerCase().includes(q) || t.peran.toLowerCase().includes(q));
+					if (!found.length) return m.reply("Tokoh tidak ditemukan.");
+					return m.reply(found.map((t) => `*${t.nama}*\n${t.peran}`).join("\n\n"));
+				}
+				break;
+			case "olahraga":
+				{
+					const q = (text || "").trim().toLowerCase();
+					if (!q) return m.reply(`*Cabang Olahraga (${OLAHRAGA.length})*\n\n${OLAHRAGA.join(", ")}`);
+					if (q === "random") return m.reply(`*${OLAHRAGA[Math.floor(Math.random() * OLAHRAGA.length)]}*`);
+					const found = OLAHRAGA.filter((o) => o.includes(q));
+					return found.length ? m.reply(found.map((o) => `- *${o}*`).join("\n")) : m.reply("Cabang olahraga tidak ditemukan.");
+				}
+				break;
+			case "singkatan":
+				{
+					const q = (text || "").trim().toUpperCase();
+					if (!q) return m.reply(`*Singkatan Umum (${SINGKATAN.length})*\n\nKetik .singkatan KTP\nKetik .singkatan cari kesehatan`);
+					if (/^CARI\s+/.test(q)) {
+						const kata = q.replace(/^CARI\s+/, "");
+						const found = SINGKATAN.filter(([s, a]) => a.includes(kata));
+						return found.length ? m.reply(found.map(([s, a]) => `- *${s}*: ${a}`).join("\n")) : m.reply("Singkatan tidak ditemukan.");
+					}
+					const found = SINGKATAN.filter(([s, a]) => s === q || a.toUpperCase().includes(q));
+					return found.length ? m.reply(found.map(([s, a]) => `*${s}*: ${a}`).join("\n")) : m.reply("Singkatan tidak ditemukan.");
+				}
+				break;
+			case "sinonim":
+			case "antonim":
+				{
+					const q = (text || "").trim().toLowerCase();
+					const sumber = command === "sinonim" ? SINONIM : ANTONIM;
+					if (!q) return m.reply(`Contoh: .${command} senang\nTersedia ${sumber.length} pasangan kata.`);
+					const found = sumber.filter(([a, b]) => a === q || b === q);
+					return found.length ? m.reply(found.map(([a, b]) => `*${a}* -> ${b}`).join("\n")) : m.reply("Kata tidak ditemukan.");
+				}
+				break;
+			case "kamus":
+				{
+					const q = (text || "").trim().toLowerCase();
+					if (!q) return m.reply("Contoh: .kamus senang");
+					const sin = SINONIM.filter(([a, b]) => a === q || b === q);
+					const ant = ANTONIM.filter(([a, b]) => a === q || b === q);
+					const sing = SINGKATAN.filter(([s, a]) => s.toLowerCase() === q || a.toLowerCase().includes(q));
+					const bagian = [];
+					if (sin.length) bagian.push(`*Sinonim*\n${sin.map(([a, b]) => `- ${a} -> ${b}`).join("\n")}`);
+					if (ant.length) bagian.push(`*Antonim*\n${ant.map(([a, b]) => `- ${a} -> ${b}`).join("\n")}`);
+					if (sing.length) bagian.push(`*Singkatan*\n${sing.map(([s, a]) => `- ${s}: ${a}`).join("\n")}`);
+					return m.reply(bagian.length ? `*Kamus: ${q}*\n\n${bagian.join("\n\n")}` : "Kata tidak ditemukan.");
+				}
+				break;
 			case "cari":
 				{
 					const q = (text || "").trim();
@@ -8736,8 +8929,9 @@ Select Bot Settings:
 						fun: "funmenu", edukasi: "edukasimenu", pendidikan: "edukasimenu", owner: "ownermenu", author: "authormenu",
 					};
 					if (!k) return m.reply(`Ketik .menu <kategori>.\n\nPilihan: ${Object.keys(peta).join(", ")}`);
-					const submenu = peta[k];
-					return submenu ? m.reply(`Untuk kategori *${k}*, ketik *.${submenu}*\n\nAtau ketik .allmenu untuk semua perintah.`) : m.reply(`Kategori tidak ditemukan.\n\nPilihan: ${Object.keys(peta).join(", ")}`);
+					const submenu = kategoriDariNama(k);
+					const teks = submenu ? bangunMenu(submenu, setv, prefix) : null;
+					return teks ? m.reply(teks) : m.reply(`Kategori tidak ditemukan.\n\nPilihan: ${Object.keys({ bot: 1, grup: 1, search: 1, download: 1, quotes: 1, tools: 1, ai: 1, random: 1, stalker: 1, anime: 1, game: 1, fun: 1, edukasi: 1, owner: 1 }).join(", ")}`);
 				}
 				break;
 			case "statistikbot":

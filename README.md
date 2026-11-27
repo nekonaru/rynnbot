@@ -59,6 +59,10 @@ Berbasis Hitori Bot karya [Nazedev](https://github.com/nazedev/hitori), yang dir
 | Menu & Umum | **Menu dan bantuan** | Menu berkategori, daftar perintah, info bot, ping |
 | Menu & Umum | **CLI interaktif** | Wizard setup pertama, manajer pengaturan, dashboard status, pembaca log |
 | Menu & Umum | **Hot reload** | `settings.js` dimuat ulang otomatis saat disimpan |
+| Menu & Umum | **Penemuan lanjutan** | `.help`, `.contoh <cmd>`, `.alias <cmd>`, `.cmdlist [kategori]`, `.saran <kata>` |
+| Menu & Umum | **Owner lanjutan** | `.envstatus` (nama variabel saja), `.backuplist`, `.sesi`, `.setmotd <teks>` |
+| Menu & Umum | **Generator menu** | `.menu <kategori>` kini menampilkan submenu asli dari registry, bukan petunjuk |
+| Utilitas | **Pengetahuan Indonesia** | `.sejarah` (30 peristiwa), `.tokoh` (21 tokoh), `.olahraga` (40 cabang), `.singkatan` (100), `.sinonim` (57), `.antonim` (52), `.kamus` |
 | Menu & Umum | **Penemuan perintah** | `.cari <kata>` (cari perintah dan rumus), `.bantuan <cmd>`, `.kategori`, `.menu <kategori>`, `.statistikbot`, `.topcmd` |
 | Menu & Umum | **Kontrol akses** | `.akses <cmd> <role>`, `.matikan <cmd>`, `.hidupkan <cmd>`, `.cooldown <cmd> <detik>` |
 | Menu & Umum | **Progression** | `.streak` (klaim harian beruntun), `.rankgame` (peringkat game) |
@@ -534,6 +538,19 @@ Semua perintah memakai prefix default `.` `!` atau `+` (atur di `settings.js`).
 | `.ekonomi` | Ringkasan harga limit, hadiah, dan saldo |
 | `.gameinfo` | Cooldown dan aturan game (daily, rampok, begal, slot, casino, samgong) |
 | `.panduan` | Panduan singkat mulai pakai Rynn |
+| `.help` | Bantuan umum dan perintah sering dipakai |
+| `.contoh rumus` | Contoh pemakaian perintah |
+| `.alias rumus` | Daftar alias perintah |
+| `.cmdlist edukasi` | Daftar perintah per kategori |
+| `.saran rumuss` | Saran perintah mirip |
+| `.sejarah 17 agustus` | Peristiwa sejarah Indonesia |
+| `.tokoh kartini` | Tokoh Indonesia dan perannya |
+| `.olahraga bulu` | Cabang olahraga |
+| `.singkatan KTP` / `.singkatan cari kesehatan` | Singkatan umum |
+| `.sinonim senang` / `.antonim panas` | Pasangan kata |
+| `.kamus senang` | Cari sinonim, antonim, dan singkatan |
+| `.envstatus` | Status variabel .env tanpa nilai (owner) |
+| `.backuplist`, `.sesi`, `.setmotd` | Tools owner tambahan |
 | `.cari rumus` | Cari perintah dan rumus |
 | `.bantuan rumus` | Detail penggunaan perintah |
 | `.kategori` | Daftar kategori perintah |

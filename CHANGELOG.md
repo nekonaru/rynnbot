@@ -1,5 +1,30 @@
 # Changelog
 
+## v5.0.0
+
+Rynn v5.0.0 menyelesaikan lanjutan rancangan v4: generator menu terpusat, penemuan perintah lanjutan, data pengetahuan Indonesia baru, dan tools owner tambahan.
+
+### Menu dan penemuan
+
+- `lib/menu-builder.js` menjadi satu sumber kebenaran untuk menyusun teks menu dari registry. `.menu <kategori>` sekarang benar-benar menampilkan submenu kategori, bukan sekadar petunjuk.
+- Perintah baru: `.help`, `.contoh <cmd>`, `.alias <cmd>`, `.cmdlist [kategori]`, `.saran <kata>`. `.saran` memakai fungsi `similarity` yang sudah ada untuk menyarankan perintah saat salah ketik.
+- `.help` menampilkan `global.motd` bila diatur owner.
+
+### Data baru
+
+- Modul `lib/data-v5.js`: 30 peristiwa sejarah, 21 tokoh, 40 cabang olahraga, 100 singkatan, 57 pasangan sinonim, dan 52 pasangan antonim.
+- Perintah baru: `.sejarah`, `.tokoh`, `.olahraga`, `.singkatan`, `.sinonim`, `.antonim`, `.kamus`.
+
+### Tools owner
+
+- `.envstatus` menampilkan nama variabel dan status terisi atau kosong tanpa menampilkan nilai.
+- `.backuplist`, `.sesi`, dan `.setmotd <teks>` ditambahkan.
+
+### Audit
+
+- 2 tes unit baru untuk generator menu dan data v5; total **103 tes lolos**. `npm run check` lolos (144 file).
+- Audit menu terhadap `case`: 639 case, 379 perintah menu unik, semua punya implementasi. CI hijau sebelum tag `v5.0.0`.
+
 ## v4.1.0
 
 Rynn v4.1.0 menyelesaikan rancangan akhir v4: ekspansi rumus lanjutan, quest harian, dan batch data final.
