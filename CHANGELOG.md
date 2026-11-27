@@ -1,5 +1,29 @@
 # Changelog
 
+## v6.1.0
+
+Rynn v6.1.0 mengejar target data dan rumus: rumus menembus 4.000 entri, fakta menembus 2.000, dan pantun jauh melebihi target.
+
+### Data
+
+- Batch masif `lib/data-v6b.js`: 1.744 fakta hitung, 16.000 pantun hasil rakitan bait aman, 144 puisi, 100 kata Hangman, dan 800 soal matematika.
+- Dataset inti sesudah deduplikasi: FAKTA 2.395, PANTUN 16.473, PUISI 391, Hangman 615, SOAL 1.312.
+
+### Rumus
+
+- Ekspansi `lib/rumus/tambahan4.js` menambah 1.400 rumus dari 35 keluarga rumus standar.
+- Total rumus sekarang **4.013** dalam **35 kategori**, sesuai target 4.000.
+
+### Audit
+
+- `npm run check` lolos (150 file), **106 tes lolos**, tes integritas data dan rumus tetap hijau.
+- CI hijau sebelum tag `v6.1.0`.
+
+### Target yang belum tercapai
+
+- Puisi 391 dari target 700, Hangman 615 dari target 2.000, soal 1.312 dari target 1.500.
+- Dataset wisata, kuliner, resep, hewan, tumbuhan, dan lainnya belum diperluas ke target v6.
+
 ## v6.0.0
 
 Rynn v6.0.0 menyatukan ekspansi data, rumus, dan format daftar seragam. Entri acak kini ditampilkan di atas daftar pada perintah data.
