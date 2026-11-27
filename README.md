@@ -64,6 +64,9 @@ Berbasis Hitori Bot karya [Nazedev](https://github.com/nazedev/hitori), yang dir
 | Menu & Umum | **Ekonomi v8** | `.bank`, `.tabung`, `.tarik`, `.pinjam`, `.lunas`, `.top`, `.dompetgrafik` |
 | Menu & Umum | **Game v8** | `.turnamen`, `.tebak riddle` |
 | Menu & Umum | **Data v8** | `.data cari`, `.data rekomendasi` |
+| Menu & Umum | **Pembagian dan turnamen** | `.bagi <anggota> <kelompok>` (per kelompok, sisa, distribusi), `.team <game> <pemain>` (ukuran ML 5, PUBG/FF 4), `.turnamen buat|daftar|mulai|bracket|menang|juara|reset` sampai juara |
+| Menu & Umum | **AI teks** | `.ringkas`, `.ide`, `.paragraf`, `.judulkan`, `.tanya`, `.terjemah`, `.teks` |
+| Menu & Umum | **Kalender dan jadwal** | `.kalender [YYYY-MM]`, `.jadwal <jam> <tugas>`, `.notifikasi on|off` |
 | Menu & Umum | **Eksplorasi perintah** | `.explore`, `.randomcmd`, `.riwayat`, `.shortcut`, `.pintasan`, `.dataset`, `.rekomendasi` |
 | Menu & Umum | **Produktivitas chat** | `.todo` (tugas pribadi), `.catatancari`, `.peraturan`, `.icebreak`, `.tabel` |
 | Menu & Umum | **Ekonomi lanjutan** | `.dompet`, `.topuang`, `.toplimit`, `.hadiah` |
@@ -551,6 +554,22 @@ Semua perintah memakai prefix default `.` `!` atau `+` (atur di `settings.js`).
 | `.ekonomi` | Ringkasan harga limit, hadiah, dan saldo |
 | `.gameinfo` | Cooldown dan aturan game (daily, rampok, begal, slot, casino, samgong) |
 | `.panduan` | Panduan singkat mulai pakai Rynn |
+| `.bagi 38 5` | Bagi 38 anggota ke 5 kelompok, tampil sisa dan distribusi |
+| `.team mobile legend 20` | Bagi pemain sesuai ukuran tim game |
+| `.turnamen buat` / `.turnamen daftar` / `.turnamen mulai` | Buat, daftar peserta, dan mulai bracket |
+| `.turnamen bracket` | Lihat bracket dan status pertandingan |
+| `.turnamen menang 1 1 @nama` | Catat pemenang, lanjut sampai juara |
+| `.turnamen juara` | Tampilkan juara |
+| `.ringkas <teks>` | Ringkas teks lewat AI |
+| `.ide <topik>` | Usulan ide lewat AI |
+| `.paragraf <topik>` | Paragraf pendek lewat AI |
+| `.judulkan <teks>` | Usulan judul lewat AI |
+| `.tanya <pertanyaan>` | Tanya ke AI |
+| `.terjemah <teks>` | Terjemah teks |
+| `.teks <mode> <teks>` | judul, kecil, besar, kebab, camel, snake |
+| `.kalender [YYYY-MM]` | Kalender bulan |
+| `.jadwal 08:00 belajar` | Jadwal tugas |
+| `.notifikasi on\|off` | Notifikasi per user |
 | `.jelajah [kategori]` | Jelajah perintah per kategori |
 | `.cmdbaru` | Daftar perintah terbaru |
 | `.peta` | Peta seluruh kategori perintah |

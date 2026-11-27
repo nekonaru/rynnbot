@@ -40,6 +40,9 @@ import { KOTA_WAKTU, cariKota, waktuDi } from "./lib/data-waktu.js";
 import { SURAT, cariSurat } from "./lib/data-surat.js";
 import { kataBilangan, ucapanWaktu, hurufKe, angkaKeHuruf } from "./lib/bilangan.js";
 import { bilah, formatTanggal, formatWaktu, potongTeks, hitungKata } from "./lib/teks.js";
+import { bagiKelompok, bagiTim, ukuranTimGame, formatPembagian } from "./lib/pembagian.js";
+import { buatBracket, catatMenang, formatBracket } from "./lib/turnamen.js";
+import { denganCache } from "./lib/cache.js";
 import { hashTeks, urlEncode, urlDecode, validasiJson } from "./lib/devutils.js";
 import { luasBangun, volumeBangun, akarKuadrat } from "./lib/geometri.js";
 import { deretAritmetika, deretGeometri, linearSatu, persenDari, persenPerubahan } from "./lib/deret.js";
@@ -6245,6 +6248,19 @@ Select Bot Settings:
 │${setv} ${prefix}dataset
 │${setv} ${prefix}rekomendasi
 │${setv} ${prefix}tabel
+│${setv} ${prefix}bagi <anggota> <kelompok>
+│${setv} ${prefix}ringkas
+│${setv} ${prefix}ide
+│${setv} ${prefix}paragraf
+│${setv} ${prefix}judulkan
+│${setv} ${prefix}tanya
+│${setv} ${prefix}terjemah
+│${setv} ${prefix}teks
+│${setv} ${prefix}kalender
+│${setv} ${prefix}jadwal
+│${setv} ${prefix}notifikasi
+│${setv} ${prefix}team <game> <pemain>
+│${setv} ${prefix}turnamen buat
 │${setv} ${prefix}jelajah
 │${setv} ${prefix}cmdbaru
 │${setv} ${prefix}peta
@@ -7090,31 +7106,6 @@ Select Bot Settings:
 						} catch {}
 					}
 					m.reply(`Berhasil mengeluarkan ${removed} anggota.`);
-				}
-				break;
-			case "team":
-			case "tim":
-				{
-					if (!m.isGroup) return m.reply(global.mess.group);
-					const n = parseInt((text || "").trim(), 10);
-					if (isNaN(n) || n < 2 || n > 8) return m.reply("Contoh: .team 2\n(bagikan anggota grup menjadi 2 tim, maksimal 8)");
-					const md = await sock.groupMetadata(m.chat).catch(() => null);
-					if (!md) return m.reply("Gagal mengambil metadata grup.");
-					const botId = sock.user?.id;
-					const members = md.participants.map((p) => p.id).filter((id) => id !== botId);
-					if (members.length < n * 2) return m.reply(`Anggota grup tidak cukup untuk dibagi menjadi ${n} tim.`);
-					for (let i = members.length - 1; i > 0; i--) {
-						const j = Math.floor(Math.random() * (i + 1));
-						[members[i], members[j]] = [members[j], members[i]];
-					}
-					let out = `*Pembagian ${n} Tim*\n\n`;
-					const mentions = [];
-					for (let t = 0; t < n; t++) {
-						const team = members.filter((_, idx) => idx % n === t);
-						mentions.push(...team);
-						out += `*Tim ${t + 1}*\n` + team.map((id) => `- @${id.split("@")[0]}`).join("\n") + "\n\n";
-					}
-					return m.reply(out.trim(), { mentions });
 				}
 				break;
 			case "pair":
@@ -8825,15 +8816,6 @@ Select Bot Settings:
 					return m.reply(`*Dompet Grafik*\n\nUang    [${bilah(Math.min(uang, 10000), 10000)}] ${uang.toLocaleString("id-ID")}\nLimit   [${bilah(Math.min(limit, 100), 100)}] ${limit.toLocaleString("id-ID")}`);
 				}
 				break;
-			case "turnamen":
-				{
-					if (!m.isGroup) return m.reply(global.mess.group);
-					const game = (text || "").trim().toLowerCase();
-					if (!game) return m.reply("Contoh: .turnamen quiz\nGame: quiz, soal, suit, catur");
-					if (!["quiz", "soal", "suit", "catur"].includes(game)) return m.reply("Game tidak didukung.");
-					return m.reply(`*Turnamen ${game}*\n\nPendaftaran dibuka. Ketik .team <jumlah> untuk membagi peserta, lalu mainkan .${game}.`);
-				}
-				break;
 			case "tebak":
 				{
 					const q = (text || "").trim().toLowerCase();
@@ -8982,12 +8964,193 @@ Select Bot Settings:
 				{
 					const q = (text || "").trim();
 					if (!q) return m.reply("Contoh: .cari rumus\n.cari kurs\nCari perintah dan rumus berdasarkan kata kunci.");
-					const cmd = cariCommand(q);
-					const rum = cariRumus(q, 8);
+					const cmd = denganCache("cmd:" + q, 60000, () => cariCommand(q));
+					const rum = denganCache("rumus:" + q, 60000, () => cariRumus(q, 8));
 					const bagian = [];
 					if (cmd.length) bagian.push(`*Perintah (${cmd.length})*\n${cmd.map((c) => `- .${c.command} (${c.kategori})${c.deskripsi ? ": " + c.deskripsi : ""}`).join("\n")}`);
 					if (rum.length) bagian.push(`*Rumus (${rum.length} ditampilkan)*\n${rum.map((r) => `- *${r.nama}*: ${r.rumus} [${r.id}]`).join("\n")}`);
 					return m.reply(bagian.length ? `*Hasil Pencarian: ${q}*\n\n${bagian.join("\n\n")}` : "Tidak ditemukan perintah atau rumus yang cocok.");
+				}
+				break;
+			case "bagi":
+				{
+					const mt = (text || "").trim().split(/\s+/);
+					const jenis = (mt[0] || "").toLowerCase();
+					let hasil;
+					if (jenis === "kelas" || jenis === "group" || jenis === "grup") hasil = bagiKelompok(Number(mt[1]), Number(mt[2]));
+					else if (jenis === "tim" || jenis === "team") hasil = bagiTim(Number(mt[1]), Number(mt[2]));
+					else hasil = bagiKelompok(Number(mt[0]), Number(mt[1]));
+					if (!hasil) return m.reply("Contoh:\n.bagi 38 5\n.bagi kelas 38 5\n.bagi tim 20 5\n\nHarus bilangan bulat, kelompok tidak boleh lebih banyak dari anggota.");
+					return m.reply(formatPembagian(hasil));
+				}
+				break;
+			case "team":
+				{
+					const arg = (text || "").trim();
+					const mt = arg.split(/\s+/);
+					if (/^\d+$/.test(mt[0])) {
+						const jumlahTim = parseInt(mt[0], 10);
+						const orang = Array.isArray(m.mentionedJid) ? m.mentionedJid.map((j) => "@" + j.split("@")[0]) : [];
+						if (orang.length < 2) return m.reply("Tag minimal 2 orang, lalu ketik .team <jumlah tim>");
+						const h = bagiKelompok(orang.length, jumlahTim);
+						if (!h) return m.reply("Jumlah tim tidak valid.");
+						let at = 0;
+						const baris = h.distribusi.map((n, i) => `Tim ${i + 1}: ${orang.slice(at, at + n).join(", ")}`).join("\n");
+						return m.reply(`*Pembagian Tim*\n\n${baris}\n\nSisa: ${h.sisa}`);
+					}
+					const game = mt[0] || "";
+					const jumlahPemain = Number(mt[1]);
+					const ukuran = ukuranTimGame(game) || Number(mt[2]);
+					const h = bagiTim(jumlahPemain, ukuran);
+					if (!h) return m.reply(`Contoh: .team mobile legend 20\n.team pubg 16\nGame dikenal: Mobile Legend (5), PUBG (4), Free Fire (4), Valorant (5), Dota (5)`);
+					return m.reply(`${formatPembagian(h)}\n\nGame: ${game}`);
+				}
+				break;
+			case "turnamen":
+				{
+					if (!m.isGroup) return m.reply(global.mess.group);
+					if (!global.db.turnamen) global.db.turnamen = {};
+					const kunci = m.chat;
+					const arg = (text || "").trim();
+					const bagian = arg.split(/\s+/);
+					const sub = (bagian[0] || "bantuan").toLowerCase();
+					const state = global.db.turnamen[kunci];
+					if (sub === "daftar" || sub === "join" || sub === "gabung") {
+						if (!state || state.bracket) return m.reply("Turnamen belum dibuka atau sudah dimulai. Ketik .turnamen buat");
+						if (!state.peserta) state.peserta = [];
+						const nama = "@" + m.sender.split("@")[0];
+						if (state.peserta.includes(nama)) return m.reply("Kamu sudah terdaftar.");
+						state.peserta.push(nama);
+						return m.reply(`Terdaftar sebagai *${nama}*. Peserta: ${state.peserta.length}`);
+					}
+					if (sub === "buat") {
+						if (!isCreator && !m.isAdmin) return m.reply(global.mess.admin);
+						global.db.turnamen[kunci] = { peserta: [], bracket: null, game: bagian[1] || "umum" };
+						return m.reply(`Turnamen *${bagian[1] || "umum"}* dibuka. Ketik .turnamen daftar untuk gabung.`);
+					}
+					if (sub === "peserta") {
+						if (!state) return m.reply("Belum ada turnamen.");
+						return m.reply(`*Peserta Turnamen (${(state.peserta || []).length})*\n\n${state.peserta.join("\n") || "(kosong)"}`);
+					}
+					if (sub === "mulai") {
+						if (!isCreator && !m.isAdmin) return m.reply(global.mess.admin);
+						if (!state || state.bracket) return m.reply("Buat turnamen dulu dengan .turnamen buat");
+						const bracket = buatBracket(state.peserta || []);
+						if (!bracket) return m.reply("Minimal 2 peserta untuk membuat bracket.");
+						state.bracket = bracket;
+						return m.reply(formatBracket(bracket) + "\n\nCatatan pemenang: .turnamen menang <babak> <nomor> <nama>");
+					}
+					if (sub === "bracket" || sub === "skor") {
+						if (!state?.bracket) return m.reply("Bracket belum dibuat.");
+						return m.reply(formatBracket(state.bracket));
+					}
+					if (sub === "menang") {
+						if (!isCreator && !m.isAdmin) return m.reply(global.mess.admin);
+						if (!state?.bracket) return m.reply("Bracket belum dibuat.");
+						const babak = parseInt(bagian[1], 10);
+						const index = parseInt(bagian[2], 10) - 1;
+						const pemenang = bagian.slice(3).join(" ").replace(/^@/, "");
+						if (!Number.isInteger(babak) || !Number.isInteger(index) || !pemenang) return m.reply("Contoh: .turnamen menang 1 1 @pemain");
+						const hasil = catatMenang(state.bracket, babak, index, pemenang);
+						if (!hasil.ok) return m.reply(hasil.alasan);
+						return m.reply(formatBracket(state.bracket) + (hasil.selesai ? `\n\n*Juara: ${hasil.juara}*` : ""));
+					}
+					if (sub === "juara") {
+						if (!state?.bracket) return m.reply("Belum ada juara.");
+						return m.reply(`Juara turnamen: *${state.bracket.juara || "belum ditentukan"}*`);
+					}
+					if (sub === "reset") {
+						if (!isCreator && !m.isAdmin) return m.reply(global.mess.admin);
+						delete global.db.turnamen[kunci];
+						return m.reply("Turnamen direset.");
+					}
+					return m.reply(`*Turnamen*\n\n.turnamen buat [game]\n.turnamen daftar\n.turnamen peserta\n.turnamen mulai\n.turnamen bracket\n.turnamen menang <babak> <nomor> <nama>\n.turnamen juara\n.turnamen reset`);
+				}
+				break;
+			case "ringkas":
+			case "ide":
+			case "paragraf":
+			case "judulkan":
+			case "tanya":
+				{
+					const isi = (text || "").trim();
+					if (!isi) return m.reply(`Contoh: .${command} ${command === "ide" ? "judul bot" : "teks atau pertanyaan"}`);
+					const prompt = {
+						ringkas: `Ringkas teks berikut dengan singkat dan jelas: ${isi}`,
+						ide: `Berikan 5 ide singkat untuk topik: ${isi}`,
+						paragraf: `Tulis satu paragraf pendek Bahasa Indonesia tentang: ${isi}`,
+						judulkan: `Berikan 3 usulan judul untuk teks berikut: ${isi}`,
+						tanya: isi,
+					}[command];
+					try {
+						const hasil = await fetchApi("/ai/chat2", { query: prompt });
+						return m.reply(String(hasil?.result?.message || hasil?.result || "Tidak ada jawaban.").slice(0, 3500));
+					} catch {
+						return m.reply("Fitur AI sedang bermasalah. Coba lagi nanti.");
+					}
+				}
+				break;
+			case "terjemah":
+				{
+					if (!text) return m.reply("Gunakan .translate <teks> untuk menerjemahkan.");
+					try {
+						const hasil = await fetchApi("/translate", { teks: text, target: "id" });
+						return m.reply(String(hasil?.result?.translated || hasil?.result || "Tidak ada hasil.").slice(0, 3000));
+					} catch {
+						return m.reply("Layanan terjemah sedang bermasalah. Gunakan .translate sebagai ganti.");
+					}
+				}
+				break;
+			case "teks":
+				{
+					const mt = (text || "").trim().match(/^(\S+)\s+([\s\S]+)$/);
+					if (!mt) return m.reply("Contoh: .teks judul halo dunia\nMode: judul, kecil, besar, kebab, camel, snake");
+					const mode = mt[1].toLowerCase();
+					const isi = mt[2];
+					const hasil = {
+						judul: isi.replace(/\b\w/g, (c) => c.toUpperCase()),
+						kecil: isi.toLowerCase(),
+						besar: isi.toUpperCase(),
+						kebab: slug(isi, "-"),
+						camel: slug(isi, " ").split(" ").map((w, i) => (i === 0 ? w : w.charAt(0).toUpperCase() + w.slice(1))).join(""),
+						snake: slug(isi, "_"),
+					}[mode];
+					return hasil ? m.reply(hasil) : m.reply("Mode tidak dikenal.");
+				}
+				break;
+			case "kalender":
+				{
+					const arg = (text || "").trim();
+					const sekarang = arg ? new Date(`${arg}-01T00:00:00Z`) : new Date();
+					if (isNaN(sekarang.getTime())) return m.reply("Contoh: .kalender 2026-11");
+					const tahun = sekarang.getUTCFullYear();
+					const bulan = sekarang.getUTCMonth() + 1;
+					const jumlah = new Date(Date.UTC(tahun, bulan, 0)).getUTCDate();
+					const pertama = new Date(Date.UTC(tahun, bulan - 1, 1)).getUTCDay();
+					const baris = ["Sen Sel Rab Kam Jum Sab Min", " ".repeat(pertama * 4) + Array.from({ length: jumlah }, (_, i) => String(i + 1).padStart(3, " ")).join("")];
+					return m.reply(`*Kalender ${tahun}-${String(bulan).padStart(2, "0")}*\n\n${baris.join("\n")}`);
+				}
+				break;
+			case "jadwal":
+				{
+					if (!db.users[m.sender]) db.users[m.sender] = {};
+					const jadwal = db.users[m.sender].jadwal || [];
+					const arg = (text || "").trim();
+					if (!arg || arg === "list") return m.reply(`*Jadwal*\n\n${jadwal.length ? jadwal.map((j, i) => `${i + 1}. ${j.jam} - ${j.tugas}`).join("\n") : "(kosong)"}\n\nTambah: .jadwal 08:00 belajar`);
+					const mt = arg.match(/^(\d{1,2}:\d{2})\s+([\s\S]+)$/);
+					if (!mt) return m.reply("Contoh: .jadwal 08:00 belajar");
+					jadwal.push({ jam: mt[1], tugas: mt[2].slice(0, 100) });
+					db.users[m.sender].jadwal = jadwal.slice(-10);
+					return m.reply(`Jadwal ${mt[1]} disimpan.`);
+				}
+				break;
+			case "notifikasi":
+				{
+					const a = (text || "").trim().toLowerCase();
+					if (!["on", "off"].includes(a)) return m.reply("Ketik .notifikasi on atau .notifikasi off");
+					if (!db.users[m.sender]) db.users[m.sender] = {};
+					db.users[m.sender].notifikasi = a === "on";
+					return m.reply(`Notifikasi ${a === "on" ? "aktif" : "nonaktif"}.`);
 				}
 				break;
 			case "bantuan":

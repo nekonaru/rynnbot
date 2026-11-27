@@ -1,5 +1,37 @@
 # Changelog
 
+## v9.0.0
+
+Rynn v9.0.0 menambah pembagian kelompok dan tim game, sistem turnamen lengkap sampai juara, perintah AI teks, kalender, jadwal, cache pencarian, dan coverage di CI.
+
+### Pembagian dan turnamen
+
+- `lib/pembagian.js`: `.bagi` menghitung jumlah per kelompok, sisa, dan distribusi nyata. Contoh 38 anggota dibagi 5 kelompok menghasilkan 8,8,8,7,7.
+- `.team` mendukung ukuran game dikenal: Mobile Legend dan Valorant 5, PUBG dan Free Fire 4, Dota dan COD 5. Perintah lama `.team <n>` dengan tag tetap bekerja.
+- `lib/turnamen.js`: bracket single elimination dengan bye otomatis. `.turnamen buat`, `daftar`, `peserta`, `mulai`, `bracket`, `menang <babak> <nomor> <nama>`, `juara`, dan `reset`.
+- Pemenang babak berikutnya diisi otomatis dari hasil babak sebelumnya sampai juara keluar.
+
+### AI teks dan produktivitas
+
+- `.ringkas`, `.ide`, `.paragraf`, `.judulkan`, dan `.tanya` memakai endpoint AI yang sudah dipakai bot, bukan endpoint baru.
+- `.terjemah`, `.teks`, `.kalender`, `.jadwal`, dan `.notifikasi` ditambahkan.
+
+### Optimalisasi
+
+- `lib/cache.js` dipakai pada `.cari` dengan TTL 60 detik.
+- `npm run test:coverage` masuk ke workflow CI.
+- Benchmark tersedia lewat `npm run bench`.
+
+### Audit
+
+- 5 tes unit baru untuk pembagian, bracket, dan cache. Total **113 tes lolos**.
+- `npm run check` lolos (163 file). Audit menu: 702 case, 428 perintah menu unik, semua punya implementasi.
+
+### Batas
+
+- Lazy loading dataset belum diterapkan karena seluruh dataset masih diimpor statis. Ini menjadi catatan untuk rilis lanjutan.
+- Data faktual tidak dipaksa dengan entri karangan.
+
 ## v8.0.0
 
 Rynn v8.0.0 menambah 25 perintah baru untuk navigasi, catatan, owner, ekonomi, game, dan data, serta menyelesaikan sisa rancangan v7 berupa generator menu penuh, benchmark, dan coverage.
