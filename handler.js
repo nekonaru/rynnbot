@@ -1,4 +1,9 @@
 import "./settings.js";
+import { pasangSweeperState } from "./lib/handler/state-sweeper.js";
+import { formatAchievement, formatLevel, formatLevelboard } from "./lib/handler/progres.js";
+import { parsePasanganGrafik, formatGrafik, formatPanjangTeks } from "./lib/handler/teks-lanjut.js";
+import { detailUmur, formatUmurDetail } from "./lib/handler/waktu.js";
+import { FAKTA, PUISI, PANTUN, SOAL, PERIBAHASA, NAMA_BAYI_COWO, NAMA_BAYI_CEWE, SUKU, KULINER, RESEP, LAGU_DAERAH, WISATA, WAYANG, PROVINSI, NEGARA, UNSUR, PLANET, HANGMAN_KATA, MBTI_PERTANYAAN, MBTI_TIPES, hitungMBTI, BAHASA, cariBahasa, DANAU, GUNUNG, PULAU, SUNGAI, HARI_BERSEJARAH, cariHari, hariHariIni, KOTA_WAKTU, cariKota, waktuDi, SURAT, cariSurat, FAUNA, FLORA, cariFauna, cariFlora, daftarKategori, daftarSubkategori, halamanRumus, cariRumus, rumusAcak, rumusDetail, statistikRumus, formatRumus, semuaRumus, API_COMMANDS, SEJARAH, TOKOH, OLAHRAGA, SINGKATAN, SINONIM, ANTONIM, MATAUANG, NEGARA_TAMBAHAN, SUKU_TAMBAHAN, BAHASA_TAMBAHAN, PLANET_TAMBAHAN, DANAU_TAMBAHAN, GUNUNG_TAMBAHAN, PULAU_TAMBAHAN, SUNGAI_TAMBAHAN, BUDAYA, siapkanData } from "./lib/data-state.js";
 import { logInfo } from "./src/cli/helpers.js";
 import fs from "fs";
 import os from "os";
@@ -19,25 +24,8 @@ import { UguuSe } from "./lib/uploader.js";
 import TicTacToe from "./lib/tictactoe.js";
 import { werewolf } from "./lib/werewolf.js";
 import templateMenu from "./lib/template_menu.js";
-import { FAKTA, PUISI, PANTUN } from "./lib/data-umum.js";
-import { SOAL } from "./lib/soal.js";
-import { PERIBAHASA } from "./lib/data-peribahasa.js";
-import { NAMA_BAYI_COWO, NAMA_BAYI_CEWE } from "./lib/namabayi.js";
-import { SUKU, KULINER, RESEP, LAGU_DAERAH, WISATA, WAYANG } from "./lib/data-indonesia.js";
-import { PROVINSI } from "./lib/provinsi.js";
-import { NEGARA, UNSUR, PLANET } from "./lib/data-dunia.js";
-import { HANGMAN_KATA } from "./lib/data-game.js";
-import { MBTI_PERTANYAAN, MBTI_TIPES, hitungMBTI } from "./lib/mbti.js";
 import { angkaKeKata, toRoman, fromRoman, rot13, morseEncode, morseDecode, binaryEncode, binaryDecode, hexEncode, hexDecode, ZODIAC, zodiacFor, convertUnit, cap } from "./lib/util-lokal.js";
 import { parseBulat, fpb, kpk, faktorPrima, isPrima, pembagiTerkecil, isPalindrom, isAnagram, formatRupiah, hitungDiskon, cicilanAnuitas, hitungBmi, siklusTidur, uuidV4, akar, faktorial, formatBigInt, isoWeek, selisihHari, fibonacci, primaAntara, statistik, sederhanakanPecahan, progres } from "./lib/kalkulator.js";
-import { BAHASA, cariBahasa } from "./lib/data-bahasa-daerah.js";
-import { DANAU } from "./lib/data-danau.js";
-import { GUNUNG } from "./lib/data-gunung.js";
-import { PULAU } from "./lib/data-pulau.js";
-import { SUNGAI } from "./lib/data-sungai.js";
-import { HARI_BERSEJARAH, cariHari, hariHariIni } from "./lib/data-hari-bersejarah.js";
-import { KOTA_WAKTU, cariKota, waktuDi } from "./lib/data-waktu.js";
-import { SURAT, cariSurat } from "./lib/data-surat.js";
 import { kataBilangan, ucapanWaktu, hurufKe, angkaKeHuruf } from "./lib/bilangan.js";
 import { bilah, formatTanggal, formatWaktu, potongTeks, hitungKata } from "./lib/teks.js";
 import { bagiKelompok, bagiTim, ukuranTimGame, formatPembagian } from "./lib/pembagian.js";
@@ -50,20 +38,15 @@ import { luasBangun, volumeBangun, akarKuadrat } from "./lib/geometri.js";
 import { deretAritmetika, deretGeometri, linearSatu, persenDari, persenPerubahan } from "./lib/deret.js";
 import { det2, invers2, kali2, transpose2 } from "./lib/matriks.js";
 import { dotVektor, crossVektor, panjangVektor, kompleksTambah, kompleksKurang, kompleksKali, kompleksBagi, kompleksKonjugat, kompleksModulus } from "./lib/vektor-kompleks.js";
-import { FAUNA, FLORA, cariFauna, cariFlora } from "./lib/data-fauna-flora.js";
 import { formatUptime, statusApiKey, laporanDiagnosa } from "./lib/diagnosa.js";
 import { keBasis, dariBasis, konversiBasis } from "./lib/basis.js";
 import { slug } from "./lib/slug.js";
-import { daftarKategori, daftarSubkategori, halamanRumus, cariRumus, rumusAcak, rumusDetail, statistikRumus, formatRumus, semuaRumus } from "./lib/rumus/index.js";
 import { daftarCommand, daftarKategoriCommand, cariCommand, infoCommand, jumlahCase } from "./lib/command-registry.js";
-import { API_COMMANDS } from "./lib/api-commands.js";
 import { cekAkses, aturAkses, matikanPerintah, hidupkanPerintah, aturCooldown } from "./lib/access.js";
 import { lihatQuest, tandaiQuest, klaimQuest } from "./lib/quest.js";
-import { SEJARAH, TOKOH, OLAHRAGA, SINGKATAN, SINONIM, ANTONIM } from "./lib/data-v5.js";
 import { bangunMenu, kategoriDariNama, ringkasanKategori } from "./lib/menu-builder.js";
 import { formatDaftar, formatDetail } from "./lib/daftar.js";
 import { tulisAudit, bacaAudit } from "./lib/audit.js";
-import { MATAUANG, NEGARA_TAMBAHAN, SUKU_TAMBAHAN, BAHASA_TAMBAHAN, PLANET_TAMBAHAN, DANAU_TAMBAHAN, GUNUNG_TAMBAHAN, PULAU_TAMBAHAN, SUNGAI_TAMBAHAN, BUDAYA } from "./lib/data-edukasi.js";
 import { FIRST_SETUP_MARKER, firstSetupStates, firstSetupStepText, sendFirstSetupIntro } from './src/setup-wizard.js';
 import { ytMp4, ytMp3, ytMp4Stream } from "./lib/scraper.js";
 import { GroupUpdate, LoadDataBase, extractNativeFlowResponseId } from "./src/message.js";
@@ -96,21 +79,8 @@ import {
 	rotateBackups,
 } from "./lib/function.js";
 
-// Optimisasi memori: sesi game/tes yang ditinggalkan user dibersihkan otomatis.
-// Tanpa ini, entri Map bertahan selamanya pada bot publik yang banyak dipakai.
-if (!global._stateSweeper) {
-	global._stateSweeper = setInterval(() => {
-		const batas = Date.now() - 15 * 60 * 1000;
-		for (const nama of ["quizState", "mbtiState", "hangmanState", "soalState"]) {
-			const peta = global[nama];
-			if (!(peta instanceof Map)) continue;
-			for (const [kunci, nilai] of peta) {
-				if (!nilai || typeof nilai.at !== "number" || nilai.at < batas) peta.delete(kunci);
-			}
-		}
-	}, 5 * 60 * 1000);
-	global._stateSweeper.unref?.();
-}
+// Pembersih state dipindah ke lib/handler/state-sweeper.js.
+pasangSweeperState();
 
 const require = createRequire(import.meta.url);
 const __filename = fileURLToPath(import.meta.url);
@@ -255,6 +225,7 @@ function getCasesArray() {
 }
 
 const sock = async (sock, m, store) => {
+	await siapkanData();
 	let ownerNumber = global.owner || [];
 	try {
 		if (!global.db) global.db = {};
@@ -9659,30 +9630,16 @@ Select Bot Settings:
 				break;
 			case "umurdetail":
 				{
-					const arg = (text || "").trim();
-					const d = new Date(arg);
-					if (isNaN(d.getTime())) return m.reply("Contoh: .umurdetail 1999-05-20");
-					if (d.getTime() > Date.now()) return m.reply("Tanggal tidak boleh di masa depan.");
-					let ms = Date.now() - d.getTime();
-					const tahun = Math.floor(ms / (365.25 * 86400000));
-					ms -= tahun * 365.25 * 86400000;
-					const bulan = Math.floor(ms / (30.44 * 86400000));
-					ms -= bulan * 30.44 * 86400000;
-					const minggu = Math.floor(ms / (7 * 86400000));
-					ms -= minggu * 7 * 86400000;
-					const hari = Math.floor(ms / 86400000);
-					return m.reply(`*Umur Detail*\n\nTahun: ${tahun}\nBulan: ${bulan}\nMinggu: ${minggu}\nHari: ${hari}`);
+					const hasil = detailUmur((text || "").trim());
+					if (!hasil) return m.reply("Contoh: .umurdetail 1999-05-20. Tanggal tidak boleh di masa depan.");
+					return m.reply(formatUmurDetail(hasil));
 				}
 				break;
 			case "grafik":
 				{
-					const pasangan = (text || "").trim().split(",").map((s) => {
-						const [label, nilai] = s.split("=").map((x) => x.trim());
-						return { label, nilai: Number(nilai) };
-					}).filter((x) => x.label && Number.isFinite(x.nilai)).slice(0, 10);
+					const pasangan = parsePasanganGrafik(text);
 					if (!pasangan.length) return m.reply("Contoh: .grafik kopi=8, teh=4, susu=6");
-					const maks = Math.max(...pasangan.map((x) => x.nilai));
-					return m.reply(`*Grafik*\n\n${pasangan.map((x) => `${x.label.padEnd(8)} [${bilah(x.nilai, maks, 12)}] ${x.nilai}`).join("\n")}`);
+					return m.reply(formatGrafik(pasangan, bilah));
 				}
 				break;
 			case "pilihberat":
@@ -9816,32 +9773,18 @@ Select Bot Settings:
 				break;
 			case "achievement":
 				{
-					const u = db.users[m.sender] || {};
-					const daftar = [
-						["Pemula", true],
-						["Pemain Soal", (u.soal?.benar || 0) >= 1],
-						["Penulis", (u.skorBelajar || 0) >= 5],
-						["Kolektor", (u.koleksi || []).length >= 5],
-						["Turnamen", Object.values(global.db?.turnamen || {}).some((t) => t.bracket?.juara)],
-					];
-					return m.reply(`*Achievement*\n\n${daftar.map(([n, o]) => `${o ? "[v]" : "x"} ${n}`).join("\n")}`);
+					const adaJuara = Object.values(global.db?.turnamen || {}).some((t) => t.bracket?.juara);
+					return m.reply(formatAchievement(db.users[m.sender] || {}, adaJuara));
 				}
 				break;
 			case "level":
 				{
-					const u = db.users[m.sender] || {};
-					const skor = (u.skorBelajar || 0) + (u.soal?.benar || 0) + (u.koleksi || []).length;
-					const level = Math.floor(skor / 5) + 1;
-					return m.reply(`*Level*\n\nLevel: *${level}*\nSkor: ${skor}\nNaik tiap 5 skor.`);
+					return m.reply(formatLevel(db.users[m.sender] || {}));
 				}
 				break;
 			case "levelboard":
 				{
-					const entri = Object.entries(db.users || {}).map(([jid, u]) => {
-						const skor = (u.skorBelajar || 0) + (u.soal?.benar || 0) + (u.koleksi || []).length;
-						return [jid, skor, Math.floor(skor / 5) + 1];
-					}).sort((a, b) => b[1] - a[1]).slice(0, 10);
-					return m.reply(`*Levelboard*\n\n${entri.map(([jid, skor, lv], i) => `${i + 1}. @${jid.split("@")[0]}: level ${lv} (${skor} skor)`).join("\n")}`);
+					return m.reply(formatLevelboard(db.users || {}));
 				}
 				break;
 			case "investasi":
@@ -10088,7 +10031,7 @@ Select Bot Settings:
 				{
 					const isi = (text || "").trim();
 					if (!isi) return m.reply("Contoh: .hitungpanjang halo dunia");
-					return m.reply(`*Panjang Teks*\n\nKarakter: ${isi.length}\nKata: ${isi.split(/\s+/).length}\nTanpa spasi: ${isi.replace(/\s/g, "").length}`);
+					return m.reply(formatPanjangTeks(isi));
 				}
 				break;
 			case "indeksdata":

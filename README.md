@@ -80,6 +80,7 @@ Berbasis Hitori Bot karya [Nazedev](https://github.com/nazedev/hitori), yang dir
 | Menu & Umum | **Game baru** | `.wordle`, `.wordlejawab`, `.scramble`, `.bingo`, `.lotre`, `.tebakwarna`, `.gameskor` |
 | Menu & Umum | **Utilitas dan AI v11** | `.markdown`, `.tabel2`, `.diagram`, `.hitungpanjang`, `.indeksdata`, `.contohdata`, `.bantuansaya`, `.code`, `.dialog`, `.brainstorm`, `.kritik`, `.translateid`, `.airiwayat` |
 | Menu & Umum | **Owner dan statistik v11** | `.restartnow`, `.updatenow`, `.logunduh`, `.pengguna`, `.daftargroup`, `.databaseinfo`, `.maintenancewhy`, `.laporharian`, `.lapormingguan`, `.statistikgrup`, `.statistikpengguna`, `.statistikperintah`, `.statistikkinerja` |
+| Menu & Umum | **Arsitektur internal v11.1** | Dataset dimuat malas lewat `lib/data-state.js`, registry v2 dengan alias dan metadata, modul kategori di `lib/handler/`, benchmark startup, dan ambang coverage di CI |
 | Menu & Umum | **Eksplorasi perintah** | `.explore`, `.randomcmd`, `.riwayat`, `.shortcut`, `.pintasan`, `.dataset`, `.rekomendasi` |
 | Menu & Umum | **Produktivitas chat** | `.todo` (tugas pribadi), `.catatancari`, `.peraturan`, `.icebreak`, `.tabel` |
 | Menu & Umum | **Ekonomi lanjutan** | `.dompet`, `.topuang`, `.toplimit`, `.hadiah` |
@@ -567,6 +568,8 @@ Semua perintah memakai prefix default `.` `!` atau `+` (atur di `settings.js`).
 | `.ekonomi` | Ringkasan harga limit, hadiah, dan saldo |
 | `.gameinfo` | Cooldown dan aturan game (daily, rampok, begal, slot, casino, samgong) |
 | `.panduan` | Panduan singkat mulai pakai Rynn |
+| `npm run bench` | Bandingkan waktu muat data eager dan malas |
+| `npm run test:coverage` | Jalankan tes dengan ambang baris 80, cabang 75, fungsi 75 |
 | `.presensi hadir` / `.kuorum 10` | Presensi dan cek kuorum grup |
 | `.rapat <judul>` / `.notulen <teks>` | Agenda dan notulen rapat grup (admin) |
 | `.laporgrup <alasan>` | Laporkan anggota ke admin grup |

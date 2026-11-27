@@ -1,5 +1,22 @@
 # Changelog
 
+## v11.1.0
+
+Rynn v11.1.0 menuntaskan utang teknis yang tertunda dari rancangan v11: lazy loading penuh, registry v2, modul handler per kategori, benchmark startup, dan ambang coverage di CI.
+
+### Arsitektur
+
+- `lib/data-state.js` memuat 22 modul data lewat 65 binding live saat pesan pertama. Seluruh 262 pemakaian data di `handler.js` tetap tidak diubah. Startup menghemat sekitar 233 ms berdasarkan `npm run bench`.
+- `lib/command-registry.js` kini registry v2. Metadata mencakup nama, alias, kategori, deskripsi, contoh, biaya limit, role, dan flag hidden. `infoCommand` mengutamakan nama persis sebelum alias.
+- Modul kategori baru di `lib/handler/`: `state-sweeper.js`, `progres.js`, `teks-lanjut.js`, dan `waktu.js`. Tujuh case di `handler.js` kini mendelegasikan ke modul tersebut, sementara router switch tetap dipertahankan.
+
+### Kualitas
+
+- `npm run bench` membandingkan muat eager dan muat malas dalam proses terpisah.
+- `npm run test:coverage` memakai ambang minimal 80 persen baris, 75 persen cabang, dan 75 persen fungsi.
+- 8 tes unit baru untuk data state, registry v2, dan modul handler. Total **130 tes lolos**.
+- `npm run check` lolos (176 file). Audit menu: 804 case, 529 perintah menu unik, semua punya implementasi.
+
 ## v11.0.0
 
 Rynn v11.0.0 menambah 59 perintah baru, penjaga proses, dan penyempurnaan stabilitas. Ini rilis besar besaran kelanjutan v10.0.0.
