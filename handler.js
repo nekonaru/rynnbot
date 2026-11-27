@@ -49,13 +49,14 @@ import { FAUNA, FLORA, cariFauna, cariFlora } from "./lib/data-fauna-flora.js";
 import { formatUptime, statusApiKey, laporanDiagnosa } from "./lib/diagnosa.js";
 import { keBasis, dariBasis, konversiBasis } from "./lib/basis.js";
 import { slug } from "./lib/slug.js";
-import { daftarKategori, daftarSubkategori, halamanRumus, cariRumus, rumusAcak, rumusDetail, statistikRumus, formatRumus } from "./lib/rumus/index.js";
+import { daftarKategori, daftarSubkategori, halamanRumus, cariRumus, rumusAcak, rumusDetail, statistikRumus, formatRumus, semuaRumus } from "./lib/rumus/index.js";
 import { daftarCommand, daftarKategoriCommand, cariCommand, infoCommand, jumlahCase } from "./lib/command-registry.js";
 import { API_COMMANDS } from "./lib/api-commands.js";
 import { cekAkses, aturAkses, matikanPerintah, hidupkanPerintah, aturCooldown } from "./lib/access.js";
 import { lihatQuest, tandaiQuest, klaimQuest } from "./lib/quest.js";
 import { SEJARAH, TOKOH, OLAHRAGA, SINGKATAN, SINONIM, ANTONIM } from "./lib/data-v5.js";
 import { bangunMenu, kategoriDariNama, ringkasanKategori } from "./lib/menu-builder.js";
+import { formatDaftar, formatDetail } from "./lib/daftar.js";
 import { FIRST_SETUP_MARKER, firstSetupStates, firstSetupStepText, sendFirstSetupIntro } from './src/setup-wizard.js';
 import { ytMp4, ytMp3, ytMp4Stream } from "./lib/scraper.js";
 import { GroupUpdate, LoadDataBase, extractNativeFlowResponseId } from "./src/message.js";
@@ -7648,9 +7649,13 @@ Select Bot Settings:
 					if (!mt) return m.reply("Contoh: .rumus matematika 1\n.rumus cari energi\n.rumus random fisika");
 					const halaman = halamanRumus(mt[1], mt[2] ? parseInt(mt[2], 10) : 1);
 					if (!halaman) return m.reply("Kategori atau subkategori tidak ditemukan.\nKetik .rumus untuk daftar kategori.");
-					const baris = halaman.entri.map((r, i) => `${(halaman.halaman - 1) * 12 + i + 1}. *${r.nama}*\n   ${r.rumus}\n   ${r.variabel} [${r.id}]`).join("\n");
-					const lanjut = halaman.halaman < halaman.totalHalaman ? `\nKetik .rumus ${halaman.kategori} ${halaman.halaman + 1} untuk halaman berikutnya.` : "";
-					return m.reply(`*Rumus ${halaman.kategori}*\n\n${baris}\n\nHalaman ${halaman.halaman}/${halaman.totalHalaman} dari ${halaman.total} rumus.${lanjut}`);
+					return m.reply(formatDaftar({
+						judul: `Rumus ${halaman.kategori}`,
+						data: semuaRumus(halaman.kategori),
+						halaman: halaman.halaman,
+						format: (r) => `*${r.nama}*\n   ${r.rumus}\n   ${r.variabel} [${r.id}]`,
+						contoh: [`Ketik .rumus ${halaman.kategori} ${halaman.halaman + 1} untuk lanjut.`, "Ketik .rumus cari <kata> untuk mencari.", "Ketik .rumus random <kategori> untuk satu rumus."],
+					}));
 				}
 				break;
 			case "hitung":
@@ -7915,14 +7920,20 @@ Select Bot Settings:
 				break;
 			case "wisata":
 				{
-					const q = (text || "").trim().toLowerCase();
-					if (q === "random") { const w = WISATA[Math.floor(Math.random() * WISATA.length)]; return m.reply(`*${w.nama}* (${w.provinsi})\n${w.info}`); }
-					if (!q) {
-						return m.reply(`*Destinasi Wisata Indonesia*\n\n${WISATA.map((w) => `- ${w.nama} (${w.provinsi})`).join("\n")}\n\nKetik .wisata bromo`);
+					const arg = (text || "").trim().toLowerCase();
+					const judul = "Destinasi Wisata Indonesia";
+					const petunjuk = ["Ketik .wisata <nama> untuk detail", "Ketik .wisata cari <kata> untuk mencari", "Ketik .wisata random untuk satu entri"];
+					if (arg === "random") { const w = WISATA[Math.floor(Math.random() * WISATA.length)]; return m.reply(`*${w.nama}* (${w.provinsi})\n\n${w.info}`); }
+					if (/^cari\s+/.test(arg)) {
+						const kata = arg.replace(/^cari\s+/, "");
+						const found = WISATA.filter((w) => `${w.nama} ${w.provinsi} ${w.info}`.toLowerCase().includes(kata));
+						return found.length ? m.reply(formatDaftar({ judul: "Hasil Cari Wisata", data: found, denganAcak: false, contoh: petunjuk })) : m.reply("Tidak ada destinasi yang cocok.");
 					}
-					const found = WISATA.filter((w) => `${w.nama} ${w.provinsi}`.toLowerCase().includes(q));
+					if (/^\d+$/.test(arg)) return m.reply(formatDaftar({ judul, data: WISATA, halaman: parseInt(arg, 10), contoh: petunjuk }));
+					if (!arg || arg === "list") return m.reply(formatDaftar({ judul, data: WISATA, halaman: 1, contoh: petunjuk }));
+					const found = WISATA.filter((w) => `${w.nama} ${w.provinsi}`.toLowerCase().includes(arg));
 					if (!found.length) return m.reply("Tidak ada destinasi yang cocok.\n\nKetik .wisata untuk daftar.");
-					return m.reply(found.map((w) => `*${w.nama}* (${w.provinsi})\n${w.info}`).join("\n\n"));
+					return found.length === 1 ? m.reply(`*${found[0].nama}* (${found[0].provinsi})\n\n${found[0].info}`) : m.reply(formatDaftar({ judul: "Hasil Wisata", data: found, denganAcak: false, contoh: petunjuk }));
 				}
 				break;
 			case "resep":

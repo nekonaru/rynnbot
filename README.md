@@ -59,6 +59,7 @@ Berbasis Hitori Bot karya [Nazedev](https://github.com/nazedev/hitori), yang dir
 | Menu & Umum | **Menu dan bantuan** | Menu berkategori, daftar perintah, info bot, ping |
 | Menu & Umum | **CLI interaktif** | Wizard setup pertama, manajer pengaturan, dashboard status, pembaca log |
 | Menu & Umum | **Hot reload** | `settings.js` dimuat ulang otomatis saat disimpan |
+| Menu & Umum | **Format daftar seragam** | Semua perintah data menampilkan entri acak di atas, daftar bernomor per halaman, dan petunjuk lanjut/cari/detail |
 | Menu & Umum | **Penemuan lanjutan** | `.help`, `.contoh <cmd>`, `.alias <cmd>`, `.cmdlist [kategori]`, `.saran <kata>` |
 | Menu & Umum | **Owner lanjutan** | `.envstatus` (nama variabel saja), `.backuplist`, `.sesi`, `.setmotd <teks>` |
 | Menu & Umum | **Generator menu** | `.menu <kategori>` kini menampilkan submenu asli dari registry, bukan petunjuk |
@@ -66,14 +67,14 @@ Berbasis Hitori Bot karya [Nazedev](https://github.com/nazedev/hitori), yang dir
 | Menu & Umum | **Penemuan perintah** | `.cari <kata>` (cari perintah dan rumus), `.bantuan <cmd>`, `.kategori`, `.menu <kategori>`, `.statistikbot`, `.topcmd` |
 | Menu & Umum | **Kontrol akses** | `.akses <cmd> <role>`, `.matikan <cmd>`, `.hidupkan <cmd>`, `.cooldown <cmd> <detik>` |
 | Menu & Umum | **Progression** | `.streak` (klaim harian beruntun), `.rankgame` (peringkat game) |
-| Utilitas | **Sistem rumus** | `.rumus` dengan 20 kategori dan 1.773 rumus: halaman 12 entri, `.rumus cari`, `.rumus detail <id>`, `.rumus random [kategori]`, `.rumus sub <kategori>`, `.rumus statistik` |
+| Utilitas | **Sistem rumus** | `.rumus` dengan 35 kategori dan 2.613 rumus: halaman 12 entri, `.rumus cari`, `.rumus detail <id>`, `.rumus random [kategori]`, `.rumus sub <kategori>`, `.rumus statistik` |
 | Menu & Umum | **Diagnosa** | `.diagnosa` (owner): cek Node.js, ffmpeg, status kunci API tanpa menampilkan nilai, tipe database, zona waktu, jumlah entri data |
 | Menu & Umum | **Ekonomi** | `.ekonomi` (harga limit, hadiah kuis/soal/hangman, saldo), `.gameinfo` (cooldown dan aturan game) |
 | Menu & Umum | **Panduan** | `.panduan` (langkah mulai pakai, prefix, submenu, perintah owner) |
 | Utilitas | **Kalender & hiburan** | `.cal` (kalender bulan), `.pantun` (pantun acak), `.b64` (encode/decode base64), `.password` (generate password acak) |
 | Utilitas | **Cek anggota** | `.admins` (daftar admin grup), `.saldo` (saldo limit/uang/status) |
-| Utilitas | **Belajar SMA** | `.soal` (357 soal, bank soal campuran), `.soalmtk` (120 soal), `.soalipa` (79 soal), `.soalips` (56 soal), `.soalbindon` (63 soal), `.soalppkn` (43 soal), `.namabayi` (nama bayi Indonesia + asal + arti) |
-| Utilitas | **Hiburan & pengetahuan** | `.fakta` (651 fakta), `.puisi` (155 puisi), `.pantun` (219 pantun), `.zodiak`, `.wayang`, `.lagudaerah`, `.wisata` (109 destinasi), `.peribahasa` (67 pepatah Indonesia), `.resep` (130 resep), `.kuliner` (140 kuliner daerah) |
+| Utilitas | **Belajar SMA** | `.soal` (507 soal, bank soal campuran), `.soalmtk` (120 soal), `.soalipa` (79 soal), `.soalips` (56 soal), `.soalbindon` (63 soal), `.soalppkn` (43 soal), `.namabayi` (nama bayi Indonesia + asal + arti) |
+| Utilitas | **Hiburan & pengetahuan** | `.fakta` (1.051 fakta), `.puisi` (247 puisi), `.pantun` (473 pantun), `.wisata` (109 destinasi), `.peribahasa` (67 pepatah), `.resep` (130 resep), `.kuliner` (140 kuliner) |
 | Utilitas | **Statistik data** | `.statistikdata` (jumlah seluruh entri data Rynn) |
 | Utilitas | **Author & proyek** | `.author` (info pembuat), `.repo` (repositori), `.channel` (channel resmi), `.donasi` (dukungan), `.versi` (versi bot) |
 | Menu | **Submenu per kategori** | `.botmenu`, `.groupmenu` (`.grupmenu`), `.searchmenu`, `.downloadmenu`, `.quotesmenu`, `.toolsmenu`, `.aimenu`, `.randommenu`, `.stalkermenu`, `.animemenu`, `.gamemenu`, `.funmenu`, `.edukasimenu`, `.ownermenu`, `.authormenu` |

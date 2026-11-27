@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import fs from "fs";
-import { daftarKategori, halamanRumus, cariRumus, rumusAcak, rumusDetail, statistikRumus, formatRumus } from "../lib/rumus/index.js";
+import { daftarKategori, halamanRumus, cariRumus, rumusAcak, rumusDetail, statistikRumus, formatRumus, semuaEntriRumus } from "../lib/rumus/index.js";
 import { daftarCommand, cariCommand, infoCommand, jumlahCase } from "../lib/command-registry.js";
 import { API_COMMANDS } from "../lib/api-commands.js";
 
@@ -13,7 +13,7 @@ test("sistem rumus memiliki banyak entri dan kategori", () => {
 });
 
 test("id rumus unik dan field lengkap", () => {
-	const semua = daftarKategori().flatMap((k) => halamanRumus(k.kategori, 1, 100000).entri);
+	const semua = semuaEntriRumus();
 	const ids = semua.map((r) => r.id);
 	assert.equal(new Set(ids).size, ids.length, "id duplikat");
 	for (const r of semua) {

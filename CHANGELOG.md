@@ -1,5 +1,30 @@
 # Changelog
 
+## v6.0.0
+
+Rynn v6.0.0 menyatukan ekspansi data, rumus, dan format daftar seragam. Entri acak kini ditampilkan di atas daftar pada perintah data.
+
+### Format daftar seragam
+
+- Modul `lib/daftar.js` dipakai `.wisata` dan `.rumus <kategori>`: entri acak muncul lebih dulu, lalu daftar bernomor 12 entri per halaman, lalu petunjuk halaman berikutnya, pencarian, detail, dan acak.
+- Pola `.wisata`, `.wisata 2`, `.wisata cari pantai`, `.wisata toba`, dan `.wisata random` menjadi acuan untuk perintah data lain.
+
+### Data
+
+- Batch v6: 400 fakta hitung, 256 pantun, 100 puisi, 211 kata Hangman, dan 150 soal matematika.
+- Dataset inti: FAKTA 1.051, PANTUN 473, PUISI 247, Hangman 541, SOAL 507, PERIBAHASA 67.
+- Semua data digabung dengan deduplikasi dan diuji oleh tes integritas.
+
+### Rumus
+
+- 15 kategori baru: logika matematika, himpunan, fungsi, bilangan kompleks, matematika diskrit, optimasi, biokimia, kimia fisik, geofisika, meteorologi, astronomi, demografi, statistik bisnis, aktuaria, dan akuntansi.
+- Total rumus sekarang **2.613** dalam **35 kategori**.
+
+### Audit
+
+- 3 tes unit baru: renderer daftar, ekspansi data v6, dan kategori rumus baru. Total **106 tes lolos**.
+- `npm run check` lolos (148 file). Audit menu terhadap `case` tetap bersih. CI hijau sebelum tag `v6.0.0`.
+
 ## v5.0.0
 
 Rynn v5.0.0 menyelesaikan lanjutan rancangan v4: generator menu terpusat, penemuan perintah lanjutan, data pengetahuan Indonesia baru, dan tools owner tambahan.
