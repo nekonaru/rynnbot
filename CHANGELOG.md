@@ -1,5 +1,29 @@
 # Changelog
 
+## v10.0.0
+
+Rynn v10.0.0 menambah 22 perintah baru. Fase alpha 2 dan 3 dari rancangan awal tidak dieksekusi, sehingga perintah manajemen waktu dan kesehatan tidak dimasukkan.
+
+### Perintah baru
+
+- Keuangan: `.anggaran`, `.pengeluaran`, `.pemasukan`, `.laporanuang`.
+- Belajar: `.flashcard`, `.flashcardjawab`, `.kuisharian`, `.kuisjawab`, `.skorbelajar`, `.modul`.
+- Grup: `.absen`, `.acara`, `.acararsvp`.
+- Liga: `.liga`, `.klasemen`.
+- Utilitas: `.bendera`, `.umurdetail`, `.grafik`, `.pilihberat`, `.acakurutan`.
+- Owner: `.aksesgrup`, `.pemeliharaan`.
+
+### Optimalisasi
+
+- `lib/data-facade.js` menyediakan `muat(nama)` untuk pemuatan modul data malas. Impor statis lama masih tetap ada, sehingga ini baru fondasi, bukan penghapusan import lama.
+- Cache dan pembersih cache dipakai oleh `.cari` dan `.pemeliharaan`.
+
+### Audit
+
+- 1 tes unit facade data baru; total **119 tes lolos**. `npm run check` lolos (167 file).
+- Audit menu: 744 case, 470 perintah menu unik, semua punya implementasi.
+- CI hijau sebelum tag `v10.0.0`.
+
 ## v9.1.0
 
 Rynn v9.1.0 menuntaskan sisa rancangan v9: lazy loader, fuzz dan property test, serta 20 perintah lanjutan.

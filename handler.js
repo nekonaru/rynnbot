@@ -42,8 +42,9 @@ import { kataBilangan, ucapanWaktu, hurufKe, angkaKeHuruf } from "./lib/bilangan
 import { bilah, formatTanggal, formatWaktu, potongTeks, hitungKata } from "./lib/teks.js";
 import { bagiKelompok, bagiTim, ukuranTimGame, formatPembagian } from "./lib/pembagian.js";
 import { buatBracket, catatMenang, formatBracket } from "./lib/turnamen.js";
-import { denganCache } from "./lib/cache.js";
+import { denganCache, bersihkanCache } from "./lib/cache.js";
 import { muatData } from "./lib/data-loader.js";
+import { muat } from "./lib/data-facade.js";
 import { hashTeks, urlEncode, urlDecode, validasiJson } from "./lib/devutils.js";
 import { luasBangun, volumeBangun, akarKuadrat } from "./lib/geometri.js";
 import { deretAritmetika, deretGeometri, linearSatu, persenDari, persenPerubahan } from "./lib/deret.js";
@@ -6280,6 +6281,28 @@ Select Bot Settings:
 │${setv} ${prefix}integral
 │${setv} ${prefix}koordinat
 │${setv} ${prefix}datasetpenuh
+│${setv} ${prefix}anggaran
+│${setv} ${prefix}pengeluaran
+│${setv} ${prefix}pemasukan
+│${setv} ${prefix}laporanuang
+│${setv} ${prefix}flashcard
+│${setv} ${prefix}flashcardjawab
+│${setv} ${prefix}kuisharian
+│${setv} ${prefix}kuisjawab
+│${setv} ${prefix}skorbelajar
+│${setv} ${prefix}modul
+│${setv} ${prefix}absen
+│${setv} ${prefix}acara
+│${setv} ${prefix}acararsvp
+│${setv} ${prefix}liga
+│${setv} ${prefix}klasemen
+│${setv} ${prefix}bendera
+│${setv} ${prefix}umurdetail
+│${setv} ${prefix}grafik
+│${setv} ${prefix}pilihberat
+│${setv} ${prefix}acakurutan
+│${setv} ${prefix}aksesgrup
+│${setv} ${prefix}pemeliharaan
 │${setv} ${prefix}team <game> <pemain>
 │${setv} ${prefix}turnamen buat
 │${setv} ${prefix}jelajah
@@ -9358,6 +9381,287 @@ Select Bot Settings:
 			case "datasetpenuh":
 				{
 					return m.reply(`*Dataset Penuh*\n\n${statistikRumus().perKategori ? Object.entries(statistikRumus().perKategori).map(([k, v]) => `- ${k}: ${v} rumus`).join("\n") : ""}\n\nKetik .statistikdata penuh untuk dataset teks.`);
+				}
+				break;
+			case "anggaran":
+				{
+					if (!db.users[m.sender]) db.users[m.sender] = {};
+					const anggaran = db.users[m.sender].anggaran || {};
+					const arg = (text || "").trim();
+					if (!arg || arg === "status") {
+						const entri = Object.entries(anggaran);
+						return m.reply(`*Anggaran Bulanan*\n\n${entri.length ? entri.map(([k, v]) => `- *${k}*: ${v.toLocaleString("id-ID")}`).join("\n") : "(belum diatur)"}\n\nAtur: .anggaran <kategori> <nominal>`);
+					}
+					const mt = arg.match(/^(\S+)\s+([\d.,]+)$/);
+					if (!mt) return m.reply("Contoh: .anggaran makan 1500000");
+					const nominal = Number(mt[2].replace(",", "."));
+					if (!Number.isFinite(nominal) || nominal < 1) return m.reply("Nominal tidak valid.");
+					anggaran[mt[1].toLowerCase()] = nominal;
+					db.users[m.sender].anggaran = anggaran;
+					return m.reply(`Anggaran *${mt[1]}* ${nominal.toLocaleString("id-ID")} disimpan.`);
+				}
+				break;
+			case "pengeluaran":
+			case "pemasukan":
+				{
+					const mt = (text || "").trim().match(/^(\S+)\s+([\d.,]+)$/);
+					if (!mt) return m.reply(`Contoh: .${command} makan 25000`);
+					const nominal = Number(mt[2].replace(",", "."));
+					if (!Number.isFinite(nominal) || nominal < 1) return m.reply("Nominal tidak valid.");
+					if (!db.users[m.sender]) db.users[m.sender] = {};
+					const kunci = command === "pengeluaran" ? "pengeluaran" : "pemasukan";
+					const list = db.users[m.sender][kunci] || [];
+					list.push({ kategori: mt[1], nominal, waktu: Date.now() });
+					db.users[m.sender][kunci] = list.slice(-100);
+					return m.reply(`${command === "pengeluaran" ? "Pengeluaran" : "Pemasukan"} ${nominal.toLocaleString("id-ID")} dicatat.`);
+				}
+				break;
+			case "laporanuang":
+				{
+					const u = db.users[m.sender] || {};
+					const keluar = (u.pengeluaran || []).reduce((n, x) => n + x.nominal, 0);
+					const masuk = (u.pemasukan || []).reduce((n, x) => n + x.nominal, 0);
+					const anggaran = Object.values(u.anggaran || {}).reduce((n, x) => n + x, 0);
+					return m.reply(`*Laporan Uang*\n\nPemasukan: ${masuk.toLocaleString("id-ID")}\nPengeluaran: ${keluar.toLocaleString("id-ID")}\nSisa anggaran: ${(anggaran - keluar).toLocaleString("id-ID")}\nSaldo: ${(u.money || 0).toLocaleString("id-ID")}`);
+				}
+				break;
+			case "flashcard":
+				{
+					if (!db.users[m.sender]) db.users[m.sender] = {};
+					const kartu = db.users[m.sender].flashcard || [];
+					const arg = (text || "").trim();
+					if (!arg || arg === "list") return m.reply(`*Flashcard (${kartu.length})*\n\n${kartu.length ? kartu.map((k, i) => `${i + 1}. ${k.pertanyaan}`).join("\n") : "(kosong)"}\n\nTambah: .flashcard pertanyaan | jawaban\nUlang: .flashcard ulang`);
+					if (arg === "ulang") {
+						if (!kartu.length) return m.reply("Belum ada kartu.");
+						const k = kartu[Math.floor(Math.random() * kartu.length)];
+						db.users[m.sender].flashcardAktif = k;
+						return m.reply(`*Flashcard*\n\n${k.pertanyaan}\n\nJawab: .flashcardjawab <jawaban>`);
+					}
+					const parts = arg.split("|").map((s) => s.trim());
+					if (parts.length !== 2 || !parts[0] || !parts[1]) return m.reply("Contoh: .flashcard ibu kota Indonesia | Nusantara");
+					kartu.push({ pertanyaan: parts[0], jawaban: parts[1] });
+					db.users[m.sender].flashcard = kartu.slice(-50);
+					return m.reply("Kartu ditambahkan.");
+				}
+				break;
+			case "flashcardjawab":
+				{
+					const k = db.users[m.sender]?.flashcardAktif;
+					if (!k) return m.reply("Belum ada kartu aktif. Ketik .flashcard ulang");
+					const jawab = (text || "").trim().toLowerCase();
+					const benar = k.jawaban.toLowerCase();
+					delete db.users[m.sender].flashcardAktif;
+					return jawab.includes(benar) || benar.includes(jawab) ? m.reply("Benar!") : m.reply(`Salah. Jawaban: *${k.jawaban}*`);
+				}
+				break;
+			case "kuisharian":
+				{
+					const pool = SOAL.matematika && SOAL.matematika.length ? SOAL.matematika : Object.values(SOAL)[0];
+					if (!pool || !pool.length) return m.reply("Bank soal kosong.");
+					const soal = pool[Math.floor(Math.random() * pool.length)];
+					global.kuisHarian = global.kuisHarian || {};
+					global.kuisHarian[m.sender] = { soal, at: Date.now() };
+					return m.reply(`*Kuis Harian*\n\n${soal.q}\n\n${soal.o.map((o, i) => `${String.fromCharCode(65 + i)}. ${o}`).join("\n")}\n\nJawab: .kuisjawab <a/b/c/d>`);
+				}
+				break;
+			case "kuisjawab":
+				{
+					const q = global.kuisHarian?.[m.sender];
+					if (!q || Date.now() - q.at > 300000) return m.reply("Tidak ada kuis aktif. Ketik .kuisharian");
+					const j = (text || "").trim().toLowerCase();
+					if (!/^[a-d]$/.test(j)) return m.reply("Jawab a, b, c, atau d.");
+					delete global.kuisHarian[m.sender];
+					if (j.charCodeAt(0) - 97 === q.soal.a) {
+						if (!db.users[m.sender]) db.users[m.sender] = {};
+						db.users[m.sender].skorBelajar = (db.users[m.sender].skorBelajar || 0) + 1;
+						return m.reply("Benar! Skor belajar bertambah.");
+					}
+					return m.reply(`Salah. Jawaban: ${String.fromCharCode(65 + q.soal.a)}`);
+				}
+				break;
+			case "skorbelajar":
+				{
+					const u = db.users[m.sender] || {};
+					return m.reply(`*Skor Belajar*\n\nBenar: ${u.skorBelajar || 0}\nSoal benar: ${u.soal?.benar || 0}\nSoal salah: ${u.soal?.salah || 0}`);
+				}
+				break;
+			case "modul":
+				{
+					const kategori = Object.keys(SOAL);
+					if (!kategori.length) return m.reply("Belum ada modul.");
+					return m.reply(`*ModulBelajar*\n\n${kategori.map((k) => `- ${k}: ${SOAL[k].length} soal`).join("\n")}\n\nKetik .soal <kategori>`);
+				}
+				break;
+			case "absen":
+				{
+					if (!m.isGroup) return m.reply(global.mess.group);
+					if (!global.db.absen) global.db.absen = {};
+					const hari = new Date().toISOString().slice(0, 10);
+					const kunci = `${m.chat}:${hari}`;
+					if (!global.db.absen[kunci]) global.db.absen[kunci] = [];
+					const nama = "@" + m.sender.split("@")[0];
+					const arg = (text || "").trim().toLowerCase();
+					if (arg === "list") return m.reply(`*Absen Hari Ini*\n\n${global.db.absen[kunci].join("\n") || "(belum ada)"}`);
+					if (arg === "rekap") {
+						const semua = Object.entries(global.db.absen).filter(([k]) => k.startsWith(m.chat + ":"));
+						return m.reply(`*Rekap Absen*\n\n${semua.map(([k, v]) => `- ${k.split(":")[1]}: ${v.length} orang`).join("\n") || "(belum ada)"}`);
+					}
+					if (global.db.absen[kunci].includes(nama)) return m.reply("Kamu sudah absen hari ini.");
+					global.db.absen[kunci].push(nama);
+					return m.reply(`Absen tercatat: *${nama}*`);
+				}
+				break;
+			case "acara":
+				{
+					if (!m.isGroup) return m.reply(global.mess.group);
+					if (!global.db.acara) global.db.acara = {};
+					const list = global.db.acara[m.chat] || [];
+					const arg = (text || "").trim();
+					if (!arg || arg === "list") return m.reply(`*Acara Grup*\n\n${list.length ? list.map((a, i) => `${i + 1}. ${a.nama} (${a.tanggal})`).join("\n") : "(belum ada)"}`);
+					const mt = arg.match(/^(\S+)\s+(\d{4}-\d{2}-\d{2})$/);
+					if (!mt) return m.reply("Contoh: .acara Rapat 2026-12-01");
+					list.push({ id: Math.random().toString(36).slice(2, 7).toUpperCase(), nama: mt[1], tanggal: mt[2], rsvp: [] });
+					global.db.acara[m.chat] = list.slice(-20);
+					return m.reply(`Acara *${mt[1]}* dibuat tanggal ${mt[2]}.`);
+				}
+				break;
+			case "acararsvp":
+				{
+					if (!m.isGroup) return m.reply(global.mess.group);
+					const j = (text || "").trim().toLowerCase();
+					if (!["ya", "tidak"].includes(j)) return m.reply("Ketik .acararsvp ya atau .acararsvp tidak");
+					const list = global.db.acara?.[m.chat] || [];
+					if (!list.length) return m.reply("Belum ada acara.");
+					const acara = list[list.length - 1];
+					acara.rsvp = acara.rsvp.filter((x) => x.jid !== m.sender);
+					acara.rsvp.push({ jid: m.sender,status: j });
+					return m.reply(`RSVP *${j}* untuk acara *${acara.nama}* tercatat.`);
+				}
+				break;
+			case "liga":
+				{
+					if (!m.isGroup) return m.reply(global.mess.group);
+					if (!global.db.liga) global.db.liga = {};
+				const liga = global.db.liga[m.chat];
+					const arg = (text || "").trim();
+					const sub = (arg.split(/\s+/)[0] || "bantuan").toLowerCase();
+					if (sub === "buat") {
+						if (!isCreator && !m.isAdmin) return m.reply(global.mess.admin);
+						const nama = arg.split(/\s+/).slice(1).join(" ") || "Liga Grup";
+						global.db.liga[m.chat] = { nama, peserta: [], skor: {} };
+						return m.reply(`Liga *${nama}* dibuat.`);
+					}
+					if (!liga) return m.reply("Belum ada liga. Ketik .liga buat");
+					if (sub === "daftar" || sub === "join") {
+						const nama = "@" + m.sender.split("@")[0];
+						if (liga.peserta.includes(nama)) return m.reply("Sudah terdaftar.");
+						liga.peserta.push(nama);
+						return m.reply(`Terdaftar: *${nama}*`);
+					}
+					if (sub === "skor") {
+						const entri = Object.entries(liga.skor).sort((a, b) => b[1] - a[1]);
+						return m.reply(`*Klasemen ${liga.nama}*\n\n${entri.map(([n, s], i) => `${i + 1}. ${n}: ${s} poin`).join("\n") || "(belum ada skor)"}`);
+					}
+					if (sub === "menang") {
+						if (!isCreator && !m.isAdmin) return m.reply(global.mess.admin);
+						const nama = arg.split(/\s+/).slice(1).join(" ").replace(/^@/, "");
+						if (!liga.peserta.includes("@" + nama) && !liga.peserta.includes(nama)) return m.reply("Peserta tidak ditemukan.");
+						const kunci = liga.peserta.find((p) => p === "@" + nama || p === nama);
+						liga.skor[kunci] = (liga.skor[kunci] || 0) + 3;
+						return m.reply(`Poin ditambahkan untuk ${kunci}.`);
+					}
+					if (sub === "juara") {
+						const entri = Object.entries(liga.skor).sort((a, b) => b[1] - a[1]);
+						return entri.length ? m.reply(`Juara sementara: *${entri[0][0]}* dengan ${entri[0][1]} poin.`) : m.reply("Belum ada skor.");
+					}
+					return m.reply(`.liga buat [nama]\n.liga daftar\n.liga peserta\n.liga skor\n.liga menang @nama\n.liga juara`);
+				}
+				break;
+			case "klasemen":
+				{
+					const hit = global.db?.hit || {};
+					const game = ["quiz", "soal", "hangman", "turnamen", "liga"];
+					return m.reply(`*Klasemen Aktivitas*\n\n${game.map((g) => `- .${g}: ${(hit[g] || 0).toLocaleString("id-ID")}x`).join("\n")}`);
+				}
+				break;
+			case "bendera":
+				{
+					const kode = (text || "").trim().toUpperCase();
+					if (!/^[A-Z]{2}$/.test(kode)) return m.reply("Contoh: .bendera ID\nGunakan kode negara dua huruf.");
+					const bendera = [...kode].map((c) => String.fromCodePoint(127397 + c.charCodeAt(0))).join("");
+					return m.reply(`${kode}: ${bendera}`);
+				}
+				break;
+			case "umurdetail":
+				{
+					const arg = (text || "").trim();
+					const d = new Date(arg);
+					if (isNaN(d.getTime())) return m.reply("Contoh: .umurdetail 1999-05-20");
+					if (d.getTime() > Date.now()) return m.reply("Tanggal tidak boleh di masa depan.");
+					let ms = Date.now() - d.getTime();
+					const tahun = Math.floor(ms / (365.25 * 86400000));
+					ms -= tahun * 365.25 * 86400000;
+					const bulan = Math.floor(ms / (30.44 * 86400000));
+					ms -= bulan * 30.44 * 86400000;
+					const minggu = Math.floor(ms / (7 * 86400000));
+					ms -= minggu * 7 * 86400000;
+					const hari = Math.floor(ms / 86400000);
+					return m.reply(`*Umur Detail*\n\nTahun: ${tahun}\nBulan: ${bulan}\nMinggu: ${minggu}\nHari: ${hari}`);
+				}
+				break;
+			case "grafik":
+				{
+					const pasangan = (text || "").trim().split(",").map((s) => {
+						const [label, nilai] = s.split("=").map((x) => x.trim());
+						return { label, nilai: Number(nilai) };
+					}).filter((x) => x.label && Number.isFinite(x.nilai)).slice(0, 10);
+					if (!pasangan.length) return m.reply("Contoh: .grafik kopi=8, teh=4, susu=6");
+					const maks = Math.max(...pasangan.map((x) => x.nilai));
+					return m.reply(`*Grafik*\n\n${pasangan.map((x) => `${x.label.padEnd(8)} [${bilah(x.nilai, maks, 12)}] ${x.nilai}`).join("\n")}`);
+				}
+				break;
+			case "pilihberat":
+				{
+					const items = (text || "").trim().split(/[|,]/).map((s) => {
+						const [nama, bobot] = s.split(":").map((x) => x.trim());
+						return { nama, bobot: Number(bobot) };
+					}).filter((x) => x.nama && Number.isFinite(x.bobot) && x.bobot > 0);
+					if (items.length < 2) return m.reply("Contoh: .pilihberat kopi:3, teh:1");
+					const total = items.reduce((n, x) => n + x.bobot, 0);
+					let acak = Math.random() * total;
+					const pilihan = items.find((x) => (acak -= x.bobot) <= 0) || items[items.length - 1];
+					return m.reply(`*Pilihan Berbobot*\n\nTerpilih: *${pilihan.nama}*\nBobot: ${pilihan.bobot}/${total}`);
+				}
+				break;
+			case "acakurutan":
+				{
+					const n = parseInt((text || "").trim(), 10);
+					if (!Number.isInteger(n) || n < 1 || n > 100) return m.reply("Contoh: .acakurutan 10 (1 sampai 100)");
+					const angka = Array.from({ length: n }, (_, i) => i + 1);
+					for (let i = angka.length - 1; i > 0; i--) {
+						const j = Math.floor(Math.random() * (i + 1));
+						[angka[i], angka[j]] = [angka[j], angka[i]];
+					}
+					return m.reply(`*Urutan Acak*\n\n${angka.join(", ")}`);
+				}
+				break;
+			case "aksesgrup":
+				{
+					if (!isCreator) return m.reply(global.mess.owner);
+					const role = (text || "").trim().toLowerCase();
+					if (!["free", "premium", "vip", "admin", "owner"].includes(role)) return m.reply("Role: free, premium, vip, admin, owner");
+					global.aksesGrupDefault = role;
+					return m.reply(`Role default grup diperbarui menjadi *${role}*.`);
+				}
+				break;
+			case "pemeliharaan":
+				{
+					if (!isCreator) return m.reply(global.mess.owner);
+					bersihkanCache();
+					for (const k of Object.keys(global)) {
+						if (k.toLowerCase().includes("state") && global[k] instanceof Map) global[k].clear();
+					}
+					return m.reply("Pemeliharaan selesai: cache dan state game dibersihkan.");
 				}
 				break;
 			case "bantuan":

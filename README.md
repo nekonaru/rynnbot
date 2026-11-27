@@ -68,6 +68,11 @@ Berbasis Hitori Bot karya [Nazedev](https://github.com/nazedev/hitori), yang dir
 | Menu & Umum | **AI teks** | `.ringkas`, `.ide`, `.paragraf`, `.judulkan`, `.tanya`, `.terjemah`, `.teks` |
 | Menu & Umum | **Kalender dan jadwal** | `.kalender [YYYY-MM]`, `.jadwal <jam> <tugas>`, `.notifikasi on|off` |
 | Menu & Umum | **Perintah akhir v9** | `.diam`, `.ownerlist`, `.sesihapus`, `.akseswarisan`, `.tabungtarget`, `.bungapinjam`, `.hadiahevent`, `.topbulanan`, `.transferbatch`, `.uanglog`, `.quizberuntun`, `.quizjawab`, `.tebakjawab`, `.rankmingguan`, `.statistiklanjut`, `.matriks3`, `.turunan`, `.integral`, `.koordinat`, `.datasetpenuh` |
+| Menu & Umum | **Keuangan dan belajar v10** | `.anggaran`, `.pengeluaran`, `.pemasukan`, `.laporanuang`, `.flashcard`, `.kuisharian`, `.skorbelajar`, `.modul` |
+| Menu & Umum | **Absensi dan acara** | `.absen`, `.acara`, `.acararsvp` |
+| Menu & Umum | **Liga** | `.liga`, `.klasemen` |
+| Menu & Umum | **Utilitas v10** | `.bendera`, `.umurdetail`, `.grafik`, `.pilihberat`, `.acakurutan` |
+| Menu & Umum | **Owner v10** | `.aksesgrup`, `.pemeliharaan` |
 | Menu & Umum | **Eksplorasi perintah** | `.explore`, `.randomcmd`, `.riwayat`, `.shortcut`, `.pintasan`, `.dataset`, `.rekomendasi` |
 | Menu & Umum | **Produktivitas chat** | `.todo` (tugas pribadi), `.catatancari`, `.peraturan`, `.icebreak`, `.tabel` |
 | Menu & Umum | **Ekonomi lanjutan** | `.dompet`, `.topuang`, `.toplimit`, `.hadiah` |
@@ -555,6 +560,27 @@ Semua perintah memakai prefix default `.` `!` atau `+` (atur di `settings.js`).
 | `.ekonomi` | Ringkasan harga limit, hadiah, dan saldo |
 | `.gameinfo` | Cooldown dan aturan game (daily, rampok, begal, slot, casino, samgong) |
 | `.panduan` | Panduan singkat mulai pakai Rynn |
+| `.anggaran <kategori> <nominal>` | Anggaran bulanan |
+| `.pengeluaran <kategori> <nominal>` | Catat pengeluaran |
+| `.pemasukan <sumber> <nominal>` | Catat pemasukan |
+| `.laporanuang` | Ringkasan uang bulanan |
+| `.flashcard <pertanyaan> \| <jawaban>` | Kartu hafalan |
+| `.flashcard ulang` / `.flashcardjawab <teks>` | Ulang dan jawab kartu |
+| `.kuisharian` / `.kuisjawab <a-d>` | Kuis harian |
+| `.skorbelajar` | Skor belajar user |
+| `.modul` | Daftar modul soal |
+| `.absen` / `.absen list` / `.absen rekap` | Absensi grup |
+| `.acara <nama> <YYYY-MM-DD>` | Buat acara grup |
+| `.acararsvp ya\|tidak` | RSVP acara |
+| `.liga buat\|daftar\|skor\|menang\|juara` | Liga grup |
+| `.klasemen` | Klasemen aktivitas |
+| `.bendera ID` | Bendera emoji dari kode ISO |
+| `.umurdetail <YYYY-MM-DD>` | Umur dalam tahun, bulan, minggu, hari |
+| `.grafik kopi=8, teh=4` | Grafik bilah teks |
+| `.pilihberat kopi:3, teh:1` | Pilihan acak berbobot |
+| `.acakurutan 10` | Urutan acak |
+| `.aksesgrup <role>` | Role default grup (owner) |
+| `.pemeliharaan` | Bersihkan cache dan state (owner) |
 | `.diam on\|off` | Mode diam, hanya owner dibalas |
 | `.ownerlist` | Daftar owner |
 | `.sesihapus <nama>` | Hapus sesi lokal dengan konfirmasi nama |
