@@ -1,5 +1,28 @@
 # Changelog
 
+## v6.3.0
+
+Rynn v6.3.0 melanjutkan pengejaran target data: soal menembus 5.000 dan fakta menembus 9.000.
+
+### Data
+
+- `lib/data-v63.js`: 8.400 fakta hitung, 900 puisi, 1.907 kata Hangman, dan 3.600 soal matematika.
+- `lib/data-v63b.js`: 400 puisi tambahan, 1.200 soal tambahan, 8 negara tambahan, dan 10 planet tambahan.
+- Dataset inti: FAKTA 9.051, PUISI 1.730, PANTUN 16.873, Hangman 2.517, SOAL 5.312, NEGARA 190, PLANET 51.
+
+### Rumus
+
+- Tetap 11.013 rumus dalam 35 kategori, sudah melewati target 10.000.
+
+### Audit
+
+- `npm run check` lolos (155 file), **106 tes lolos**, tes integritas tetap hijau.
+- CI hijau sebelum tag `v6.3.0`.
+
+### Target yang masih tersisa
+
+- Puisi 1.730 dari 2.000, Hangman 2.517 dari 5.000, negara 190 dari 195, planet 51 dari 100.
+
 ## v6.2.0
 
 Rynn v6.2.0 menaikkan target data dan rumus secara besar-besaran dan menambah perintah data edukasi baru.
