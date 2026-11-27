@@ -20,6 +20,7 @@ import { showBanner, logSuccess, logInfo } from "./src/cli/helpers.js";
 import { dataBase, cmdDel, checkStatus, checkExpired } from "./src/database.js";
 import { GroupParticipantsUpdate, MessagesUpsert, Solving, updateLidMapping } from "./src/message.js";
 import { assertInstalled, customDispatcher, compressMessage, decompressMessage, rotateBackups } from "./lib/function.js";
+import { pasangGuardProses } from "./lib/process-guard.js";
 import { firstSetupStates, FIRST_SETUP_MARKER, sendFirstSetupIntro } from "./src/setup-wizard.js";
 
 rotateBackups("./backup", 5);
@@ -402,6 +403,7 @@ async function startRynnBot() {
 	});
 
 	global.sock = sock;
+	pasangGuardProses({ onShutdown: async () => { try { await database.write(global.db || {}); await storeDB.write(global.store || {}); } catch {} } });
 	await Solving(sock, global.store, sessionPath);
 
 	global.nodeMap = global.nodeMap || new Map();

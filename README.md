@@ -73,6 +73,13 @@ Berbasis Hitori Bot karya [Nazedev](https://github.com/nazedev/hitori), yang dir
 | Menu & Umum | **Liga** | `.liga`, `.klasemen` |
 | Menu & Umum | **Utilitas v10** | `.bendera`, `.umurdetail`, `.grafik`, `.pilihberat`, `.acakurutan` |
 | Menu & Umum | **Owner v10** | `.aksesgrup`, `.pemeliharaan` |
+| Menu & Umum | **Grup lanjutan v11** | `.presensi`, `.kuorum`, `.rapat`, `.notulen`, `.laporgrup`, `.moderasi` |
+| Menu & Umum | **Koleksi dan progres** | `.koleksi`, `.gacha`, `.achievement`, `.level`, `.levelboard` |
+| Menu & Umum | **Ekonomi simulasi** | `.investasi`, `.deposito`, `.asuransi`, `.keuangannilai`, `.transferterjadwal` |
+| Menu & Umum | **Sosial dan otomasi** | `.sapaanpribadi`, `.pujian`, `.semangat`, `.ceritapendek`, `.mood`, `.moodrekap`, `.teman`, `.autoreply`, `.autotag`, `.autosalam` |
+| Menu & Umum | **Game baru** | `.wordle`, `.wordlejawab`, `.scramble`, `.bingo`, `.lotre`, `.tebakwarna`, `.gameskor` |
+| Menu & Umum | **Utilitas dan AI v11** | `.markdown`, `.tabel2`, `.diagram`, `.hitungpanjang`, `.indeksdata`, `.contohdata`, `.bantuansaya`, `.code`, `.dialog`, `.brainstorm`, `.kritik`, `.translateid`, `.airiwayat` |
+| Menu & Umum | **Owner dan statistik v11** | `.restartnow`, `.updatenow`, `.logunduh`, `.pengguna`, `.daftargroup`, `.databaseinfo`, `.maintenancewhy`, `.laporharian`, `.lapormingguan`, `.statistikgrup`, `.statistikpengguna`, `.statistikperintah`, `.statistikkinerja` |
 | Menu & Umum | **Eksplorasi perintah** | `.explore`, `.randomcmd`, `.riwayat`, `.shortcut`, `.pintasan`, `.dataset`, `.rekomendasi` |
 | Menu & Umum | **Produktivitas chat** | `.todo` (tugas pribadi), `.catatancari`, `.peraturan`, `.icebreak`, `.tabel` |
 | Menu & Umum | **Ekonomi lanjutan** | `.dompet`, `.topuang`, `.toplimit`, `.hadiah` |
@@ -560,6 +567,41 @@ Semua perintah memakai prefix default `.` `!` atau `+` (atur di `settings.js`).
 | `.ekonomi` | Ringkasan harga limit, hadiah, dan saldo |
 | `.gameinfo` | Cooldown dan aturan game (daily, rampok, begal, slot, casino, samgong) |
 | `.panduan` | Panduan singkat mulai pakai Rynn |
+| `.presensi hadir` / `.kuorum 10` | Presensi dan cek kuorum grup |
+| `.rapat <judul>` / `.notulen <teks>` | Agenda dan notulen rapat grup (admin) |
+| `.laporgrup <alasan>` | Laporkan anggota ke admin grup |
+| `.moderasi` | Ringkasan status moderasi grup |
+| `.koleksi <nama>` / `.gacha` | Koleksi pribadi dan gacha kosmetik lokal |
+| `.achievement` / `.level` / `.levelboard` | Pencapaian dan level user |
+| `.investasi <nominal>` / `.investasi cek` | Simulasi investasi, bunga 1 persen per hari |
+| `.deposito <nominal> <hari>` | Simulasi deposito, bunga 0,5 persen per hari |
+| `.asuransi <nominal>` | Simulasi dana perlindungan, bukan produk nyata |
+| `.keuangannilai` | Ringkasan aset simulasi user |
+| `.transferterjadwal @user <nominal> <mode>` | Catat transfer berulang |
+| `.sapaanpribadi <teks>` | Sapaan otomatis per user |
+| `.pujian` / `.semangat` / `.ceritapendek` | Kalimat kreatif acak lokal |
+| `.mood <nama>` / `.moodrekap` | Catat dan rekap mood tujuh hari |
+| `.teman <nama>` | Catat nama teman untuk ice breaker |
+| `.autoreply <kata> \| <balasan>` | Balasan otomatis grup (admin) |
+| `.autotag on\|off` / `.autosalam on\|off` | Otomasi grup (admin) |
+| `.wordle <kata>` / `.wordlejawab <teks>` | Tebak kata dengan petunjuk huruf |
+| `.scramble <kata>` / `.bingo <n>` / `.lotre` | Game kata dan angka lokal |
+| `.tebakwarna <warna>` | Tebak warna dari petunjuk |
+| `.gameskor` | Skor game user |
+| `.markdown` / `.tabel2` / `.diagram` | Format teks dan diagram |
+| `.hitungpanjang <teks>` | Statistik panjang teks |
+| `.indeksdata <kata>` / `.contohdata <perintah>` | Indeks dan contoh perintah |
+| `.bantuansaya` | Perintah paling sering dipakai user |
+| `.code` / `.dialog` / `.brainstorm` / `.kritik` | AI teks lanjutan |
+| `.translateid <teks>` | Terjemah ke Bahasa Indonesia |
+| `.airiwayat <kata>` | Cari riwayat perintah AI |
+| `.restartnow confirm` | Restart lewat start.js (owner) |
+| `.updatenow confirm` | Perbarui bot (owner) |
+| `.logunduh` / `.pengguna` / `.daftargroup` | Ringkasan log dan daftar (owner) |
+| `.databaseinfo` / `.maintenancewhy <alasan>` | Info database dan alasan maintenance (owner) |
+| `.laporharian` / `.lapormingguan` | Laporan aktivitas bot |
+| `.statistikgrup` / `.statistikpengguna` / `.statistikperintah` / `.statistikkinerja` | Statistik grup, user, perintah, kinerja |
+| Guard proses | `lib/process-guard.js` menangkap promise gagal dan menutup resource saat SIGINT/SIGTERM |
 | `.anggaran <kategori> <nominal>` | Anggaran bulanan |
 | `.pengeluaran <kategori> <nominal>` | Catat pengeluaran |
 | `.pemasukan <sumber> <nominal>` | Catat pemasukan |

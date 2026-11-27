@@ -1,5 +1,31 @@
 # Changelog
 
+## v11.0.0
+
+Rynn v11.0.0 menambah 59 perintah baru, penjaga proses, dan penyempurnaan stabilitas. Ini rilis besar besaran kelanjutan v10.0.0.
+
+### Fitur baru
+
+- Grup lanjutan: `.presensi`, `.kuorum`, `.rapat`, `.notulen`, `.laporgrup`, `.moderasi`.
+- Koleksi dan progres: `.koleksi`, `.gacha`, `.achievement`, `.level`, `.levelboard`.
+- Ekonomi simulasi: `.investasi`, `.deposito`, `.asuransi`, `.keuangannilai`, `.transferterjadwal`. Semua diberi catatan simulasi, bukan produk nyata atau nasihat keuangan.
+- Sosial dan otomasi: `.sapaanpribadi`, `.pujian`, `.semangat`, `.ceritapendek`, `.mood`, `.moodrekap`, `.teman`, `.autoreply`, `.autotag`, `.autosalam`. Auto reply dihubungkan ke alur pesan grup.
+- Game baru: `.wordle`, `.wordlejawab`, `.scramble`, `.bingo`, `.lotre`, `.tebakwarna`, `.gameskor`.
+- Utilitas dan AI: `.markdown`, `.tabel2`, `.diagram`, `.hitungpanjang`, `.indeksdata`, `.contohdata`, `.bantuansaya`, `.code`, `.dialog`, `.brainstorm`, `.kritik`, `.translateid`, `.airiwayat`.
+- Owner dan statistik: `.restartnow`, `.updatenow`, `.logunduh`, `.pengguna`, `.daftargroup`, `.databaseinfo`, `.maintenancewhy`, `.laporharian`, `.lapormingguan`, `.statistikgrup`, `.statistikpengguna`, `.statistikperintah`, `.statistikkinerja`.
+
+### Stabilitas
+
+- `lib/process-guard.js` menangkap `unhandledRejection` dan `uncaughtException`, lalu menulis database saat SIGINT atau SIGTERM.
+- `index.js` memasang guard setelah koneksi sock siap.
+- Perbaikan hak akses `.rapat` dan `.notulen`, perbaikan pemeriksaan jawaban `.tebakwarna`, dan inisialisasi `db.users` pada `.transferterjadwal`.
+
+### Audit
+
+- 1 tes unit guard proses baru; total **120 tes lolos**. `npm run check` lolos (169 file).
+- Audit menu: 804 case, 529 perintah menu unik, semua punya implementasi.
+- CI hijau sebelum tag `v11.0.0`.
+
 ## v10.0.0
 
 Rynn v10.0.0 menambah 22 perintah baru. Fase alpha 2 dan 3 dari rancangan awal tidak dieksekusi, sehingga perintah manajemen waktu dan kesehatan tidak dimasukkan.
