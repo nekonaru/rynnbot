@@ -257,7 +257,7 @@ global.chatLength = 1000;
 	}
 }
 
-fs.watchFile(__filename, async () => {
+fs.watchFile(__filename, { persistent: false }, async () => {
 	fs.unwatchFile(__filename);
 	console.log(chalk.yellowBright(`[UPDATE] ${__filename}`));
 	await import(`${import.meta.url}?update=${Date.now()}`);

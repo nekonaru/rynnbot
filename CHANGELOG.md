@@ -1,5 +1,36 @@
 # Changelog
 
+## v11.2.0
+
+﻿Rynn v11.2.0 adalah rilis audit dan optimalisasi mendalam. Fokusnya adalah membuat fitur yang sudah ada berjalan lebih native, ringan, dan lancar tanpa menambah kategori perintah baru.
+
+### Perbaikan anomali
+
+- Case duplikat `.backup` dan `.menu` disatukan. `.backup jadwal <HH:MM>` dan `.menu <kategori>` kini benar-benar berfungsi.
+- Turnamen `.turnamen menang` kini menerima nama dengan tanda @, sesuai format pendaftaran.
+- `.transferbatch confirm <token>` akhirnya memproses konfirmasi. Token disimpan per pengirim dan kedaluwarsa dalam lima menit.
+- Konflik state `quizState` antara `.quiz` dan `.quizberuntun` dihilangkan. `.quizberuntun`, `.tebak`, dan `.wordle` memakai Map yang dibersihkan otomatis.
+- Role `admin` dan `owner` pada `.akses` kini dapat diberikan dan ditegakkan. Alias perintah tidak lagi bisa melewati kontrol akses.
+- Efek perintah seperti hit, riwayat, dan quest kini dijalankan setelah penolakan akses, sehingga percobaan gagal tidak mencentang misi.
+- Quest harian memakai tanggal lokal, bukan UTC, sehingga berganti tepat tengah malam waktu setempat.
+- Samgong seri mengembalikan taruhan seperti yang dijanjikan. Transfer dengan @tag diterima. Luas persegi panjang dua kata diterima. Bagian imajiner akar kuadrat bernilai positif.
+
+### Kinerja dan keringanan
+
+- Antrean per pengirim di `lib/antrian.js` mencegah dua perintah bersamaan menimpa saldo, limit, dan state game.
+- Impor berat `jimp`, `undici`, `unzipper`, `fluent-ffmpeg`, `ytdl-core`, dan `yt-search` ditunda sampai dipakai. Muat `lib/function.js` turun dari sekitar 1131 ms menjadi sekitar 677 ms.
+- Levenshtein memakai dua baris berulang, bukan matriks penuh. Cache kategori rumus menghilangkan enam kali scan per panggilan statistik.
+- Regex URL dan daftar pola di-hoist. Encode JPEG profil tidak dilakukan dua kali. ffmpeg untuk `.bratvideo` kini asinkron dan tidak memblokir pesan lain.
+- Set case dan daftar huruf kecil dibentuk sekali. Versi WA Web di-cache antar reconnect. Impor yang tidak dipakai dibersihkan.
+- `fs.watchFile` pada `settings.js` memakai `persistent: false`, sehingga proses utilitas bisa keluar bersih.
+- Muat data pertama turun dari sekitar 274 ms menjadi sekitar 180 ms berdasarkan `npm run bench`.
+
+### Audit
+
+- 8 tes regresi baru di `test/audit-fixes.test.js`. Total **138 tes lolos**. `npm run check` lolos (180 file).
+- Coverage: 88,72 persen baris, 81,15 persen cabang, 82,13 persen fungsi.
+- Hook pre-commit lokal menjalankan `npm run check` dan `npm test` sebelum commit.
+
 ## v11.1.0
 
 Rynn v11.1.0 menuntaskan utang teknis yang tertunda dari rancangan v11: lazy loading penuh, registry v2, modul handler per kategori, benchmark startup, dan ambang coverage di CI.
