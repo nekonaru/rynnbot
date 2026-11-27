@@ -1,5 +1,30 @@
 # Changelog
 
+## v7.0.0
+
+Rynn v7.0.0 menutup sisa target data dan menambah 19 perintah baru untuk navigasi, produktivitas, ekonomi, game, dan eksplorasi data.
+
+### Data target akhir
+
+- `lib/data-v7.js`: 900 puisi, 8.228 kata Hangman, 10 negara, dan 20 planet tambahan.
+- Dataset inti: PUISI 2.630, Hangman 8.850, NEGARA 195, PLANET 70, FAKTA 9.051, PANTUN 16.873, SOAL 5.312.
+- Rumus tetap 11.013 dalam 35 kategori.
+
+### Perintah baru
+
+- Navigasi: `.explore`, `.randomcmd`, `.riwayat`, `.shortcut`, `.pintasan`.
+- Produktivitas: `.todo`, `.catatancari`, `.peraturan`, `.icebreak`, `.tabel`.
+- Ekonomi: `.dompet`, `.topuang`, `.toplimit`, `.hadiah`.
+- Game: `.questmingguan`, `.dailykalender`, `.papanperingkat`, `.trivia`.
+- Data: `.dataset`, `.rekomendasi`, `.statistikdata penuh`.
+- Riwayat perintah dicatat otomatis per user, maksimal 20 entri.
+
+### Audit
+
+- `npm run check` lolos (156 file), **106 tes lolos**.
+- Audit menu terhadap `case`: 665 case, 404 perintah menu unik, semua punya implementasi.
+- CI hijau sebelum tag `v7.0.0`.
+
 ## v6.3.0
 
 Rynn v6.3.0 melanjutkan pengejaran target data: soal menembus 5.000 dan fakta menembus 9.000.

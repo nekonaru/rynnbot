@@ -757,6 +757,10 @@ const sock = async (sock, m, store) => {
 			if (cases.includes(command)) {
 				cmdAdd(db.hit);
 				cmdAddHit(db.hit, command);
+				if (!db.users[m.sender]) db.users[m.sender] = {};
+				const riwayat = db.users[m.sender].riwayat || [];
+				riwayat.push(command);
+				db.users[m.sender].riwayat = riwayat.slice(-20);
 				const kategori = infoCommand(command)?.kategori || "";
 				if (command === "daily") tandaiQuest(db, m.sender, "harian");
 				else if (kategori === "EDUKASI") tandaiQuest(db, m.sender, "edukasi");
@@ -6218,6 +6222,25 @@ Select Bot Settings:
 │${setv} ${prefix}ekonomi
 │${setv} ${prefix}gameinfo
 │${setv} ${prefix}panduan
+│${setv} ${prefix}explore
+│${setv} ${prefix}randomcmd
+│${setv} ${prefix}riwayat
+│${setv} ${prefix}shortcut
+│${setv} ${prefix}pintasan
+│${setv} ${prefix}todo
+│${setv} ${prefix}peraturan
+│${setv} ${prefix}icebreak
+│${setv} ${prefix}dompet
+│${setv} ${prefix}topuang
+│${setv} ${prefix}toplimit
+│${setv} ${prefix}hadiah
+│${setv} ${prefix}questmingguan
+│${setv} ${prefix}dailykalender
+│${setv} ${prefix}papanperingkat
+│${setv} ${prefix}trivia
+│${setv} ${prefix}dataset
+│${setv} ${prefix}rekomendasi
+│${setv} ${prefix}tabel
 │${setv} ${prefix}streak
 │${setv} ${prefix}quest
 │${setv} ${prefix}rankgame
@@ -6652,6 +6675,25 @@ Select Bot Settings:
 │${setv} ${prefix}ekonomi
 │${setv} ${prefix}gameinfo
 │${setv} ${prefix}panduan
+│${setv} ${prefix}explore
+│${setv} ${prefix}randomcmd
+│${setv} ${prefix}riwayat
+│${setv} ${prefix}shortcut
+│${setv} ${prefix}pintasan
+│${setv} ${prefix}todo
+│${setv} ${prefix}peraturan
+│${setv} ${prefix}icebreak
+│${setv} ${prefix}dompet
+│${setv} ${prefix}topuang
+│${setv} ${prefix}toplimit
+│${setv} ${prefix}hadiah
+│${setv} ${prefix}questmingguan
+│${setv} ${prefix}dailykalender
+│${setv} ${prefix}papanperingkat
+│${setv} ${prefix}trivia
+│${setv} ${prefix}dataset
+│${setv} ${prefix}rekomendasi
+│${setv} ${prefix}tabel
 │${setv} ${prefix}streak
 │${setv} ${prefix}quest
 │${setv} ${prefix}rankgame
@@ -8820,6 +8862,173 @@ Select Bot Settings:
 					return found.length ? m.reply(formatDaftar({ judul: "Hasil Budaya", data: found, denganAcak: false, format: ([nama, tipe, daerah]) => `*${nama}* (${tipe}, ${daerah})` })) : m.reply("Budaya tidak ditemukan.");
 				}
 				break;
+			case "explore":
+				{
+					const q = (text || "").trim().toLowerCase();
+					const kat = daftarKategoriCommand();
+					if (!q) return m.reply(`*Jelajahi Perintah*\n\n${kat.map((k) => `- .explore ${k.kategori.toLowerCase()} (${k.jumlah})`).join("\n")}`);
+					const k = kategoriDariNama(q) || q.toUpperCase();
+					const entri = daftarCommand().filter((e) => e.kategori === k);
+					return entri.length ? m.reply(formatDaftar({ judul: `Perintah ${k}`, data: entri, format: (e) => `.${e.command}${e.deskripsi ? ": " + e.deskripsi : ""}`, contoh: ["Ketik .bantuan <perintah>"] })) : m.reply("Kategori tidak ditemukan.");
+				}
+				break;
+			case "randomcmd":
+				{
+					const semua = daftarCommand();
+					const e = semua[Math.floor(Math.random() * semua.length)];
+					return m.reply(`*Perintah Acak*\n\n.${e.command} (${e.kategori})\n${e.deskripsi || "Tanpa deskripsi"}\n\nKetik .bantuan ${e.command}`);
+				}
+				break;
+			case "riwayat":
+				{
+					const user = db.users[m.sender] || {};
+					const list = Array.isArray(user.riwayat) ? user.riwayat.slice(-15).reverse() : [];
+					return m.reply(`*Riwayat Perintah*\n\n${list.length ? list.map((c, i) => `${i + 1}. .${c}`).join("\n") : "(belum ada)"}`);
+				}
+				break;
+			case "shortcut":
+				{
+					const mt = (text || "").trim().split(/\s+/);
+					if (mt.length !== 2) return m.reply("Contoh: .shortcut r rumus");
+					if (!db.users[m.sender]) db.users[m.sender] = {};
+					if (!db.users[m.sender].shortcut) db.users[m.sender].shortcut = {};
+					db.users[m.sender].shortcut[mt[0].toLowerCase()] = mt[1].toLowerCase().replace(/^\./, "");
+					return m.reply(`Pintasan .${mt[0]} -> .${mt[1].replace(/^\./, "")} disimpan.`);
+				}
+				break;
+			case "pintasan":
+				{
+					const p = db.users[m.sender]?.shortcut || {};
+					const entri = Object.entries(p);
+					return m.reply(`*Pintasan Kamu*\n\n${entri.length ? entri.map(([k, v]) => `- .${k} -> .${v}`).join("\n") : "(belum ada)"}`);
+				}
+				break;
+			case "todo":
+				{
+					const arg = (text || "").trim();
+					if (!db.users[m.sender]) db.users[m.sender] = {};
+					const tugas = db.users[m.sender].todo || [];
+					if (/^done\s+\d+$/i.test(arg)) {
+						const i = parseInt(arg.split(/\s+/)[1], 10) - 1;
+						if (i < 0 || i >= tugas.length) return m.reply("Nomor tugas tidak valid.");
+						tugas.splice(i, 1);
+						return m.reply("Tugas selesai dihapus.");
+					}
+					if (/^hapus\s+\d+$/i.test(arg)) {
+						const i = parseInt(arg.split(/\s+/)[1], 10) - 1;
+						if (i < 0 || i >= tugas.length) return m.reply("Nomor tugas tidak valid.");
+						tugas.splice(i, 1);
+						return m.reply("Tugas dihapus.");
+					}
+					if (!arg) return m.reply(`*Daftar Tugas*\n\n${tugas.length ? tugas.map((t, i) => `${i + 1}. ${t}`).join("\n") : "(kosong)"}\n\nTambah: .todo <tugas>\nSelesai: .todo done <n>`);
+					tugas.push(arg.slice(0, 120));
+					db.users[m.sender].todo = tugas.slice(-20);
+					return m.reply(`Tugas ditambahkan: ${arg}`);
+				}
+				break;
+			case "catatancari":
+				{
+					const q = (text || "").trim().toLowerCase();
+					if (!q) return m.reply("Contoh: .catatancari belajar");
+					const semua = Object.entries(global.db?.notes || {}).filter(([k]) => k.includes(m.sender));
+					const hasil = semua.filter(([, v]) => String(v).toLowerCase().includes(q));
+					return hasil.length ? m.reply(hasil.map(([k, v]) => `*${k.split(":")[1] || "catatan"}*\n${v}`).join("\n\n")) : m.reply("Catatan tidak ditemukan.");
+				}
+				break;
+			case "peraturan":
+				{
+					if (!m.isGroup) return m.reply(global.mess.group);
+					const arg = (text || "").trim();
+					if (!db.groups[m.chat]) db.groups[m.chat] = {};
+					if (/^reset$/i.test(arg)) {
+						if (!isCreator && !m.isAdmin) return m.reply(global.mess.admin);
+						db.groups[m.chat].peraturan = "";
+						return m.reply("Peraturan dihapus.");
+					}
+					if (!arg) return m.reply(`*Peraturan Grup*\n\n${db.groups[m.chat].peraturan || "(belum diatur)"}`);
+					if (!isCreator && !m.isAdmin) return m.reply(global.mess.admin);
+					db.groups[m.chat].peraturan = arg.slice(0, 1000);
+					return m.reply("Peraturan grup diperbarui.");
+				}
+				break;
+			case "icebreak":
+				{
+					const kalimat = ["Apa hal kecil yang bikin kamu senyum hari ini?", "Kalau bisa liburan sehari, ke mana kamu pergi?", "Apa makanan yang selalu bikin kangen rumah?", "Skill apa yang ingin kamu kuasai tahun ini?", "Kapan terakhir kali kamu belajar hal baru?"];
+					return m.reply(`*Ice Breaker*\n\n${kalimat[Math.floor(Math.random() * kalimat.length)]}`);
+				}
+				break;
+			case "dompet":
+				{
+					const u = db.users[m.sender] || {};
+					const q = lihatQuest(db, m.sender);
+					return m.reply(`*Dompet*\n\nUang: ${(u.money || 0).toLocaleString("id-ID")}\nLimit: ${(u.limit || 0).toLocaleString("id-ID")}\nStreak: ${u.streak || 0} hari\nQuest: ${q.diklaim ? "selesai" : q.siap ? "siap diklaim" : "berjalan"}\nPeringkat: ketik .topuang`);
+				}
+				break;
+			case "topuang":
+			case "toplimit":
+				{
+					const field = command === "topuang" ? "money" : "limit";
+					const entri = Object.entries(db.users || {}).filter(([, u]) => u && typeof u[field] === "number").sort((a, b) => b[1][field] - a[1][field]).slice(0, 10);
+					return m.reply(`*Top ${field === "money" ? "Uang" : "Limit"}*\n\n${entri.map(([jid, u], i) => `${i + 1}. @${jid.split("@")[0]}: ${u[field].toLocaleString("id-ID")}`).join("\n") || "(belum ada data)"}`);
+				}
+				break;
+			case "hadiah":
+				{
+					return m.reply("*Daftar Hadiah*\n\n• Daily: +10 limit, +10.000 uang\n• Bonus streak hari ke-7: +5.000 uang\n• Kuis: +50 uang per jawaban benar\n• Soal SMA: +25 uang per jawaban benar\n• Hangman: +100 uang bila menang\n• Quest harian: +1.000 uang, +5 limit\n• Quest mingguan: hadiah lebih besar");
+				}
+				break;
+			case "questmingguan":
+				{
+					const u = db.users[m.sender] || {};
+					return m.reply(`*Quest Mingguan*\n\nKlaim harian 7 kali: ${u.mingguan || 0}/7\nMain 10 game: ${u.mingguanGame || 0}/10\nPakai 20 perintah edukasi: ${u.mingguanEdukasi || 0}/20\n\nHadiah: +10.000 uang dan +50 limit.`);
+				}
+				break;
+			case "dailykalender":
+				{
+					const u = db.users[m.sender] || {};
+					const streak = u.streak || 0;
+					return m.reply(`*Kalender Klaim Harian*\n\n${Array.from({ length: 7 }, (_, i) => `${i + 1}. ${i < streak % 7 ? "sudah" : "belum"}${i === 6 ? " (bonus 5.000 uang)" : ""}`).join("\n")}\n\nStreak saat ini: ${streak} hari.`);
+				}
+				break;
+			case "papanperingkat":
+				{
+					const hit = global.db?.hit || {};
+					const game = ["quiz", "soal", "hangman", "slot", "casino", "samgong", "dadu", "rampok", "begal"];
+					return m.reply(`*Papan Peringkat Game*\n\n${game.map((g) => `- .${g}: ${(hit[g] || 0).toLocaleString("id-ID")}x`).join("\n")}`);
+				}
+				break;
+			case "trivia":
+				{
+					const mode = (text || "").trim().toLowerCase();
+					const pool = SOAL.ips.length ? SOAL.ips : Object.values(SOAL)[0];
+					if (!pool.length) return m.reply("Belum ada soal trivia.");
+					const soal = pool[Math.floor(Math.random() * pool.length)];
+					return m.reply(`*Trivia ${mode ? "(" + mode + ")" : ""}*\n\n${soal.q}\n\n${soal.o.map((o, i) => `${String.fromCharCode(65 + i)}. ${o}`).join("\n")}\n\nJawab: .trivia jawab <a/b/c/d>`);
+				}
+				break;
+			case "dataset":
+				{
+					const q = (text || "").trim().toLowerCase();
+					const daftar = daftarKategoriCommand();
+					if (!q) return m.reply(`*Dataset Tersedia*\n\n${daftar.map((k) => `- ${k.kategori}: ${k.jumlah} perintah`).join("\n")}\n\nKetik .statistikdata penuh`);
+					return m.reply(`*Dataset: ${q}*\n\nGunakan .cari ${q} atau .dataset tanpa argumen untuk daftar.`);
+				}
+				break;
+			case "rekomendasi":
+				{
+					const q = (text || "").trim().toLowerCase();
+					if (!q) return m.reply("Contoh: .rekomendasi mata uang");
+					const saran = cariCommand(q).slice(0, 8);
+					return saran.length ? m.reply(`*Rekomendasi*\n\n${saran.map((e) => `- .${e.command} (${e.kategori})`).join("\n")}`) : m.reply("Tidak ada rekomendasi.");
+				}
+				break;
+			case "tabel":
+				{
+					const items = (text || "").trim().split(/[|,]/).map((s) => s.trim()).filter(Boolean).slice(0, 20);
+					if (!items.length) return m.reply("Contoh: .tabel kopi | teh | susu");
+					return m.reply(`*Tabel*\n\n${items.map((v, i) => `${i + 1}. ${v}`).join("\n")}`);
+				}
+				break;
 			case "help":
 				{
 					const daftar = daftarCommand();
@@ -9136,9 +9345,19 @@ Select Bot Settings:
 						`Hari bersejarah: ${HARI_BERSEJARAH.length}`,
 						`Kota waktu: ${KOTA_WAKTU.length}`,
 						`Templat surat: ${SURAT.length}`,
+						`Mata uang: ${MATAUANG.length}`,
+						`Sejarah: ${SEJARAH.length}`,
+						`Tokoh: ${TOKOH.length}`,
+						`Olahraga: ${OLAHRAGA.length}`,
+						`Singkatan: ${SINGKATAN.length}`,
+						`Sinonim: ${SINONIM.length}`,
+						`Antonim: ${ANTONIM.length}`,
+						`Budaya: ${BUDAYA.length}`,
+						`Rumus: ${statistikRumus().total}`,
 					];
 					const total = baris.reduce((n, b) => n + (parseInt(b.split(": ")[1], 10) || 0), 0);
-					return m.reply(`*Statistik Data Rynn*\n\n${baris.join("\n")}\n\n*Total entri: ${total.toLocaleString("id-ID")}*`);
+					const ringkas = /^penuh$/i.test((text || "").trim()) ? baris : baris.slice(0, 12);
+					return m.reply(`*Statistik Data Rynn*\n\n${ringkas.join("\n")}\n\n*Total entri: ${total.toLocaleString("id-ID")}*\n${ringkas.length !== baris.length ? "Ketik .statistikdata penuh untuk semua dataset." : ""}`);
 				}
 				break;
 			case "uuid":

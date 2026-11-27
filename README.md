@@ -58,13 +58,17 @@ Berbasis Hitori Bot karya [Nazedev](https://github.com/nazedev/hitori), yang dir
 |----------|-------|-----------|
 | Menu & Umum | **Menu dan bantuan** | Menu berkategori, daftar perintah, info bot, ping |
 | Menu & Umum | **CLI interaktif** | Wizard setup pertama, manajer pengaturan, dashboard status, pembaca log |
+| Menu & Umum | **Eksplorasi perintah** | `.explore`, `.randomcmd`, `.riwayat`, `.shortcut`, `.pintasan`, `.dataset`, `.rekomendasi` |
+| Menu & Umum | **Produktivitas chat** | `.todo` (tugas pribadi), `.catatancari`, `.peraturan`, `.icebreak`, `.tabel` |
+| Menu & Umum | **Ekonomi lanjutan** | `.dompet`, `.topuang`, `.toplimit`, `.hadiah` |
+| Menu & Umum | **Game lanjutan** | `.questmingguan`, `.dailykalender`, `.papanperingkat`, `.trivia` |
 | Menu & Umum | **Hot reload** | `settings.js` dimuat ulang otomatis saat disimpan |
 | Menu & Umum | **Format daftar seragam** | Semua perintah data menampilkan entri acak di atas, daftar bernomor per halaman, dan petunjuk lanjut/cari/detail |
 | Menu & Umum | **Penemuan lanjutan** | `.help`, `.contoh <cmd>`, `.alias <cmd>`, `.cmdlist [kategori]`, `.saran <kata>` |
 | Menu & Umum | **Owner lanjutan** | `.envstatus` (nama variabel saja), `.backuplist`, `.sesi`, `.setmotd <teks>` |
 | Menu & Umum | **Generator menu** | `.menu <kategori>` kini menampilkan submenu asli dari registry, bukan petunjuk |
 | Utilitas | **Data edukasi baru** | `.matauang` (56 mata uang), `.budaya`, `.tarian`, `.rumahadat`, `.alatmusik`, `.batik` |
-| Utilitas | **Pengetahuan Indonesia** | `.negara` (190 negara), `.planet` (51), `.suku` (83), `.bahasa` (24), `.sejarah`, `.tokoh`, `.olahraga`, `.singkatan`, `.sinonim`, `.antonim`, `.kamus` |
+| Utilitas | **Pengetahuan Indonesia** | `.negara` (195 negara), `.planet` (70), `.suku` (83), `.bahasa` (24), `.sejarah`, `.tokoh`, `.olahraga`, `.singkatan`, `.sinonim`, `.antonim`, `.kamus` |
 | Menu & Umum | **Penemuan perintah** | `.cari <kata>` (cari perintah dan rumus), `.bantuan <cmd>`, `.kategori`, `.menu <kategori>`, `.statistikbot`, `.topcmd` |
 | Menu & Umum | **Kontrol akses** | `.akses <cmd> <role>`, `.matikan <cmd>`, `.hidupkan <cmd>`, `.cooldown <cmd> <detik>` |
 | Menu & Umum | **Progression** | `.streak` (klaim harian beruntun), `.rankgame` (peringkat game) |
@@ -74,8 +78,8 @@ Berbasis Hitori Bot karya [Nazedev](https://github.com/nazedev/hitori), yang dir
 | Menu & Umum | **Panduan** | `.panduan` (langkah mulai pakai, prefix, submenu, perintah owner) |
 | Utilitas | **Kalender & hiburan** | `.cal` (kalender bulan), `.pantun` (pantun acak), `.b64` (encode/decode base64), `.password` (generate password acak) |
 | Utilitas | **Cek anggota** | `.admins` (daftar admin grup), `.saldo` (saldo limit/uang/status) |
-| Utilitas | **Belajar SMA** | `.soal` (5.312 soal, bank soal campuran), `.soalmtk` (120 soal), `.soalipa` (79 soal), `.soalips` (56 soal), `.soalbindon` (63 soal), `.soalppkn` (43 soal), `.namabayi` (nama bayi Indonesia + asal + arti) |
-| Utilitas | **Hiburan & pengetahuan** | `.fakta` (9.051 fakta), `.puisi` (1.730 puisi), `.pantun` (16.873 pantun), `.wisata` (109 destinasi), `.peribahasa` (67 pepatah), `.resep` (130 resep), `.kuliner` (140 kuliner) |
+| Utilitas | **Belajar SMA** | `.soal` (5.312 soal, bank soal campuran), `.hangman` (8.850 kata), `.soalmtk` (120 soal), `.soalipa` (79 soal), `.soalips` (56 soal), `.soalbindon` (63 soal), `.soalppkn` (43 soal), `.namabayi` (nama bayi Indonesia + asal + arti) |
+| Utilitas | **Hiburan & pengetahuan** | `.fakta` (9.051 fakta), `.puisi` (2.630 puisi), `.pantun` (16.873 pantun), `.wisata` (109 destinasi), `.peribahasa` (67 pepatah), `.resep` (130 resep), `.kuliner` (140 kuliner) |
 | Utilitas | **Statistik data** | `.statistikdata` (jumlah seluruh entri data Rynn) |
 | Utilitas | **Author & proyek** | `.author` (info pembuat), `.repo` (repositori), `.channel` (channel resmi), `.donasi` (dukungan), `.versi` (versi bot) |
 | Menu | **Submenu per kategori** | `.botmenu`, `.groupmenu` (`.grupmenu`), `.searchmenu`, `.downloadmenu`, `.quotesmenu`, `.toolsmenu`, `.aimenu`, `.randommenu`, `.stalkermenu`, `.animemenu`, `.gamemenu`, `.funmenu`, `.edukasimenu`, `.ownermenu`, `.authormenu` |
@@ -540,6 +544,24 @@ Semua perintah memakai prefix default `.` `!` atau `+` (atur di `settings.js`).
 | `.ekonomi` | Ringkasan harga limit, hadiah, dan saldo |
 | `.gameinfo` | Cooldown dan aturan game (daily, rampok, begal, slot, casino, samgong) |
 | `.panduan` | Panduan singkat mulai pakai Rynn |
+| `.explore edukasi` | Jelajahi perintah per kategori |
+| `.randomcmd` | Perintah acak beserta contoh |
+| `.riwayat` | Riwayat perintah terakhir |
+| `.shortcut r rumus` / `.pintasan` | Pintasan perintah pribadi |
+| `.todo belajar` | Daftar tugas pribadi |
+| `.peraturan` | Atur atau lihat peraturan grup |
+| `.icebreak` | Kalimat pemancing obrolan |
+| `.dompet` | Ringkasan uang, limit, streak, quest |
+| `.topuang` / `.toplimit` | Peringkat uang atau limit |
+| `.hadiah` | Daftar hadiah dan syaratnya |
+| `.questmingguan` | Quest mingguan |
+| `.dailykalender` | Kalender klaim harian |
+| `.papanperingkat` | Peringkat game |
+| `.trivia` | Kuis acak dari bank data |
+| `.dataset` | Daftar dataset |
+| `.rekomendasi kata` | Saran perintah terkait |
+| `.statistikdata penuh` | Statistik semua dataset |
+| `.tabel kopi, teh, susu` | Tabel ASCII sederhana |
 | `.help` | Bantuan umum dan perintah sering dipakai |
 | `.contoh rumus` | Contoh pemakaian perintah |
 | `.alias rumus` | Daftar alias perintah |
