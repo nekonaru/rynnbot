@@ -63,18 +63,19 @@ Berbasis Hitori Bot karya [Nazedev](https://github.com/nazedev/hitori), yang dir
 | Menu & Umum | **Penemuan lanjutan** | `.help`, `.contoh <cmd>`, `.alias <cmd>`, `.cmdlist [kategori]`, `.saran <kata>` |
 | Menu & Umum | **Owner lanjutan** | `.envstatus` (nama variabel saja), `.backuplist`, `.sesi`, `.setmotd <teks>` |
 | Menu & Umum | **Generator menu** | `.menu <kategori>` kini menampilkan submenu asli dari registry, bukan petunjuk |
-| Utilitas | **Pengetahuan Indonesia** | `.sejarah` (30 peristiwa), `.tokoh` (21 tokoh), `.olahraga` (40 cabang), `.singkatan` (100), `.sinonim` (57), `.antonim` (52), `.kamus` |
+| Utilitas | **Data edukasi baru** | `.matauang` (56 mata uang), `.budaya`, `.tarian`, `.rumahadat`, `.alatmusik`, `.batik` |
+| Utilitas | **Pengetahuan Indonesia** | `.negara` (187 negara), `.planet` (31), `.suku` (83), `.bahasa` (24), `.sejarah`, `.tokoh`, `.olahraga`, `.singkatan`, `.sinonim`, `.antonim`, `.kamus` |
 | Menu & Umum | **Penemuan perintah** | `.cari <kata>` (cari perintah dan rumus), `.bantuan <cmd>`, `.kategori`, `.menu <kategori>`, `.statistikbot`, `.topcmd` |
 | Menu & Umum | **Kontrol akses** | `.akses <cmd> <role>`, `.matikan <cmd>`, `.hidupkan <cmd>`, `.cooldown <cmd> <detik>` |
 | Menu & Umum | **Progression** | `.streak` (klaim harian beruntun), `.rankgame` (peringkat game) |
-| Utilitas | **Sistem rumus** | `.rumus` dengan 35 kategori dan 4.013 rumus: halaman 12 entri, `.rumus cari`, `.rumus detail <id>`, `.rumus random [kategori]`, `.rumus sub <kategori>`, `.rumus statistik` |
+| Utilitas | **Sistem rumus** | `.rumus` dengan 35 kategori dan 11.013 rumus: halaman 12 entri, `.rumus cari`, `.rumus detail <id>`, `.rumus random [kategori]`, `.rumus sub <kategori>`, `.rumus statistik` |
 | Menu & Umum | **Diagnosa** | `.diagnosa` (owner): cek Node.js, ffmpeg, status kunci API tanpa menampilkan nilai, tipe database, zona waktu, jumlah entri data |
 | Menu & Umum | **Ekonomi** | `.ekonomi` (harga limit, hadiah kuis/soal/hangman, saldo), `.gameinfo` (cooldown dan aturan game) |
 | Menu & Umum | **Panduan** | `.panduan` (langkah mulai pakai, prefix, submenu, perintah owner) |
 | Utilitas | **Kalender & hiburan** | `.cal` (kalender bulan), `.pantun` (pantun acak), `.b64` (encode/decode base64), `.password` (generate password acak) |
 | Utilitas | **Cek anggota** | `.admins` (daftar admin grup), `.saldo` (saldo limit/uang/status) |
-| Utilitas | **Belajar SMA** | `.soal` (1.312 soal, bank soal campuran), `.soalmtk` (120 soal), `.soalipa` (79 soal), `.soalips` (56 soal), `.soalbindon` (63 soal), `.soalppkn` (43 soal), `.namabayi` (nama bayi Indonesia + asal + arti) |
-| Utilitas | **Hiburan & pengetahuan** | `.fakta` (2.395 fakta), `.puisi` (391 puisi), `.pantun` (16.473 pantun), `.wisata` (109 destinasi), `.peribahasa` (67 pepatah), `.resep` (130 resep), `.kuliner` (140 kuliner) |
+| Utilitas | **Belajar SMA** | `.soal` (2.512 soal, bank soal campuran), `.soalmtk` (120 soal), `.soalipa` (79 soal), `.soalips` (56 soal), `.soalbindon` (63 soal), `.soalppkn` (43 soal), `.namabayi` (nama bayi Indonesia + asal + arti) |
+| Utilitas | **Hiburan & pengetahuan** | `.fakta` (5.595 fakta), `.puisi` (791 puisi), `.pantun` (16.873 pantun), `.wisata` (109 destinasi), `.peribahasa` (67 pepatah), `.resep` (130 resep), `.kuliner` (140 kuliner) |
 | Utilitas | **Statistik data** | `.statistikdata` (jumlah seluruh entri data Rynn) |
 | Utilitas | **Author & proyek** | `.author` (info pembuat), `.repo` (repositori), `.channel` (channel resmi), `.donasi` (dukungan), `.versi` (versi bot) |
 | Menu | **Submenu per kategori** | `.botmenu`, `.groupmenu` (`.grupmenu`), `.searchmenu`, `.downloadmenu`, `.quotesmenu`, `.toolsmenu`, `.aimenu`, `.randommenu`, `.stalkermenu`, `.animemenu`, `.gamemenu`, `.funmenu`, `.edukasimenu`, `.ownermenu`, `.authormenu` |
@@ -484,7 +485,7 @@ Semua perintah memakai prefix default `.` `!` atau `+` (atur di `settings.js`).
 | `.pair` | Cari pasangan acak di grup |
 | `.rumus matematika 1` | Rumus pelajaran per halaman (12 entri) |
 | `.rumus cari energi` | Cari rumus lintas kategori |
-| `.rumus detail MAT-0001` | Detail satu rumus |
+| `.rumus detail MAT-00001` | Detail satu rumus |
 | `.rumus random fisika` | Rumus acak dari kategori |
 | `.rumus sub geometri` | Daftar subkategori |
 | `.rumus statistik` | Jumlah rumus per kategori |

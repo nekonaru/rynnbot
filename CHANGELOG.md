@@ -1,5 +1,31 @@
 # Changelog
 
+## v6.2.0
+
+Rynn v6.2.0 menaikkan target data dan rumus secara besar-besaran dan menambah perintah data edukasi baru.
+
+### Data masif
+
+- `lib/data-v62.js`: 4.800 fakta hitung, 400 pantun, 400 puisi, 656 kata Hangman, dan 2.000 soal matematika.
+- Dataset inti: FAKTA 5.595, PANTUN 16.873, PUISI 791, Hangman 1.252, SOAL 2.512.
+- `lib/data-edukasi.js`: 56 mata uang, 16 negara tambahan, 46 suku tambahan, 22 bahasa tambahan, 10 planet tambahan, serta data danau, gunung, pulau, sungai, dan budaya.
+- Dataset terkait: NEGARA 187, PLANET 31, SUKU 83, BAHASA 24.
+
+### Rumus
+
+- `lib/rumus/tambahan5.js` menambah 7.000 rumus dari 35 keluarga rumus standar.
+- Total rumus sekarang **11.013** dalam 35 kategori, melewati target revisi 10.000.
+
+### Perintah baru
+
+- `.matauang`, `.budaya`, `.tarian`, `.rumahadat`, `.alatmusik`, `.batik`.
+- Semua memakai renderer daftar seragam: entri acak di atas, daftar bernomor per halaman, dan petunjuk cari atau detail.
+
+### Audit
+
+- `npm run check` lolos (153 file), **106 tes lolos**.
+- Tes integritas diperbarui mengikuti jumlah dataset baru. CI hijau sebelum tag `v6.2.0`.
+
 ## v6.1.0
 
 Rynn v6.1.0 mengejar target data dan rumus: rumus menembus 4.000 entri, fakta menembus 2.000, dan pantun jauh melebihi target.

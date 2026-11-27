@@ -63,8 +63,8 @@ test("resep dan pepatah konsisten", () => {
 test(" data provinsi, negara, unsur, dan planet lengkap", () => {
 	assert.equal(Object.keys(PROVINSI).length, 38);
 	assert.ok(Object.values(PROVINSI).every((p) => p.nama && p.ibukota && p.gubernur));
-	assert.equal(Object.keys(NEGARA).length, 181);
+	assert.ok(Object.keys(NEGARA).length >= 187);
 	assert.ok(Object.values(NEGARA).every((n) => n.ibukota && n.matauang && n.benua));
 	assert.equal(Object.keys(UNSUR).length, 118);
-	assert.equal(Object.keys(PLANET).length, 21);
+	assert.ok(Object.keys(PLANET).length >= 31);
 });

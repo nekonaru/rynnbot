@@ -57,6 +57,7 @@ import { lihatQuest, tandaiQuest, klaimQuest } from "./lib/quest.js";
 import { SEJARAH, TOKOH, OLAHRAGA, SINGKATAN, SINONIM, ANTONIM } from "./lib/data-v5.js";
 import { bangunMenu, kategoriDariNama, ringkasanKategori } from "./lib/menu-builder.js";
 import { formatDaftar, formatDetail } from "./lib/daftar.js";
+import { MATAUANG, NEGARA_TAMBAHAN, SUKU_TAMBAHAN, BAHASA_TAMBAHAN, PLANET_TAMBAHAN, DANAU_TAMBAHAN, GUNUNG_TAMBAHAN, PULAU_TAMBAHAN, SUNGAI_TAMBAHAN, BUDAYA } from "./lib/data-edukasi.js";
 import { FIRST_SETUP_MARKER, firstSetupStates, firstSetupStepText, sendFirstSetupIntro } from './src/setup-wizard.js';
 import { ytMp4, ytMp3, ytMp4Stream } from "./lib/scraper.js";
 import { GroupUpdate, LoadDataBase, extractNativeFlowResponseId } from "./src/message.js";
@@ -6476,6 +6477,12 @@ Select Bot Settings:
 │${setv} ${prefix}sinonim
 │${setv} ${prefix}antonim
 │${setv} ${prefix}kamus
+│${setv} ${prefix}matauang
+│${setv} ${prefix}budaya
+│${setv} ${prefix}tarian
+│${setv} ${prefix}rumahadat
+│${setv} ${prefix}alatmusik
+│${setv} ${prefix}batik
 │${setv} ${prefix}diagnosa
 │${setv} ${prefix}basis
 │${setv} ${prefix}durasi
@@ -6966,6 +6973,12 @@ Select Bot Settings:
 │${setv} ${prefix}sinonim
 │${setv} ${prefix}antonim
 │${setv} ${prefix}kamus
+│${setv} ${prefix}matauang
+│${setv} ${prefix}budaya
+│${setv} ${prefix}tarian
+│${setv} ${prefix}rumahadat
+│${setv} ${prefix}alatmusik
+│${setv} ${prefix}batik
 │${setv} ${prefix}diagnosa
 │${setv} ${prefix}basis
 │${setv} ${prefix}durasi
@@ -7098,6 +7111,12 @@ Select Bot Settings:
 │${setv} ${prefix}sinonim
 │${setv} ${prefix}antonim
 │${setv} ${prefix}kamus
+│${setv} ${prefix}matauang
+│${setv} ${prefix}budaya
+│${setv} ${prefix}tarian
+│${setv} ${prefix}rumahadat
+│${setv} ${prefix}alatmusik
+│${setv} ${prefix}batik
 │${setv} ${prefix}diagnosa
 │${setv} ${prefix}basis
 │${setv} ${prefix}durasi
@@ -8777,6 +8796,28 @@ Select Bot Settings:
 					if (!pesan) return m.reply("Contoh: .setmotd Selamat datang di Rynn");
 					global.motd = pesan.slice(0, 200);
 					return m.reply("Pesan hari ini diperbarui.");
+				}
+				break;
+			case "matauang":
+				{
+					const q = (text || "").trim().toUpperCase();
+					if (!q) return m.reply(formatDaftar({ judul: "Mata Uang Dunia", data: MATAUANG, format: ([kode, nama, simbol, negara]) => `*${kode}* ${nama} (${simbol}) - ${negara}`, contoh: ["Ketik .matauang USD untuk detail", "Ketik .matauang Rp untuk cari simbol"] }));
+					const found = MATAUANG.filter(([kode, nama, simbol, negara]) => kode === q || nama.toUpperCase().includes(q) || simbol.includes(q) || negara.toUpperCase().includes(q));
+					return found.length ? m.reply(formatDaftar({ judul: "Hasil Mata Uang", data: found, denganAcak: false, format: ([kode, nama, simbol, negara]) => `*${kode}* ${nama} (${simbol}) - ${negara}` })) : m.reply("Mata uang tidak ditemukan.");
+				}
+				break;
+			case "budaya":
+			case "tarian":
+			case "rumahadat":
+			case "alatmusik":
+			case "batik":
+				{
+					const jenis = { budaya: null, tarian: "tari", rumahadat: "rumah adat", alatmusik: "alat musik", batik: "batik" }[command];
+					const q = (text || "").trim().toLowerCase();
+					const data = jenis ? BUDAYA.filter((b) => b[1] === jenis) : BUDAYA;
+					if (!q) return m.reply(formatDaftar({ judul: `Budaya Indonesia${jenis ? " " + jenis : ""}`, data, format: ([nama, tipe, daerah]) => `*${nama}* (${tipe}, ${daerah})`, contoh: ["Ketik .budaya <nama> untuk detail"] }));
+					const found = data.filter((b) => b[0].toLowerCase().includes(q) || b[2].toLowerCase().includes(q));
+					return found.length ? m.reply(formatDaftar({ judul: "Hasil Budaya", data: found, denganAcak: false, format: ([nama, tipe, daerah]) => `*${nama}* (${tipe}, ${daerah})` })) : m.reply("Budaya tidak ditemukan.");
 				}
 				break;
 			case "help":

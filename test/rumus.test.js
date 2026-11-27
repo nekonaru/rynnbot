@@ -18,7 +18,7 @@ test("id rumus unik dan field lengkap", () => {
 	assert.equal(new Set(ids).size, ids.length, "id duplikat");
 	for (const r of semua) {
 		assert.ok(r.nama && r.rumus && r.variabel && r.kategori && r.subkategori);
-		assert.match(r.id, /^[A-Z]{3}-\d{4}$/);
+		assert.match(r.id, /^[A-Z]{3}-\d{5}$/);
 	}
 });
 
