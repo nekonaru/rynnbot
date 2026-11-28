@@ -7,7 +7,7 @@ test("generator menu memakai registry", () => {
 	const teks = bangunMenu("edukasi", "•", ".");
 	assert.ok(teks && teks.includes(".rumus"));
 	assert.match(teks, /「 \*EDUKASI\* 」/);
-	assert.equal(kategoriDariNama("grup"), "GROUP");
+	assert.equal(kategoriDariNama("grup"), "GRUP");
 	assert.equal(kategoriDariNama("tidak-ada"), null);
 	assert.match(ringkasanKategori(), /EDUKASI/);
 });

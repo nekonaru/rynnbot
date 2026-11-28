@@ -1,5 +1,42 @@
 # Changelog
 
+## v21.0.0
+
+﻿## v21.0.0
+
+Rynn v21.0.0 merapikan struktur menu dan `allmenu`. Tidak ada perintah baru dan tidak ada perubahan perilaku perintah. Yang berubah hanya kategori tempat perintah ditampilkan.
+
+### Masalah yang diperbaiki
+
+- Sebelum rilis ini, 490 dari 812 perintah menumpuk di kategori BOT karena penambahan perintah dari v12 sampai v20 disisipkan di satu titik.
+- `.menu <kategori>` tidak intuitif karena kategori lama tidak menggambarkan fungsi perintah.
+- `docs/COMMANDS.md` mengikuti kategori yang sama sehingga sulit dipakai sebagai indeks.
+
+### Taksonomi baku
+
+ fourteen kategori: UMUM, BOT, GRUP, EKONOMI, GAME, TURNAMEN, EDUKASI, AI, MEDIA, PENCARIAN, KOMUNITAS, STATISTIK, KEAMANAN, dan OWNER.
+ Setiap perintah masuk tepat satu kategori berdasarkan fungsi utamanya. Alias kategori lama tetap dikenal, misalnya `edukasi`, `liga`, `cari`, dan `owner`.
+
+### Hasil
+
+- Kategori terbesar turun dari 490 perintah menjadi 124 perintah.
+- Distribusi akhir: EDUKASI 124, GAME 107, GRUP 78, OWNER 68, AI 67, KOMUNITAS 64, EKONOMI 60, MEDIA 59, UMUM 47, KEAMANAN 38, STATISTIK 37, BOT 28, PENCARIAN 21, TURNAMEN 20.
+- `allmenu` memakai urutan kategori baku dengan pagination yang sama.
+- `scripts/audit-menu.js` masuk CI dan gagal bila ada kategori di luar taksonomi atau penumpukan di atas 200 perintah.
+- `docs/COMMANDS.md` dihasilkan ulang dari registry.
+
+### Audit
+
+- 5 tes unit baru di `test/v21.test.js`. Total **233 tes lolos**.
+- `npm run check` lolos (261 file).
+- `npm run audit:menu`: 812 perintah, 14 kategori, nol kategori asing, nol penumpukan.
+
+### Batas
+
+- Tidak menambah perintah, kategori di luar taksonomi, atau perubahan perilaku.
+- Review independen menemukan lima masalah, semuanya diperbaiki sebelum rilis, termasuk `.menu pencarian` yang tidak resolve, alias `quotes` yang salah kategori, border ganda di akhir `allmenu`, serta `ping`, `pintasan`, dan `terbilang` yang salah kategori.
+- Tidak menambah dependency berat.
+
 ## v20.0.0
 
 ﻿## v20.0.0
