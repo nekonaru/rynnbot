@@ -1,5 +1,43 @@
 # Changelog
 
+## v13.0.0
+
+﻿## v13.0.0
+
+Rynn v13.0.0 menambah 88 perintah baru pada sembilan kelompok fitur, tanpa dependency baru dan tanpa mengubah desain v12.
+
+### Fitur baru
+
+- Akun dan identitas: `.profilkartu`, `.bio`, `.xp`, `.xptop`, `.badge`, `.badgeberi`, `.badgehapus`, `.identitas`.
+- Ekonomi simulasi: `.rekening`, `.arisan`, `.kreditskor`, `.asuransiklaim`, `.pajaksimulasi`, `.grafikpengeluaran`, `.pendapatanharian`, `.donasikampanye`.
+- Komunitas: `.guild`, `.temanrekomendasi`, `.perkenalan`, `.sapagrup`, `.icekartu`, `.komunitasstatistik`.
+- Game: `.sudoku`, `.game2048`, `.kartuingatan`, `.tebaktokoh`, `.tebaklagu`, `.riddleai`, `.gameharian`, `.gamepass`, `.quizturnamen`, `.rekapgame`.
+- Edukasi: `.kosakataharian`, `.kosakatacari`, `.ejaan`, `.tatabahasa`, `.terjemahbalik`, `.pantunbuat`, `.puisibuat`, `.resepcari`, `.sejarahharian`, `.rumustantangan`.
+- Produktivitas: `.target`, `.proyek`, `.catatcari`, `.cattag`, `.agendaekspor`, `.absenbulanan`.
+- Grup: `.admindaftar`, `.admintambah`, `.peraturankategori`, `.peraturansemua`, `.linkaman`, `.spamdeteksi`, `.grupkartu`, `.grupaktivitas`, `.lapordetail`.
+- Media: `.stikerteks`, `.stikerkartu`, `.stickergambar`, `.fotoprofil`, `.kartuundangan`, `.posterucapan`, `.diagramlingkaran`, `.tabeldua`.
+- AI: `.aimemori`, `.ailupa`, `.aipersona`, `.aidebat`, `.airangkum`, `.aireviewkode`, `.airencana`, `.aibatas`. Memori AI bersifat opt-in dan bisa dihapus user.
+- Owner: `.relaystatus`, `.deploystatus`, `.backupverifikasi`, `.restorediff`, `.sesilist`, `.databasemigrasi`, `.databaseinfopenuh`, `.logekspor`, `.ratelimit`, `.domainblokir`, `.maintenancealasan`, `.auditekspor`.
+
+### Sistem
+
+- Modul murni di `lib/v13/` memisahkan logika dari router agar mudah diuji.
+- State baru memakai batas ukuran dan tidak menyimpan nilai rahasia.
+- Semua balasan baru lewat renderer terpadu dari v12.
+
+### Audit
+
+- 11 tes unit baru di `test/v13.test.js`, termasuk cabang invalid. Total **162 tes lolos**.
+- `npm run check` lolos (208 file). Audit menu: 958 case, 683 perintah menu unik, semua punya implementasi.
+- Coverage: 89,96 persen baris, 76,45 persen cabang, 86,69 persen fungsi.
+- Import handler.js berhasil dengan semua named export tersedia.
+
+### Batas
+
+- Rekening, arisan, kredit, asuransi, dan pajak adalah simulasi bot, bukan produk nyata.
+- Tidak menambah fitur waktu, kesehatan, atau Islami.
+- Tidak menambah dependency berat.
+
 ## v12.0.0
 
 Rynn v12.0.0 adalah update besar besaran yang menambah 68 perintah baru dan memperkenalkan Rynn Design System pada tiga permukaan: percakapan WhatsApp, CLI, dan panel lokal.

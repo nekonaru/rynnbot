@@ -62,6 +62,8 @@ global.fetchApi = async (endpoint = "/", data = {}, options = {}) => {
 				}
 			}
 			const apiName = typeof options.api === "number" ? apiList[options.api - 1] : options.name;
+			const baseUrl = apiName ? global.APIs[apiName] || apiName : global.APIs.naze;
+			if ((global.domainBlokir || []).some((d) => String(baseUrl).includes(d))) return reject(new Error(`[Fetch Error] Domain diblokir: ${baseUrl}`));
 			const base = apiName ? global.APIs[apiName] || apiName : global.APIs.naze;
 			const apikey = global.APIKeys[base] || "";
 			let method = (options.method || "GET").toUpperCase();

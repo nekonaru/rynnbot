@@ -89,6 +89,15 @@ Berbasis Hitori Bot karya [Nazedev](https://github.com/nazedev/hitori), yang dir
 | Menu & Umum | **Produktivitas v12** | `.agendaminggu`, `.absengrafik`, `.pollhasil`, `.rapatringkas`, `.notulencari`, `.tugastambah`, `.tugasselesai`, `.tugaslist`, `.peraturanversi`, `.peringatan`, `.peringatanlist`, `.moderasiskor`, `.laporstatus`, `.adminlog` |
 | Menu & Umum | **Media dan AI v12** | `.kartuwarna`, `.posterteks`, `.kartuucapan`, `.komikpendek`, `.galeri`, `.stikeranimasi`, `.aigaya`, `.aitopik`, `.aicontoh`, `.aibatalkan`, `.aikuota`, `.aibandingkan` |
 | Menu & Umum | **Owner v12** | `.health`, `.metrik`, `.logringkas`, `.auditcari`, `.diagnosapenuh`, `.modehemat`, `.cacheinfo`, `.memori`, `.dashboardbuka`, `.dashboardtutup` |
+| Menu & Umum | **Akun dan identitas v13** | `.profilkartu`, `.bio`, `.xp`, `.xptop`, `.badge`, `.identitas` |
+| Menu & Umum | **Ekonomi v13** | `.rekening`, `.arisan`, `.kreditskor`, `.asuransiklaim`, `.pajaksimulasi`, `.grafikpengeluaran`, `.pendapatanharian` |
+| Menu & Umum | **Komunitas v13** | `.guild`, `.temanrekomendasi`, `.perkenalan`, `.sapagrup`, `.icekartu`, `.komunitasstatistik` |
+| Menu & Umum | **Game v13** | `.sudoku`, `.game2048`, `.kartuingatan`, `.tebaktokoh`, `.tebaklagu`, `.riddleai`, `.gameharian`, `.gamepass`, `.quizturnamen`, `.rekapgame` |
+| Menu & Umum | **Edukasi v13** | `.kosakataharian`, `.kosakatacari`, `.ejaan`, `.tatabahasa`, `.terjemahbalik`, `.pantunbuat`, `.puisibuat`, `.resepcari`, `.sejarahharian`, `.rumustantangan` |
+| Menu & Umum | **Produktivitas v13** | `.target`, `.proyek`, `.catatcari`, `.cattag`, `.agendaekspor`, `.absenbulanan` |
+| Menu & Umum | **Grup v13** | `.admindaftar`, `.admintambah`, `.peraturankategori`, `.peraturansemua`, `.linkaman`, `.spamdeteksi`, `.grupkartu`, `.grupaktivitas`, `.lapordetail` |
+| Menu & Umum | **Media dan AI v13** | `.stikerteks`, `.stikerkartu`, `.stickergambar`, `.fotoprofil`, `.kartuundangan`, `.posterucapan`, `.diagramlingkaran`, `.tabeldua`, `.aimemori`, `.ailupa`, `.aipersona`, `.aidebat`, `.airangkum`, `.aireviewkode`, `.airencana`, `.aibatas` |
+| Menu & Umum | **Owner v13** | `.relaystatus`, `.deploystatus`, `.backupverifikasi`, `.restorediff`, `.sesilist`, `.databasemigrasi`, `.databaseinfopenuh`, `.logekspor`, `.ratelimit`, `.domainblokir`, `.maintenancealasan`, `.auditekspor` |
 | Menu & Umum | **Audit dan optimalisasi v11.2** | Antrean per user, state game tanpa kebocoran, konfirmasi transfer batch, akses alias, import berat ditunda, Levenshtein dua baris, cache statistik rumus, dan ffmpeg non-blokir |
 | Menu & Umum | **Eksplorasi perintah** | `.explore`, `.randomcmd`, `.riwayat`, `.shortcut`, `.pintasan`, `.dataset`, `.rekomendasi` |
 | Menu & Umum | **Produktivitas chat** | `.todo` (tugas pribadi), `.catatancari`, `.peraturan`, `.icebreak`, `.tabel` |
@@ -577,6 +586,16 @@ Semua perintah memakai prefix default `.` `!` atau `+` (atur di `settings.js`).
 | `.ekonomi` | Ringkasan harga limit, hadiah, dan saldo |
 | `.gameinfo` | Cooldown dan aturan game (daily, rampok, begal, slot, casino, samgong) |
 | `.panduan` | Panduan singkat mulai pakai Rynn |
+| `.profilkartu` / `.xp` / `.xptop` | Kartu profil, pengalaman, dan papan peringkat |
+| `.rekening buat liburan` / `.arisan buat Kelas 50000` | Dompet dan arisan simulasi |
+| `.guild buat Rynn` / `.guild papan` | Guild komunitas |
+| `.sudoku buat mudah` / `.game2048` | Game baru berbasis teks |
+| `.kosakataharian` / `.rumustantangan` | Kosakata dan tantangan rumus |
+| `.target buat baca 20` / `.proyek papan` | Target dan papan proyek |
+| `.admindaftar` / `.peraturansemua` / `.grupkartu` | Administrasi grup |
+| `.stikerteks halo` / `.kartuundangan Rapat 2026-12-01` | Kartu dan stiker lokal |
+| `.aimemori on` / `.aipersona guru` / `.aidebat topik` | AI dengan memori opt-in |
+| `.health` / `.backupverifikasi` / `.ratelimit` | Observability, owner saja |
 | `.bantuanku` / `.carifitur <kata>` / `.coba <perintah>` | Bantuan adaptif tanpa efek samping |
 | `.turnamen2 buat` / `.turnamen2 seed @a @b` / `.turnamen2 juara @nama` | Turnamen lanjutan dengan seed dan arsip |
 | `.liga2 buat` / `.liga2 anggota @nama` / `.liga2 skor` | Liga grup lanjutan |
