@@ -1,4 +1,5 @@
 import "./settings.js";
+import { buatKejuaraan, catatHasil as catatHasilMesin, klasemen as klasemenMesin, jadwalkan as jadwalkanMesin, formatRingkas as formatRingkasMesin, formatKlasemen as formatKlasemenMesin, pertandinganTersedia } from "./lib/turnamen-mesin.js";
 import { catatLog } from "./lib/log-terstruktur.js";
 import { aman as pathAman, daftarAman } from "./lib/path-aman.js";
 import { cocokJawaban } from "./lib/game-jawaban.js";
@@ -10696,6 +10697,42 @@ Select Bot Settings:
 					const arg = (text || "").trim();
 					const sub = (arg.split(/\s+/)[0] || "bantuan").toLowerCase();
 					const sisa = arg.split(/\s+/).slice(1);
+					if (sub === "mesin") {
+						const aksi = (sisa[0] || "lihat").toLowerCase();
+						global.turnamenMesin = global.turnamenMesin || {};
+						if (aksi === "buat") {
+							if (!isCreator && !m.isAdmin) return m.reply(global.mess.admin);
+							const mode = sisa[1] || "single";
+							const nama = sisa.slice(2).join(" ") || "Turnamen Mesin";
+							const peserta = (m.mentionedJid || []).map((j) => "@" + j.split("@")[0]);
+							const seedAwal = turnamenAktif(db, m.chat)?.seed || [];
+							const kejuaraan = buatKejuaraan({ nama, mode, peserta, seed: seedAwal });
+							if (!kejuaraan) return m.reply("Minimal dua peserta dan mode: single, double, atau roundrobin.");
+							global.turnamenMesin[m.chat] = kejuaraan;
+							return kirimRespons(m, { judul: "Turnamen dibuat", isi: formatRingkasMesin(kejuaraan), footer: ".turnamen2 mesin lanjut | hasil <a> <b> <pemenang>" });
+						}
+						const kejuaraan = global.turnamenMesin[m.chat];
+						if (!kejuaraan) return m.reply("Belum ada turnamen mesin. Ketik .turnamen2 mesin buat <mode> <nama> dengan tag peserta.");
+						if (aksi === "hasil") {
+							if (!isCreator && !m.isAdmin) return m.reply(global.mess.admin);
+							if (!sisa[3]) return m.reply("Contoh: .turnamen2 mesin hasil A B A");
+							const hasil = catatHasilMesin(kejuaraan, { a: sisa[1], b: sisa[2], pemenang: sisa[3] });
+							if (hasil.selesai) delete global.turnamenMesin[m.chat];
+							return hasil.ok ? m.reply(hasil.selesai ? `Turnamen selesai. Juara: *${kejuaraan.juara}*` : "Hasil dicatat.") : m.reply(hasil.alasan);
+						}
+						if (aksi === "klasemen") return kirimRespons(m, { judul: "Klasemen", isi: formatKlasemenMesin(kejuaraan) });
+						if (aksi === "jadwal") {
+							const j = jadwalkanMesin(kejuaraan, sisa[1], sisa[2], sisa.slice(3).join(" "));
+							return j ? m.reply(`Jadwal ${sisa[1]} vs ${sisa[2]} dicatat.`) : m.reply("Contoh: .turnamen2 mesin jadwal A B 19:00");
+						}
+						if (aksi === "lihat") return kirimRespons(m, { judul: "Turnamen mesin", isi: formatRingkasMesin(kejuaraan), catatan: `Jadwal: ${kejuaraan.jadwal.length} entri` });
+						const tersedia = pertandinganTersedia(kejuaraan);
+						return kirimRespons(m, {
+							judul: "Pertandingan berikutnya",
+							isi: tersedia.length ? tersedia.slice(0, 8).map((x, i) => `${i + 1}. ${x.a} vs ${x.b}`).join("\n") : formatKosong("Semua pertandingan selesai."),
+						});
+					}
+
 					if (sub === "buat") {
 						if (!isCreator && !m.isAdmin) return m.reply(global.mess.admin);
 						const mode = ["single", "double"].includes(sisa[sisa.length - 1]) ? sisa[sisa.length - 1] : "single";
@@ -10740,7 +10777,7 @@ Select Bot Settings:
 					}
 					return kirimRespons(m, {
 						judul: "Turnamen lanjutan",
-						isi: ".turnamen2 buat [nama] [single|double]\n.turnamen2 daftar\n.turnamen2 tambah @nama\n.turnamen2 seed @a @b\n.turnamen2 hasil @menang @kalah\n.turnamen2 juara @nama\n.turnamen2 arsip\n.turnamen2 ingat <tim> <waktu>",
+						isi: ".turnamen2 buat [nama] [single|double]\n.turnamen2 daftar\n.turnamen2 tambah @nama\n.turnamen2 seed @a @b\n.turnamen2 hasil @menang @kalah\n.turnamen2 juara @nama\n.turnamen2 arsip\n.turnamen2 ingat <tim> <waktu>\n.turnamen2 mesin buat <single|double|roundrobin> <nama> (tag peserta)\n.turnamen2 mesin lanjut | hasil <a> <b> <pemenang> | klasemen | jadwal | lihat",
 					});
 				}
 				break;
