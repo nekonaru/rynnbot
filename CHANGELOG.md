@@ -1,5 +1,31 @@
 # Changelog
 
+## v18.0.0
+
+﻿## v18.0.0
+
+Rynn v18.0.0 melanjutkan pendalaman fitur yang sudah ada. Fokusnya adalah path aman, log tanpa secret, transaksi poin, dan dokumentasi yang dihasilkan dari registry. Tidak ada kategori perintah baru.
+
+### Perubahan
+
+- `lib/path-aman.js` membatasi restore, sesi, dan pemeriksaan backup ke dalam workspace bot. Traversal dan jalur absolut ditolak.
+- `lib/log-terstruktur.js` menulis log berbentuk JSON denganredaksi nilai kunci, token, kata sandi, dan secret. Log dipanggil pada jalur perintah yang berhasil melewati akses.
+- `.aksesku` kini menampilkan status akun aman dan status terverifikasi sehingga field tersebut benar-benar dibaca.
+- Transfer poin lewat jid memakai `lib/transaksi.js`, sehingga tercatat dan bisa dibatalkan.
+- `scripts/gen-docs.js` menghasilkan `docs/COMMANDS.md` dari registry. Dokumen tidak lagi ditulis manual dan tersedia lewat `npm run docs:gen`.
+
+### Audit
+
+- 5 tes unit baru di `test/v18.test.js`. Total **212 tes lolos**.
+- `npm run check` lolos (256 file).
+- Coverage: 91,32 persen baris, 75,15 persen cabang, 89,69 persen fungsi.
+- Audit router: 1087 case, 812 perintah menu, nol duplikat, nol menu tanpa case.
+
+### Batas
+
+- Tidak menambah kategori perintah, fitur waktu, kesehatan, atau Islami.
+- Lazy loading modul fitur v12 sampai v17 belum diterapkan karena risiko mengubah router. Ini menjadi catatan untuk rilis berikutnya.
+
 ## v17.0.0
 
 ﻿## v17.0.0

@@ -128,6 +128,7 @@ Berbasis Hitori Bot karya [Nazedev](https://github.com/nazedev/hitori), yang dir
 | Menu & Umum | **Konstitusi v16** | `.konstitusi`, `.tandatangan` |
 | Menu & Umum | **Owner v16** | `.ownerringkas`, `.aksesmatriks`, `.limitatur`, `.limitlihat`, `.statebersih`, `.memoripeta`, `.eventlog`, `.jadwalkerja` |
 | Menu & Umum | **Pendalaman v17** | Audit router dan state di CI, transaksi uang terpusat, bracket double elimination, jawaban game seragam, domain blokir di semua jalur jaringan |
+| Menu & Umum | **Dokumentasi otomatis v18** | `docs/COMMANDS.md` dihasilkan dari registry lewat `npm run docs:gen` |
 | Menu & Umum | **Audit dan optimalisasi v11.2** | Antrean per user, state game tanpa kebocoran, konfirmasi transfer batch, akses alias, import berat ditunda, Levenshtein dua baris, cache statistik rumus, dan ffmpeg non-blokir |
 | Menu & Umum | **Eksplorasi perintah** | `.explore`, `.randomcmd`, `.riwayat`, `.shortcut`, `.pintasan`, `.dataset`, `.rekomendasi` |
 | Menu & Umum | **Produktivitas chat** | `.todo` (tugas pribadi), `.catatancari`, `.peraturan`, `.icebreak`, `.tabel` |
