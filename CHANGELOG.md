@@ -1,5 +1,61 @@
 # Changelog
 
+﻿## v25.0.0
+
+Rynn v25.0.0 memperdalam fitur yang sudah ada. Tidak ada keluarga fitur baru yang ditambahkan.
+
+### Dompet dan transaksi
+
+- 17 perintah untuk dompet, anggaran, dan utang. Semua perubahan uang memakai `lib/transaksi.js` dengan jalur rollback.
+- `.dompetpindah`, `.anggaranpakai`, dan `.utangbayar` menolak nominal tidak valid dan saldo kurang.
+
+### Koperasi dan toko
+
+- 14 perintah untuk koperasi dan toko, memakai state yang sama dengan modul v15 dan v16.
+- `.koperasisimpan` dan `.koperasitarik` lewat transaksi terpusat. Toko membatasi stok dan diskon.
+
+### Skor dan turnamen
+
+- 15 perintah untuk skor gabungan, turnamen, dan laga. Data dibaca dari mesin turnamen dan papan yang sudah ada.
+- `.skorTotal` menerima bentuk data angka, array, dan objek.
+
+### Rantai pet, kebun, dan karir
+
+- 15 perintah yang menghubungkan hewan, kebun, dan karir. Hewan membantu panen, hasil kebun jadi makanan, gaji masuk dompet.
+- `.rantai status`, `.rantai papan`, dan `.rantai hadiah` merangkum rantai produksi.
+
+### Pembelajaran dan data
+
+- 14 perintah untuk jalur belajar, kartu hafalan, dan kuis. Data berasal dari dataset lokal yang sudah ada.
+- `.kuisTurnamen` memakai mesin turnamen yang sama dengan pertandingan biasa.
+
+### Grup dan komunitas
+
+- 18 perintah untuk papan grup, proyek, survei, dan reputasi. Semua memanggil modul grup, proyek, dan reputasi yang sudah ada.
+
+### Pengawasan dan studio konten
+
+- 12 perintah pengawasan khusus owner, dengan konfirmasi untuk aksi pemulihan dan penghentian.
+- 8 perintah studio konten yang memakai templat media yang sudah ada.
+
+### Arsitektur
+
+- Delapan modul murni di `lib/v25/` plus `indeks.js` sebagai registi.
+- Semua state baru berbatas ukuran. Anggaran dan utang maksimal 20 entri per user, karya studio maksimal 10.
+
+### Audit
+
+- 11 tes unit baru di `test/v25.test.js`. Total **266 tes lolos**.
+- `npm run check` lolos (295 file).
+- Coverage: 92,39 persen baris, 75,29 persen cabang, 91,15 persen fungsi.
+- Audit router: 1350 case, 1075 perintah menu, nol duplikat, nol menu tanpa case.
+- Audit menu: 1075 perintah, 14 kategori, nol kategori asing.
+
+### Batas
+
+- Tidak menambah kategori di luar 14 kategori baku.
+- Tidak menambah dependency berat. Perintah lama dan alias tetap bekerja.
+
 ## v24.0.0
 
 Rynn v24.0.0 menambahkan sistem otomasi internal untuk owner. Kelompok fitur lain tidak ditambahkan. Seluruh perintah baru masuk kategori OWNER.
