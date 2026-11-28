@@ -119,6 +119,14 @@ Berbasis Hitori Bot karya [Nazedev](https://github.com/nazedev/hitori), yang dir
 | Menu & Umum | **Keamanan v15** | `.kunci`, `.verifikasi`, `.akunaman`, `.logkeamanan` |
 | Menu & Umum | **Media v15** | `.stikerpaket`, `.wallpaperteks`, `.kartupos` |
 | Menu & Umum | **Owner v15** | `.penggunaaktif`, `.grupaktif`, `.perintahmati`, `.cooldownlist`, `.akseslist`, `.whitelisttambah`, `.blacklistalasan`, `.rollback` |
+| Menu & Umum | **Paket v16** | `.paket`, `.undang`, `.referral` simulasi |
+| Menu & Umum | **Artikel v16** | `.artikel`, `.seri`, `.survei` |
+| Menu & Umum | **Koperasi v16** | `.koperasi`, `.inventaris`, `.avatar` |
+| Menu & Umum | **Papan v16** | `.papan` dengan enam mode |
+| Menu & Umum | **Portabilitas v16** | `.pindah`, `.datasehat` |
+| Menu & Umum | **Mode v16** | `.modedebot`, `.fitur` |
+| Menu & Umum | **Konstitusi v16** | `.konstitusi`, `.tandatangan` |
+| Menu & Umum | **Owner v16** | `.ownerringkas`, `.aksesmatriks`, `.limitatur`, `.limitlihat`, `.statebersih`, `.memoripeta`, `.eventlog`, `.jadwalkerja` |
 | Menu & Umum | **Audit dan optimalisasi v11.2** | Antrean per user, state game tanpa kebocoran, konfirmasi transfer batch, akses alias, import berat ditunda, Levenshtein dua baris, cache statistik rumus, dan ffmpeg non-blokir |
 | Menu & Umum | **Eksplorasi perintah** | `.explore`, `.randomcmd`, `.riwayat`, `.shortcut`, `.pintasan`, `.dataset`, `.rekomendasi` |
 | Menu & Umum | **Produktivitas chat** | `.todo` (tugas pribadi), `.catatancari`, `.peraturan`, `.icebreak`, `.tabel` |
@@ -607,6 +615,17 @@ Semua perintah memakai prefix default `.` `!` atau `+` (atur di `settings.js`).
 | `.ekonomi` | Ringkasan harga limit, hadiah, dan saldo |
 | `.gameinfo` | Cooldown dan aturan game (daily, rampok, begal, slot, casino, samgong) |
 | `.panduan` | Panduan singkat mulai pakai Rynn |
+| `.paket list` / `.paket pilih plus` / `.paket status` | Paket layanan simulasi |
+| `.undang buat` / `.referral papan` | Kode undangan dan referral |
+| `.artikel buat Judul` / `.artikel isi <id> <teks>` / `.artikel cari <kata>` | Artikel pribadi |
+| `.survei buat Judul` / `.survei jawab <id> <opsi>` / `.survei hasil <id>` | Survei grup |
+| `.koperasi buat Bersama` / `.koperasi setor 100` / `.koperasi rekap` | Koperasi simulasi |
+| `.inventaris buat kotak` / `.avatar pakai kucing` | Inventaris dan avatar |
+| `.papan umum` / `.papan game` / `.papan kontribusi` | Papan peringkat |
+| `.pindah ekspor confirm` / `.datasehat cek` | Portabilitas dan integritas data |
+| `.modedebot pakai ringkas` / `.fitur flag beta` | Mode dan penanda fitur |
+| `.konstitusi buat Aturan` / `.tandatangan halo` | Konstitusi grup dan tanda tangan |
+| `.ownerringkas` / `.aksesmatriks` / `.jadwalkerja` | Diagnostik owner |
 | `.aturan buat sapa halo hai` / `.aturan uji halo` | Aturan balasan grup |
 | `.poin` / `.poin tukar stiker` / `.hadiahpoin tambah stiker 50` | Poin dan hadiah |
 | `.toko buka warung` / `.lelang buat buku` | Toko dan lelang simulasi |
