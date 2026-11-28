@@ -1,5 +1,43 @@
 # Changelog
 
+## v15.0.0
+
+﻿## v15.0.0
+
+Rynn v15.0.0 menambah 38 perintah baru pada dua belas kelompok fitur, tanpa dependency baru dan tanpa mengubah design system v12.
+
+### Fitur baru
+
+- Aturan dan filter: `.aturan`, `.filter`, dengan aturan yang bisa diuji dan dimatikan.
+- Poin terpadu: `.poin`, `.hadiahpoin`, dengan papan, riwayat, penukaran, dan transfer poin.
+- Toko dan lelang simulasi: `.toko`, `.lelang`.
+- Reputasi: `.reputasi`, `.tepercaya`.
+- Kursus mini: `.kursus`, `.materi`, dengan langkah berurutan dan sertifikat.
+- Keputusan grup: `.keputusan`, `.notulenversi`.
+- Proyek bersama: `.proyekgrup`.
+- Arsip pribadi: `.arsip`, `.cadangan`.
+- Utilitas teks: `.teksrapi`, `.teksbalik`, `.teksulang`, `.tekspotong`, `.teksbersih`, `.teksheksa`, `.teksdariheksa`, `.teksbanding`.
+- Keamanan: `.kunci`, `.verifikasi`, `.akunaman`, `.logkeamanan`. PIN disimpan sebagai hash, bukan teks mentah.
+- Media: `.stikerpaket`, `.wallpaperteks`, `.kartupos`.
+- Owner: `.penggunaaktif`, `.grupaktif`, `.perintahmati`, `.cooldownlist`, `.akseslist`, `.whitelisttambah`, `.blacklistalasan`, `.rollback`.
+
+### Sistem
+
+- Dua belas modul murni di `lib/v15/`.
+- Harga toko dan lelang adalah angka simulasi dari pengguna, bukan data pasar.
+- Semua aksi destruktif memakai konfirmasi dua langkah.
+
+### Audit
+
+- 12 tes unit baru di `test/v15.test.js`, termasuk cabang invalid. Total **187 tes lolos**.
+- `npm run check` lolos (233 file). Audit menu: 1061 case, 786 perintah menu unik, semua punya implementasi.
+- Coverage: 90,88 persen baris, 75,53 persen cabang, 88,62 persen fungsi.
+
+### Batas
+
+- Tidak menambah fitur waktu, kesehatan, atau Islami.
+- Tidak menambah dependency berat.
+
 ## v14.0.0
 
 ﻿## v14.0.0

@@ -108,6 +108,17 @@ Berbasis Hitori Bot karya [Nazedev](https://github.com/nazedev/hitori), yang dir
 | Menu & Umum | **Ekonomi v14** | `.portofolio`, `.dividen`, `.obligasi`, `.emassimulasi`, `.sahamsimulasi`, `.kurssimulasi`, `.inflasisimulasi`, `.warisansimulasi` |
 | Menu & Umum | **Game v14** | `.wordleturnamen`, `.rankinggame`, `.gametim`, `.tebakurutan`, `.kartutaruhan`, `.papanskorharian` |
 | Menu & Umum | **Owner v14** | `.bootinfo`, `.stateinfo`, `.cachebersih`, `.backupinkremental`, `.dbekspor`, `.dbimpor`, `.loglevel`, `.debugmode`, `.ketersediaan` |
+| Menu & Umum | **Aturan v15** | `.aturan`, `.filter` dengan uji dan penonaktifan aturan |
+| Menu & Umum | **Poin v15** | `.poin`, `.hadiahpoin` dengan penukaran dan transfer |
+| Menu & Umum | **Toko v15** | `.toko`, `.lelang` simulasi |
+| Menu & Umum | **Reputasi v15** | `.reputasi`, `.tepercaya` |
+| Menu & Umum | **Kursus v15** | `.kursus`, `.materi` |
+| Menu & Umum | **Keputusan v15** | `.keputusan`, `.notulenversi`, `.proyekgrup` |
+| Menu & Umum | **Arsip v15** | `.arsip`, `.cadangan` |
+| Menu & Umum | **Teks v15** | `.teksrapi`, `.teksbalik`, `.teksulang`, `.tekspotong`, `.teksbersih`, `.teksheksa`, `.teksdariheksa`, `.teksbanding` |
+| Menu & Umum | **Keamanan v15** | `.kunci`, `.verifikasi`, `.akunaman`, `.logkeamanan` |
+| Menu & Umum | **Media v15** | `.stikerpaket`, `.wallpaperteks`, `.kartupos` |
+| Menu & Umum | **Owner v15** | `.penggunaaktif`, `.grupaktif`, `.perintahmati`, `.cooldownlist`, `.akseslist`, `.whitelisttambah`, `.blacklistalasan`, `.rollback` |
 | Menu & Umum | **Audit dan optimalisasi v11.2** | Antrean per user, state game tanpa kebocoran, konfirmasi transfer batch, akses alias, import berat ditunda, Levenshtein dua baris, cache statistik rumus, dan ffmpeg non-blokir |
 | Menu & Umum | **Eksplorasi perintah** | `.explore`, `.randomcmd`, `.riwayat`, `.shortcut`, `.pintasan`, `.dataset`, `.rekomendasi` |
 | Menu & Umum | **Produktivitas chat** | `.todo` (tugas pribadi), `.catatancari`, `.peraturan`, `.icebreak`, `.tabel` |
@@ -596,6 +607,17 @@ Semua perintah memakai prefix default `.` `!` atau `+` (atur di `settings.js`).
 | `.ekonomi` | Ringkasan harga limit, hadiah, dan saldo |
 | `.gameinfo` | Cooldown dan aturan game (daily, rampok, begal, slot, casino, samgong) |
 | `.panduan` | Panduan singkat mulai pakai Rynn |
+| `.aturan buat sapa halo hai` / `.aturan uji halo` | Aturan balasan grup |
+| `.poin` / `.poin tukar stiker` / `.hadiahpoin tambah stiker 50` | Poin dan hadiah |
+| `.toko buka warung` / `.lelang buat buku` | Toko dan lelang simulasi |
+| `.reputasi beri @user 2` / `.reputasi papan` | Reputasi grup |
+| `.kursus mulai dasar` / `.kursus lanjut` / `.kursus sertifikat` | Kursus mini |
+| `.keputusan buat Rapat` / `.proyekgrup papan` | Keputusan dan proyek grup |
+| `.arsip cari kata` / `.cadangan buat confirm` | Arsip dan cadangan pribadi |
+| `.teksheksa halo` / `.teksdariheksa <heksa>` | Konversi teks |
+| `.kunci perintah transfer 1234` | Kunci perintah dengan PIN |
+| `.stikerpaket buat lucu` / `.wallpaperteks halo` | Paket stiker dan wallpaper |
+| `.penggunaaktif` / `.akseslist` / `.rollback <tag> confirm` | Administrasi lanjutan, owner saja |
 | `.privasi` / `.privasi ekspor` / `.privasi hapus confirm` | Kendali data pribadi |
 | `.tiket buat <judul>` / `.tiket status <id>` | Tiket dukungan |
 | `.aset simpan <nama> <isi>` / `.aset cari <tag>` | Pustaka aset pribadi |

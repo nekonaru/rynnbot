@@ -1,4 +1,16 @@
 import "./settings.js";
+import { aturanBuat, aturanAmbil, aturanHapus, aturanMatikan, aturanUji, filterTambah, filterHapus } from "./lib/v15/aturan.js";
+import { tambahPoin, papanPoin, hadiahTambah, hadiahTukar, transferPoin } from "./lib/v15/poin.js";
+import { tokoBuka, tokoTambah, tokoBeli, lelangBuat, lelangTawar, lelangTutup } from "./lib/v15/toko.js";
+import { reputasiBeri, papanReputasi, tepercayaTambah, tepercayaHapus } from "./lib/v15/reputasi.js";
+import { kursusBuat, kursusMulai, kursusLanjut, kursusSelesai, sertifikat, materiTambah, materiCari } from "./lib/v15/kursus.js";
+import { keputusanBuat, keputusanAmbil, keputusanUbah, keputusanArsip, notulenBanding, simpanNotulenVersi } from "./lib/v15/keputusan.js";
+import { proyekBuat as proyekGrupBuat, proyekTugas, proyekAmbil, proyekSelesai, proyekPapan, proyekArsip } from "./lib/v15/proyekgrup.js";
+import { cariLintas, arsipTanggal, arsipRingkas, cadanganBuat, cadanganList } from "./lib/v15/arsip.js";
+import { teksRapi, teksBalik, teksUlang, teksPotong, teksBersih, keHeksa, dariHeksa, teksBanding } from "./lib/v15/teks.js";
+import { kunciPerintah, lepasKunci, logKeamanan } from "./lib/v15/keamanan.js";
+import { paketBuat, paketTambah, paketHapus, wallpaperTeks, kartuPos } from "./lib/v15/media.js";
+import { penggunaAktif, grupAktif, daftarCooldown, daftarAkses, rollbackInfo, alasanBlacklist } from "./lib/v15/owner.js";
 import { ringkasanData, eksporData, formatEkspor, hapusDataPribadi, aturOpsi, batasData } from "./lib/v14/privasi.js";
 import { tiketBuat, tiketAmbil, tiketBalas, tiketTutup, tiketMilik, faqTambah, faqCari } from "./lib/v14/tiket.js";
 import { asetSimpan, asetAmbil, asetHapus, asetTag, asetCari, kontenSimpan, kontenAmbil } from "./lib/v14/aset.js";
@@ -6611,6 +6623,44 @@ Select Bot Settings:
 │${setv} ${prefix}loglevel
 │${setv} ${prefix}debugmode
 │${setv} ${prefix}ketersediaan
+│${setv} ${prefix}aturan
+│${setv} ${prefix}filter
+│${setv} ${prefix}poin
+│${setv} ${prefix}hadiahpoin
+│${setv} ${prefix}toko
+│${setv} ${prefix}lelang
+│${setv} ${prefix}reputasi
+│${setv} ${prefix}tepercaya
+│${setv} ${prefix}kursus
+│${setv} ${prefix}materi
+│${setv} ${prefix}keputusan
+│${setv} ${prefix}notulenversi
+│${setv} ${prefix}proyekgrup
+│${setv} ${prefix}arsip
+│${setv} ${prefix}cadangan
+│${setv} ${prefix}teksrapi
+│${setv} ${prefix}teksbalik
+│${setv} ${prefix}teksulang
+│${setv} ${prefix}tekspotong
+│${setv} ${prefix}teksbersih
+│${setv} ${prefix}teksheksa
+│${setv} ${prefix}teksdariheksa
+│${setv} ${prefix}teksbanding
+│${setv} ${prefix}kunci
+│${setv} ${prefix}verifikasi
+│${setv} ${prefix}akunaman
+│${setv} ${prefix}logkeamanan
+│${setv} ${prefix}stikerpaket
+│${setv} ${prefix}wallpaperteks
+│${setv} ${prefix}kartupos
+│${setv} ${prefix}penggunaaktif
+│${setv} ${prefix}grupaktif
+│${setv} ${prefix}perintahmati
+│${setv} ${prefix}cooldownlist
+│${setv} ${prefix}akseslist
+│${setv} ${prefix}whitelisttambah
+│${setv} ${prefix}blacklistalasan
+│${setv} ${prefix}rollback
 │${setv} ${prefix}anggaran
 │${setv} ${prefix}pengeluaran
 │${setv} ${prefix}pemasukan
@@ -12330,6 +12380,514 @@ Select Bot Settings:
 					if (!isCreator) return m.reply(global.mess.owner);
 					const k = ketersediaan(global);
 					return kirimRespons(m, { judul: "Ketersediaan", isi: `- Dashboard: ${k.dashboard ? "aktif" : "mati"}\n- Relay: ${k.relay ? "aktif" : "mati"}\n- Database: ${k.database}` });
+				}
+				break;
+			case "aturan":
+				{
+					if (!m.isGroup) return m.reply(global.mess.group);
+					if (!isCreator && !m.isAdmin) return m.reply(global.mess.admin);
+					const arg = (text || "").trim();
+					const sub = (arg.split(/\s+/)[0] || "list").toLowerCase();
+					const mt = arg.match(/^\S+\s+(\S+)\s+(\S+)\s+([\s\S]+)$/);
+					if (sub === "buat") {
+						if (!mt) return m.reply("Contoh: .aturan buat sapa halo balas halo juga");
+						const d = aturanBuat(db, m.chat, mt[1], mt[2], mt[3]);
+						return d ? m.reply(`Aturan *${mt[1]}* dibuat.`) : m.reply("Nama sudah ada atau tidak valid.");
+					}
+					if (sub === "hapus") {
+						const nama = arg.split(/\s+/)[1];
+						if (arg.split(/\s+/)[2] !== "confirm") return m.reply("Ketik .aturan hapus <nama> confirm");
+						return aturanHapus(db, m.chat, nama) ? m.reply("Aturan dihapus.") : m.reply("Aturan tidak ditemukan.");
+					}
+					if (sub === "mati") {
+						const mtMati = arg.split(/\s+/);
+						return aturanMatikan(db, m.chat, mtMati[1], false) ? m.reply("Aturan dimatikan.") : m.reply("Aturan tidak ditemukan.");
+					}
+					if (sub === "uji") {
+						const a = aturanUji(db, m.chat, arg.slice(4));
+						return a ? m.reply(`Cocok: *${a.nama}* -> ${a.balasan}`) : m.reply("Tidak ada aturan yang cocok.");
+					}
+					const list = Object.values(db.aturan?.[m.chat] || {});
+					return kirimRespons(m, { judul: "Aturan grup", isi: list.length ? list.map((a) => `- ${a.nama}: ${a.kata} -> ${a.balasan} (${a.aktif ? "aktif" : "mati"})`).join("\n") : formatKosong() });
+				}
+				break;
+			case "filter":
+				{
+					if (!isCreator) return m.reply(global.mess.owner);
+					const arg = (text || "").trim();
+					const sub = arg.split(/\s+/)[0];
+					const kata = arg.slice(sub.length).trim();
+					if (sub === "kata") {
+						const list = filterTambah(db, m.chat, kata);
+						return list ? m.reply(`Kata *${kata}* difilter.`) : m.reply("Kata sudah ada atau tidak valid.");
+					}
+					if (sub === "hapus") {
+						if (!kata.endsWith(" confirm")) return m.reply("Ketik .filter hapus <kata> confirm");
+						return filterHapus(db, m.chat, kata.replace(/\s+confirm$/, "")) ? m.reply("Filter dihapus.") : m.reply("Filter tidak ditemukan.");
+					}
+					return kirimRespons(m, { judul: "Filter kata", isi: (db.filterKata?.[m.chat] || []).join("\n") || formatKosong() });
+				}
+				break;
+			case "poin":
+				{
+					if (!db.users[m.sender]) db.users[m.sender] = {};
+					const arg = (text || "").trim();
+					const mt = arg.split(/\s+/);
+					if (mt[0] === "top") {
+						const list = papanPoin(db);
+						return kirimRespons(m, { judul: "Papan poin", isi: list.map((x, i) => `${i + 1}. @${x.jid.split("@")[0]}: ${x.poin}`).join("\n") || formatKosong() });
+					}
+					if (mt[0] === "riwayat") {
+						const log = (db.users[m.sender].poinLog || []).slice(-8).reverse();
+						return kirimRespons(m, { judul: "Riwayat poin", isi: log.map((x) => `- ${x.jumlah > 0 ? "+" : ""}${x.jumlah} (${x.alasan})`).join("\n") || formatKosong() });
+					}
+					if (mt[0] === "tukar") {
+						const h = hadiahTukar(db.users[m.sender], db, mt[1]);
+						return h ? m.reply(`Hadiah *${h.nama}* ditukar.`) : m.reply("Hadiah tidak ada atau poin kurang.");
+					}
+					if (mt[0] === "transfer") {
+						const target = (m.mentionedJid || [])[0];
+						if (!target || mt[2] !== "confirm") return m.reply("Tag target, lalu .poin transfer @user <jumlah> confirm");
+						return transferPoin(db, db.users[m.sender], target, Number(mt[1])) ? m.reply("Poin ditransfer.") : m.reply("Poin tidak mencukupi.");
+					}
+					const u = db.users[m.sender];
+					return kirimRespons(m, { judul: "Poin kamu", isi: `*${u.poin || 0}* poin`, footer: ".poin top | .poin riwayat | .poin tukar <hadiah>" });
+				}
+				break;
+			case "hadiahpoin":
+				{
+					if (!isCreator) return m.reply(global.mess.owner);
+					const arg = (text || "").trim();
+					const mt = arg.split(/\s+/);
+					if (mt[0] === "tambah") {
+						const d = hadiahTambah(db, mt[1], mt[2]);
+						return d ? m.reply(`Hadiah *${mt[1]}* ditambahkan.`) : m.reply("Contoh: .hadiahpoin tambah stiker 50");
+					}
+					if (mt[0] === "hapus") {
+						const kunci = String(mt[1] || "").toLowerCase();
+						if (mt[2] !== "confirm" || !db.hadiahPoin?.[kunci]) return m.reply("Hadiah tidak ditemukan atau konfirmasi salah.");
+						delete db.hadiahPoin[kunci];
+						return m.reply("Hadiah dihapus.");
+					}
+					const list = Object.values(db.hadiahPoin || {});
+					return kirimRespons(m, { judul: "Hadiah", isi: list.map((h) => `- ${h.nama}: ${h.poin} poin`).join("\n") || formatKosong() });
+				}
+				break;
+			case "toko":
+				{
+					const arg = (text || "").trim();
+					const mt = arg.split(/\s+/);
+					const sub = (mt[0] || "stok").toLowerCase();
+					if (sub === "buka") {
+						if (!isCreator && !m.isAdmin) return m.reply(global.mess.admin);
+						const t = tokoBuka(db, m.chat, mt.slice(1).join(" "));
+						return t ? m.reply(`Toko *${t.nama}* dibuka.`) : m.reply("Nama sudah ada atau tidak valid.");
+					}
+					const toko = Object.values(db.toko || {}).find((t) => t.chat === m.chat);
+					if (!toko) return m.reply("Belum ada toko di grup ini.");
+					if (sub === "tambah") {
+						if (!isCreator && !m.isAdmin) return m.reply(global.mess.admin);
+						return tokoTambah(toko, mt[1], mt[2]) ? m.reply(`Barang *${mt[1]}* ditambahkan.`) : m.reply("Contoh: .toko tambah kopi 5000");
+					}
+					if (sub === "beli") {
+						if (!db.users[m.sender]) db.users[m.sender] = {};
+						const b = tokoBeli(toko, db.users[m.sender], mt[1]);
+						return b ? m.reply(`*${b.nama}* dibeli.`) : m.reply("Barang habis atau saldo kurang.");
+					}
+					if (sub === "riwayat") {
+						return kirimRespons(m, { judul: "Riwayat toko", isi: toko.riwayat.slice(-8).map((r) => `- ${r.barang}: ${r.harga}`).join("\n") || formatKosong() });
+					}
+					return kirimRespons(m, { judul: `Stok ${toko.nama}`, isi: Object.values(toko.barang).map((b) => `- ${b.nama}: ${b.harga} (${b.stok})`).join("\n") || formatKosong() });
+				}
+				break;
+			case "lelang":
+				{
+					if (!m.isGroup) return m.reply(global.mess.group);
+					const arg = (text || "").trim();
+					const mt = arg.split(/\s+/);
+					const sub = (mt[0] || "lihat").toLowerCase();
+					if (sub === "buat") {
+						if (!isCreator && !m.isAdmin) return m.reply(global.mess.admin);
+						const l = lelangBuat(db, m.chat, mt.slice(1).join(" "));
+						return m.reply(`Lelang *${l.barang}* dibuka.`);
+					}
+					const l = db.lelang?.[m.chat];
+					if (!l) return m.reply("Belum ada lelang.");
+					if (sub === "tawar") {
+						return lelangTawar(l, m.sender, mt[1]) ? m.reply(`Tawaran ${Number(mt[1]).toLocaleString("id-ID")} dicatat.`) : m.reply("Nominal tidak valid atau lelang sudah tutup.");
+					}
+					if (sub === "tutup") {
+						if (mt[1] !== "confirm") return m.reply("Ketik .lelang tutup confirm");
+						if (!isCreator && !m.isAdmin) return m.reply(global.mess.admin);
+						const p = lelangTutup(l);
+						return p ? m.reply(`Pemenang: @${p.jid.split("@")[0]} dengan ${p.nominal.toLocaleString("id-ID")}.`) : m.reply("Tidak ada tawaran.");
+					}
+					return kirimRespons(m, { judul: `Lelang ${l.barang}`, isi: `- Status: ${l.tutup ? "tutup" : "buka"}\n- Tawaran: ${l.tawaran.length}`, catatan: "Nominal adalah simulasi." });
+				}
+				break;
+			case "reputasi":
+				{
+					const arg = (text || "").trim();
+					const mt = arg.split(/\s+/);
+					if (mt[0] === "beri") {
+						const target = (m.mentionedJid || [])[0] || mt[1];
+						const hasil = reputasiBeri(db, m.sender, target, mt[2]);
+						return hasil !== null ? m.reply(`Reputasi @${String(target).split("@")[0]} sekarang ${hasil}.`) : m.reply("Tidak bisa memberi reputasi lagi hari ini.");
+					}
+					if (mt[0] === "papan") {
+						const list = papanReputasi(db);
+						return kirimRespons(m, { judul: "Papan reputasi", isi: list.map(([jid, v], i) => `${i + 1}. @${jid.split("@")[0]}: ${v}`).join("\n") || formatKosong() });
+					}
+					if (mt[0] === "log") {
+						const list = Object.values(db.reputasiLog || {}).slice(-8);
+						return kirimRespons(m, { judul: "Log reputasi", isi: list.map((x) => `- @${String(x.ke).split("@")[0]}: ${x.jumlah > 0 ? "+" : ""}${x.jumlah}`).join("\n") || formatKosong() });
+					}
+					return kirimRespons(m, { judul: "Reputasi", isi: `*${db.reputasi?.[m.sender] || 0}*`, footer: ".reputasi beri @user <angka> | .reputasi papan" });
+				}
+				break;
+			case "tepercaya":
+				{
+					if (!isCreator) return m.reply(global.mess.owner);
+					const arg = (text || "").trim();
+					const mt = arg.split(/\s+/);
+					const jid = (m.mentionedJid || [])[0] || mt[1];
+					if (mt[0] === "tambah") return tepercayaTambah(db, jid) ? m.reply("Ditambahkan ke tepercaya.") : m.reply("Sudah terdaftar atau JID tidak valid.");
+					if (mt[0] === "hapus") {
+						if (mt[2] !== "confirm") return m.reply("Ketik .tepercaya hapus @user confirm");
+						return tepercayaHapus(db, jid) ? m.reply("Dihapus dari tepercaya.") : m.reply("Tidak ditemukan.");
+					}
+					return kirimRespons(m, { judul: "Tepercaya", isi: (db.tepercaya || []).map((x, i) => `${i + 1}. @${x.split("@")[0]}`).join("\n") || formatKosong() });
+				}
+				break;
+			case "kursus":
+				{
+					const arg = (text || "").trim();
+					const mt = arg.split(/\s+/);
+					const sub = (mt[0] || "list").toLowerCase();
+					if (sub === "list") {
+						const list = Object.values(db.kursus || {});
+						return kirimRespons(m, { judul: "Kursus", isi: list.map((k) => `- ${k.nama}: ${k.langkah.length} langkah`).join("\n") || formatKosong() });
+					}
+					if (!db.users[m.sender]) db.users[m.sender] = {};
+					const u = db.users[m.sender];
+					if (sub === "mulai") {
+						const k = kursusMulai(u, db, mt.slice(1).join(" "));
+						return k ? kirimRespons(m, { judul: `${k.judul} (${k.nomor}/${k.total})`, isi: k.langkah }) : m.reply("Kursus tidak ditemukan.");
+					}
+					if (sub === "lanjut") {
+						const k = kursusLanjut(u, db);
+						if (!k) return m.reply("Tidak ada kursus aktif.");
+						if (k.selesai) return m.reply("Kursus selesai. Ketik .kursus sertifikat");
+						return kirimRespons(m, { judul: `${k.judul} (${k.nomor}/${k.total})`, isi: k.langkah });
+					}
+					if (sub === "ulang") {
+						const aktif = u.kursusAktif;
+						const k = db.kursus?.[String(aktif?.nama || "").toLowerCase()];
+						return k ? kirimRespons(m, { judul: `${k.nama} (${aktif.indek + 1}/${k.langkah.length})`, isi: k.langkah[aktif.indek] }) : m.reply("Tidak ada kursus aktif.");
+					}
+					if (sub === "selesai") return kursusSelesai(u) ? m.reply("Kursus diselesaikan.") : m.reply("Tidak ada kursus aktif.");
+					if (sub === "sertifikat") {
+						const terakhir = (u.kursusSelesai || []).slice(-1)[0];
+						return terakhir ? m.reply(sertifikat(terakhir)) : m.reply("Belum ada kursus selesai.");
+					}
+					return m.reply(".kursus list | mulai <nama> | lanjut | ulang | selesai | sertifikat");
+				}
+				break;
+			case "materi":
+				{
+					const arg = (text || "").trim();
+					const mt = arg.split(/\s+/);
+					if (mt[0] === "buat") {
+						if (!isCreator) return m.reply(global.mess.owner);
+						const d = materiTambah(db, mt[1], mt.slice(2).join(" "));
+						return d ? m.reply(`Materi *${mt[1]}* ditambahkan.`) : m.reply("Contoh: .materi buat aljabar dasar penjelasan");
+					}
+					const list = materiCari(db, arg);
+					return kirimRespons(m, { judul: "Materi", isi: list.map((x) => `- *${x.judul}*: ${x.isi.slice(0, 80)}`).join("\n") || formatKosong() });
+				}
+				break;
+			case "keputusan":
+				{
+					if (!m.isGroup) return m.reply(global.mess.group);
+					const arg = (text || "").trim();
+					const mt = arg.split(/\s+/);
+					const sub = (mt[0] || "list").toLowerCase();
+					if (sub === "buat") {
+						if (!isCreator && !m.isAdmin) return m.reply(global.mess.admin);
+						const k = keputusanBuat(db, m.chat, mt.slice(1).join(" "));
+						return m.reply(`Keputusan *${k.id}* dibuat.`);
+					}
+					if (sub === "detail") {
+						const k = keputusanAmbil(db, m.chat, mt[1]);
+						return k ? kirimRespons(m, { judul: `${k.judul} (v${k.versi})`, isi: k.isi || "(belum ada isi)" }) : m.reply("Keputusan tidak ditemukan.");
+					}
+					if (sub === "ubah") {
+						if (!isCreator && !m.isAdmin) return m.reply(global.mess.admin);
+						const k = keputusanUbah(keputusanAmbil(db, m.chat, mt[1]), mt.slice(2).join(" "));
+						return k ? m.reply(`Keputusan diperbarui ke versi ${k.versi}.`) : m.reply("Keputusan tidak ditemukan.");
+					}
+					if (sub === "arsip") {
+						if (mt[2] !== "confirm") return m.reply("Ketik .keputusan arsip <id> confirm");
+						return keputusanArsip(keputusanAmbil(db, m.chat, mt[1])) ? m.reply("Keputusan diarsipkan.") : m.reply("Keputusan tidak ditemukan.");
+					}
+					const list = (db.keputusan?.[m.chat] || []).slice(-8);
+					return kirimRespons(m, { judul: "Keputusan grup", isi: list.map((k) => `- ${k.id}: ${k.judul} (v${k.versi})`).join("\n") || formatKosong() });
+				}
+				break;
+			case "notulenversi":
+				{
+					if (!m.isGroup) return m.reply(global.mess.group);
+					const arg = (text || "").trim();
+					const mt = arg.split(/\s+/);
+					if (mt[0] === "simpan") {
+						const list = simpanNotulenVersi(db, m.chat, mt.slice(1).join(" "));
+						return m.reply(`Versi notulen *${list[list.length - 1].id}* disimpan.`);
+					}
+					if (mt[0] === "banding") {
+						const h = notulenBanding(db, m.chat, mt[1], mt[2]);
+						return h ? kirimRespons(m, { judul: "Perbandingan notulen", isi: `- ${h.satu.id}: ${h.satu.teks}\n- ${h.dua.id}: ${h.dua.teks}` }) : m.reply("Versi tidak ditemukan.");
+					}
+					const list = db.groups?.[m.chat]?.notulenVersi || [];
+					return kirimRespons(m, { judul: "Versi notulen", isi: list.map((x) => `- ${x.id}: ${x.teks.slice(0, 60)}`).join("\n") || formatKosong() });
+				}
+				break;
+			case "proyekgrup":
+				{
+					if (!m.isGroup) return m.reply(global.mess.group);
+					const arg = (text || "").trim();
+					const mt = arg.split(/\s+/);
+					const sub = (mt[0] || "papan").toLowerCase();
+					if (sub === "buat") {
+						const p = proyekGrupBuat(db, m.chat, mt.slice(1).join(" "), m.sender);
+						return p ? m.reply(`Proyek *${p.nama}* dibuat.`) : m.reply("Nama sudah ada atau tidak valid.");
+					}
+					const p = Object.values(db.proyekGrup || {}).find((x) => x.chat === m.chat && !x.arsip);
+					if (!p) return m.reply("Belum ada proyek grup.");
+					if (sub === "tugas") {
+						const t = proyekTugas(p, mt.slice(1).join(" "));
+						return t ? m.reply(`Tugas *${t.id}* ditambahkan.`) : m.reply("Contoh: .proyekgrup tugas desain kartu");
+					}
+					if (sub === "ambil") {
+						const t = proyekAmbil(p, mt[1], m.sender);
+						return t ? m.reply(`Tugas ${t.id} kamu ambil.`) : m.reply("Tugas tidak tersedia.");
+					}
+					if (sub === "selesai") {
+						if (mt[2] !== "confirm") return m.reply("Ketik .proyekgrup selesai <id> confirm");
+						return proyekSelesai(p, mt[1]) ? m.reply("Tugas selesai.") : m.reply("Tugas tidak ditemukan.");
+					}
+					if (sub === "anggota") {
+						return kirimRespons(m, { judul: "Anggota proyek", isi: p.anggota.map((x, i) => `${i + 1}. @${x.split("@")[0]}`).join("\n") });
+					}
+					if (sub === "arsip") {
+						if (mt[1] !== "confirm") return m.reply("Ketik .proyekgrup arsip confirm");
+						return proyekArsip(p) ? m.reply("Proyek diarsipkan.") : m.reply("Gagal.");
+					}
+					const baris = proyekPapan(p).map((g) => `*${g.status.toUpperCase()}*\n${g.tugas.map((t) => `- ${t.id}: ${t.tugas}`).join("\n") || "- (kosong)"}`);
+					return m.reply(baris.join("\n\n"));
+				}
+				break;
+			case "arsip":
+				{
+					if (!db.users[m.sender]) db.users[m.sender] = {};
+					const u = db.users[m.sender];
+					const arg = (text || "").trim();
+					const mt = arg.split(/\s+/);
+					if (mt[0] === "tanggal") {
+						const list = arsipTanggal(u, mt[1]);
+						return kirimRespons(m, { judul: `Arsip ${mt[1]}`, isi: list.join("\n") || formatKosong() });
+					}
+					if (mt[0] === "ringkas") {
+						const r = arsipRingkas(u);
+						return kirimRespons(m, { judul: "Arsip", isi: `- Catatan: ${r.catatan}\n- Aset: ${r.aset}\n- Tiket: ${r.tiket}\n- Riwayat: ${r.riwayat}` });
+					}
+					if (mt[0] === "ekspor") {
+						const hasil = cariLintas(u, "");
+						return kirimRespons(m, { judul: "Ekspor arsip", isi: hasil.join("\n") || formatKosong() });
+					}
+					const hasil = cariLintas(u, arg);
+					return kirimRespons(m, { judul: `Cari ${arg}`, isi: hasil.join("\n") || formatKosong() });
+				}
+				break;
+			case "cadangan":
+				{
+					if (!db.users[m.sender]) db.users[m.sender] = {};
+					const u = db.users[m.sender];
+					const arg = (text || "").trim();
+					const mt = arg.split(/\s+/);
+					if (mt[0] === "buat") {
+						if (mt[1] !== "confirm") return m.reply("Ketik .cadangan buat confirm");
+						const c = cadanganBuat(u);
+						u.cadangan = u.cadangan || [];
+						u.cadangan.push(c);
+						u.cadangan = u.cadangan.slice(-10);
+						return m.reply(`Cadangan *${c.id}* dibuat (${c.ukuran} karakter).`);
+					}
+					if (mt[0] === "hapus") {
+						if (mt[2] !== "confirm") return m.reply("Ketik .cadangan hapus <id> confirm");
+						u.cadangan = (u.cadangan || []).filter((c) => c.id !== mt[1]);
+						return m.reply("Cadangan dihapus.");
+					}
+					const list = cadanganList(u.cadangan);
+					return kirimRespons(m, { judul: "Cadangan", isi: list.map((c) => `- ${c.id}: ${c.ukuran} karakter`).join("\n") || formatKosong() });
+				}
+				break;
+			case "teksrapi":
+				return m.reply(teksRapi(text));
+			case "teksbalik":
+				return m.reply(teksBalik(text));
+			case "teksulang":
+				{
+					const mt = (text || "").trim().match(/^(\d+)\s+([\s\S]+)$/);
+					const h = mt ? teksUlang(mt[2], mt[1]) : null;
+					return h ? m.reply(h) : m.reply("Contoh: .teksulang 3 halo");
+				}
+				break;
+			case "tekspotong":
+				{
+					const mt = (text || "").trim().match(/^(\d+)\s+([\s\S]+)$/);
+					const h = mt ? teksPotong(mt[2], mt[1]) : null;
+					return h !== null ? m.reply(h) : m.reply("Contoh: .tekspotong 5 halo dunia");
+				}
+				break;
+			case "teksbersih":
+				return m.reply(teksBersih(text));
+			case "teksheksa":
+				return m.reply(keHeksa(text));
+			case "teksdariheksa":
+				{
+					const h = dariHeksa(text);
+					return h !== null ? m.reply(h) : m.reply("Heksa tidak valid.");
+				}
+				break;
+			case "teksbanding":
+				{
+					const mt = (text || "").trim().split("|").map((s) => s.trim());
+					return mt.length === 2 ? m.reply(teksBanding(mt[0], mt[1])) : m.reply("Contoh: .teksbanding satu | dua");
+				}
+				break;
+			case "kunci":
+				{
+					if (!db.users[m.sender]) db.users[m.sender] = {};
+					const u = db.users[m.sender];
+					const mt = (text || "").trim().split(/\s+/);
+					if (mt[0] === "perintah") {
+						return kunciPerintah(u, mt[1], mt[2]) ? m.reply(`Perintah .${mt[1]} dikunci.`) : m.reply("Contoh: .kunci perintah transfer 1234 (PIN 4-6 digit)");
+					}
+					if (mt[0] === "lepas") return lepasKunci(u, mt[1]) ? m.reply("Kunci dilepas.") : m.reply("Kunci tidak ditemukan.");
+					const list = Object.keys(u.kunciPerintah || {});
+					return kirimRespons(m, { judul: "Perintah terkunci", isi: list.map((k) => `- .${k}`).join("\n") || formatKosong() });
+				}
+				break;
+			case "verifikasi":
+				{
+					if (!isCreator) return m.reply(global.mess.owner);
+					const target = (m.mentionedJid || [])[0];
+					if (!target) return m.reply("Tag pengguna untuk diverifikasi.");
+					if (!db.terverifikasi) db.terverifikasi = [];
+					if (!db.terverifikasi.includes(target)) db.terverifikasi.push(target);
+					return m.reply(`@${target.split("@")[0]} terverifikasi.`);
+				}
+				break;
+			case "akunaman":
+				{
+					const a = (text || "").trim().toLowerCase();
+					if (!["on", "off"].includes(a)) return m.reply("Ketik .akunaman on atau off");
+					if (!db.users[m.sender]) db.users[m.sender] = {};
+					db.users[m.sender].akunAman = a === "on";
+					return m.reply(`Akun aman ${a}.`);
+				}
+				break;
+			case "logkeamanan":
+				return kirimRespons(m, { judul: "Log keamanan", isi: logKeamanan(db, "dilihat").slice(-8).map((x) => `- ${new Date(x.at).toISOString()}: ${x.aksi}`).join("\n") });
+			case "stikerpaket":
+				{
+					if (!db.users[m.sender]) db.users[m.sender] = {};
+					const u = db.users[m.sender];
+					const arg = (text || "").trim();
+					const mt = arg.split(/\s+/);
+					if (mt[0] === "buat") return paketBuat(u, mt[1]) ? m.reply(`Paket *${mt[1]}* dibuat.`) : m.reply("Nama sudah ada atau tidak valid.");
+					if (mt[0] === "tambah") {
+						const p = paketTambah(u, mt[1], m.quoted?.text || mt.slice(2).join(" "));
+						return p ? m.reply("Stiker ditambahkan ke paket.") : m.reply("Paket tidak ditemukan.");
+					}
+					if (mt[0] === "hapus") {
+						if (mt[2] !== "confirm") return m.reply("Ketik .stikerpaket hapus <nama> confirm");
+						return paketHapus(u, mt[1]) ? m.reply("Paket dihapus.") : m.reply("Paket tidak ditemukan.");
+					}
+					const list = Object.values(u.paketStiker || {});
+					return kirimRespons(m, { judul: "Paket stiker", isi: list.map((p) => `- ${p.nama}: ${p.stiker.length} stiker`).join("\n") || formatKosong() });
+				}
+				break;
+			case "wallpaperteks":
+				return m.reply(wallpaperTeks(text));
+			case "kartupos":
+				{
+					const mt = (text || "").trim().match(/^(\S+)\s+([\s\S]+)$/);
+					return mt ? m.reply(kartuPos(mt[1], mt[2])) : m.reply("Contoh: .kartupos Ani semangat");
+				}
+				break;
+			case "penggunaaktif":
+				{
+					if (!isCreator) return m.reply(global.mess.owner);
+					const n = parseInt((text || "").trim(), 10) || 10;
+					const list = penggunaAktif(db, n);
+					return kirimRespons(m, { judul: "Pengguna aktif", isi: list.map((x, i) => `${i + 1}. @${x.jid.split("@")[0]}: ${x.skor}`).join("\n") || formatKosong() });
+				}
+				break;
+			case "grupaktif":
+				{
+					if (!isCreator) return m.reply(global.mess.owner);
+					const n = parseInt((text || "").trim(), 10) || 10;
+					const list = grupAktif(db, n);
+					return kirimRespons(m, { judul: "Grup aktif", isi: list.map((x, i) => `${i + 1}. ${x.jid}: ${x.skor}`).join("\n") || formatKosong() });
+				}
+				break;
+			case "perintahmati":
+				{
+					if (!isCreator) return m.reply(global.mess.owner);
+					const list = Object.entries(db.set || {}).flatMap(([chat, g]) => (g.disabled || []).map((c) => `${chat.slice(0, 8)}: .${c}`));
+					return kirimRespons(m, { judul: "Perintah dimatikan", isi: list.slice(0, 20).join("\n") || formatKosong() });
+				}
+				break;
+			case "cooldownlist":
+				{
+					if (!isCreator) return m.reply(global.mess.owner);
+					const list = daftarCooldown(db);
+					return kirimRespons(m, { judul: "Cooldown", isi: list.map(([k, v]) => `- .${k}: ${v} detik`).join("\n") || formatKosong() });
+				}
+				break;
+			case "akseslist":
+				{
+					if (!isCreator) return m.reply(global.mess.owner);
+					const list = daftarAkses(db);
+					return kirimRespons(m, { judul: "Akses perintah", isi: list.map(([k, v]) => `- .${k}: ${v}`).join("\n") || formatKosong() });
+				}
+				break;
+			case "whitelisttambah":
+				{
+					if (!isCreator) return m.reply(global.mess.owner);
+					const jid = (m.mentionedJid || [])[0];
+					if (!jid) return m.reply("Tag pengguna.");
+					if (!db.whitelist) db.whitelist = [];
+					if (!db.whitelist.includes(jid)) db.whitelist.push(jid);
+					return m.reply("Whitelist ditambahkan.");
+				}
+				break;
+			case "blacklistalasan":
+				{
+					if (!isCreator) return m.reply(global.mess.owner);
+					const mt = (text || "").trim().split(/\s+/);
+					alasanBlacklist(db, mt[0], mt.slice(1).join(" "));
+					return m.reply("Alasan blacklist disimpan.");
+				}
+				break;
+			case "rollback":
+				{
+					if (!isCreator) return m.reply(global.mess.owner);
+					const mt = (text || "").trim().split(/\s+/);
+					if (mt[1] !== "confirm") return m.reply("Ketik .rollback <tag> confirm");
+					const r = rollbackInfo(mt[0], db);
+					return kirimRespons(m, { judul: "Pratinjau rollback", isi: `- Tag: ${r.tag}\n- User saat ini: ${r.user}\n- ${r.keterangan}` });
 				}
 				break;
 			case "bantuan":
