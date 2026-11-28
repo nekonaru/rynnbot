@@ -19,6 +19,8 @@ test("alias kategori lama tetap dikenal", () => {
 	assert.equal(kategoriDariNama("liga"), "TURNAMEN");
 	assert.equal(kategoriDariNama("cari"), "PENCARIAN");
 	assert.equal(kategoriDariNama("owner"), "OWNER");
+	assert.equal(kategoriDariNama("pencarian"), "PENCARIAN");
+	assert.equal(kategoriDariNama("quotes"), "GAME");
 });
 
 test("submenu dibangun dari kategori baku", () => {

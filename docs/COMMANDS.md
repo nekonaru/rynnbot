@@ -80,6 +80,8 @@ Total 812 perintah dalam 14 kategori.
 
 | Perintah | Contoh | Role | Biaya limit |
 |---|---|---|---|
+| `.ping` | `.ping` | semua | 0 |
+| `.pintasan` | `.pintasan` | semua | 0 |
 | `.speed` | `.speed` | owner | 0 |
 | `.tabel` | `.tabel` | semua | 0 |
 | `.bagi` | `.bagi` | grup | 0 |
@@ -106,13 +108,13 @@ Total 812 perintah dalam 14 kategori.
 | `.earrape` | `.earrape(reply audio)` | semua | 0 |
 | `.nightcore` | `.nightcore(reply audio)` | semua | 0 |
 | `.surat` | `.surat` | semua | 0 |
-| `.terbilang` | `.terbilang` | semua | 0 |
 | `.cekkhodam` | `.cekkhodam(nama lu)` | semua | 0 |
 
 ## EDUKASI
 
 | Perintah | Contoh | Role | Biaya limit |
 |---|---|---|---|
+| `.terbilang` | `.terbilang` | semua | 0 |
 | `.gempa` | `.gempa` | semua | 0 |
 | `.hariini` | `.hariini` | semua | 0 |
 | `.waktu` | `.waktu` | semua | 0 |
@@ -500,8 +502,6 @@ Total 812 perintah dalam 14 kategori.
 
 | Perintah | Contoh | Role | Biaya limit |
 |---|---|---|---|
-| `.ping` | `.ping` | semua | 0 |
-| `.pintasan` | `.pintasan` | semua | 0 |
 | `.sesihapus` | `.sesihapus` | owner | 0 |
 | `.akseswarisan` | `.akseswarisan` | owner | 0 |
 | `.bungapinjam` | `.bungapinjam` | owner | 0 |

@@ -6356,6 +6356,8 @@ Select Bot Settings:
 │${setv} ${prefix}authormenu
 ╰─┬────❍
 ╭─┴❍「 *BOT* 」❍
+│${setv} ${prefix}ping
+│${setv} ${prefix}pintasan
 │${setv} ${prefix}speed
 │${setv} ${prefix}tabel
 │${setv} ${prefix}bagi <anggota> <kelompok>
@@ -6382,7 +6384,6 @@ Select Bot Settings:
 │${setv} ${prefix}earrape (reply audio)
 │${setv} ${prefix}nightcore (reply audio)
 │${setv} ${prefix}surat
-│${setv} ${prefix}terbilang
 │${setv} ${prefix}cekkhodam (nama lu)
 ╰─┬────❍
 ╭─┴❍「 *GRUP* 」❍
@@ -6661,6 +6662,7 @@ Select Bot Settings:
 │${setv} ${prefix}pair
 ╰─┬────❍
 ╭─┴❍「 *EDUKASI* 」❍
+│${setv} ${prefix}terbilang
 │${setv} ${prefix}gempa
 │${setv} ${prefix}hariini
 │${setv} ${prefix}waktu
@@ -7045,8 +7047,6 @@ Select Bot Settings:
 │${setv} ${prefix}diagnosa
 ╰─┬────❍
 ╭─┴❍「 *KEAMANAN* 」❍
-│${setv} ${prefix}ping
-│${setv} ${prefix}pintasan
 │${setv} ${prefix}sesihapus
 │${setv} ${prefix}akseswarisan
 │${setv} ${prefix}bungapinjam
@@ -7154,7 +7154,7 @@ Select Bot Settings:
 │${setv} ${prefix}restore
 │${setv} ${prefix}maintenance
 ╰──────❍
-╰──────❍`;
+`;
 					await sock.sendMessageV3(m.chat, {
 						text: menunya,
 						title: ucapanWaktu,

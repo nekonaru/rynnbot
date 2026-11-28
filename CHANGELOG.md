@@ -34,6 +34,7 @@ Rynn v21.0.0 merapikan struktur menu dan `allmenu`. Tidak ada perintah baru dan 
 ### Batas
 
 - Tidak menambah perintah, kategori di luar taksonomi, atau perubahan perilaku.
+- Review independen menemukan lima masalah, semuanya diperbaiki sebelum rilis, termasuk `.menu pencarian` yang tidak resolve, alias `quotes` yang salah kategori, border ganda di akhir `allmenu`, serta `ping`, `pintasan`, dan `terbilang` yang salah kategori.
 - Tidak menambah dependency berat.
 
 ## v20.0.0
