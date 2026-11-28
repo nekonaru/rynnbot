@@ -109,6 +109,38 @@ test("input invalid ditolak", () => {
 	assert.equal(ambil(db, "XX"), null);
 });
 
+test("regresi review v22", () => {
+	const u = { money: 100 };
+	assert.ok(buatKebun(u, "K"));
+	assert.equal(beliBenih(u, "cabai", -5), null);
+	assert.equal(jualHasil(u, "cabai", -5), null);
+	assert.equal(u.money, 100);
+
+	assert.ok(pilihBidang(u, "teknologi"));
+	assert.ok(ambilGaji(u));
+	assert.equal(ambilGaji(u), null, "gaji tidak boleh diambil dua kali");
+
+	const k = { karir: { bidang: "dagang", cuti: false } };
+	assert.ok(cuti(k, true));
+	assert.ok(cuti(k, false), "cuti harus bisa dibatalkan");
+
+	const belum = { money: 50 };
+	assert.equal(beliBarang(belum, "wortel"), 8);
+	assert.equal(belum.pet, undefined, "beli barang tidak boleh membuat hewan");
+	assert.ok(adopsi(belum, "kucing"));
+	assert.ok(beriMakan(belum, "WORTEL"), "huruf besar harus diterima");
+
+	const db = {};
+	const p = buat(db, "X");
+	isi(db, p.id, "isi");
+	aturTarget(db, p.id, "grup", "g@g.us");
+	const jid = "6281@s.whatsapp.net";
+	db.users = { [jid]: {}, "6282@s.whatsapp.net": {} };
+	assert.ok(terbitkan(db, p.id, [jid]));
+	assert.equal(terbitkan(db, p.id, [jid]), null, "terbit ulang ditolak");
+	assert.equal(inbox(db, "6282@s.whatsapp.net").length, 0, "target grup dibatasi");
+});
+
 test("cabang invalid empat pilar", () => {
 	const u = {};
 	assert.equal(gantiNama(u, ""), null);

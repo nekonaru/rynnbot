@@ -10784,7 +10784,7 @@ Select Bot Settings:
 							global.turnamenMesin[m.chat] = kejuaraan;
 							return kirimRespons(m, { judul: "Turnamen dibuat", isi: formatRingkasMesin(kejuaraan), footer: ".turnamen2 mesin lanjut | hasil <a> <b> <pemenang>" });
 						}
-						const kejuaraan = global.turnamenMesin[m.chat];
+						const kejuaraan = global.turnamenMesin[m.chat] || global.turnamenMesin[m.chat + ":pet"];
 						if (!kejuaraan) return m.reply("Belum ada turnamen mesin. Ketik .turnamen2 mesin buat <mode> <nama> dengan tag peserta.");
 						if (aksi === "hasil") {
 							if (!isCreator && !m.isAdmin) return m.reply(global.mess.admin);
@@ -13534,7 +13534,7 @@ Select Bot Settings:
 					if (command === "petmandi") return mandi(u) ? m.reply("Hewan sudah mandi.") : m.reply("Belum ada hewan.");
 					if (command === "petobat") return obat(u, mt[1]) ? m.reply("Obat diberikan.") : m.reply("Obat tidak tersedia.");
 					if (command === "petbarang") {
-						const list = Object.entries(u.pet?.barang || {});
+						const list = Object.entries({ ...(u.petBarang || {}), ...(u.pet?.barang || {}) });
 						return kirimRespons(m, { judul: "Barang hewan", isi: list.map(([n, v]) => `- ${n}: ${v}`).join("\n") || formatKosong() });
 					}
 					if (command === "petbeli") return beliBarang(u, mt[1]) ? m.reply(`*${mt[1]}* dibeli.`) : m.reply("Barang tidak tersedia atau saldo kurang.");
@@ -13598,7 +13598,9 @@ Select Bot Settings:
 					}
 					if (command === "kebunjual") {
 						const total = jualHasil(u, mt[1], mt[2]);
-						return total ? m.reply(`Hasil dijual. Uang +${total.toLocaleString("id-ID")}.`) : m.reply("Barang tidak ada di gudang.");
+						if (!total) return m.reply("Barang tidak ada di gudang.");
+						ubahSaldo(db, m.sender, "money", total, "v22:kebun");
+						return m.reply(`Hasil dijual. Uang +${total.toLocaleString("id-ID")}.`);
 					}
 					if (command === "kebungudang") return u.kebun ? kirimRespons(m, { judul: "Gudang", isi: Object.entries(u.kebun.gudang).map(([k, v]) => `- ${k}: ${v}`).join("\n") || formatKosong() }) : m.reply("Belum ada kebun.");
 					if (command === "kebunolah") {
@@ -13610,7 +13612,9 @@ Select Bot Settings:
 					if (command === "kebunperluas") {
 						if (mt[1] !== "confirm") return m.reply("Ketik .kebunperluas confirm");
 						const biaya = perluas(u);
-						return biaya ? m.reply(`Lahan bertambah. Biaya ${biaya.toLocaleString("id-ID")}.`) : m.reply("Saldo kurang.");
+						if (!biaya) return m.reply("Saldo kurang.");
+						ubahSaldo(db, m.sender, "money", -biaya, "v22:kebun");
+						return m.reply(`Lahan bertambah. Biaya ${biaya.toLocaleString("id-ID")}.`);
 					}
 					if (command === "kebunhama") {
 						const h = cekHama(u, mt[1]);
@@ -13668,13 +13672,13 @@ Select Bot Settings:
 					if (command === "karirlembur") {
 						const bonus = lembur(u);
 						if (!bonus) return m.reply("Kinerja tidak cukup.");
-						u.money = (u.money || 0) + bonus;
+						ubahSaldo(db, m.sender, "money", bonus, "v22:lembur");
 						return m.reply(`Lembur selesai. Uang +${bonus.toLocaleString("id-ID")}.`);
 					}
 					if (command === "karirgaji") {
 						const gaji = ambilGaji(u);
 						if (!gaji) return m.reply("Belum ada karier atau sedang cuti.");
-						u.money = (u.money || 0) + gaji;
+						ubahSaldo(db, m.sender, "money", gaji, "v22:gaji");
 						return m.reply(`Gaji ${gaji.toLocaleString("id-ID")} diterima.`);
 					}
 					if (command === "karirkeahlian") return kirimRespons(m, { judul: "Keahlian", isi: daftarKeahlian().join("\n") });
@@ -13700,12 +13704,13 @@ Select Bot Settings:
 					if (command === "karirinsentif") {
 						if ((u.karir?.kinerja || 0) < 30) return m.reply("Kinerja belum cukup untuk insentif.");
 						u.karir.kinerja -= 30;
-						u.money = (u.money || 0) + 25;
+						ubahSaldo(db, m.sender, "money", 25, "v22:insentif");
 						return m.reply("Insentif 25 diterima.");
 					}
 					if (command === "karircuti") {
 						if (mt[1] !== "confirm") return m.reply("Ketik .karircuti confirm");
-						return cuti(u, true) ? m.reply("Cuti diambil.") : m.reply("Belum ada karier.");
+						if (!u.karir) return m.reply("Belum ada karier.");
+						return cuti(u, !u.karir.cuti) ? m.reply(u.karir.cuti ? "Cuti diambil." : "Sudah kembali bekerja.") : m.reply("Gagal mengubah status cuti.");
 					}
 					if (command === "karirpensiun") {
 						if (mt[1] !== "confirm") return m.reply("Ketik .karirpensiun confirm");
@@ -13726,10 +13731,6 @@ Select Bot Settings:
 			case "pengumumantutup":
 			case "pengumumanarsip":
 			case "pengumumantemplat":
-			case "inbox":
-			case "inboxbaca":
-			case "inboxhapus":
-			case "inboxbersih":
 				{
 					const mt = (text || "").trim().split(/\s+/);
 					const ownerCmd = command.startsWith("pengumuman");
@@ -13745,9 +13746,11 @@ Select Bot Settings:
 						if (mt[2] !== "confirm") return m.reply("Ketik .pengumumanterbitkan <id> confirm");
 						const p = ambilPengumuman(db, mt[1]);
 						if (!p || !p.isi) return m.reply("Pengumuman tidak ditemukan atau isi kosong.");
-						const penerima = Object.keys(db.users || {});
-						terbitkan(db, mt[1], penerima);
-						return m.reply(`Pengumuman *${p.judul}* diterbitkan ke ${penerima.length} pengguna.`);
+						let penerima = Object.keys(db.users || {});
+						if (p.target === "grup" && p.nilai) penerima = penerima.filter((jid) => jid === p.nilai || jid.startsWith(String(p.nilai).split("@")[0]));
+						if (p.target === "role" && p.nilai) penerima = penerima.filter((jid) => db.users[jid]?.role === p.nilai || (p.nilai === "premium" && isPremium(jid)));
+						const hasil = terbitkan(db, mt[1], penerima);
+						return hasil ? m.reply(`Pengumuman *${p.judul}* diterbitkan ke ${penerima.length} kullanıcı.`.replace("kullanıcı", "pengguna")) : m.reply("Pengumuman sudah diterbitkan atau isi kosong.");
 					}
 					if (command === "pengumumanlist") return kirimRespons(m, { judul: "Pengumuman aktif", isi: ringkasPengumuman(daftarAktif(db)) });
 					if (command === "pengumumanbaca") {
@@ -13772,6 +13775,15 @@ Select Bot Settings:
 						const t = ambilTemplat(db, mt[1]);
 						return t ? m.reply(t) : m.reply("Templat tidak ditemukan.");
 					}
+					return m.reply("Perintah pengumuman tidak dikenal.");
+				}
+				break;
+			case "inbox":
+			case "inboxbaca":
+			case "inboxhapus":
+			case "inboxbersih":
+				{
+					const mt = (text || "").trim().split(/\s+/);
 					const jid = m.sender;
 					if (command === "inbox") {
 						const list = inbox(db, jid);
@@ -13789,9 +13801,10 @@ Select Bot Settings:
 						if (mt[1] !== "confirm") return m.reply("Ketik .inboxbersih confirm");
 						return bersihInbox(db, jid) ? m.reply("Kotak masuk dikosongkan.") : m.reply("Kotak masuk sudah kosong.");
 					}
-					return m.reply("Perintah pengumuman tidak dikenal.");
+					return m.reply("Perintah inbox tidak dikenal.");
 				}
 				break;
+
 			case "bantuan":
 			case "commandinfo":
 				{
