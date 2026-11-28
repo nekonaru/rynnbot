@@ -23,7 +23,7 @@ Rynn v15.0.0 menambah 38 perintah baru pada dua belas kelompok fitur, tanpa depe
 
 ### Sistem
 
-- Dua belas modul murni di `lib/v15/`.
+- Dua belas modul murni di `lib/v15/`. Review independen menemukan sepuluh masalah, semuanya diperbaiki sebelum rilis, termasuk PIN yang belum ditegakkan, hash tanpa salt, aturan dan filter yang belum tersambung, serta kunci toko dan proyek yang bentrok antargrup.
 - Harga toko dan lelang adalah angka simulasi dari pengguna, bukan data pasar.
 - Semua aksi destruktif memakai konfirmasi dua langkah.
 
@@ -31,7 +31,7 @@ Rynn v15.0.0 menambah 38 perintah baru pada dua belas kelompok fitur, tanpa depe
 
 - 12 tes unit baru di `test/v15.test.js`, termasuk cabang invalid. Total **187 tes lolos**.
 - `npm run check` lolos (233 file). Audit menu: 1061 case, 786 perintah menu unik, semua punya implementasi.
-- Coverage: 90,88 persen baris, 75,53 persen cabang, 88,62 persen fungsi.
+- Coverage: 90,78 persen baris, 75,52 persen cabang, 88,53 persen fungsi.
 
 ### Batas
 

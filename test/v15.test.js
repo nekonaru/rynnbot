@@ -2,12 +2,12 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { aturanBuat, aturanAmbil, aturanHapus, aturanMatikan, aturanUji, filterTambah, filterHapus } from "../lib/v15/aturan.js";
 import { tambahPoin, papanPoin, hadiahTambah, hadiahTukar, transferPoin } from "../lib/v15/poin.js";
-import { tokoBuka, tokoTambah, tokoBeli, lelangBuat, lelangTawar, lelangTutup } from "../lib/v15/toko.js";
+import { tokoBuka, tokoAmbil, tokoTambah, tokoBeli, lelangBuat, lelangTawar, lelangTutup } from "../lib/v15/toko.js";
 import { reputasiBeri, papanReputasi, tepercayaTambah, tepercayaHapus } from "../lib/v15/reputasi.js";
 import { kursusBuat, kursusMulai, kursusLanjut, kursusSelesai, sertifikat, materiTambah, materiCari } from "../lib/v15/kursus.js";
 import { keputusanBuat, keputusanAmbil, keputusanUbah, keputusanArsip, notulenBanding, simpanNotulenVersi } from "../lib/v15/keputusan.js";
 import { proyekBuat, proyekTugas, proyekAmbil, proyekSelesai, proyekPapan, proyekArsip } from "../lib/v15/proyekgrup.js";
-import { cariLintas, arsipTanggal, arsipRingkas, cadanganBuat, cadanganList } from "../lib/v15/arsip.js";
+import { cariLintas, arsipTanggal, arsipRingkas, cadanganBuat, cadanganList, cadanganPulihkan } from "../lib/v15/arsip.js";
 import { teksRapi, teksBalik, teksUlang, teksPotong, teksBersih, keHeksa, dariHeksa, teksBanding } from "../lib/v15/teks.js";
 import { kunciPerintah, lepasKunci, butuhPin, cocokPin, logKeamanan } from "../lib/v15/keamanan.js";
 import { paketBuat, paketTambah, paketHapus, wallpaperTeks, kartuPos } from "../lib/v15/media.js";
@@ -41,7 +41,7 @@ test("poin dan hadiah terpadu", () => {
 test("toko dan lelang simulasi", () => {
 	const db = {};
 	assert.ok(tokoBuka(db, "g", "warung"));
-	const toko = db.toko.warung;
+	const toko = tokoAmbil(db, "g", "warung");
 	assert.equal(tokoTambah(toko, "kopi", 5000), true);
 	const u = { money: 10000 };
 	assert.ok(tokoBeli(toko, u, "kopi"));
@@ -96,7 +96,7 @@ test("arsip dan cadangan", () => {
 		catatan: { belajar: "halo dunia" },
 		aset: { foto: { isi: "halo" } },
 		tiket: [{ id: "ABC", judul: "halo" }],
-		riwayat: [{ tanggal: "2026-01-01" }],
+		riwayatTanggal: { "2026-01-01": ["rumus"] },
 	};
 	assert.ok(cariLintas(u, "halo").length > 0);
 	assert.equal(arsipTanggal(u, "2026-01-01").length, 1);
@@ -121,7 +121,7 @@ test("keamanan perintah memakai hash", () => {
 	assert.equal(butuhPin(u, "transfer"), true);
 	assert.equal(cocokPin(u, "transfer", "9999"), false);
 	assert.equal(cocokPin(u, "transfer", "1234"), true);
-	assert.equal(lepasKunci(u, "transfer"), true);
+	assert.equal(lepasKunci(u, "transfer", "1234"), true);
 	assert.equal(logKeamanan({}, "cek").length, 1);
 });
 

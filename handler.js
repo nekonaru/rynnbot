@@ -6,9 +6,9 @@ import { reputasiBeri, papanReputasi, tepercayaTambah, tepercayaHapus } from "./
 import { kursusBuat, kursusMulai, kursusLanjut, kursusSelesai, sertifikat, materiTambah, materiCari } from "./lib/v15/kursus.js";
 import { keputusanBuat, keputusanAmbil, keputusanUbah, keputusanArsip, notulenBanding, simpanNotulenVersi } from "./lib/v15/keputusan.js";
 import { proyekBuat as proyekGrupBuat, proyekTugas, proyekAmbil, proyekSelesai, proyekPapan, proyekArsip } from "./lib/v15/proyekgrup.js";
-import { cariLintas, arsipTanggal, arsipRingkas, cadanganBuat, cadanganList } from "./lib/v15/arsip.js";
+import { cariLintas, arsipTanggal, arsipRingkas, cadanganBuat, cadanganList, cadanganPulihkan } from "./lib/v15/arsip.js";
 import { teksRapi, teksBalik, teksUlang, teksPotong, teksBersih, keHeksa, dariHeksa, teksBanding } from "./lib/v15/teks.js";
-import { kunciPerintah, lepasKunci, logKeamanan } from "./lib/v15/keamanan.js";
+import { kunciPerintah, lepasKunci, butuhPin, cocokPin, logKeamanan } from "./lib/v15/keamanan.js";
 import { paketBuat, paketTambah, paketHapus, wallpaperTeks, kartuPos } from "./lib/v15/media.js";
 import { penggunaAktif, grupAktif, daftarCooldown, daftarAkses, rollbackInfo, alasanBlacklist } from "./lib/v15/owner.js";
 import { ringkasanData, eksporData, formatEkspor, hapusDataPribadi, aturOpsi, batasData } from "./lib/v14/privasi.js";
@@ -437,6 +437,10 @@ const sock = async (sock, m, store) => {
 			args = cleanBody.split(/ +/).slice(1);
 		}
 
+			const filter = db?.filterKata?.[m.chat] || [];
+			if (filter.some((k) => budy.toLowerCase().includes(k))) return;
+			const aturan = aturanUji(db, m.chat, budy);
+			if (aturan) return m.reply(aturan.balasan);
 		if (!isCmd && m.isGroup && !m.key.fromMe && budy) {
 			const atur = global.db?.groups?.[m.chat]?.autoReply || [];
 			const cocok = atur.find((x) => budy.toLowerCase().includes(x.kata));
@@ -815,6 +819,13 @@ const sock = async (sock, m, store) => {
 				const cek = cekAkses({ db, chat: m.chat, sender: m.sender, command, isCreator, isAdmin: Boolean(m.isAdmin), isPremium, isVip });
 				if (!cek.ok) return m.reply(cek.alasan);
 			}
+			if (isCmd && command && butuhPin(db.users[m.sender], command)) {
+				const pin = (budy || "").match(/(?:^|\s)(?:pin|#)(\d{4,6})(?:\s|$)/i)?.[1];
+				if (!pin || !cocokPin(db.users[m.sender], command, pin)) {
+					logKeamanan(db, `pin gagal: ${command}`);
+					return m.reply(`Perintah .${command} dikunci. Tambahkan pin <PIN> di akhir perintah.`);
+				}
+			}
 			if (casesSet.has(command)) {
 				cmdAdd(db.hit);
 				cmdAddHit(db.hit, command);
@@ -823,6 +834,11 @@ const sock = async (sock, m, store) => {
 				const riwayat = db.users[m.sender].riwayat || [];
 				riwayat.push(command);
 				db.users[m.sender].riwayat = riwayat.slice(-20);
+				const tanggal = new Date().toISOString().slice(0, 10);
+				const perTanggal = db.users[m.sender].riwayatTanggal || {};
+				(perTanggal[tanggal] ||= []).push(command);
+				perTanggal[tanggal] = perTanggal[tanggal].slice(-20);
+				db.users[m.sender].riwayatTanggal = Object.fromEntries(Object.entries(perTanggal).slice(-30));
 				const kategori = infoCommand(command)?.kategori || "";
 				if (command === "daily") tandaiQuest(db, m.sender, "harian");
 				else if (kategori === "EDUKASI") tandaiQuest(db, m.sender, "edukasi");
@@ -12447,8 +12463,9 @@ Select Bot Settings:
 					}
 					if (mt[0] === "transfer") {
 						const target = (m.mentionedJid || [])[0];
-						if (!target || mt[2] !== "confirm") return m.reply("Tag target, lalu .poin transfer @user <jumlah> confirm");
-						return transferPoin(db, db.users[m.sender], target, Number(mt[1])) ? m.reply("Poin ditransfer.") : m.reply("Poin tidak mencukupi.");
+						const jumlah = Number(mt.find((x) => /^\d+$/.test(x)));
+						if (!target || mt.at(-1) !== "confirm" || !jumlah) return m.reply("Tag target, lalu .poin transfer @user <jumlah> confirm");
+						return transferPoin(db, db.users[m.sender], target, jumlah) ? m.reply("Poin ditransfer.") : m.reply("Poin tidak mencukupi.");
 					}
 					const u = db.users[m.sender];
 					return kirimRespons(m, { judul: "Poin kamu", isi: `*${u.poin || 0}* poin`, footer: ".poin top | .poin riwayat | .poin tukar <hadiah>" });
@@ -12564,6 +12581,12 @@ Select Bot Settings:
 					const arg = (text || "").trim();
 					const mt = arg.split(/\s+/);
 					const sub = (mt[0] || "list").toLowerCase();
+					if (sub === "buat") {
+						if (!isCreator && !m.isAdmin) return m.reply(global.mess.admin);
+						const langkah = mt.slice(2).join(" ").split("|").map((x) => x.trim()).filter(Boolean);
+						const k = kursusBuat(db, mt[1], langkah);
+						return k ? m.reply(`Kursus *${k.nama}* dibuat dengan ${k.langkah.length} langkah.`) : m.reply("Contoh: .kursus buat dasar awal | tengah | akhir");
+					}
 					if (sub === "list") {
 						const list = Object.values(db.kursus || {});
 						return kirimRespons(m, { judul: "Kursus", isi: list.map((k) => `- ${k.nama}: ${k.langkah.length} langkah`).join("\n") || formatKosong() });
@@ -12697,14 +12720,14 @@ Select Bot Settings:
 						return kirimRespons(m, { judul: `Arsip ${mt[1]}`, isi: list.join("\n") || formatKosong() });
 					}
 					if (mt[0] === "ringkas") {
-						const r = arsipRingkas(u);
+						const r = arsipRingkas(u, Object.values(db.tiket || {}).filter((t) => t.dari === m.sender));
 						return kirimRespons(m, { judul: "Arsip", isi: `- Catatan: ${r.catatan}\n- Aset: ${r.aset}\n- Tiket: ${r.tiket}\n- Riwayat: ${r.riwayat}` });
 					}
 					if (mt[0] === "ekspor") {
-						const hasil = cariLintas(u, "");
+						const hasil = cariLintas(u, "", Object.values(db.tiket || {}).filter((t) => t.dari === m.sender));
 						return kirimRespons(m, { judul: "Ekspor arsip", isi: hasil.join("\n") || formatKosong() });
 					}
-					const hasil = cariLintas(u, arg);
+					const hasil = cariLintas(u, arg, Object.values(db.tiket || {}).filter((t) => t.dari === m.sender));
 					return kirimRespons(m, { judul: `Cari ${arg}`, isi: hasil.join("\n") || formatKosong() });
 				}
 				break;
@@ -12721,6 +12744,10 @@ Select Bot Settings:
 						u.cadangan.push(c);
 						u.cadangan = u.cadangan.slice(-10);
 						return m.reply(`Cadangan *${c.id}* dibuat (${c.ukuran} karakter).`);
+					}
+					if (mt[0] === "pulihkan") {
+						if (mt[2] !== "confirm") return m.reply("Ketik .cadangan pulihkan <id> confirm");
+						return cadanganPulihkan(u, mt[1]) ? m.reply("Cadangan dipulihkan.") : m.reply("Cadangan tidak ditemukan atau rusak.");
 					}
 					if (mt[0] === "hapus") {
 						if (mt[2] !== "confirm") return m.reply("Ketik .cadangan hapus <id> confirm");
@@ -12773,7 +12800,11 @@ Select Bot Settings:
 					if (mt[0] === "perintah") {
 						return kunciPerintah(u, mt[1], mt[2]) ? m.reply(`Perintah .${mt[1]} dikunci.`) : m.reply("Contoh: .kunci perintah transfer 1234 (PIN 4-6 digit)");
 					}
-					if (mt[0] === "lepas") return lepasKunci(u, mt[1]) ? m.reply("Kunci dilepas.") : m.reply("Kunci tidak ditemukan.");
+					if (mt[0] === "lepas") {
+						const pin = mt[2];
+						if (!/^\d{4,6}$/.test(pin || "")) return m.reply("Ketik .kunci lepas <nama> <PIN>");
+						return lepasKunci(u, mt[1], pin) ? m.reply("Kunci dilepas.") : m.reply("PIN salah atau kunci tidak ditemukan.");
+					}
 					const list = Object.keys(u.kunciPerintah || {});
 					return kirimRespons(m, { judul: "Perintah terkunci", isi: list.map((k) => `- .${k}`).join("\n") || formatKosong() });
 				}
@@ -12866,10 +12897,9 @@ Select Bot Settings:
 			case "whitelisttambah":
 				{
 					if (!isCreator) return m.reply(global.mess.owner);
-					const jid = (m.mentionedJid || [])[0];
-					if (!jid) return m.reply("Tag pengguna.");
-					if (!db.whitelist) db.whitelist = [];
-					if (!db.whitelist.includes(jid)) db.whitelist.push(jid);
+					const jid = m.isGroup ? m.chat : (m.mentionedJid || [])[0] || m.sender;
+					if (!set.whitelist) set.whitelist = [];
+					if (!set.whitelist.includes(jid)) set.whitelist.push(jid);
 					return m.reply("Whitelist ditambahkan.");
 				}
 				break;
