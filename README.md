@@ -98,6 +98,16 @@ Berbasis Hitori Bot karya [Nazedev](https://github.com/nazedev/hitori), yang dir
 | Menu & Umum | **Grup v13** | `.admindaftar`, `.admintambah`, `.peraturankategori`, `.peraturansemua`, `.linkaman`, `.spamdeteksi`, `.grupkartu`, `.grupaktivitas`, `.lapordetail` |
 | Menu & Umum | **Media dan AI v13** | `.stikerteks`, `.stikerkartu`, `.stickergambar`, `.fotoprofil`, `.kartuundangan`, `.posterucapan`, `.diagramlingkaran`, `.tabeldua`, `.aimemori`, `.ailupa`, `.aipersona`, `.aidebat`, `.airangkum`, `.aireviewkode`, `.airencana`, `.aibatas` |
 | Menu & Umum | **Owner v13** | `.relaystatus`, `.deploystatus`, `.backupverifikasi`, `.restorediff`, `.sesilist`, `.databasemigrasi`, `.databaseinfopenuh`, `.logekspor`, `.ratelimit`, `.domainblokir`, `.maintenancealasan`, `.auditekspor` |
+| Menu & Umum | **Privasi v14** | `.privasi`, `.auditaku` dengan ekspor dan penghapusan data pribadi |
+| Menu & Umum | **Tiket v14** | `.tiket`, `.faq`, `.faqcari`, `.faqtambah` |
+| Menu & Umum | **Aset dan siaran v14** | `.aset`, `.konten`, `.siaran` |
+| Menu & Umum | **Analitik v14** | `.laporanbulanan`, `.laporantren`, `.laporanbanding`, `.statistikanggota`, `.statistikjam`, `.statistikrespons`, `.trenperintah`, `.ringkasanbot` |
+| Menu & Umum | **Sosial v14** | `.apresiasi`, `.apresiasipapan`, `.salam`, `.tanyakomunitas`, `.ceritalanjut`, `.ceritabaca`, `.ceritareset`, `.rekomendasiperintah` |
+| Menu & Umum | **Kreatif v14** | `.namamerek`, `.namagrup`, `.caption`, `.hashtag`, `.tagline`, `.judulalternatif`, `.dialogpendek`, `.suratpendek` |
+| Menu & Umum | **Edukasi v14** | `.glosarium`, `.peribahasaarti`, `.latihanhitung`, `.teorisingkat`, `.petarumus`, `.soalkategori`, `.hafalancek`, `.rangkumpelajaran` |
+| Menu & Umum | **Ekonomi v14** | `.portofolio`, `.dividen`, `.obligasi`, `.emassimulasi`, `.sahamsimulasi`, `.kurssimulasi`, `.inflasisimulasi`, `.warisansimulasi` |
+| Menu & Umum | **Game v14** | `.wordleturnamen`, `.rankinggame`, `.gametim`, `.tebakurutan`, `.kartutaruhan`, `.papanskorharian` |
+| Menu & Umum | **Owner v14** | `.bootinfo`, `.stateinfo`, `.cachebersih`, `.backupinkremental`, `.dbekspor`, `.dbimpor`, `.loglevel`, `.debugmode`, `.ketersediaan` |
 | Menu & Umum | **Audit dan optimalisasi v11.2** | Antrean per user, state game tanpa kebocoran, konfirmasi transfer batch, akses alias, import berat ditunda, Levenshtein dua baris, cache statistik rumus, dan ffmpeg non-blokir |
 | Menu & Umum | **Eksplorasi perintah** | `.explore`, `.randomcmd`, `.riwayat`, `.shortcut`, `.pintasan`, `.dataset`, `.rekomendasi` |
 | Menu & Umum | **Produktivitas chat** | `.todo` (tugas pribadi), `.catatancari`, `.peraturan`, `.icebreak`, `.tabel` |
@@ -586,6 +596,17 @@ Semua perintah memakai prefix default `.` `!` atau `+` (atur di `settings.js`).
 | `.ekonomi` | Ringkasan harga limit, hadiah, dan saldo |
 | `.gameinfo` | Cooldown dan aturan game (daily, rampok, begal, slot, casino, samgong) |
 | `.panduan` | Panduan singkat mulai pakai Rynn |
+| `.privasi` / `.privasi ekspor` / `.privasi hapus confirm` | Kendali data pribadi |
+| `.tiket buat <judul>` / `.tiket status <id>` | Tiket dukungan |
+| `.aset simpan <nama> <isi>` / `.aset cari <tag>` | Pustaka aset pribadi |
+| `.siaran jadwal <teks>` / `.siaran list` | Siaran grup tertunda |
+| `.laporanbulanan` / `.ringkasanbot` | Laporan dan ringkasan metrik |
+| `.apresiasi @user <teks>` / `.ceritalanjut <kalimat>` | Interaksi sosial grup |
+| `.namamerek <kata>` / `.caption <teks>` / `.hashtag <topik>` | Generator kreatif lokal |
+| `.glosarium <kata>` / `.teorisingkat <topik>` | Bantuan edukasi |
+| `.portofolio` / `.dividen <nominal>` / `.warisansimulasi <nominal> <bagian>` | Ekonomi simulasi |
+| `.gametim buat <nama>` / `.tebakurutan` / `.papanskorharian` | Game lanjutan |
+| `.bootinfo` / `.stateinfo` / `.ketersediaan` | Informasi sistem, owner saja |
 | `.profilkartu` / `.xp` / `.xptop` | Kartu profil, pengalaman, dan papan peringkat |
 | `.rekening buat liburan` / `.arisan buat Kelas 50000` | Dompet dan arisan simulasi |
 | `.guild buat Rynn` / `.guild papan` | Guild komunitas |

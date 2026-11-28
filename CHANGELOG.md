@@ -1,5 +1,43 @@
 # Changelog
 
+## v14.0.0
+
+﻿## v14.0.0
+
+Rynn v14.0.0 menambah 65 perintah baru pada sebelas kelompok fitur, tanpa dependency baru dan tanpa mengubah design system v12.
+
+### Fitur baru
+
+- Privasi: `.privasi`, `.auditaku`, dengan ekspor dan penghapusan data pribadi berkonfirmasi.
+- Tiket dukungan: `.tiket`, `.faq`, `.faqcari`, `.faqtambah`.
+- Aset dan konten: `.aset`, `.konten`, dengan penyimpanan, tag, dan pencarian.
+- Siaran: `.siaran` untuk menjadwalkan, mengirim, membatalkan, dan melihat riwayat siaran grup.
+- Analitik: `.laporanbulanan`, `.laporantren`, `.laporanbanding`, `.statistikanggota`, `.statistikjam`, `.statistikrespons`, `.trenperintah`, `.ringkasanbot`.
+- Sosial: `.apresiasi`, `.apresiasipapan`, `.salam`, `.tanyakomunitas`, `.ceritalanjut`, `.ceritabaca`, `.ceritareset`, `.rekomendasiperintah`.
+- Kreatif: `.namamerek`, `.namagrup`, `.caption`, `.hashtag`, `.tagline`, `.judulalternatif`, `.dialogpendek`, `.suratpendek`.
+- Edukasi: `.glosarium`, `.peribahasaarti`, `.latihanhitung`, `.teorisingkat`, `.petarumus`, `.soalkategori`, `.hafalancek`, `.rangkumpelajaran`.
+- Ekonomi simulasi: `.portofolio`, `.dividen`, `.obligasi`, `.emassimulasi`, `.sahamsimulasi`, `.kurssimulasi`, `.inflasisimulasi`, `.warisansimulasi`.
+- Game: `.wordleturnamen`, `.rankinggame`, `.gametim`, `.tebakurutan`, `.kartutaruhan`, `.papanskorharian`.
+- Owner: `.bootinfo`, `.stateinfo`, `.cachebersih`, `.backupinkremental`, `.dbekspor`, `.dbimpor`, `.loglevel`, `.debugmode`, `.ketersediaan`.
+
+### Sistem
+
+- Sebelas modul murni di `lib/v14/` memisahkan logika dari router.
+- Seluruh nilai ekonomi, saham, emas, dan kurs diberi label simulasi atau contoh. Tidak ada data pasar yang dikarang sebagai fakta.
+- Semua balasan baru memakai renderer terpadu v12.
+
+### Audit
+
+- 12 tes unit baru di `test/v14.test.js`, termasuk cabang invalid. Total **174 tes lolos**.
+- `npm run check` lolos (220 file). Audit menu: 1023 case, 748 perintah menu unik, semua punya implementasi.
+- Coverage: 90,41 persen baris, 75,47 persen cabang, 87,84 persen fungsi.
+
+### Batas
+
+- Tidak menambah fitur waktu, kesehatan, atau Islami.
+- Tidak menambah dependency berat.
+- Semua aksi destruktif tetap memakai konfirmasi.
+
 ## v13.0.0
 
 ﻿## v13.0.0
