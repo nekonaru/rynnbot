@@ -1,4 +1,5 @@
 import "./settings.js";
+import { ringkasV26, statusV26, ai as aiV26, laporan as laporanV26, pencarian as pencarianV26, game as gameV26, moderasi as moderasiV26, media as mediaV26, profil as profilV26, bot as botV26 } from "./lib/v26/indeks.js";
 import { ringkasV25, statusV25, dompet as dompetV25, koperasi as koperasiV25, kompetisi as kompetisiV25, rantai as rantaiV25, pembelajaran as pembelajaranV25, komunitas as komunitasV25, pengawasan as pengawasanV25, studio as studioV25 } from "./lib/v25/indeks.js";
 import { ringkasan as otomasiRingkasan, validasi as otomasiValidasi, kering as otomasiKering, batas as otomasiBatas, izin as otomasiIzin, catatAudit as otomasiCatat, audit as otomasiAudit, hentikanSemua as otomasiHentikan, penjadwal, event as eventOtomasi, aturan as aturanOtomasi, workflow as workflowOtomasi, templat as templatOtomasi, orkestrasi, jalankanEventNyata, evaluasiAturanNyata } from "./lib/v24/indeks.js";
 import { datasetV23, ambilDataset, cariDataset, totalV23 } from "./lib/data-v23/indeks.js";
@@ -6323,6 +6324,14 @@ Select Bot Settings:
 ├ *Time* : ${date_time}
 ╰──────❍
 ╭──❍「 *UMUM* 」❍
+│${setv} ${prefix}profillengkap (Profil lengkap)
+│${setv} ${prefix}profilpencapaian (Pencapaian)
+│${setv} ${prefix}profilriwayat (Riwayat)
+│${setv} ${prefix}profilpengaturan ([kunci] [nilai] Pengaturan)
+│${setv} ${prefix}profilmode ([nama] Mode)
+│${setv} ${prefix}profilbahasa ([id|en] Bahasa)
+│${setv} ${prefix}profilcadangan (Cadangkan profil)
+│${setv} ${prefix}profilpulihkan ([kode] Pulihkan)
 │${setv} ${prefix}pengumumanbuat
 │${setv} ${prefix}pengumumanisi
 │${setv} ${prefix}pengumumankategori
@@ -6633,6 +6642,14 @@ Select Bot Settings:
 │${setv} ${prefix}adduang
 ╰─┬────❍
 ╭─┴❍「 *GAME* 」❍
+│${setv} ${prefix}gamiharian (Tantangan harian)
+│${setv} ${prefix}gametantangan (Tantangan acak)
+│${setv} ${prefix}gameturnamen (Game turnamen)
+│${setv} ${prefix}gamerekor (Rekor pribadi)
+│${setv} ${prefix}gamematihan ([nama] Mode latihan)
+│${setv} ${prefix}gamepapan (Papan game)
+│${setv} ${prefix}gamehadiah ([poin] Tukar poin)
+│${setv} ${prefix}gamemberi ([jid] [jumlah] Beri poin)
 │${setv} ${prefix}petbantukebun (Bantu kebun)
 │${setv} ${prefix}petpakaipesul (Pakai hasil kebun)
 │${setv} ${prefix}pethadiahpanen (Hadiah panen)
@@ -6979,6 +6996,16 @@ Select Bot Settings:
 │${setv} ${prefix}acakkata
 ╰─┬────❍
 ╭─┴❍「 *AI* 」❍
+│${setv} ${prefix}ailaporandompet (Ringkas transaksi)
+│${setv} ${prefix}aipet (Saran hewan)
+│${setv} ${prefix}aikebun (Saran kebun)
+│${setv} ${prefix}aikarir (Saran karir)
+│${setv} ${prefix}aibelajar (Saran belajar)
+│${setv} ${prefix}aigame (Ulas game)
+│${setv} ${prefix}aigrup (Ringkas grup)
+│${setv} ${prefix}aikarya (Ulas karya)
+│${setv} ${prefix}aikodeulas ([kode] Ulas kode)
+│${setv} ${prefix}airingkasfitur ([nama] Ringkas fitur)
 │${setv} ${prefix}ringkas
 │${setv} ${prefix}ide
 │${setv} ${prefix}paragraf
@@ -7048,6 +7075,14 @@ Select Bot Settings:
 │${setv} ${prefix}urlcode
 ╰─┬────❍
 ╭─┴❍「 *MEDIA* 」❍
+│${setv} ${prefix}mediakartu ([judul] [isi] Kartu)
+│${setv} ${prefix}mediaposter ([judul] [isi] Poster)
+│${setv} ${prefix}mediastiker ([teks] Stiker)
+│${setv} ${prefix}mediagaleri (Galeri)
+│${setv} ${prefix}mediaanimasi ([nama] [frame] Animasi)
+│${setv} ${prefix}mediameta ([teks] Metadata)
+│${setv} ${prefix}mediauji ([teks] Uji media)
+│${setv} ${prefix}mediahapus ([id] Hapus media)
 │${setv} ${prefix}studiodaftar (Daftar studio)
 │${setv} ${prefix}studiobuat ([jenis] Buat karya)
 │${setv} ${prefix}studioisi ([id] [teks] Isi karya)
@@ -7117,6 +7152,14 @@ Select Bot Settings:
 │${setv} ${prefix}animemenu
 ╰─┬────❍
 ╭─┴❍「 *PENCARIAN* 」❍
+│${setv} ${prefix}carilintasfitur ([kata] Cari lintas)
+│${setv} ${prefix}cariperintah ([kata] Cari perintah)
+│${setv} ${prefix}caridata ([kata] Cari data)
+│${setv} ${prefix}caripengguna ([kata] Cari pengguna)
+│${setv} ${prefix}carigrup ([kata] Cari grup)
+│${setv} ${prefix}caririwayat ([kata] Cari riwayat)
+│${setv} ${prefix}caritersimpan ([kata] Simpan)
+│${setv} ${prefix}carihapus ([kata] Hapus tersimpan)
 │${setv} ${prefix}dataset
 │${setv} ${prefix}rekomendasi
 │${setv} ${prefix}datasetpenuh
@@ -7224,6 +7267,14 @@ Select Bot Settings:
 │${setv} ${prefix}setbio
 ╰─┬────❍
 ╭─┴❍「 *STATISTIK* 」❍
+│${setv} ${prefix}laporanharian (Laporan harian)
+│${setv} ${prefix}laporanmingguan (Laporan mingguan)
+│${setv} ${prefix}laporanbulan (Laporan bulanan)
+│${setv} ${prefix}laporanpertumbuhan (Pertumbuhan)
+│${setv} ${prefix}laporanperbandingan ([a] [b] Bandingkan)
+│${setv} ${prefix}laporanekspor (Ekspor laporan)
+│${setv} ${prefix}laporanjadwalkan ([interval] Jadwalkan)
+│${setv} ${prefix}laporanberhenti (Hentikan jadwal)
 │${setv} ${prefix}leaderboard
 │${setv} ${prefix}runtime
 │${setv} ${prefix}totalfitur
@@ -7263,6 +7314,14 @@ Select Bot Settings:
 │${setv} ${prefix}diagnosa
 ╰─┬────❍
 ╭─┴❍「 *KEAMANAN* 」❍
+│${setv} ${prefix}moderatoraturan (Aturan grup)
+│${setv} ${prefix}moderasipingatan ([jid] [alasan] Peringatan)
+│${setv} ${prefix}moderatemute ([jid] [menit] Mute)
+│${setv} ${prefix}moderasiunmute ([jid] Unmute)
+│${setv} ${prefix}moderasilog (Log moderasi)
+│${setv} ${prefix}moderasistatistik (Statistik moderasi)
+│${setv} ${prefix}moderasiauto ([on|off] Moderasi otomatis)
+│${setv} ${prefix}moderasiuji ([teks] Uji aturan)
 │${setv} ${prefix}sesihapus
 │${setv} ${prefix}akseswarisan
 │${setv} ${prefix}bungapinjam
@@ -7301,6 +7360,14 @@ Select Bot Settings:
 │${setv} ${prefix}logaudit
 ╰─┬────❍
 ╭─┴❍「 *OWNER* 」❍
+│${setv} ${prefix}botdiagnosis (Diagnosis bot)
+│${setv} ${prefix}botmetrik (Metrik bot)
+│${setv} ${prefix}botpanas (State terberat)
+│${setv} ${prefix}botbeban (Beban bot)
+│${setv} ${prefix}botcache (Cache bot)
+│${setv} ${prefix}botuji ([nama] Uji modul)
+│${setv} ${prefix}bothentikan ([nama] Hentikan layanan)
+│${setv} ${prefix}botjadwal (Jadwal bot)
 │${setv} ${prefix}kesehatanskor (Skor kesehatan)
 │${setv} ${prefix}kesehatanrincian (Rincian kesehatan)
 │${setv} ${prefix}kesehatansejarah (Riwayat kesehatan)
@@ -15390,6 +15457,525 @@ Select Bot Settings:
 					const u = db.users[m.sender] || (db.users[m.sender] = {});
 					const hasil = studioV25.laporanStudio(u);
 					return kirimRespons(m, { judul: "Laporan studio", isi: ringkasV25(hasil) || formatKosong() });
+				}
+				break;
+			case "ailaporandompet":
+				{
+					const hasil = aiV26.ringkasDompet(db, m.sender);
+					return kirimRespons(m, { judul: "Ringkasan dompet", isi: ringkasV26(hasil) || formatKosong() });
+				}
+				break;
+
+			case "aipet":
+				{
+					const u = db.users[m.sender] || (db.users[m.sender] = {});
+					const hasil = aiV26.saranPet(u);
+					return m.reply(hasil === null || hasil === undefined ? "Data tidak tersedia." : String(hasil));
+				}
+				break;
+
+			case "aikebun":
+				{
+					const u = db.users[m.sender] || (db.users[m.sender] = {});
+					const hasil = aiV26.saranKebun(u);
+					return m.reply(hasil === null || hasil === undefined ? "Data tidak tersedia." : String(hasil));
+				}
+				break;
+
+			case "aikarir":
+				{
+					const u = db.users[m.sender] || (db.users[m.sender] = {});
+					const hasil = aiV26.saranKarir(u);
+					return m.reply(hasil === null || hasil === undefined ? "Data tidak tersedia." : String(hasil));
+				}
+				break;
+
+			case "aibelajar":
+				{
+					const u = db.users[m.sender] || (db.users[m.sender] = {});
+					const hasil = aiV26.saranBelajar(u);
+					return m.reply(hasil === null || hasil === undefined ? "Data tidak tersedia." : String(hasil));
+				}
+				break;
+
+			case "aigame":
+				{
+					const u = db.users[m.sender] || (db.users[m.sender] = {});
+					const hasil = aiV26.ulasGame(u);
+					return m.reply(hasil === null || hasil === undefined ? "Data tidak tersedia." : String(hasil));
+				}
+				break;
+
+			case "aigrup":
+				{
+					const hasil = aiV26.ringkasGrup(db, m.chat);
+					return m.reply(hasil === null || hasil === undefined ? "Data tidak tersedia." : String(hasil));
+				}
+				break;
+
+			case "aikarya":
+				{
+					const u = db.users[m.sender] || (db.users[m.sender] = {});
+					const hasil = aiV26.ulasKarya(u);
+					return m.reply(hasil === null || hasil === undefined ? "Data tidak tersedia." : String(hasil));
+				}
+				break;
+
+			case "aikodeulas":
+				{
+					const hasil = aiV26.ulasKode(text);
+					return m.reply(hasil === null || hasil === undefined ? "Data tidak tersedia." : String(hasil));
+				}
+				break;
+
+			case "airingkasfitur":
+				{
+					const hasil = aiV26.ringkasFitur(text);
+					return m.reply(hasil === null || hasil === undefined ? "Data tidak tersedia." : String(hasil));
+				}
+				break;
+
+			case "laporanharian":
+				{
+					const hasil = laporanV26.harian(db, m.sender);
+					return kirimRespons(m, { judul: "Laporan harian", isi: ringkasV26(hasil) || formatKosong() });
+				}
+				break;
+
+			case "laporanmingguan":
+				{
+					const hasil = laporanV26.mingguan(db, m.sender);
+					return kirimRespons(m, { judul: "Laporan mingguan", isi: ringkasV26(hasil) || formatKosong() });
+				}
+				break;
+
+			case "laporanbulan":
+				{
+					const hasil = laporanV26.bulanan(db, m.sender);
+					return kirimRespons(m, { judul: "Laporan bulanan", isi: ringkasV26(hasil) || formatKosong() });
+				}
+				break;
+
+			case "laporanpertumbuhan":
+				{
+					const hasil = laporanV26.pertumbuhan(db, m.sender);
+					return kirimRespons(m, { judul: "Pertumbuhan", isi: ringkasV26(hasil) || formatKosong() });
+				}
+				break;
+
+			case "laporanperbandingan":
+				{
+					const hasil = laporanV26.perbandingan(db, m.sender, args[0], args[1]);
+					return kirimRespons(m, { judul: "Perbandingan", isi: ringkasV26(hasil) || formatKosong() });
+				}
+				break;
+
+			case "laporanekspor":
+				{
+					const hasil = laporanV26.ekspor(db, m.sender);
+					return m.reply(hasil === null || hasil === undefined ? "Data tidak tersedia." : String(hasil));
+				}
+				break;
+
+			case "laporanjadwalkan":
+				{
+					const hasil = laporanV26.jadwalkan(db, m.sender, args[0]);
+					return kirimRespons(m, { judul: "Jadwal laporan", isi: ringkasV26(hasil) || formatKosong() });
+				}
+				break;
+
+			case "laporanberhenti":
+				{
+					const mt = (text || "").trim().split(/\s+/);
+					if (args[0] !== "confirm") return m.reply("Ketik .laporanberhenti confirm");
+					const hasil = laporanV26.berhenti(db, m.sender);
+					return hasil ? m.reply("Jadwal laporan dihentikan.") : m.reply("Gagal.");
+				}
+				break;
+
+			case "carilintasfitur":
+				{
+					const hasil = pencarianV26.lintas(text);
+					return kirimRespons(m, { judul: "Hasil pencarian", isi: ringkasV26(hasil) || formatKosong() });
+				}
+				break;
+
+			case "cariperintah":
+				{
+					const hasil = pencarianV26.perintah(text);
+					return kirimRespons(m, { judul: "Perintah", isi: ringkasV26(hasil) || formatKosong() });
+				}
+				break;
+
+			case "caridata":
+				{
+					const hasil = pencarianV26.data(text);
+					return kirimRespons(m, { judul: "Data", isi: ringkasV26(hasil) || formatKosong() });
+				}
+				break;
+
+			case "caripengguna":
+				{
+					const hasil = pencarianV26.pengguna(db, text);
+					return kirimRespons(m, { judul: "Pengguna", isi: ringkasV26(hasil) || formatKosong() });
+				}
+				break;
+
+			case "carigrup":
+				{
+					const hasil = pencarianV26.grup(db, text);
+					return kirimRespons(m, { judul: "Grup", isi: ringkasV26(hasil) || formatKosong() });
+				}
+				break;
+
+			case "caririwayat":
+				{
+					const hasil = pencarianV26.riwayat(db, m.sender, text);
+					return kirimRespons(m, { judul: "Riwayat", isi: ringkasV26(hasil) || formatKosong() });
+				}
+				break;
+
+			case "caritersimpan":
+				{
+					const u = db.users[m.sender] || (db.users[m.sender] = {});
+					const hasil = pencarianV26.simpan(u, text);
+					return kirimRespons(m, { judul: "Tersimpan", isi: ringkasV26(hasil) || formatKosong() });
+				}
+				break;
+
+			case "carihapus":
+				{
+					const u = db.users[m.sender] || (db.users[m.sender] = {});
+					const mt = (text || "").trim().split(/\s+/);
+					if (mt[1] !== "confirm") return m.reply("Ketik .carihapus [kata] confirm");
+					const hasil = pencarianV26.hapus(u, args[0]);
+					return hasil ? m.reply("Pencarian dihapus.") : m.reply("Gagal.");
+				}
+				break;
+
+			case "gamiharian":
+				{
+					const hasil = gameV26.harian(Date.now());
+					return kirimRespons(m, { judul: "Tantangan harian", isi: ringkasV26(hasil) || formatKosong() });
+				}
+				break;
+
+			case "gametantangan":
+				{
+					const hasil = gameV26.tantangan(Date.now());
+					return kirimRespons(m, { judul: "Tantangan", isi: ringkasV26(hasil) || formatKosong() });
+				}
+				break;
+
+			case "gameturnamen":
+				{
+					const hasil = gameV26.daftarTurnamen();
+					return kirimRespons(m, { judul: "Game turnamen", isi: ringkasV26(hasil) || formatKosong() });
+				}
+				break;
+
+			case "gamerekor":
+				{
+					const u = db.users[m.sender] || (db.users[m.sender] = {});
+					const hasil = gameV26.rekor(u);
+					return kirimRespons(m, { judul: "Rekor", isi: ringkasV26(hasil) || formatKosong() });
+				}
+				break;
+
+			case "gamematihan":
+				{
+					const u = db.users[m.sender] || (db.users[m.sender] = {});
+					const hasil = gameV26.latihan(u, args[0]);
+					return hasil ? m.reply("Latihan dicatat tanpa hadiah.") : m.reply("Game tidak ditemukan.");
+				}
+				break;
+
+			case "gamepapan":
+				{
+					const hasil = gameV26.papan(db);
+					return kirimRespons(m, { judul: "Papan game", isi: ringkasV26(hasil) || formatKosong() });
+				}
+				break;
+
+			case "gamehadiah":
+				{
+					const hasil = gameV26.hadiah(db, m.sender);
+					return hasil === null || hasil === undefined ? m.reply("Data tidak tersedia.") : kirimRespons(m, { judul: "Hadiah game", isi: String(hasil) });
+				}
+				break;
+
+			case "gamemberi":
+				{
+					const mt = (text || "").trim().split(/\s+/);
+					if (args[2] !== "confirm") return m.reply("Ketik .gamemberi [jid] [jumlah] confirm");
+					const hasil = gameV26.beri(db, m.sender, args[0], Number(args[1]));
+					return hasil ? m.reply("Poin diberikan.") : m.reply("Gagal.");
+				}
+				break;
+
+			case "moderatoraturan":
+				{
+					if (!isCreator && !m.isAdmin) return m.reply(global.mess.admin);
+					const hasil = moderasiV26.aturan(db, m.chat);
+					return m.reply(hasil === null || hasil === undefined ? "Data tidak tersedia." : String(hasil));
+				}
+				break;
+
+			case "moderasipingatan":
+				{
+					if (!isCreator && !m.isAdmin) return m.reply(global.mess.admin);
+					const hasil = moderasiV26.peringatan(db, m.chat, args[0], args.slice(1).join(' '));
+					return kirimRespons(m, { judul: "Peringatan", isi: ringkasV26(hasil) || formatKosong() });
+				}
+				break;
+
+			case "moderatemute":
+				{
+					if (!isCreator && !m.isAdmin) return m.reply(global.mess.admin);
+					const hasil = moderasiV26.mute(db, m.chat, args[0], Number(args[1]));
+					return kirimRespons(m, { judul: "Mute", isi: ringkasV26(hasil) || formatKosong() });
+				}
+				break;
+
+			case "moderasiunmute":
+				{
+					if (!isCreator && !m.isAdmin) return m.reply(global.mess.admin);
+					const mt = (text || "").trim().split(/\s+/);
+					if (mt[1] !== "confirm") return m.reply("Ketik .moderasiunmute [jid] confirm");
+					const hasil = moderasiV26.unmute(db, m.chat, args[0]);
+					return hasil ? m.reply("Mute dilepas.") : m.reply("Gagal.");
+				}
+				break;
+
+			case "moderasilog":
+				{
+					if (!isCreator && !m.isAdmin) return m.reply(global.mess.admin);
+					const hasil = moderasiV26.log(db, m.chat);
+					return kirimRespons(m, { judul: "Log moderasi", isi: ringkasV26(hasil) || formatKosong() });
+				}
+				break;
+
+			case "moderasistatistik":
+				{
+					if (!isCreator && !m.isAdmin) return m.reply(global.mess.admin);
+					const hasil = moderasiV26.statistik(db, m.chat);
+					return kirimRespons(m, { judul: "Statistik moderasi", isi: ringkasV26(hasil) || formatKosong() });
+				}
+				break;
+
+			case "moderasiauto":
+				{
+					if (!isCreator && !m.isAdmin) return m.reply(global.mess.admin);
+					const hasil = moderasiV26.auto(db, m.chat, args[0] === 'on');
+					return kirimRespons(m, { judul: "Moderasi otomatis", isi: ringkasV26(hasil) || formatKosong() });
+				}
+				break;
+
+			case "moderasiuji":
+				{
+					if (!isCreator && !m.isAdmin) return m.reply(global.mess.admin);
+					const hasil = moderasiV26.uji(db, m.chat, text);
+					return m.reply(hasil === null || hasil === undefined ? "Data tidak tersedia." : String(hasil));
+				}
+				break;
+
+			case "mediakartu":
+				{
+					const u = db.users[m.sender] || (db.users[m.sender] = {});
+					const hasil = mediaV26.kartu(args[0], args.slice(1).join(' '));
+					const simpan = mediaV26.simpan(u, 'kartu', hasil);
+					return m.reply(`${String(hasil)}\n\nID: ${simpan?.id || '-'}`);
+				}
+				break;
+
+			case "mediaposter":
+				{
+					const u = db.users[m.sender] || (db.users[m.sender] = {});
+					const hasil = mediaV26.poster(args[0], args.slice(1).join(' '), 'ungu');
+					const simpan = mediaV26.simpan(u, 'poster', hasil);
+					return m.reply(`${String(hasil)}\n\nID: ${simpan?.id || '-'}`);
+				}
+				break;
+
+			case "mediastiker":
+				{
+					const u = db.users[m.sender] || (db.users[m.sender] = {});
+					const hasil = mediaV26.stiker(text);
+					const simpan = mediaV26.simpan(u, 'stiker', JSON.stringify(hasil));
+					return kirimRespons(m, { judul: "Stiker", isi: ringkasV26(hasil) || formatKosong(), footer: `ID: ${simpan?.id || '-'}` });
+				}
+				break;
+
+			case "mediagaleri":
+				{
+					const u = db.users[m.sender] || (db.users[m.sender] = {});
+					const hasil = mediaV26.galeri(u);
+					return kirimRespons(m, { judul: "Galeri", isi: ringkasV26(hasil) || formatKosong() });
+				}
+				break;
+
+			case "mediaanimasi":
+				{
+					const u = db.users[m.sender] || (db.users[m.sender] = {});
+					const hasil = mediaV26.animasi(args[0], Number(args[1]));
+					const simpan = mediaV26.simpan(u, 'animasi', JSON.stringify(hasil));
+					return kirimRespons(m, { judul: "Animasi", isi: ringkasV26(hasil) || formatKosong(), footer: `ID: ${simpan?.id || '-'}` });
+				}
+				break;
+
+			case "mediameta":
+				{
+					const hasil = mediaV26.meta(text);
+					return kirimRespons(m, { judul: "Metadata", isi: ringkasV26(hasil) || formatKosong() });
+				}
+				break;
+
+			case "mediauji":
+				{
+					const hasil = mediaV26.uji(text);
+					return kirimRespons(m, { judul: "Uji media", isi: ringkasV26(hasil) || formatKosong() });
+				}
+				break;
+
+			case "mediahapus":
+				{
+					const u = db.users[m.sender] || (db.users[m.sender] = {});
+					const mt = (text || "").trim().split(/\s+/);
+					if (mt[1] !== "confirm") return m.reply("Ketik .mediahapus [id] confirm");
+					const hasil = mediaV26.hapus(u, args[0]);
+					return hasil ? m.reply("Media dihapus.") : m.reply("Gagal.");
+				}
+				break;
+
+			case "profillengkap":
+				{
+					const u = db.users[m.sender] || (db.users[m.sender] = {});
+					const hasil = profilV26.lengkap(u, db, m.sender);
+					return kirimRespons(m, { judul: "Profil", isi: ringkasV26(hasil) || formatKosong() });
+				}
+				break;
+
+			case "profilpencapaian":
+				{
+					const u = db.users[m.sender] || (db.users[m.sender] = {});
+					const hasil = profilV26.pencapaian(u);
+					return kirimRespons(m, { judul: "Pencapaian", isi: ringkasV26(hasil) || formatKosong() });
+				}
+				break;
+
+			case "profilriwayat":
+				{
+					const u = db.users[m.sender] || (db.users[m.sender] = {});
+					const hasil = profilV26.riwayat(u);
+					return kirimRespons(m, { judul: "Riwayat", isi: ringkasV26(hasil) || formatKosong() });
+				}
+				break;
+
+			case "profilpengaturan":
+				{
+					const u = db.users[m.sender] || (db.users[m.sender] = {});
+					const hasil = args[0] ? profilV26.aturPengaturan(u, args[0], args[1]) : profilV26.pengaturan(u);
+					return kirimRespons(m, { judul: "Pengaturan", isi: ringkasV26(hasil) || formatKosong() });
+				}
+				break;
+
+			case "profilmode":
+				{
+					const u = db.users[m.sender] || (db.users[m.sender] = {});
+					const hasil = profilV26.mode(u, args[0]);
+					return hasil === null || hasil === undefined ? m.reply("Data tidak tersedia.") : kirimRespons(m, { judul: "Mode", isi: String(hasil) });
+				}
+				break;
+
+			case "profilbahasa":
+				{
+					const u = db.users[m.sender] || (db.users[m.sender] = {});
+					const hasil = profilV26.bahasa(u, args[0]);
+					return hasil === null || hasil === undefined ? m.reply("Data tidak tersedia.") : kirimRespons(m, { judul: "Bahasa", isi: String(hasil) });
+				}
+				break;
+
+			case "profilcadangan":
+				{
+					const u = db.users[m.sender] || (db.users[m.sender] = {});
+					const hasil = profilV26.cadangan(u);
+					return kirimRespons(m, { judul: "Cadangan", isi: ringkasV26(hasil) || formatKosong() });
+				}
+				break;
+
+			case "profilpulihkan":
+				{
+					const u = db.users[m.sender] || (db.users[m.sender] = {});
+					const mt = (text || "").trim().split(/\s+/);
+					if (mt[1] !== "confirm") return m.reply("Ketik .profilpulihkan [kode] confirm");
+					const hasil = profilV26.pulihkan(u, args[0]);
+					return hasil ? m.reply("Profil dipulihkan.") : m.reply("Gagal.");
+				}
+				break;
+
+			case "botdiagnosis":
+				{
+					if (!isCreator) return m.reply(mess.owner);
+					const hasil = botV26.diagnosis(global, db);
+					return kirimRespons(m, { judul: "Diagnosis bot", isi: ringkasV26(hasil) || formatKosong() });
+				}
+				break;
+
+			case "botmetrik":
+				{
+					if (!isCreator) return m.reply(mess.owner);
+					const hasil = botV26.metrik(db);
+					return kirimRespons(m, { judul: "Metrik bot", isi: ringkasV26(hasil) || formatKosong() });
+				}
+				break;
+
+			case "botpanas":
+				{
+					if (!isCreator) return m.reply(mess.owner);
+					const hasil = botV26.panas(db);
+					return kirimRespons(m, { judul: "State terberat", isi: ringkasV26(hasil) || formatKosong() });
+				}
+				break;
+
+			case "botbeban":
+				{
+					if (!isCreator) return m.reply(mess.owner);
+					const hasil = botV26.beban(global);
+					return kirimRespons(m, { judul: "Beban bot", isi: ringkasV26(hasil) || formatKosong() });
+				}
+				break;
+
+			case "botcache":
+				{
+					if (!isCreator) return m.reply(mess.owner);
+					const hasil = botV26.cache(global);
+					return kirimRespons(m, { judul: "Cache bot", isi: ringkasV26(hasil) || formatKosong() });
+				}
+				break;
+
+			case "botuji":
+				{
+					if (!isCreator) return m.reply(mess.owner);
+					const hasil = botV26.uji(args[0]);
+					return kirimRespons(m, { judul: "Uji modul", isi: ringkasV26(hasil) || formatKosong() });
+				}
+				break;
+
+			case "bothentikan":
+				{
+					if (!isCreator) return m.reply(mess.owner);
+					const mt = (text || "").trim().split(/\s+/);
+					if (mt[1] !== "confirm") return m.reply("Ketik .bothentikan [nama] confirm");
+					const hasil = botV26.hentikan(db, args[0]);
+					return hasil ? m.reply("Layanan ditandai berhenti.") : m.reply("Gagal.");
+				}
+				break;
+
+			case "botjadwal":
+				{
+					if (!isCreator) return m.reply(mess.owner);
+					const hasil = botV26.jadwal(db);
+					return kirimRespons(m, { judul: "Jadwal bot", isi: ringkasV26(hasil) || formatKosong() });
 				}
 				break;
 			case "bantuan":

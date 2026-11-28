@@ -380,5 +380,5 @@ test("perintah v25 terdaftar di kategori baku", () => {
 	const entri = nama.map((n) => daftar.find((e) => e.command === n));
 	assert.equal(entri.filter(Boolean).length, 113);
 	assert.equal(entri.every((e) => e && baku.has(e.kategori)), true);
-	assert.equal(jumlahCase(), 1350);
+	assert.equal(jumlahCase(), 1416);
 });
