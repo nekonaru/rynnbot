@@ -20,15 +20,16 @@ Rynn v20.0.0 menyatukan fitur yang sudah ada di bawah satu sumber data. Tidak ad
 
 ### Audit
 
-- 5 tes unit baru di `test/v20.test.js`. Total **227 tes lolos**.
+- 5 tes unit baru di `test/v20.test.js`. Total **228 tes lolos**.
 - `npm run check` lolos (260 file).
-- Coverage: 91,44 persen baris, 75,19 persen cabang, 90,07 persen fungsi.
+- Coverage: 91,46 persen baris, 75,21 persen cabang, 90,08 persen fungsi.
 - Audit router: 1087 case, 812 perintah menu, nol duplikat, nol menu tanpa case.
 
 ### Batas
 
 - Tidak menambah kategori perintah, fitur waktu, kesehatan, atau Islami.
 - Skor dan hadiah adalah simulasi bot.
+- Review independen menemukan lima masalah, semuanya diperbaiki sebelum rilis, termasuk juara berupa nomor polos yang tidak cocok dengan kunci JID, turnamen kuis dan wordle yang menimpa state turnamen aktif, serta papan juara yang menampilkan entri lintas grup.
 - Tidak menambah dependency berat.
 
 ## v19.0.0

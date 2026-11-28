@@ -2,6 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { buatKejuaraan, catatHasil } from "../lib/turnamen-mesin.js";
 import {
+	normJid,
 	catatJuara,
 	papanJuara,
 	beriPoinJuara,
@@ -17,10 +18,22 @@ test("juara tercatat dan menambah poin serta lencana", () => {
 	const db = { users: { A: { poin: 5, badge: [] } } };
 	const kejuaraan = buatKejuaraan({ nama: "Liga", mode: "single", peserta: ["A", "B"] });
 	catatJuara(db, kejuaraan, "A");
-	assert.equal(papanJuara(db)[0].juara, "A");
+	assert.equal(papanJuara(db)[0].juara, "A@s.whatsapp.net");
 	assert.equal(beriPoinJuara(db, "A"), 15);
 	assert.ok(db.users.A.badge.includes("juara"));
 	assert.match(ringkasanJuara(papanJuara(db)), /A - Liga/);
+});
+
+test("juara dinormalisasi ke JID dan diberi poin", () => {
+	const db = { users: { "628123@s.whatsapp.net": { poin: 1, badge: [] } } };
+	const kejuaraan = { id: "ABC", nama: "Liga", mode: "single", peserta: ["628123"], juara: "628123" };
+	const jid = normJid(kejuaraan.juara);
+	assert.equal(jid, "628123@s.whatsapp.net");
+	catatJuara(db, kejuaraan, jid, "g@g.us");
+	assert.equal(papanJuara(db)[0].chat, "g@g.us");
+	beriPoinJuara(db, jid);
+	assert.equal(db.users[jid].poin, 11);
+	assert.match(ringkasanJuara(papanJuara(db)), /@628123/);
 });
 
 test("klasemen liga memakai mesin", () => {

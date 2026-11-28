@@ -1,5 +1,5 @@
 import "./settings.js";
-import { catatJuara, papanJuara, beriPoinJuara, klasemenLigaDariMesin, skorGameTerpadu, aktivitasTerpadu, formatJadwal, ringkasanJuara } from "./lib/v20/integrasi.js";
+import { normJid, catatJuara, papanJuara, beriPoinJuara, klasemenLigaDariMesin, skorGameTerpadu, aktivitasTerpadu, formatJadwal, ringkasanJuara } from "./lib/v20/integrasi.js";
 import { buatKejuaraan, catatHasil as catatHasilMesin, klasemen as klasemenMesin, jadwalkan as jadwalkanMesin, formatRingkas as formatRingkasMesin, formatKlasemen as formatKlasemenMesin, pertandinganTersedia } from "./lib/turnamen-mesin.js";
 import { catatLog } from "./lib/log-terstruktur.js";
 import { aman as pathAman, daftarAman } from "./lib/path-aman.js";
@@ -10719,8 +10719,9 @@ Select Bot Settings:
 							if (!sisa[3]) return m.reply("Contoh: .turnamen2 mesin hasil A B A");
 							const hasil = catatHasilMesin(kejuaraan, { a: sisa[1], b: sisa[2], pemenang: sisa[3] });
 							if (hasil.selesai) {
-							catatJuara(db, kejuaraan, kejuaraan.juara);
-							if (db.users?.[kejuaraan.juara]) beriPoinJuara(db, kejuaraan.juara);
+							const jidJuara = normJid(kejuaraan.juara);
+							catatJuara(db, kejuaraan, jidJuara, m.chat);
+							beriPoinJuara(db, jidJuara);
 							delete global.turnamenMesin[m.chat];
 						}
 							return hasil.ok ? m.reply(hasil.selesai ? `Turnamen selesai. Juara: *${kejuaraan.juara}*` : "Hasil dicatat.") : m.reply(hasil.alasan);
@@ -10817,14 +10818,15 @@ Select Bot Settings:
 					}
 					if (sub === "skor" || sub === "klasemen") {
 						const mesin = global.turnamenMesin?.[m.chat];
-						return mesin ? kirimRespons(m, { judul: `Klasemen ${l.nama}`, isi: klasemenLigaDariMesin(mesin) }) : kirimRespons(m, { judul: `Klasemen ${l.nama}`, isi: formatKlasemen(l) });
+						const mesinLiga = mesin && l.nama && String(mesin.nama || "").toLowerCase().includes(String(l.nama).toLowerCase());
+						return mesinLiga ? kirimRespons(m, { judul: `Klasemen ${l.nama}`, isi: klasemenLigaDariMesin(mesin) }) : kirimRespons(m, { judul: `Klasemen ${l.nama}`, isi: formatKlasemen(l) });
 					}
 					return m.reply(".liga2 buat [nama]\n.liga2 anggota @nama\n.liga2 transfer @dari @ke @pemain\n.liga2 jadwal <lawan> <waktu>\n.liga2 skor");
 				}
 				break;
 			case "juaraboards":
 				{
-					const a = papanJuara(db).filter((x) => !m.isGroup || true);
+					const a = papanJuara(db).filter((x) => !m.isGroup || x.chat === m.chat);
 					return kirimRespons(m, { judul: "Papan juara", isi: ringkasanJuara(a) });
 				}
 				break;
@@ -11588,7 +11590,7 @@ Select Bot Settings:
 					const kejuaraan = buatKejuaraan({ nama: "Turnamen Kuis", mode: "roundrobin", peserta });
 					if (!kejuaraan) return m.reply("Tag minimal dua peserta.");
 					global.turnamenMesin = global.turnamenMesin || {};
-					global.turnamenMesin[m.chat] = kejuaraan;
+					global.turnamenMesin[m.chat + ":quiz"] = kejuaraan;
 					return m.reply(`Turnamen kuis *${kejuaraan.id}* dibuat. Gunakan .turnamen2 mesin lanjut.`);
 				}
 				break;
@@ -12370,7 +12372,7 @@ Select Bot Settings:
 					const kejuaraan = buatKejuaraan({ nama: "Turnamen Wordle", mode: "single", peserta });
 					if (!kejuaraan) return m.reply("Tag minimal dua peserta.");
 					global.turnamenMesin = global.turnamenMesin || {};
-					global.turnamenMesin[m.chat] = kejuaraan;
+					global.turnamenMesin[m.chat + ":wordle"] = kejuaraan;
 					return m.reply(`Turnamen Wordle *${kejuaraan.id}* dibuat. Gunakan .turnamen2 mesin lanjut.`);
 				}
 				break;
