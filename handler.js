@@ -1,4 +1,6 @@
 import "./settings.js";
+import { cocokJawaban } from "./lib/game-jawaban.js";
+import { ubahSaldo, pindahSaldo, riwayatTransaksi, rekonsiliasi } from "./lib/transaksi.js";
 import { daftarPaket, pilihPaket, paketAktif, bandingPaket, batasPaket } from "./lib/v16/paket.js";
 import { undangBuat, undangPakai, undangMilik, referralPapan, hadiahReferral } from "./lib/v16/undang.js";
 import { artikelBuat, artikelAmbil, artikelIsi, artikelHapus, artikelCari, seriLanjut } from "./lib/v16/artikel.js";
@@ -84,7 +86,7 @@ import { parseBulat, fpb, kpk, faktorPrima, isPrima, pembagiTerkecil, isPalindro
 import { kataBilangan, ucapanWaktu, hurufKe, angkaKeHuruf } from "./lib/bilangan.js";
 import { bilah, formatTanggal, formatWaktu, potongTeks, hitungKata } from "./lib/teks.js";
 import { bagiKelompok, bagiTim, ukuranTimGame, formatPembagian } from "./lib/pembagian.js";
-import { buatBracket, catatMenang, formatBracket } from "./lib/turnamen.js";
+import { buatBracket, catatMenang, formatBracket, buatBracketDouble, formatBracketDouble } from "./lib/turnamen.js";
 import { denganCache, bersihkanCache } from "./lib/cache.js";
 import { hashTeks, urlEncode, urlDecode, validasiJson } from "./lib/devutils.js";
 import { luasBangun, volumeBangun, akarKuadrat } from "./lib/geometri.js";
@@ -6659,6 +6661,8 @@ Select Bot Settings:
 │${setv} ${prefix}loglevel
 │${setv} ${prefix}debugmode
 │${setv} ${prefix}ketersediaan
+│${setv} ${prefix}cobacmd
+│${setv} ${prefix}aliasperintah
 │${setv} ${prefix}aturan
 │${setv} ${prefix}filter
 │${setv} ${prefix}poin
@@ -9709,12 +9713,17 @@ Select Bot Settings:
 						const pending = peta.get(m.sender);
 						if (!pending || pending.token !== konfirmasi[1] || Date.now() - pending.at > 300000) return m.reply("Token konfirmasi tidak valid atau sudah kedaluwarsa.");
 						const total = pending.nominal * pending.target.length;
-						const u = db.users[m.sender] || {};
-						if ((u.money || 0) < total) return m.reply(`Saldo kurang. Butuh ${total.toLocaleString("id-ID")}.`);
-						u.money -= total;
+						const keluar = ubahSaldo(db, m.sender, "money", -total, "transferbatch");
+						if (!keluar) return m.reply(`Saldo kurang. Butuh ${total.toLocaleString("id-ID")}.`);
+						const berhasil = [];
 						for (const tujuan of pending.target) {
-							if (!db.users[tujuan]) db.users[tujuan] = { limit: 0, money: 0 };
-							db.users[tujuan].money = (db.users[tujuan].money || 0) + pending.nominal;
+							const masuk = ubahSaldo(db, tujuan, "money", pending.nominal, "transferbatch");
+							if (!masuk) {
+								for (const tujuan of berhasil) ubahSaldo(db, tujuan, "money", -pending.nominal, "transferbatch:rollback");
+								ubahSaldo(db, m.sender, "money", total, "transferbatch:rollback");
+								return m.reply("Transfer gagal, saldo dikembalikan.");
+							}
+							berhasil.push(tujuan);
 						}
 						peta.delete(m.sender);
 						return m.reply(`Transfer ${total.toLocaleString("id-ID")} ke ${pending.target.length} target berhasil.`);
@@ -10640,7 +10649,7 @@ Select Bot Settings:
 					});
 				}
 				break;
-			case "coba":
+			case "cobacmd":
 				{
 					const q = (text || "").trim().toLowerCase().replace(/^\./, "");
 					if (!q) return m.reply("Contoh: .coba rumus");
@@ -10652,7 +10661,7 @@ Select Bot Settings:
 					}) : m.reply("Perintah tidak ditemukan.");
 				}
 				break;
-			case "singkatan":
+			case "aliasperintah":
 				{
 					const q = (text || "").trim().toLowerCase().replace(/^\./, "");
 					const info = infoCommand(q);
@@ -10689,7 +10698,7 @@ Select Bot Settings:
 						const mode = ["single", "double"].includes(sisa[sisa.length - 1]) ? sisa[sisa.length - 1] : "single";
 						const namaTurnamen = (mode === "single" ? sisa : sisa.slice(0, -1)).join(" ") || "Turnamen";
 						const t = buatTurnamen(db, m.chat, namaTurnamen, mode);
-						return kirimRespons(m, { judul: "Turnamen dibuat", isi: formatTurnamen(t, (x) => x) });
+						return kirimRespons(m, { judul: "Turnamen dibuat", isi: formatTurnamen(t, (x) => x) + (t.bracket ? "\n\n" + formatBracketDouble(t.bracket) : "") });
 					}
 					if (sub === "daftar" || sub === "peserta") {
 						const t = turnamenAktif(db, m.chat);
@@ -10706,6 +10715,7 @@ Select Bot Settings:
 						const t = turnamenAktif(db, m.chat);
 						if (!t) return m.reply("Belum ada turnamen.");
 						t.seed = [...new Set(sisa.map((x) => x.replace(/^@/, "")))].slice(0, 32);
+						if (t.mode === "double") t.bracket = buatBracketDouble(t.seed);
 						return m.reply(`Seed disimpan: ${t.seed.length} peserta.`);
 					}
 					if (sub === "hasil") {
@@ -11466,7 +11476,7 @@ Select Bot Settings:
 					if (!s || Date.now() - s.at > 300000) return m.reply("Belum ada tebak tokoh aktif.");
 					const j = (text || "").trim().toLowerCase();
 					delete global.tebakTokohState[m.sender];
-					return j === s.jawaban.toLowerCase() ? m.reply(`Benar! *${s.jawaban}*`) : m.reply(`Salah. Jawabannya *${s.jawaban}*.`);
+					return cocokJawaban(j, s.jawaban) ? m.reply(`Benar! *${s.jawaban}*`) : m.reply(`Salah. Jawabannya *${s.jawaban}*.`);
 				}
 				break;
 			case "tebaklagu":
@@ -11484,7 +11494,7 @@ Select Bot Settings:
 					if (!s || Date.now() - s.at > 300000) return m.reply("Belum ada tebak lagu aktif.");
 					const j = (text || "").trim().toLowerCase();
 					delete global.tebakLaguState[m.sender];
-					return j.includes(s.judul.split(" ").pop()) ? m.reply("Benar!") : m.reply(`Belum tepat. Petunjuknya: ${s.judul}`);
+					return cocokJawaban(j, s.judul) ? m.reply("Benar!") : m.reply(`Belum tepat. Petunjuknya: ${s.judul}`);
 				}
 				break;
 			case "riddleai":
@@ -11504,7 +11514,7 @@ Select Bot Settings:
 					if (!s || Date.now() - s.at > 300000) return m.reply("Belum ada riddle aktif.");
 					const j = (text || "").trim().toLowerCase();
 					delete global.riddleState[m.sender];
-					return j === s.jawaban.toLowerCase() ? m.reply("Benar!") : m.reply(`Salah. Jawabannya *${s.jawaban}*.`);
+					return cocokJawaban(j, s.jawaban) ? m.reply("Benar!") : m.reply(`Salah. Jawabannya *${s.jawaban}*.`);
 				}
 				break;
 			case "gameharian":

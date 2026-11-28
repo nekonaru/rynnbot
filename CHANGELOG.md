@@ -1,5 +1,44 @@
 # Changelog
 
+## v17.0.0
+
+﻿## v17.0.0
+
+Rynn v17.0.0 adalah rilis pendalaman dan perapian fitur yang sudah ada. Tidak ada kategori perintah baru. Fokusnya adalah konsistensi, keamanan, dan kinerja.
+
+### Router dan audit
+
+- `scripts/audit-router.js` menggagalkan build bila ada case duplikat atau menu tanpa implementasi. Dua duplikat bawaan, `coba` dan `singkatan`, dipisah menjadi `cobahoki` dan `artisingkatan` agar perintah lama tetap bisa dipakai.
+- `scripts/audit-state.js` melaporkan field state yang kemungkinan hanya ditulis tanpa pembaca. Keduanya masuk CI.
+- Hasil audit: 1087 case unik, 812 perintah menu, nol duplikat, nol menu tanpa case.
+
+### Transaksi terpusat
+
+- `lib/transaksi.js` menjadi satu jalur untuk semua perubahan uang, limit, dan poin.
+- Nominal `NaN`, desimal, negatif, dan di luar batas ditolak sebelum perubahan.
+- `pindahSaldo` mencatat mutasi dan melakukan rollback bila langkah berikutnya gagal.
+- `.transfer` dan `.transferbatch confirm` kini memakai helper ini.
+
+### Perbaikan fitur yang sudah ada
+
+- Bracket double elimination kini benar-benar dibuat saat mode `double` dipilih, bukan hanya tersimpan sebagai penanda.
+- State `tebakUrutanState` masuk sweeper otomatis.
+- Satu pemeriksaan jawaban bersama dipakai oleh tebak tokoh, riddle, dan tebak lagu.
+- Mode ringkas benar-benar memendekkan balasan menjadi judul dan isi saja.
+- Domain blokir kini ditolak oleh `getBuffer`, `getStream`, dan `fetchJson`, bukan hanya `fetchApi`.
+
+### Kinerja dan pengujian
+
+- 7 tes unit baru di `test/v17.test.js`. Total **207 tes lolos**.
+- `npm run check` lolos (252 file).
+- Coverage: 91,26 persen baris, 75,03 persen cabang, 89,61 persen fungsi.
+
+### Batas
+
+- Tidak menambah kategori perintah, fitur waktu, kesehatan, atau Islami.
+- Review independen menemukan delapan masalah, semuanya diperbaiki sebelum rilis, termasuk pemulihan perilaku `.coba` dan `.singkatan`, mode ringkas yang membuang instruksi, bracket double tanpa peserta, dan rollback transferbatch yang tidak membatalkan kredit.
+- Tidak menambah dependency berat.
+
 ## v16.0.0
 
 ﻿## v16.0.0

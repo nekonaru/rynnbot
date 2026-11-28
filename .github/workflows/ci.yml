@@ -30,6 +30,12 @@ jobs:
       - name: Coverage
         run: npm run test:coverage
 
+      - name: Router audit
+        run: npm run audit:router
+
+      - name: State audit
+        run: npm run audit:state
+
       - name: Audit dependencies
         run: npm audit --omit=dev --audit-level=high
         continue-on-error: true
