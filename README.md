@@ -132,6 +132,7 @@ Berbasis Hitori Bot karya [Nazedev](https://github.com/nazedev/hitori), yang dir
 | Menu & Umum | **Mesin turnamen v19** | `.turnamen2 mesin buat\|lanjut\|hasil\|klasemen\|jadwal\|lihat` dengan single, double, dan round robin |
 | Menu & Umum | **Penyatuan v20** | Liga, kuis, dan wordle memakai mesin turnamen yang sama; juara dan poin tercatat otomatis |
 | Menu & Umum | **Kategori baku v21** | 14 kategori: UMUM, BOT, GRUP, EKONOMI, GAME, TURNAMEN, EDUKASI, AI, MEDIA, PENCARIAN, KOMUNITAS, STATISTIK, KEAMANAN, OWNER |
+| Menu & Umum | **Empat pilar v22** | Hewan peliharaan, pertanian, karier, dan pengumuman dengan kotak masuk |
 | Menu & Umum | **Audit dan optimalisasi v11.2** | Antrean per user, state game tanpa kebocoran, konfirmasi transfer batch, akses alias, import berat ditunda, Levenshtein dua baris, cache statistik rumus, dan ffmpeg non-blokir |
 | Menu & Umum | **Eksplorasi perintah** | `.explore`, `.randomcmd`, `.riwayat`, `.shortcut`, `.pintasan`, `.dataset`, `.rekomendasi` |
 | Menu & Umum | **Produktivitas chat** | `.todo` (tugas pribadi), `.catatancari`, `.peraturan`, `.icebreak`, `.tabel` |

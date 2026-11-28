@@ -2,7 +2,7 @@
 
 Dokumen ini dihasilkan otomatis dari registry perintah. Jangan disunting manual.
 
-Total 812 perintah dalam 14 kategori.
+Total 889 perintah dalam 14 kategori.
 
 ## AI
 
@@ -243,6 +243,47 @@ Total 812 perintah dalam 14 kategori.
 
 | Perintah | Contoh | Role | Biaya limit |
 |---|---|---|---|
+| `.kebunbuat` | `.kebunbuat` | semua | 0 |
+| `.kebunlihat` | `.kebunlihat` | semua | 0 |
+| `.kebunbenih` | `.kebunbenih` | semua | 0 |
+| `.kebunbelibenih` | `.kebunbelibenih` | semua | 0 |
+| `.kebuntanam` | `.kebuntanam` | semua | 0 |
+| `.kebunsiram` | `.kebunsiram` | semua | 0 |
+| `.kebunpupuk` | `.kebunpupuk` | semua | 0 |
+| `.kebunpanen` | `.kebunpanen` | semua | 0 |
+| `.kebunjual` | `.kebunjual` | semua | 0 |
+| `.kebungudang` | `.kebungudang` | semua | 0 |
+| `.kebunolah` | `.kebunolah` | semua | 0 |
+| `.kebunpasar` | `.kebunpasar` | semua | 0 |
+| `.kebunluas` | `.kebunluas` | semua | 0 |
+| `.kebunperluas` | `.kebunperluas` | semua | 0 |
+| `.kebunhama` | `.kebunhama` | semua | 0 |
+| `.kebuncuaca` | `.kebuncuaca` | semua | 0 |
+| `.kebunternak` | `.kebunternak` | semua | 0 |
+| `.kebunpanenternak` | `.kebunpanenternak` | semua | 0 |
+| `.kebunpapan` | `.kebunpapan` | semua | 0 |
+| `.kebunprestasi` | `.kebunprestasi` | semua | 0 |
+| `.kebunbongkar` | `.kebunbongkar` | semua | 0 |
+| `.karirbidang` | `.karirbidang` | semua | 0 |
+| `.karirprofil` | `.karirprofil` | semua | 0 |
+| `.karirtugas` | `.karirtugas` | semua | 0 |
+| `.karirkerjakan` | `.karirkerjakan` | semua | 0 |
+| `.karirlembur` | `.karirlembur` | semua | 0 |
+| `.karirgaji` | `.karirgaji` | semua | 0 |
+| `.karirkeahlian` | `.karirkeahlian` | semua | 0 |
+| `.karirbelajar` | `.karirbelajar` | semua | 0 |
+| `.karirsertifikat` | `.karirsertifikat` | semua | 0 |
+| `.karirpromosi` | `.karirpromosi` | semua | 0 |
+| `.karirpindah` | `.karirpindah` | semua | 0 |
+| `.karirriwayat` | `.karirriwayat` | semua | 0 |
+| `.karirprestasi` | `.karirprestasi` | semua | 0 |
+| `.karirpapan` | `.karirpapan` | semua | 0 |
+| `.karirkantor` | `.karirkantor` | semua | 0 |
+| `.karirproyek` | `.karirproyek` | semua | 0 |
+| `.karirperforma` | `.karirperforma` | semua | 0 |
+| `.karirinsentif` | `.karirinsentif` | semua | 0 |
+| `.karircuti` | `.karircuti` | semua | 0 |
+| `.karirpensiun` | `.karirpensiun` | semua | 0 |
 | `.claim` | `.claim` | semua | 0 |
 | `.buy` | `.buy[item]` | semua | 0 |
 | `.transfer` | `.transfer` | semua | 0 |
@@ -308,6 +349,26 @@ Total 812 perintah dalam 14 kategori.
 
 | Perintah | Contoh | Role | Biaya limit |
 |---|---|---|---|
+| `.petadopsi` | `.petadopsi` | semua | 0 |
+| `.petnama` | `.petnama` | semua | 0 |
+| `.petganti` | `.petganti` | semua | 0 |
+| `.petlihat` | `.petlihat` | semua | 0 |
+| `.petmakan` | `.petmakan` | semua | 0 |
+| `.petminum` | `.petminum` | semua | 0 |
+| `.petmain` | `.petmain` | semua | 0 |
+| `.petlatih` | `.petlatih` | semua | 0 |
+| `.petistirahat` | `.petistirahat` | semua | 0 |
+| `.petmandi` | `.petmandi` | semua | 0 |
+| `.petobat` | `.petobat` | semua | 0 |
+| `.petbarang` | `.petbarang` | semua | 0 |
+| `.petbeli` | `.petbeli` | semua | 0 |
+| `.petevolve` | `.petevolve` | semua | 0 |
+| `.petbakat` | `.petbakat` | semua | 0 |
+| `.petpapan` | `.petpapan` | semua | 0 |
+| `.petprestasi` | `.petprestasi` | semua | 0 |
+| `.petturnamen` | `.petturnamen` | semua | 0 |
+| `.pettoko` | `.pettoko` | semua | 0 |
+| `.petlepas` | `.petlepas` | semua | 0 |
 | `.gameinfo` | `.gameinfo` | semua | 0 |
 | `.trivia` | `.trivia` | semua | 0 |
 | `.quizberuntun` | `.quizberuntun` | semua | 0 |
@@ -841,6 +902,22 @@ Total 812 perintah dalam 14 kategori.
 
 | Perintah | Contoh | Role | Biaya limit |
 |---|---|---|---|
+| `.pengumumanbuat` | `.pengumumanbuat` | owner | 0 |
+| `.pengumumanisi` | `.pengumumanisi` | owner | 0 |
+| `.pengumumankategori` | `.pengumumankategori` | owner | 0 |
+| `.pengumumantarget` | `.pengumumantarget` | owner | 0 |
+| `.pengumumanterbitkan` | `.pengumumanterbitkan` | owner | 0 |
+| `.pengumumanlist` | `.pengumumanlist` | owner | 0 |
+| `.pengumumanbaca` | `.pengumumanbaca` | owner | 0 |
+| `.pengumumansunting` | `.pengumumansunting` | owner | 0 |
+| `.pengumumansematkan` | `.pengumumansematkan` | owner | 0 |
+| `.pengumumantutup` | `.pengumumantutup` | owner | 0 |
+| `.pengumumanarsip` | `.pengumumanarsip` | owner | 0 |
+| `.pengumumantemplat` | `.pengumumantemplat` | owner | 0 |
+| `.inbox` | `.inbox` | owner | 0 |
+| `.inboxbaca` | `.inboxbaca` | owner | 0 |
+| `.inboxhapus` | `.inboxhapus` | owner | 0 |
+| `.inboxbersih` | `.inboxbersih` | owner | 0 |
 | `.profile` | `.profile` | semua | 0 |
 | `.afk` | `.afk` | semua | 0 |
 | `.rvo` | `.rvo(reply pesan viewone)` | semua | 0 |

@@ -1,5 +1,53 @@
 # Changelog
 
+## v22.0.0
+
+﻿## v22.0.0
+
+Rynn v22.0.0 mengembangkan empat pilar yang diminta: hewan peliharaan, pertanian, karier, dan pengumuman. Fitur di luar keempat pilar ini tidak dikembangkan.
+
+### Hewan peliharaan
+
+- 20 perintah mulai dari `.petadopsi`, perawatan, latihan, evolusi, toko, prestasi, hingga `.petlepas confirm`.
+- Status mencakup kenyang, senang, energi, kesehatan, level, dan bakat.
+- Turnamen hewan memakai mesin turnamen yang sama dengan turnamen biasa.
+
+### Pertanian
+
+- 21 perintah mulai dari `.kebunbuat`, benih, tanam, siram, pupuk, panen, jual, olahan, perluas lahan, ternak, sampai `.kebunbongkar confirm`.
+- Gudang dan harga hasil tani adalah simulasi.
+- Semua transaksi lewat helper transaksi terpusat.
+
+### Karier
+
+- 20 perintah mulai dari `.karirbidang`, tugas, kinerja, lembur, gaji, keahlian, sertifikat, promosi, pindah bidang, cuti, sampai `.karirpensiun confirm`.
+- Sertifikasi memakai tingkat keahlian, bukan ujian acak.
+
+### Pengumuman
+
+- 12 perintah pengumuman untuk owner: buat, isi, kategori, target, terbitkan, list, baca, sunting, sematkan, tutup, arsip, dan templat.
+- 4 perintah kotak masuk untuk user: `.inbox`, `.inboxbaca`, `.inboxhapus confirm`, dan `.inboxbersih confirm`.
+
+### Arsitektur
+
+- Empat modul murni baru di `lib/v22/`.
+- Semua balasan lewat renderer terpadu, konfirmasi dua langkah, dan kategori baku v21.
+- Registry, `allmenu`, dan `docs/COMMANDS.md` dihasilkan dari sumber yang sama.
+
+### Audit
+
+- 6 tes unit baru di `test/v22.test.js`. Total **240 tes lolos**.
+- `npm run check` lolos (267 file).
+- Coverage: 91,72 persen baris, 75,83 persen cabang, 90,39 persen fungsi.
+- Audit router: 1164 case, 889 perintah menu, nol duplikat, nol menu tanpa case.
+- Audit menu: 889 perintah, 14 kategori, nol kategori asing, nol penumpukan.
+
+### Batas
+
+- Tidak menambah kategori di luar 14 kategori baku.
+- Tidak menambah fitur Islami, waktu, atau kesehatan.
+- Hewan, tanaman, bidang kerja, dan harga adalah simulasi bot, bukan data faktual.
+
 ## v21.0.0
 
 ﻿## v21.0.0
@@ -35,6 +83,7 @@ Rynn v21.0.0 merapikan struktur menu dan `allmenu`. Tidak ada perintah baru dan 
 
 - Tidak menambah perintah, kategori di luar taksonomi, atau perubahan perilaku.
 - Review independen menemukan lima masalah, semuanya diperbaiki sebelum rilis, termasuk `.menu pencarian` yang tidak resolve, alias `quotes` yang salah kategori, border ganda di akhir `allmenu`, serta `ping`, `pintasan`, dan `terbilang` yang salah kategori.
+- Review independen menemukan sepuluh masalah, semuanya diperbaiki sebelum rilis,termasuk jumlah benih negatif, gaji yang bisa diambil berkali kali, target pengumuman yang diabaikan, dan mutasi uang yang keluar dari jalur transaksi.
 - Tidak menambah dependency berat.
 
 ## v20.0.0
