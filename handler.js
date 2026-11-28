@@ -1,4 +1,8 @@
 import "./settings.js";
+import { daftarJenis, daftarMakanan, daftarObat, adopsi, gantiNama, beriMakan, minum, main, latih, istirahat, mandi, obat, beliBarang, evolusi, statusPet, papanPet, lepasPet } from "./lib/v22/pet.js";
+import { daftarBenih, daftarHasil, buatKebun, beliBenih, tanam, rawat, cekHama, panen, jualHasil, olah, perluas, ternak, panenTernak, statusKebun, papanKebun, bongkar } from "./lib/v22/kebun.js";
+import { daftarBidang, daftarKeahlian, pilihBidang, ambilTugas, kerjakan, lembur, ambilGaji, belajar, sertifikat as sertifikatKarir, promosi, pindahBidang, statusKarir, papanKarir, cuti, pensiun } from "./lib/v22/karir.js";
+import { buat as buatPengumuman, ambil as ambilPengumuman, isi as isiPengumuman, aturJenis, aturTarget, terbitkan, daftarAktif, sematkan, tutup, inbox, bacaInbox, hapusInbox, bersihInbox, belumDibaca, simpanTemplat, ambilTemplat, ringkasPengumuman } from "./lib/v22/pengumuman.js";
 import { normJid, catatJuara, papanJuara, beriPoinJuara, klasemenLigaDariMesin, skorGameTerpadu, aktivitasTerpadu, formatJadwal, ringkasanJuara } from "./lib/v20/integrasi.js";
 import { buatKejuaraan, catatHasil as catatHasilMesin, klasemen as klasemenMesin, jadwalkan as jadwalkanMesin, formatRingkas as formatRingkasMesin, formatKlasemen as formatKlasemenMesin, pertandinganTersedia } from "./lib/turnamen-mesin.js";
 import { catatLog } from "./lib/log-terstruktur.js";
@@ -6307,6 +6311,22 @@ Select Bot Settings:
 ├ *Time* : ${date_time}
 ╰──────❍
 ╭──❍「 *UMUM* 」❍
+│${setv} ${prefix}pengumumanbuat
+│${setv} ${prefix}pengumumanisi
+│${setv} ${prefix}pengumumankategori
+│${setv} ${prefix}pengumumantarget
+│${setv} ${prefix}pengumumanterbitkan
+│${setv} ${prefix}pengumumanlist
+│${setv} ${prefix}pengumumanbaca
+│${setv} ${prefix}pengumumansunting
+│${setv} ${prefix}pengumumansematkan
+│${setv} ${prefix}pengumumantutup
+│${setv} ${prefix}pengumumanarsip
+│${setv} ${prefix}pengumumantemplat
+│${setv} ${prefix}inbox
+│${setv} ${prefix}inboxbaca
+│${setv} ${prefix}inboxhapus
+│${setv} ${prefix}inboxbersih
 │${setv} ${prefix}profile
 │${setv} ${prefix}afk
 │${setv} ${prefix}rvo (reply pesan viewone)
@@ -6467,6 +6487,47 @@ Select Bot Settings:
 │${setv} ${prefix}setmotd
 ╰─┬────❍
 ╭─┴❍「 *EKONOMI* 」❍
+│${setv} ${prefix}kebunbuat
+│${setv} ${prefix}kebunlihat
+│${setv} ${prefix}kebunbenih
+│${setv} ${prefix}kebunbelibenih
+│${setv} ${prefix}kebuntanam
+│${setv} ${prefix}kebunsiram
+│${setv} ${prefix}kebunpupuk
+│${setv} ${prefix}kebunpanen
+│${setv} ${prefix}kebunjual
+│${setv} ${prefix}kebungudang
+│${setv} ${prefix}kebunolah
+│${setv} ${prefix}kebunpasar
+│${setv} ${prefix}kebunluas
+│${setv} ${prefix}kebunperluas
+│${setv} ${prefix}kebunhama
+│${setv} ${prefix}kebuncuaca
+│${setv} ${prefix}kebunternak
+│${setv} ${prefix}kebunpanenternak
+│${setv} ${prefix}kebunpapan
+│${setv} ${prefix}kebunprestasi
+│${setv} ${prefix}kebunbongkar
+│${setv} ${prefix}karirbidang
+│${setv} ${prefix}karirprofil
+│${setv} ${prefix}karirtugas
+│${setv} ${prefix}karirkerjakan
+│${setv} ${prefix}karirlembur
+│${setv} ${prefix}karirgaji
+│${setv} ${prefix}karirkeahlian
+│${setv} ${prefix}karirbelajar
+│${setv} ${prefix}karirsertifikat
+│${setv} ${prefix}karirpromosi
+│${setv} ${prefix}karirpindah
+│${setv} ${prefix}karirriwayat
+│${setv} ${prefix}karirprestasi
+│${setv} ${prefix}karirpapan
+│${setv} ${prefix}karirkantor
+│${setv} ${prefix}karirproyek
+│${setv} ${prefix}karirperforma
+│${setv} ${prefix}karirinsentif
+│${setv} ${prefix}karircuti
+│${setv} ${prefix}karirpensiun
 │${setv} ${prefix}claim
 │${setv} ${prefix}buy [item] (nominal)
 │${setv} ${prefix}transfer
@@ -6529,6 +6590,26 @@ Select Bot Settings:
 │${setv} ${prefix}adduang
 ╰─┬────❍
 ╭─┴❍「 *GAME* 」❍
+│${setv} ${prefix}petadopsi
+│${setv} ${prefix}petnama
+│${setv} ${prefix}petganti
+│${setv} ${prefix}petlihat
+│${setv} ${prefix}petmakan
+│${setv} ${prefix}petminum
+│${setv} ${prefix}petmain
+│${setv} ${prefix}petlatih
+│${setv} ${prefix}petistirahat
+│${setv} ${prefix}petmandi
+│${setv} ${prefix}petobat
+│${setv} ${prefix}petbarang
+│${setv} ${prefix}petbeli
+│${setv} ${prefix}petevolve
+│${setv} ${prefix}petbakat
+│${setv} ${prefix}petpapan
+│${setv} ${prefix}petprestasi
+│${setv} ${prefix}petturnamen
+│${setv} ${prefix}pettoko
+│${setv} ${prefix}petlepas
 │${setv} ${prefix}gameinfo
 │${setv} ${prefix}trivia
 │${setv} ${prefix}quizberuntun
@@ -13413,6 +13494,302 @@ Select Bot Settings:
 					if (!isCreator) return m.reply(global.mess.owner);
 					const j = jadwalKerja(global);
 					return kirimRespons(m, { judul: "Tugas berjalan", isi: `- Sweeper: ${j.sweeper ? "aktif" : "mati"}\n- GC: ${j.gc ? "aktif" : "mati"}\n- Panel: ${j.panel ? "aktif" : "mati"}` });
+				}
+				break;
+			case "petadopsi":
+			case "petnama":
+			case "petganti":
+			case "petlihat":
+			case "petmakan":
+			case "petminum":
+			case "petmain":
+			case "petlatih":
+			case "petistirahat":
+			case "petmandi":
+			case "petobat":
+			case "petbarang":
+			case "petbeli":
+			case "petevolve":
+			case "petbakat":
+			case "petpapan":
+			case "petprestasi":
+			case "petturnamen":
+			case "pettoko":
+			case "petlepas":
+				{
+					if (!db.users[m.sender]) db.users[m.sender] = {};
+					const u = db.users[m.sender];
+					const mt = (text || "").trim().split(/\s+/);
+					const a = mt[0] || "lihat";
+					if (command === "petadopsi") {
+						return adopsi(u, mt[1]) ? m.reply(`Hewan *${mt[1]}* diadopsi. Beri nama lewat .petnama`) : m.reply(`Jenis: ${daftarJenis().join(", ")}`);
+					}
+					if (command === "petnama" || command === "petganti") return gantiNama(u, mt.slice(1).join(" ")) ? m.reply(`Nama hewan: *${u.pet.nama}*`) : m.reply("Belum ada hewan.");
+					if (command === "petlihat") return u.pet ? m.reply(statusPet(u.pet)) : m.reply("Belum ada hewan. Ketik .petadopsi <jenis>");
+					if (command === "petmakan") return beriMakan(u, mt[1]) ? m.reply("Hewan diberi makan.") : m.reply("Barang makanan tidak tersedia.");
+					if (command === "petminum") return minum(u) ? m.reply("Hewan diberi minum.") : m.reply("Belum ada hewan.");
+					if (command === "petmain") return main(u) ? m.reply("Hewan bermain dengan senang.") : m.reply("Energi tidak cukup.");
+					if (command === "petlatih") return latih(u) ? m.reply("Latihan selesai, kemampuan bertambah.") : m.reply("Energi atau kenyang tidak cukup.");
+					if (command === "petistirahat") return istirahat(u) ? m.reply("Hewan beristirahat.") : m.reply("Belum ada hewan.");
+					if (command === "petmandi") return mandi(u) ? m.reply("Hewan sudah mandi.") : m.reply("Belum ada hewan.");
+					if (command === "petobat") return obat(u, mt[1]) ? m.reply("Obat diberikan.") : m.reply("Obat tidak tersedia.");
+					if (command === "petbarang") {
+						const list = Object.entries(u.pet?.barang || {});
+						return kirimRespons(m, { judul: "Barang hewan", isi: list.map(([n, v]) => `- ${n}: ${v}`).join("\n") || formatKosong() });
+					}
+					if (command === "petbeli") return beliBarang(u, mt[1]) ? m.reply(`*${mt[1]}* dibeli.`) : m.reply("Barang tidak tersedia atau saldo kurang.");
+					if (command === "petevolve") return evolusi(u) ? m.reply(`Hewan berevolusi ke tahap ${u.pet.evolusi}.`) : m.reply("Butuh level 5 dan evolusi belum maksimal.");
+					if (command === "petbakat") return u.pet ? kirimRespons(m, { judul: "Bakat", isi: u.pet.bakat.join(", ") || "(belum ada)" }) : m.reply("Belum ada hewan.");
+					if (command === "petpapan") {
+						const list = papanPet(db);
+						return kirimRespons(m, { judul: "Papan hewan", isi: list.map((x, i) => `${i + 1}. @${x.jid.split("@")[0]}: level ${x.level}`).join("\n") || formatKosong() });
+					}
+					if (command === "petprestasi") return kirimRespons(m, { judul: "Prestasi hewan", isi: `- Level: ${u.pet?.level || 0}\n- Aksi: ${u.pet?.aksi || 0}\n- Evolusi: ${u.pet?.evolusi || 0}` });
+					if (command === "petturnamen") {
+						const peserta = (m.mentionedJid || []).length ? (m.mentionedJid || []).map((j) => "@" + j.split("@")[0]) : ["@" + m.sender.split("@")[0], "bot"];
+						const kejuaraan = buatKejuaraan({ nama: "Turnamen Hewan", mode: "single", peserta });
+						global.turnamenMesin = global.turnamenMesin || {};
+						global.turnamenMesin[m.chat + ":pet"] = kejuaraan;
+						return m.reply(`Turnamen hewan *${kejuaraan.id}* dibuat.`);
+					}
+					if (command === "pettoko") return kirimRespons(m, { judul: "Toko hewan", isi: [...daftarMakanan(), ...daftarObat()].map((x) => `- ${x.nama}: ${x.harga}`).join("\n") });
+					if (command === "petlepas") {
+						if (mt[1] !== "confirm") return m.reply("Ketik .petlepas confirm");
+						return lepasPet(u) ? m.reply("Hewan dilepas.") : m.reply("Belum ada hewan.");
+					}
+					return m.reply("Perintah hewan tidak dikenal.");
+				}
+				break;
+			case "kebunbuat":
+			case "kebunlihat":
+			case "kebunbenih":
+			case "kebunbelibenih":
+			case "kebuntanam":
+			case "kebunsiram":
+			case "kebunpupuk":
+			case "kebunpanen":
+			case "kebunjual":
+			case "kebungudang":
+			case "kebunolah":
+			case "kebunpasar":
+			case "kebunluas":
+			case "kebunperluas":
+			case "kebunhama":
+			case "kebuncuaca":
+			case "kebunternak":
+			case "kebunpanenternak":
+			case "kebunpapan":
+			case "kebunprestasi":
+			case "kebunbongkar":
+				{
+					if (!db.users[m.sender]) db.users[m.sender] = {};
+					const u = db.users[m.sender];
+					const mt = (text || "").trim().split(/\s+/);
+					if (command === "kebunbuat") return buatKebun(u, mt.slice(1).join(" ")) ? m.reply(`Kebun *${mt.slice(1).join(" ")}* dibuat.`) : m.reply("Kebun sudah ada.");
+					if (command === "kebunlihat") return u.kebun ? m.reply(statusKebun(u.kebun)) : m.reply("Belum ada kebun. Ketik .kebunbuat <nama>");
+					if (command === "kebunbenih") return kirimRespons(m, { judul: "Benih", isi: daftarBenih().map((b) => `- ${b.nama}: ${b.harga}`).join("\n") });
+					if (command === "kebunbelibenih") return beliBenih(u, mt[1], mt[2]) ? m.reply(`Benih *${mt[1]}* dibeli.`) : m.reply("Benih tidak ada atau saldo kurang.");
+					if (command === "kebuntanam") return tanam(u, mt[1], mt[2]) ? m.reply(`*${mt[1]}* ditanam di lahan ${mt[2]}.`) : m.reply("Lahan tidak tersedia atau benih kurang.");
+					if (command === "kebunsiram") return rawat(u, mt[1], "siram") ? m.reply("Tanaman disiram.") : m.reply("Lahan tidak valid.");
+					if (command === "kebunpupuk") return rawat(u, mt[1], "pupuk") ? m.reply("Tanaman dipupuk.") : m.reply("Lahan tidak valid.");
+					if (command === "kebunpanen") {
+						const hasil = panen(u, mt[1]);
+						return hasil ? m.reply(`Panen *${hasil}* masuk gudang.`) : m.reply("Tanaman belum siap.");
+					}
+					if (command === "kebunjual") {
+						const total = jualHasil(u, mt[1], mt[2]);
+						return total ? m.reply(`Hasil dijual. Uang +${total.toLocaleString("id-ID")}.`) : m.reply("Barang tidak ada di gudang.");
+					}
+					if (command === "kebungudang") return u.kebun ? kirimRespons(m, { judul: "Gudang", isi: Object.entries(u.kebun.gudang).map(([k, v]) => `- ${k}: ${v}`).join("\n") || formatKosong() }) : m.reply("Belum ada kebun.");
+					if (command === "kebunolah") {
+						const produk = olah(u, mt[1]);
+						return produk ? m.reply(`Diolah menjadi *${produk}*.`) : m.reply("Butuh 2 bahan di gudang.");
+					}
+					if (command === "kebunpasar") return kirimRespons(m, { judul: "Pasar hasil tani", isi: daftarHasil().map((x) => `- ${x.nama}: ${x.harga}`).join("\n"), catatan: "Harga simulasi." });
+					if (command === "kebunluas") return u.kebun ? m.reply(`Lahan: *${u.kebun.lahan.length}*`) : m.reply("Belum ada kebun.");
+					if (command === "kebunperluas") {
+						if (mt[1] !== "confirm") return m.reply("Ketik .kebunperluas confirm");
+						const biaya = perluas(u);
+						return biaya ? m.reply(`Lahan bertambah. Biaya ${biaya.toLocaleString("id-ID")}.`) : m.reply("Saldo kurang.");
+					}
+					if (command === "kebunhama") {
+						const h = cekHama(u, mt[1]);
+						return h ? m.reply(h.ada ? "Ada hama. Siram lahan ini." : "Tanaman sehat.") : m.reply("Lahan tidak valid.");
+					}
+					if (command === "kebuncuaca") return m.reply("*Kondisi Kebun*\n\nCuaca dipilih dari pola lokal: cerah, berawan, atau hujan. Ini bukan ramalan nyata.");
+					if (command === "kebunternak") return ternak(u, mt[1]) ? m.reply(`Ternak *${mt[1]}* ditambahkan.`) : m.reply("Jenis: ayam, kambing, sapi.");
+					if (command === "kebunpanenternak") {
+						const hasil = panenTernak(u);
+						return hasil?.length ? m.reply(`Hasil ternak: ${hasil.join(", ")}.`) : m.reply("Belum ada ternak.");
+					}
+					if (command === "kebunpapan") {
+						const list = papanKebun(db);
+						return kirimRespons(m, { judul: "Papan petani", isi: list.map((x, i) => `${i + 1}. @${x.jid.split("@")[0]}: ${x.aksi} aksi`).join("\n") || formatKosong() });
+					}
+					if (command === "kebunprestasi") return kirimRespons(m, { judul: "Prestasi kebun", isi: `- Aksi: ${u.kebun?.aksi || 0}\n- Lahan: ${u.kebun?.lahan.length || 0}\n- Gudang: ${Object.keys(u.kebun?.gudang || {}).length}` });
+					if (command === "kebunbongkar") {
+						if (mt[1] !== "confirm") return m.reply("Ketik .kebunbongkar confirm");
+						return bongkar(u) ? m.reply("Kebun dibongkar.") : m.reply("Belum ada kebun.");
+					}
+					return m.reply("Perintah kebun tidak dikenal.");
+				}
+				break;
+			case "karirbidang":
+			case "karirprofil":
+			case "karirtugas":
+			case "karirkerjakan":
+			case "karirlembur":
+			case "karirgaji":
+			case "karirkeahlian":
+			case "karirbelajar":
+			case "karirsertifikat":
+			case "karirpromosi":
+			case "karirpindah":
+			case "karirriwayat":
+			case "karirprestasi":
+			case "karirpapan":
+			case "karirkantor":
+			case "karirproyek":
+			case "karirperforma":
+			case "karirinsentif":
+			case "karircuti":
+			case "karirpensiun":
+				{
+					if (!db.users[m.sender]) db.users[m.sender] = {};
+					const u = db.users[m.sender];
+					const mt = (text || "").trim().split(/\s+/);
+					if (command === "karirbidang") return pilihBidang(u, mt[1]) ? m.reply(`Bidang *${mt[1]}* dipilih.`) : m.reply(`Bidang: ${daftarBidang().join(", ")}`);
+					if (command === "karirprofil") return u.karir ? m.reply(statusKarir(u.karir)) : m.reply("Belum ada karier. Ketik .karirbidang <bidang>");
+					if (command === "karirtugas") {
+						const t = ambilTugas(u);
+						return t ? m.reply(`Tugas *${t.id}*: ${t.nama}. Kerjakan lewat .karirkerjakan ${t.id}`) : m.reply("Tugas penuh atau sedang cuti.");
+					}
+					if (command === "karirkerjakan") return kerjakan(u, mt[1]) ? m.reply(`Tugas selesai. Kinerja ${u.karir.kinerja}.`) : m.reply("Tugas tidak ditemukan.");
+					if (command === "karirlembur") {
+						const bonus = lembur(u);
+						if (!bonus) return m.reply("Kinerja tidak cukup.");
+						u.money = (u.money || 0) + bonus;
+						return m.reply(`Lembur selesai. Uang +${bonus.toLocaleString("id-ID")}.`);
+					}
+					if (command === "karirgaji") {
+						const gaji = ambilGaji(u);
+						if (!gaji) return m.reply("Belum ada karier atau sedang cuti.");
+						u.money = (u.money || 0) + gaji;
+						return m.reply(`Gaji ${gaji.toLocaleString("id-ID")} diterima.`);
+					}
+					if (command === "karirkeahlian") return kirimRespons(m, { judul: "Keahlian", isi: daftarKeahlian().join("\n") });
+					if (command === "karirbelajar") return belajar(u, mt[1]) ? m.reply(`Keahlian *${mt[1]}* naik.`) : m.reply("Keahlian tidak dikenal.");
+					if (command === "karirsertifikat") return sertifikatKarir(u, mt[1]) ? m.reply(`Sertifikat *${mt[1]}* diperoleh.`) : m.reply("Butuh tingkat keahlian 3.");
+					if (command === "karirpromosi") return promosi(u) ? m.reply(`Promosi ke *${u.karir.jabatan}*.`) : m.reply("Kinerja belum cukup.");
+					if (command === "karirpindah") return pindahBidang(u, mt[1]) ? m.reply(`Pindah ke bidang *${mt[1]}*.`) : m.reply("Bidang tidak valid.");
+					if (command === "karirriwayat") {
+						const list = (u.karir?.riwayat || []).slice(-8).reverse();
+						return kirimRespons(m, { judul: "Riwayat karier", isi: list.map((x) => `- ${x.jabatan}`).join("\n") || formatKosong() });
+					}
+					if (command === "karirprestasi") return kirimRespons(m, { judul: "Prestasi karier", isi: `- Jabatan: ${u.karir?.jabatan || "-"}\n- Kinerja: ${u.karir?.kinerja || 0}\n- Sertifikat: ${Object.keys(u.karir?.keahlian || {}).filter((k) => k.includes(":")).length}` });
+					if (command === "karirpapan") {
+						const list = papanKarir(db);
+						return kirimRespons(m, { judul: "Papan karier", isi: list.map((x, i) => `${i + 1}. @${x.jid.split("@")[0]}: ${x.jabatan} (${x.kinerja})`).join("\n") || formatKosong() });
+					}
+					if (command === "karirkantor") return kirimRespons(m, { judul: "Rekan kerja", isi: `- Bidang: ${u.karir?.bidang || "-"}\n- Total rekan: ${Object.values(db.users || {}).filter((x) => x.karir?.bidang === u.karir?.bidang).length}` });
+					if (command === "karirproyek") {
+						const list = (u.karir?.tugas || []).map((t) => `${t.selesai ? "[v]" : "[ ]"} ${t.id} ${t.tugas || t.nama}`);
+						return kirimRespons(m, { judul: "Proyek kerja", isi: list.join("\n") || formatKosong() });
+					}
+					if (command === "karirperforma") return kirimRespons(m, { judul: "Performa", isi: `- Kinerja: ${u.karir?.kinerja || 0}\n- Tugas selesai: ${(u.karir?.tugas || []).filter((t) => t.selesai).length}\n- Kualifikasi promosi: ${(u.karir?.kinerja || 0) >= 20 ? "terpenuhi" : "belum"}` });
+					if (command === "karirinsentif") {
+						if ((u.karir?.kinerja || 0) < 30) return m.reply("Kinerja belum cukup untuk insentif.");
+						u.karir.kinerja -= 30;
+						u.money = (u.money || 0) + 25;
+						return m.reply("Insentif 25 diterima.");
+					}
+					if (command === "karircuti") {
+						if (mt[1] !== "confirm") return m.reply("Ketik .karircuti confirm");
+						return cuti(u, true) ? m.reply("Cuti diambil.") : m.reply("Belum ada karier.");
+					}
+					if (command === "karirpensiun") {
+						if (mt[1] !== "confirm") return m.reply("Ketik .karirpensiun confirm");
+						return pensiun(u) ? m.reply("Karier diakhiri.") : m.reply("Belum ada karier.");
+					}
+					return m.reply("Perintah karier tidak dikenal.");
+				}
+				break;
+			case "pengumumanbuat":
+			case "pengumumanisi":
+			case "pengumumankategori":
+			case "pengumumantarget":
+			case "pengumumanterbitkan":
+			case "pengumumanlist":
+			case "pengumumanbaca":
+			case "pengumumansunting":
+			case "pengumumansematkan":
+			case "pengumumantutup":
+			case "pengumumanarsip":
+			case "pengumumantemplat":
+			case "inbox":
+			case "inboxbaca":
+			case "inboxhapus":
+			case "inboxbersih":
+				{
+					const mt = (text || "").trim().split(/\s+/);
+					const ownerCmd = command.startsWith("pengumuman");
+					if (ownerCmd && !isCreator) return m.reply(global.mess.owner);
+					if (command === "pengumumanbuat") {
+						const p = buatPengumuman(db, mt.slice(1).join(" "));
+						return m.reply(`Pengumuman *${p.id}* dibuat.`);
+					}
+					if (command === "pengumumanisi") return isiPengumuman(db, mt[1], mt.slice(2).join(" ")) ? m.reply("Isi disimpan.") : m.reply("Pengumuman tidak ditemukan.");
+					if (command === "pengumumankategori") return aturJenis(db, mt[1], mt[2]) ? m.reply(`Jenis: *${mt[2]}*`) : m.reply("Jenis: info, acara, peringatan, pemeliharaan.");
+					if (command === "pengumumantarget") return aturTarget(db, mt[1], mt[2], mt.slice(3).join(" ")) ? m.reply(`Target: *${mt[2]}*`) : m.reply("Target: semua, grup, role.");
+					if (command === "pengumumanterbitkan") {
+						if (mt[2] !== "confirm") return m.reply("Ketik .pengumumanterbitkan <id> confirm");
+						const p = ambilPengumuman(db, mt[1]);
+						if (!p || !p.isi) return m.reply("Pengumuman tidak ditemukan atau isi kosong.");
+						const penerima = Object.keys(db.users || {});
+						terbitkan(db, mt[1], penerima);
+						return m.reply(`Pengumuman *${p.judul}* diterbitkan ke ${penerima.length} pengguna.`);
+					}
+					if (command === "pengumumanlist") return kirimRespons(m, { judul: "Pengumuman aktif", isi: ringkasPengumuman(daftarAktif(db)) });
+					if (command === "pengumumanbaca") {
+						const p = ambilPengumuman(db, mt[1]);
+						return p ? kirimRespons(m, { judul: p.judul, isi: p.isi || "(kosong)", catatan: `${p.jenis}, ${p.status}` }) : m.reply("Pengumuman tidak ditemukan.");
+					}
+					if (command === "pengumumansunting") return isiPengumuman(db, mt[1], mt.slice(2).join(" ")) ? m.reply("Isi diperbarui.") : m.reply("Pengumuman tidak ditemukan.");
+					if (command === "pengumumansematkan") {
+						const p = sematkan(db, mt[1]);
+						return p ? m.reply(`Penting: ${p.penting ? "ya" : "tidak"}.`) : m.reply("Pengumuman tidak ditemukan.");
+					}
+					if (command === "pengumumantutup") {
+						if (mt[2] !== "confirm") return m.reply("Ketik .pengumumantutup <id> confirm");
+						return tutup(db, mt[1]) ? m.reply("Pengumuman ditutup.") : m.reply("Pengumuman tidak ditemukan.");
+					}
+					if (command === "pengumumanarsip") {
+						const list = Object.values(db.pengumuman || {}).filter((p) => p.status === "tutup").slice(-10);
+						return kirimRespons(m, { judul: "Arsip pengumuman", isi: ringkasPengumuman(list) });
+					}
+					if (command === "pengumumantemplat") {
+						if (mt[1] === "simpan") return simpanTemplat(db, mt[2], mt.slice(3).join(" ")) ? m.reply("Templat disimpan.") : m.reply("Nama tidak valid.");
+						const t = ambilTemplat(db, mt[1]);
+						return t ? m.reply(t) : m.reply("Templat tidak ditemukan.");
+					}
+					const jid = m.sender;
+					if (command === "inbox") {
+						const list = inbox(db, jid);
+						return kirimRespons(m, { judul: "Kotak masuk", isi: list.map((x) => `${x.dibaca ? "[v]" : "[ ]"} ${x.id}: ${x.judul}`).join("\n") || formatKosong(), catatan: `${belumDibaca(db, jid)} belum dibaca` });
+					}
+					if (command === "inboxbaca") {
+						const p = bacaInbox(db, jid, mt[1]);
+						return p ? kirimRespons(m, { judul: p.judul, isi: p.isi }) : m.reply("Pesan tidak ditemukan.");
+					}
+					if (command === "inboxhapus") {
+						if (mt[2] !== "confirm") return m.reply("Ketik .inboxhapus <id> confirm");
+						return hapusInbox(db, jid, mt[1]) ? m.reply("Pesan dihapus.") : m.reply("Pesan tidak ditemukan.");
+					}
+					if (command === "inboxbersih") {
+						if (mt[1] !== "confirm") return m.reply("Ketik .inboxbersih confirm");
+						return bersihInbox(db, jid) ? m.reply("Kotak masuk dikosongkan.") : m.reply("Kotak masuk sudah kosong.");
+					}
+					return m.reply("Perintah pengumuman tidak dikenal.");
 				}
 				break;
 			case "bantuan":

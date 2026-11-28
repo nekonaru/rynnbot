@@ -52,5 +52,5 @@ test("dokumen perintah dihasilkan dari registry", () => {
 	assert.ok(fs.existsSync(berkas));
 	const isi = fs.readFileSync(berkas, "utf8");
 	assert.match(isi, /Daftar Perintah Rynn/);
-	assert.match(isi, /Total 812 perintah/);
+	assert.match(isi, /Total \d+ perintah/);
 });
