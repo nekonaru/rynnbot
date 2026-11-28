@@ -2,7 +2,7 @@
 
 Dokumen ini dihasilkan otomatis dari registry perintah. Jangan disunting manual.
 
-Total 911 perintah dalam 14 kategori.
+Total 962 perintah dalam 14 kategori.
 
 ## AI
 
@@ -759,6 +759,57 @@ Total 911 perintah dalam 14 kategori.
 
 | Perintah | Contoh | Role | Biaya limit |
 |---|---|---|---|
+| `.tugasdaftar` | `.tugasdaftar(Tugas internal)` | owner | 0 |
+| `.tugasinfo` | `.tugasinfo(Detail tugas)` | owner | 0 |
+| `.tugasstatus` | `.tugasstatus(Status tugas)` | owner | 0 |
+| `.tugasjeda` | `.tugasjeda(Jeda tugas confirm)` | owner | 0 |
+| `.tugaslanjut` | `.tugaslanjut(Lanjut tugas confirm)` | owner | 0 |
+| `.tugasjalankan` | `.tugasjalankan(Jalankan tugas confirm)` | owner | 0 |
+| `.tugasnonaktif` | `.tugasnonaktif(Nonaktif tugas confirm)` | owner | 0 |
+| `.tugasaktifkan` | `.tugasaktifkan(Aktifkan tugas)` | owner | 0 |
+| `.tugasriwayat` | `.tugasriwayat(Riwayat tugas)` | owner | 0 |
+| `.tugasgagal` | `.tugasgagal(Tugas gagal)` | owner | 0 |
+| `.eventlist` | `.eventlist(Daftar event)` | owner | 0 |
+| `.eventpasang` | `.eventpasang(Pasang aksi event)` | owner | 0 |
+| `.eventlihat` | `.eventlihat(Lihat event)` | owner | 0 |
+| `.eventlepas` | `.eventlepas(Lepas aksi confirm)` | owner | 0 |
+| `.eventmatikan` | `.eventmatikan(Matikan aksi)` | owner | 0 |
+| `.eventhidupkan` | `.eventhidupkan(Hidupkan aksi)` | owner | 0 |
+| `.eventuji` | `.eventuji(Uji event)` | owner | 0 |
+| `.eventriwayat` | `.eventriwayat(Riwayat event)` | owner | 0 |
+| `.aturanbaru` | `.aturanbaru(Buat aturan)` | owner | 0 |
+| `.aturanketika` | `.aturanketika(Syarat aturan)` | owner | 0 |
+| `.aturanmaka` | `.aturanmaka(Aksi aturan)` | owner | 0 |
+| `.aturanuji` | `.aturanuji(Uji aturan)` | owner | 0 |
+| `.aturanaktif` | `.aturanaktif(Aktif aturan)` | owner | 0 |
+| `.aturanlist` | `.aturanlist(Daftar aturan)` | owner | 0 |
+| `.aturandetail` | `.aturandetail(Detail aturan)` | owner | 0 |
+| `.aturanhapus` | `.aturanhapus(Hapus aturan confirm)` | owner | 0 |
+| `.workflowbaru` | `.workflowbaru(Buat workflow)` | owner | 0 |
+| `.workflowlangkah` | `.workflowlangkah(Tambah langkah)` | owner | 0 |
+| `.workflowurut` | `.workflowurut(Urut langkah)` | owner | 0 |
+| `.workflowjalankan` | `.workflowjalankan(Jalankan workflow confirm)` | owner | 0 |
+| `.workflowuji` | `.workflowuji(Uji workflow)` | owner | 0 |
+| `.workflowstatus` | `.workflowstatus(Status workflow)` | owner | 0 |
+| `.workflowlist` | `.workflowlist(Daftar workflow)` | owner | 0 |
+| `.workflowhapus` | `.workflowhapus(Hapus workflow confirm)` | owner | 0 |
+| `.templatlist` | `.templatlist(Daftar templat)` | owner | 0 |
+| `.templatpakai` | `.templatpakai(Pakai templat)` | owner | 0 |
+| `.templatsimpan` | `.templatsimpan(Simpan templat)` | owner | 0 |
+| `.templatlihat` | `.templatlihat(Lihat templat)` | owner | 0 |
+| `.templathapus` | `.templathapus(Hapus templat confirm)` | owner | 0 |
+| `.otomasivalidasi` | `.otomasivalidasi(Validasi otomasi)` | owner | 0 |
+| `.otomasikering` | `.otomasikering(Otomasi kering)` | owner | 0 |
+| `.otomasibatas` | `.otomasibatas(Batas otomasi)` | owner | 0 |
+| `.otomasiizin` | `.otomasiizin(Aksi diizinkan)` | owner | 0 |
+| `.otomasiaudit` | `.otomasiaudit(Audit otomasi)` | owner | 0 |
+| `.otomasistop` | `.otomasistop(Hentikan otomasi confirm)` | owner | 0 |
+| `.orkestrasistatus` | `.orkestrasistatus(Status modul)` | owner | 0 |
+| `.orkestrasimodul` | `.orkestrasimodul(Daftar modul)` | owner | 0 |
+| `.orkestrasiinfo` | `.orkestrasiinfo(Info modul)` | owner | 0 |
+| `.orkestrasiuji` | `.orkestrasiuji(Uji modul)` | owner | 0 |
+| `.orkestrasiuru` | `.orkestrasiuru(Urutan modul)` | owner | 0 |
+| `.orkestrasiketergantungan` | `.orkestrasiketergantungan(Ketergantungan modul)` | owner | 0 |
 | `.ownerlist` | `.ownerlist` | semua | 0 |
 | `.hadiahevent` | `.hadiahevent` | owner | 0 |
 | `.topbulanan` | `.topbulanan` | semua | 0 |

@@ -56,6 +56,7 @@ Berbasis Hitori Bot karya [Nazedev](https://github.com/nazedev/hitori), yang dir
 
 | Kategori | Fitur | Deskripsi |
 |----------|-------|-----------|
+| Menu & Umum | **Otomasi v24** | Penjadwalan internal, event, aturan, workflow, templat, dan orkestrasi modul untuk owner |
 | Menu & Umum | **Menu dan bantuan** | Menu berkategori, daftar perintah, info bot, ping |
 | Menu & Umum | **CLI interaktif** | Wizard setup pertama, manajer pengaturan, dashboard status, pembaca log |
 | Menu & Umum | **Navigasi v8** | `.jelajah`, `.cmdbaru`, `.peta`, `.aliasglobal`, `.statcmd` |
