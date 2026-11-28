@@ -9,9 +9,9 @@ Rynn v23.0.0 memperbesar dataset dan menambahkan indeks kategori pada menu. Tida
 ### Dataset baru
 
 - `lib/data-v23/` berisi 20 dataset dengan metadata kelas dan sumber: fakta, kreatif, dan turunan.
-- Total **878 entri baru**. Templat surat 192, sinonim 113, singkatan 108, resep 100, kuliner 49, nama bayi 45, dan sisanya mengikuti jumlah yang bisa diverifikasi.
+- Total **856 entri baru**. Templat surat 192, singkatan 108, resep 100, peribahasa 67, kuliner 49, nama bayi 45, dan sisanya mengikuti jumlah yang bisa diverifikasi. Sinonim hanya 26 pasangan setelah pasangan identik dibuang.
 - Target 1000 per dataset tidak dipaksakan. Dataset fakta seperti tokoh, sejarah, gunung, dan lagu daerah hanya berisi entri yang lazim dikenal. Tidak ada entri karangan untuk mengejar angka.
-- `.statistikdata penuh` diperluas dengan jumlah, kelas, sumber, dan status validasi.
+- `.dataindeks` menampilkan jumlah, kelas, sumber, dan status validasi tiap dataset.
 
 ### Perintah data
 
@@ -37,6 +37,7 @@ Rynn v23.0.0 memperbesar dataset dan menambahkan indeks kategori pada menu. Tida
 
 - Tidak menambah kategori di luar 14 kategori baku.
 - Tidak mengarang tokoh, tanggal, gunung, sungai, atau budaya.
+- Review independen menemukan sepuluh masalah, semuanya diperbaiki sebelum rilis, termasuk pasangan sinonim identik, dataset peribahasa yang belum terdaftar, indeks `allmenu` yang belum dipanggil, dan state tebak yang bocor.
 - Tidak menambah dependency berat.
 
 ## v22.0.0

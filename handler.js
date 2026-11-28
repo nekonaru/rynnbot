@@ -6263,7 +6263,7 @@ Select Bot Settings:
 							set.template = parseInt(args[1], 10);
 							m.reply(`Sukses Mengubah Template Menu\nTemplate : ${set.template == 1 ? "Button Menu" : set.template == 2 ? "List Menu" : set.template == 3 ? "Document Menu" : set.template == 4 ? "Location Menu" : "Button Menu"}`);
 						} else m.reply(`Template Menu:\n- 1 (Button Menu)\n- 2 (List Menu)\n- 3 (Document Menu)\n- 4 (Location Menu)\n\nExample: ${prefix + command} set 1`);
-					} else if (args[0] === "list" || args[0] === "indeks") {
+					} else if ((args[0] || "").toLowerCase() === "list" || (args[0] || "").toLowerCase() === "indeks") {
 						return m.reply(bangunIndeksMenu(setv, prefix));
 					} else if (args[0]) {
 						const k = args[0].toLowerCase();
@@ -7263,6 +7263,7 @@ Select Bot Settings:
 │${setv} ${prefix}maintenance
 ╰──────❍
 `;
+					await m.reply(bangunIndeksMenu(setv, prefix));
 					await sock.sendMessageV3(m.chat, {
 						text: menunya,
 						title: ucapanWaktu,
@@ -13845,7 +13846,7 @@ Select Bot Settings:
 					const mt = arg.split(/\s+/);
 					const sub = command.replace("data", "").toLowerCase();
 					if (sub === "rekomendasi") {
-						const semua = datasetV23().sort((a, b) => a.jumlah - b.jumlah).slice(0, 8);
+						const semua = datasetV23().sort((a, b) => b.jumlah - a.jumlah).slice(0, 8);
 						return kirimRespons(m, { judul: "Dataset terbesar", isi: semua.map((d) => `- ${d.nama}: ${d.jumlah}`).join("\n") });
 					}
 					if (sub === "carilintas") {
@@ -13854,7 +13855,7 @@ Select Bot Settings:
 						return kirimRespons(m, { judul: `Hasil ${arg}`, isi: hasil.slice(0, 10).map((x) => `- ${x.dataset}: ${JSON.stringify(x.entri).slice(0, 100)}`).join("\n") || formatKosong() });
 					}
 					if (sub === "sumber" || sub === "kelas" || sub === "validasi" || sub === "contoh" || sub === "ekspor") {
-						const d = ambilDataset(arg.split(/\s+/).slice(1).join(" ") || arg);
+						const d = ambilDataset(arg);
 						if (!d) return kirimRespons(m, { judul: "Dataset v23", isi: datasetV23().map((x) => `- ${x.nama}: ${x.jumlah} (${x.kelas})`).join("\n") });
 						if (sub === "sumber") return m.reply(d.sumber);
 						if (sub === "kelas") return m.reply(`Kelas data *${d.kelas}*`);
@@ -13888,17 +13889,20 @@ Select Bot Settings:
 					const pilih = data[Math.floor(Math.random() * data.length)];
 					const isi = typeof pilih === "string" ? pilih : (pilih[0] || JSON.stringify(pilih));
 					global.tebakDataV23 = global.tebakDataV23 || {};
-					global.tebakDataV23[m.sender] = { jawaban: isi, at: Date.now() };
+					const kunciTebak = m.chat + ":" + m.sender;
+					global.tebakDataV23[kunciTebak] = { jawaban: isi, at: Date.now() };
 					return m.reply(`*${command}*\n\nPetunjuk: ${isi.split(" ").length} kata, diawali *${isi.slice(0, 1)}*.\\nJawab: .tebakdatajawab <teks>`);
 				}
 				break;
 			case "tebakdatajawab":
 				{
-					const s = global.tebakDataV23?.[m.sender];
-					if (!s || Date.now() - s.at > 300000) return m.reply("Belum ada tebakan aktif.");
+					const kunciTebak = m.chat + ":" + m.sender;
+					const s = global.tebakDataV23?.[kunciTebak];
+					if (!s) return m.reply("Belum ada tebakan aktif.");
+					if (Date.now() - s.at > 300000) { delete global.tebakDataV23[kunciTebak]; return m.reply("Tebakan kedaluwarsa. Ketik perintah tebak lagi."); }
 					const j = (text || "").trim().toLowerCase().replace(/[^\p{L}\p{N}\s]/gu, "");
 					const benar = s.jawaban.toLowerCase().replace(/[^\p{L}\p{N}\s]/gu, "");
-					delete global.tebakDataV23[m.sender];
+					delete global.tebakDataV23[kunciTebak];
 					return j === benar ? m.reply("Benar!") : m.reply(`Salah. Jawabannya *${s.jawaban}*.`);
 				}
 				break;

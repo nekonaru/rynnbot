@@ -6,6 +6,7 @@ import { bangunIndeksMenu, bangunAllMenu, bangunMenu, kategoriDariNama } from ".
 test("dataset v23 memiliki metadata lengkap", () => {
 	const semua = datasetV23();
 	assert.ok(semua.length >= 20);
+	assert.equal(totalV23(), 856);
 	for (const d of semua) {
 		assert.ok(d.nama && d.kelas && d.sumber, d.nama);
 		assert.ok(["fakta", "kreatif", "turunan"].includes(d.kelas), d.nama);
@@ -17,7 +18,9 @@ test("dataset v23 memiliki metadata lengkap", () => {
 test("dataset kreatif dan turunan memiliki jumlah besar", () => {
 	assert.ok(ambilDataset("Templat surat").jumlah >= 150);
 	assert.ok(ambilDataset("Resep").jumlah >= 100);
-	assert.ok(ambilDataset("Sinonim").jumlah >= 100);
+	assert.ok(ambilDataset("Sinonim").jumlah >= 20);
+	assert.equal(ambilDataset("Sinonim").data.every(([a, b]) => a !== b), true);
+	assert.equal(ambilDataset("Antonim").data.every(([a, b]) => a !== b), true);
 	assert.ok(ambilDataset("Singkatan").jumlah >= 100);
 });
 
