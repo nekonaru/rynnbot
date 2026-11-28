@@ -98,7 +98,7 @@ test("validasi dataset", () => {
 	assert.equal(kosongDataset([null, "a"]), 1);
 	assert.equal(ukuranDataset({ a: [1, 2] }).a, 2);
 	assert.equal(laporanSehat([cekDataset({ a: 1 }, "x")]).length, 1);
-	assert.deepEqual(perbaikiDuplikat(["a", "a"]), ["a"]);
+	assert.equal(perbaikiDuplikat(["a", "a"]).dihapus, 1);
 });
 
 test("mode dan penanda fitur", () => {

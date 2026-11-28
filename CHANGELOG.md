@@ -23,7 +23,7 @@ Rynn v16.0.0 menambah 24 perintah baru yang mencakup dua belas kelompok fitur me
 
 ### Sistem
 
-- Dua belas modul murni di `lib/v16/`.
+- Dua belas modul murni di `lib/v16/`. Review independen menemukan sepuluh masalah, semuanya diperbaiki sebelum rilis, termasuk survei lintas grup, `.pindah banding` yang memanggil fungsi keliru, state tanpa batas, mode dan fitur yang belum dibaca, serta normalisasi kunci inventaris.
 - Semua state baru memakai batas ukuran dan masuk sweeper yang ada.
 - Tanda tangan memakai hash lokal, bukan sertifikat resmi.
 
@@ -31,7 +31,7 @@ Rynn v16.0.0 menambah 24 perintah baru yang mencakup dua belas kelompok fitur me
 
 - 13 tes unit baru di `test/v16.test.js`, termasuk cabang invalid. Total **200 tes lolos**.
 - `npm run check` lolos (246 file). Audit menu: 1085 case, 810 perintah menu unik, semua punya implementasi.
-- Coverage: 91,12 persen baris, 75,26 persen cabang, 89,15 persen fungsi.
+- Coverage: 91,12 persen baris, 75,39 persen cabang, 89,21 persen fungsi.
 
 ### Batas
 

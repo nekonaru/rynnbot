@@ -7,10 +7,10 @@ import { koperasiBuat, koperasiGabung, koperasiSetor, koperasiPinjam, koperasiRe
 import { inventarisBuat, inventarisTambah, inventarisPakai, inventarisJual, inventarisCari, avatarBuat, avatarPakai } from "./lib/v16/inventaris.js";
 import { papanUmum, papanPoin as papanPoinV2, papanKuis, papanGame, papanGrup, papanKontribusi, formatPapan as formatPapanV2 } from "./lib/v16/papan.js";
 import { eksporPaket, simpanPaket, ambilPaket, imporPaket, bandingPaket as bandingPaketData, hapusPaket } from "./lib/v16/pindah.js";
-import { cekDataset, duplikatDataset, kosongDataset, ukuranDataset, laporanSehat } from "./lib/v16/sehat.js";
+import { cekDataset, duplikatDataset, kosongDataset, ukuranDataset, laporanSehat, perbaikiDuplikat } from "./lib/v16/sehat.js";
 import { daftarMode, pakaiMode, modeSekarang, flagFitur, aturFitur, aktifFitur } from "./lib/v16/mode.js";
 import { konstitusiBuat, konstitusiPasal, konstitusiSetuju, tandaTangan, cekTandaTangan } from "./lib/v16/konstitusi.js";
-import { aksesMatriks, aturLimit, bersihkanState, memoriPeta, eventLog, jadwalKerja } from "./lib/v16/owner.js";
+import { aksesMatriks, aturLimit, bersihkanState, memoriPeta, eventLog, catatEvent, jadwalKerja } from "./lib/v16/owner.js";
 import { aturanBuat, aturanAmbil, aturanHapus, aturanMatikan, aturanUji, filterTambah, filterHapus } from "./lib/v15/aturan.js";
 import { tambahPoin, papanPoin, hadiahTambah, hadiahTukar, transferPoin } from "./lib/v15/poin.js";
 import { tokoBuka, tokoTambah, tokoBeli, lelangBuat, lelangTawar, lelangTutup } from "./lib/v15/toko.js";
@@ -287,6 +287,10 @@ function metaCases(daftar) {
 	}
 	return hasil;
 }
+
+const datasetV16 = (nama) => ({
+	peribahasa: PERIBAHASA, fakta: FAKTA, soal: Object.values(SOAL).flat(), resep: Array.isArray(RESEP) ? RESEP : Object.values(RESEP || {}), hangman: HANGMAN_KATA, rumus: semuaRumus(),
+}[String(nama || "").toLowerCase()] || []);
 
 const sock = async (sock, m, store) => {
 	await siapkanData();
@@ -808,7 +812,7 @@ const sock = async (sock, m, store) => {
 
 		// Mengetik & Anti Spam & Hit
 		if (sock.public && isCmd) {
-			if (set.autotyping && !global.modeHemat) {
+			if (set.autotyping && !global.modeHemat && modeSekarang(global).typing) {
 				await ketikDulu(sock, m.chat, { teks: typeof budy === "string" ? budy : "" });
 			}
 			if (!global.db.spamDeteksi) global.db.spamDeteksi = 0;
@@ -831,6 +835,9 @@ const sock = async (sock, m, store) => {
 				const cek = cekAkses({ db, chat: m.chat, sender: m.sender, command, isCreator, isAdmin: Boolean(m.isAdmin), isPremium, isVip });
 				if (!cek.ok) return m.reply(cek.alasan);
 			}
+			if (isCmd && command && db.featureFlag && Object.prototype.hasOwnProperty.call(db.featureFlag, command) && !aktifFitur(db, command)) {
+				return m.reply(`Fitur .${command} sedang tidak aktif.`);
+			}
 			if (isCmd && command && butuhPin(db.users[m.sender], command)) {
 				const pin = (budy || "").match(/(?:^|\s)(?:pin|#)(\d{4,6})(?:\s|$)/i)?.[1];
 				if (!pin || !cocokPin(db.users[m.sender], command, pin)) {
@@ -841,6 +848,7 @@ const sock = async (sock, m, store) => {
 			if (casesSet.has(command)) {
 				cmdAdd(db.hit);
 				cmdAddHit(db.hit, command);
+				catatEvent(db, command);
 				if (!db.users[m.sender]) db.users[m.sender] = {};
 				if (db.users[m.sender]?.opsiPrivasi?.riwayat === false) return;
 				const riwayat = db.users[m.sender].riwayat || [];
@@ -13073,20 +13081,28 @@ Select Bot Settings:
 					}
 					if (sub === "pilih") {
 						if (!isCreator && !m.isAdmin) return m.reply(global.mess.admin);
-						const s = surveiOpsi(surveiAmbil(db, mt[1]), mt.slice(2).join(" "));
-						return s ? m.reply("Opsi ditambahkan.") : m.reply("Survei tidak ditemukan atau opsi sudah ada.");
+						const s = surveiAmbil(db, mt[1]);
+						if (!s || s.chat !== m.chat) return m.reply("Survei tidak ditemukan di grup ini.");
+						const opsi = surveiOpsi(s, mt.slice(2).join(" "));
+						return opsi ? m.reply("Opsi ditambahkan.") : m.reply("Survei tidak aktif atau opsi sudah ada.");
 					}
 					if (sub === "jawab") {
 						const s = surveiAmbil(db, mt[1]);
+						if (!s || s.chat !== m.chat) return m.reply("Survei tidak ditemukan di grup ini.");
 						return surveiJawab(s, m.sender, mt.slice(2).join(" ")) ? m.reply("Jawaban tercatat.") : m.reply("Survei tidak aktif atau opsi tidak ada.");
 					}
 					if (sub === "hasil") {
-						const h = surveiHasil(surveiAmbil(db, mt[1]));
+						const s = surveiAmbil(db, mt[1]);
+						if (!s || s.chat !== m.chat) return m.reply("Survei tidak ditemukan di grup ini.");
+						const h = surveiHasil(s);
 						return kirimRespons(m, { judul: "Hasil survei", isi: h.map(([o, v], i) => `${i + 1}. ${o}: ${v} suara`).join("\n") || formatKosong() });
 					}
 					if (sub === "tutup") {
+						if (!isCreator && !m.isAdmin) return m.reply(global.mess.admin);
 						if (mt[2] !== "confirm") return m.reply("Ketik .survei tutup <id> confirm");
-						return surveiTutup(surveiAmbil(db, mt[1])) ? m.reply("Survei ditutup.") : m.reply("Survei tidak ditemukan.");
+						const s = surveiAmbil(db, mt[1]);
+						if (!s || s.chat !== m.chat) return m.reply("Survei tidak ditemukan di grup ini.");
+						return surveiTutup(s) ? m.reply("Survei ditutup.") : m.reply("Survei tidak ditemukan.");
 					}
 					return kirimRespons(m, { judul: "Survei aktif", isi: Object.values(db.survei || {}).filter((s) => s.chat === m.chat && !s.tutup).map((s) => `- ${s.id}: ${s.judul}`).join("\n") || formatKosong() });
 				}
@@ -13188,7 +13204,7 @@ Select Bot Settings:
 						return imporPaket(u, ambilPaket(u, mt[1])) ? m.reply("Paket diimpor.") : m.reply("Paket tidak ditemukan atau rusak.");
 					}
 					if (sub === "banding") {
-						const b = bandingPaket(u, ambilPaket(u, mt[1]));
+						const b = bandingPaketData(u, ambilPaket(u, mt[1]));
 						return b ? kirimRespons(m, { judul: "Perbandingan", isi: `- Catatan lokal ${b.catatanLokal}, paket ${b.catatanPaket}\n- Aset lokal ${b.asetLokal}, paket ${b.asetPaket}` }) : m.reply("Paket tidak ditemukan.");
 					}
 					if (sub === "hapus") {
@@ -13205,13 +13221,13 @@ Select Bot Settings:
 					const mt = arg.split(/\s+/);
 					const sub = mt[0] || "cek";
 					if (sub === "ukuran") {
-						return kirimRespons(m, { judul: "Ukuran dataset", isi: Object.entries(ukuranDataset({ FAKTA, SOAL, PERIBAHASA, RESEP, HANGMAN_KATA, RUMUS: [] })).map(([k, v]) => `- ${k}: ${v}`).join("\n") });
+						return kirimRespons(m, { judul: "Ukuran dataset", isi: Object.entries(ukuranDataset({ FAKTA, SOAL, PERIBAHASA, RESEP, HANGMAN_KATA, RUMUS: semuaRumus() })).map(([k, v]) => `- ${k}: ${v}`).join("\n") });
 					}
 					if (sub === "duplikat") {
-						const hasil = duplikatDataset(mt[1] === "peribahasa" ? PERIBAHASA : []);
+						const hasil = duplikatDataset(datasetV16(mt[1]));
 						return kirimRespons(m, { judul: "Duplikat", isi: hasil.join("\n") || "(tidak ada)" });
 					}
-					if (sub === "kosong") return kirimRespons(m, { judul: "Entri kosong", isi: String(kosongDataset(mt[1] === "peribahasa" ? PERIBAHASA : [])) });
+					if (sub === "kosong") return kirimRespons(m, { judul: "Entri kosong", isi: String(kosongDataset(datasetV16(mt[1]))) });
 					if (sub === "lapor") {
 						const l = [cekDataset({ a: 1, b: 2 }, "FAKTA"), cekDataset({ c: 3 }, "SOAL")];
 						return kirimRespons(m, { judul: "Laporan sehat", isi: laporanSehat(l).join("\n") });
@@ -13219,7 +13235,8 @@ Select Bot Settings:
 					if (sub === "perbaiki") {
 						if (!isCreator) return m.reply(global.mess.owner);
 						if (mt[2] !== "confirm") return m.reply("Ketik .datasehat perbaiki <nama> confirm");
-						return m.reply("Pembersihan dijalankan pada salinan data.");
+						const hasil = perbaikiDuplikat(datasetV16(mt[1]));
+						return m.reply(hasil ? `${hasil.dihapus} entri duplikat dihapus pada salinan data.` : "Data tidak tersedia.");
 					}
 					const l = [cekDataset({ a: 1 }, "FAKTA"), cekDataset({ b: 2 }, "SOAL")];
 					return kirimRespons(m, { judul: "Cek dataset", isi: laporanSehat(l).join("\n") });
@@ -13304,13 +13321,14 @@ Select Bot Settings:
 				{
 					if (!isCreator) return m.reply(global.mess.owner);
 					const n = aturLimit(db, (text || "").trim());
+					if (n && global.limit) global.limit.free = n;
 					return n ? m.reply(`Limit default *${n}*.`) : m.reply("Contoh: .limitatur 20 (1 sampai 10000)");
 				}
 				break;
 			case "limitlihat":
 				{
 					if (!isCreator) return m.reply(global.mess.owner);
-					return kirimRespons(m, { judul: "Limit default", isi: `*${db.limitDefault || 10}*` });
+					return kirimRespons(m, { judul: "Limit default", isi: `*${global.limit?.free || 10}*` });
 				}
 				break;
 			case "statebersih":
