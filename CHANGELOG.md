@@ -1,5 +1,45 @@
 # Changelog
 
+## v19.0.0
+
+﻿## v19.0.0
+
+Rynn v19.0.0 memperdalam turnamen dan kompetisi yang sudah ada. Tidak ada kategori perintah baru. Mesin turnamen kini dipakai oleh `.turnamen2` lewat subcommand `mesin`.
+
+### Mesin turnamen
+
+- `lib/turnamen-mesin.js` menjadi satu mesin untuk single elimination, double elimination, dan round robin.
+- Seed benar-benar dipakai sebagai urutan awal bracket, bukan hanya disimpan.
+- Double elimination memiliki upper bracket, lower bracket, dan final. Pemenang upper masuk final, kalah upper masuk lower.
+- Round robin mempertemukan semua peserta dan menghitung klasemen otomatis: menang 3 poin, seri 1 poin, kalah 0 poin.
+- Pemenang pertandingan berikutnya diisi otomatis dari hasil babak sebelumnya.
+- Jadwal pertandingan tercatat dan bisa dilihat.
+- Juara akhir, jumlah hasil, dan status turnamen ditampilkan dalam satu ringkasan.
+
+### Perintah yang dipakai
+
+- `.turnamen2 mesin buat <single|double|roundrobin> <nama>` dengan tag peserta.
+- `.turnamen2 mesin lanjut` melihat pertandingan berikutnya.
+- `.turnamen2 mesin hasil <a> <b> <pemenang>` mencatat hasil.
+- `.turnamen2 mesin klasemen` menampilkan klasemen.
+- `.turnamen2 mesin jadwal <a> <b> <waktu>` mencatat jadwal.
+- `.turnamen2 mesin lihat` menampilkan ringkasan.
+
+Perintah turnamen lama tetap bekerja.
+
+### Audit
+
+- 8 tes unit baru di `test/v19.test.js`. Total **220 tes lolos**.
+- `npm run check` lolos (258 file).
+- Coverage: 91,40 persen baris, 75,02 persen cabang, 89,80 persen fungsi.
+- Audit router: 1087 case, 812 perintah menu, nol duplikat, nol menu tanpa case.
+
+### Batas
+
+- Tidak menambah kategori perintah, fitur waktu, kesehatan, atau Islami.
+- Hasil dan skor adalah data simulasi bot.
+- Tidak menambah dependency berat.
+
 ## v18.0.0
 
 ﻿## v18.0.0
