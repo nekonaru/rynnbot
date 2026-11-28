@@ -1,4 +1,5 @@
 import "./settings.js";
+import { datasetV23, ambilDataset, cariDataset, totalV23 } from "./lib/data-v23/indeks.js";
 import { daftarJenis, daftarMakanan, daftarObat, adopsi, gantiNama, beriMakan, minum, main, latih, istirahat, mandi, obat, beliBarang, evolusi, statusPet, papanPet, lepasPet } from "./lib/v22/pet.js";
 import { daftarBenih, daftarHasil, buatKebun, beliBenih, tanam, rawat, cekHama, panen, jualHasil, olah, perluas, ternak, panenTernak, statusKebun, papanKebun, bongkar } from "./lib/v22/kebun.js";
 import { daftarBidang, daftarKeahlian, pilihBidang, ambilTugas, kerjakan, lembur, ambilGaji, belajar, sertifikat as sertifikatKarir, promosi, pindahBidang, statusKarir, papanKarir, cuti, pensiun } from "./lib/v22/karir.js";
@@ -107,7 +108,7 @@ import { slug } from "./lib/slug.js";
 import { daftarCommand, daftarKategoriCommand, cariCommand, infoCommand, jumlahCase } from "./lib/command-registry.js";
 import { cekAkses, aturAkses, matikanPerintah, hidupkanPerintah, aturCooldown } from "./lib/access.js";
 import { lihatQuest, tandaiQuest, klaimQuest } from "./lib/quest.js";
-import { bangunMenu, kategoriDariNama, ringkasanKategori } from "./lib/menu-builder.js";
+import { bangunMenu, bangunIndeksMenu, kategoriDariNama, ringkasanKategori } from "./lib/menu-builder.js";
 import { formatDaftar } from "./lib/daftar.js";
 import { tulisAudit, bacaAudit } from "./lib/audit.js";
 import { FIRST_SETUP_MARKER, firstSetupStates, firstSetupStepText, sendFirstSetupIntro } from './src/setup-wizard.js';
@@ -6262,13 +6263,16 @@ Select Bot Settings:
 							set.template = parseInt(args[1], 10);
 							m.reply(`Sukses Mengubah Template Menu\nTemplate : ${set.template == 1 ? "Button Menu" : set.template == 2 ? "List Menu" : set.template == 3 ? "Document Menu" : set.template == 4 ? "Location Menu" : "Button Menu"}`);
 						} else m.reply(`Template Menu:\n- 1 (Button Menu)\n- 2 (List Menu)\n- 3 (Document Menu)\n- 4 (Location Menu)\n\nExample: ${prefix + command} set 1`);
+					} else if ((args[0] || "").toLowerCase() === "list" || (args[0] || "").toLowerCase() === "indeks") {
+						return m.reply(bangunIndeksMenu(setv, prefix));
 					} else if (args[0]) {
 						const k = args[0].toLowerCase();
 						const submenu = kategoriDariNama(k);
 						const teks = submenu ? bangunMenu(submenu, setv, prefix) : null;
 						const pilihan = daftarKategoriCommand().map((x) => x.kategori.toLowerCase()).join(", ");
 						return teks ? m.reply(teks) : m.reply(`Kategori tidak ditemukan. Pilihan: ${pilihan}`);
-					} else
+					} else {
+						await m.reply(bangunIndeksMenu(setv, prefix));
 						await templateMenu(sock, set.template, m, prefix, setv, db, {
 							locale_day,
 							date,
@@ -6280,6 +6284,7 @@ Select Bot Settings:
 							isPremium,
 							ucapanWaktu,
 						});
+					}
 				}
 				break;
 			case "allmenu":
@@ -6743,6 +6748,28 @@ Select Bot Settings:
 │${setv} ${prefix}pair
 ╰─┬────❍
 ╭─┴❍「 *EDUKASI* 」❍
+│${setv} ${prefix}dataindeks
+│${setv} ${prefix}datasumber
+│${setv} ${prefix}datavalidasi
+│${setv} ${prefix}datakelas
+│${setv} ${prefix}dataekspor
+│${setv} ${prefix}datacontoh
+│${setv} ${prefix}datacarilintas
+│${setv} ${prefix}datarekomendasi
+│${setv} ${prefix}katakaharian
+│${setv} ${prefix}tebakperibahasa
+│${setv} ${prefix}kuisbudaya
+│${setv} ${prefix}tebakgunung
+│${setv} ${prefix}tebakdanau
+│${setv} ${prefix}tebaksungai
+│${setv} ${prefix}tebakdatajawab
+│${setv} ${prefix}resepacak
+│${setv} ${prefix}namabayicari
+│${setv} ${prefix}sejarahhariini
+│${setv} ${prefix}sinonimcari
+│${setv} ${prefix}antonimcari
+│${setv} ${prefix}singkatancari
+│${setv} ${prefix}flashcarddata
 │${setv} ${prefix}terbilang
 │${setv} ${prefix}gempa
 │${setv} ${prefix}hariini
@@ -7236,6 +7263,7 @@ Select Bot Settings:
 │${setv} ${prefix}maintenance
 ╰──────❍
 `;
+					await m.reply(bangunIndeksMenu(setv, prefix));
 					await sock.sendMessageV3(m.chat, {
 						text: menunya,
 						title: ucapanWaktu,
@@ -13805,6 +13833,121 @@ Select Bot Settings:
 				}
 				break;
 
+			case "dataindeks":
+			case "datasumber":
+			case "datavalidasi":
+			case "datakelas":
+			case "dataekspor":
+			case "datacontoh":
+			case "datacarilintas":
+			case "datarekomendasi":
+				{
+					const arg = (text || "").trim();
+					const mt = arg.split(/\s+/);
+					const sub = command.replace("data", "").toLowerCase();
+					if (sub === "rekomendasi") {
+						const semua = datasetV23().sort((a, b) => b.jumlah - a.jumlah).slice(0, 8);
+						return kirimRespons(m, { judul: "Dataset terbesar", isi: semua.map((d) => `- ${d.nama}: ${d.jumlah}`).join("\n") });
+					}
+					if (sub === "carilintas") {
+						if (!arg) return m.reply("Contoh: .datacarilintas merapi");
+						const hasil = cariDataset(arg);
+						return kirimRespons(m, { judul: `Hasil ${arg}`, isi: hasil.slice(0, 10).map((x) => `- ${x.dataset}: ${JSON.stringify(x.entri).slice(0, 100)}`).join("\n") || formatKosong() });
+					}
+					if (sub === "sumber" || sub === "kelas" || sub === "validasi" || sub === "contoh" || sub === "ekspor") {
+						const d = ambilDataset(arg);
+						if (!d) return kirimRespons(m, { judul: "Dataset v23", isi: datasetV23().map((x) => `- ${x.nama}: ${x.jumlah} (${x.kelas})`).join("\n") });
+						if (sub === "sumber") return m.reply(d.sumber);
+						if (sub === "kelas") return m.reply(`Kelas data *${d.kelas}*`);
+						if (sub === "ekspor") return kirimRespons(m, { judul: d.nama, isi: `${d.jumlah} entri, kelas ${d.kelas}` });
+						const contoh = Array.isArray(d.data) ? d.data[0] : null;
+						return m.reply(contoh ? JSON.stringify(contoh) : "(kosong)");
+					}
+					return kirimRespons(m, { judul: "Dataset v23", isi: datasetV23().map((x) => `- ${x.nama}: ${x.jumlah} (${x.kelas})`).join("\n"), footer: `Total ${totalV23()} entri` });
+				}
+				break;
+			case "katakaharian":
+				{
+					const semua = ambilDataset("Sinonim")?.data || [];
+					const k = semua[Math.floor(Date.now() / 86400000) % semua.length];
+					return k ? m.reply(`*${k[0]}* = *${k[1]}*`) : m.reply("Belum ada data.");
+				}
+				break;
+			case "tebakperibahasa":
+			case "kuisbudaya":
+			case "tebakgunung":
+			case "tebakdanau":
+			case "tebaksungai":
+				{
+					const peta = {
+						tebakperibahasa: "Peribahasa", kuisbudaya: "Budaya",
+						tebakgunung: "Gunung", tebakdanau: "Danau", tebaksungai: "Sungai",
+					};
+					const d = ambilDataset(peta[command]);
+					const data = d?.data || [];
+					if (!data.length) return m.reply("Belum ada data.");
+					const pilih = data[Math.floor(Math.random() * data.length)];
+					const isi = typeof pilih === "string" ? pilih : (pilih[0] || JSON.stringify(pilih));
+					global.tebakDataV23 = global.tebakDataV23 || {};
+					const kunciTebak = m.chat + ":" + m.sender;
+					global.tebakDataV23[kunciTebak] = { jawaban: isi, at: Date.now() };
+					return m.reply(`*${command}*\n\nPetunjuk: ${isi.split(" ").length} kata, diawali *${isi.slice(0, 1)}*.\\nJawab: .tebakdatajawab <teks>`);
+				}
+				break;
+			case "tebakdatajawab":
+				{
+					const kunciTebak = m.chat + ":" + m.sender;
+					const s = global.tebakDataV23?.[kunciTebak];
+					if (!s) return m.reply("Belum ada tebakan aktif.");
+					if (Date.now() - s.at > 300000) { delete global.tebakDataV23[kunciTebak]; return m.reply("Tebakan kedaluwarsa. Ketik perintah tebak lagi."); }
+					const j = (text || "").trim().toLowerCase().replace(/[^\p{L}\p{N}\s]/gu, "");
+					const benar = s.jawaban.toLowerCase().replace(/[^\p{L}\p{N}\s]/gu, "");
+					delete global.tebakDataV23[kunciTebak];
+					return j === benar ? m.reply("Benar!") : m.reply(`Salah. Jawabannya *${s.jawaban}*.`);
+				}
+				break;
+			case "resepacak":
+				{
+					const d = ambilDataset("Resep");
+					const r = d?.data?.[Math.floor(Math.random() * d.data.length)];
+					if (!r) return m.reply("Belum ada resep.");
+					return kirimRespons(m, { judul: r.nama, isi: `- Bahan: ${r.bahan.join(", ")}`, catatan: r.langkah.join("\n") });
+				}
+				break;
+			case "namabayicari":
+				{
+					const q = (text || "").trim().toLowerCase();
+					const hasil = (ambilDataset("Nama bayi")?.data || []).filter((x) => x[0].toLowerCase().includes(q)).slice(0, 10);
+					return kirimRespons(m, { judul: "Nama bayi", isi: hasil.map((x) => `- ${x[0]}`).join("\n") || formatKosong() });
+				}
+				break;
+			case "sejarahhariini":
+				{
+					const d = ambilDataset("Hari bersejarah");
+					const s = d?.data?.[Math.floor(Date.now() / 86400000) % d.data.length];
+					return s ? m.reply(`*${s[0]}*\n\n${s[1]}`) : m.reply("Belum ada data.");
+				}
+				break;
+			case "sinonimcari":
+			case "antonimcari":
+			case "singkatancari":
+				{
+					const peta = { sinonimcari: "Sinonim", antonimcari: "Antonim", singkatancari: "Singkatan" };
+					const q = (text || "").trim().toLowerCase();
+					const hasil = (ambilDataset(peta[command])?.data || []).filter((x) => JSON.stringify(x).toLowerCase().includes(q)).slice(0, 10);
+					return kirimRespons(m, { judul: peta[command], isi: hasil.map((x) => x.length === 2 ? `- ${x[0]} = ${x[1]}` : `- ${x}`).join("\n") || formatKosong() });
+				}
+				break;
+			case "flashcarddata":
+				{
+					const d = ambilDataset("Sinonim");
+					const pasangan = d?.data?.[Math.floor(Math.random() * d.data.length)];
+					if (!pasangan) return m.reply("Belum ada data.");
+					if (!db.users[m.sender]) db.users[m.sender] = {};
+					db.users[m.sender].flashcardAktif = { pertanyaan: pasangan[0], jawaban: pasangan[1] };
+					return m.reply(`*Flashcard*\n\n${pasangan[0]}\n\nJawab: .flashcardjawab <jawaban>`);
+				}
+				break;
 			case "bantuan":
 			case "commandinfo":
 				{

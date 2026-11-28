@@ -2,7 +2,7 @@
 
 Dokumen ini dihasilkan otomatis dari registry perintah. Jangan disunting manual.
 
-Total 889 perintah dalam 14 kategori.
+Total 911 perintah dalam 14 kategori.
 
 ## AI
 
@@ -114,6 +114,28 @@ Total 889 perintah dalam 14 kategori.
 
 | Perintah | Contoh | Role | Biaya limit |
 |---|---|---|---|
+| `.dataindeks` | `.dataindeks` | semua | 0 |
+| `.datasumber` | `.datasumber` | semua | 0 |
+| `.datavalidasi` | `.datavalidasi` | semua | 0 |
+| `.datakelas` | `.datakelas` | semua | 0 |
+| `.dataekspor` | `.dataekspor` | semua | 0 |
+| `.datacontoh` | `.datacontoh` | semua | 0 |
+| `.datacarilintas` | `.datacarilintas` | semua | 0 |
+| `.datarekomendasi` | `.datarekomendasi` | semua | 0 |
+| `.katakaharian` | `.katakaharian` | semua | 0 |
+| `.tebakperibahasa` | `.tebakperibahasa` | semua | 0 |
+| `.kuisbudaya` | `.kuisbudaya` | semua | 0 |
+| `.tebakgunung` | `.tebakgunung` | semua | 0 |
+| `.tebakdanau` | `.tebakdanau` | semua | 0 |
+| `.tebaksungai` | `.tebaksungai` | semua | 0 |
+| `.tebakdatajawab` | `.tebakdatajawab` | semua | 0 |
+| `.resepacak` | `.resepacak` | semua | 0 |
+| `.namabayicari` | `.namabayicari` | semua | 0 |
+| `.sejarahhariini` | `.sejarahhariini` | semua | 0 |
+| `.sinonimcari` | `.sinonimcari` | semua | 0 |
+| `.antonimcari` | `.antonimcari` | semua | 0 |
+| `.singkatancari` | `.singkatancari` | semua | 0 |
+| `.flashcarddata` | `.flashcarddata` | semua | 0 |
 | `.terbilang` | `.terbilang` | semua | 0 |
 | `.gempa` | `.gempa` | semua | 0 |
 | `.hariini` | `.hariini` | semua | 0 |
@@ -914,10 +936,10 @@ Total 889 perintah dalam 14 kategori.
 | `.pengumumantutup` | `.pengumumantutup` | owner | 0 |
 | `.pengumumanarsip` | `.pengumumanarsip` | owner | 0 |
 | `.pengumumantemplat` | `.pengumumantemplat` | owner | 0 |
-| `.inbox` | `.inbox` | owner | 0 |
-| `.inboxbaca` | `.inboxbaca` | owner | 0 |
-| `.inboxhapus` | `.inboxhapus` | owner | 0 |
-| `.inboxbersih` | `.inboxbersih` | owner | 0 |
+| `.inbox` | `.inbox` | semua | 0 |
+| `.inboxbaca` | `.inboxbaca` | semua | 0 |
+| `.inboxhapus` | `.inboxhapus` | semua | 0 |
+| `.inboxbersih` | `.inboxbersih` | semua | 0 |
 | `.profile` | `.profile` | semua | 0 |
 | `.afk` | `.afk` | semua | 0 |
 | `.rvo` | `.rvo(reply pesan viewone)` | semua | 0 |

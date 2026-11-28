@@ -1,5 +1,45 @@
 # Changelog
 
+## v23.0.0
+
+﻿## v23.0.0
+
+Rynn v23.0.0 memperbesar dataset dan menambahkan indeks kategori pada menu. Tidak ada kategori perintah baru di luar 14 kategori baku.
+
+### Dataset baru
+
+- `lib/data-v23/` berisi 20 dataset dengan metadata kelas dan sumber: fakta, kreatif, dan turunan.
+- Total **856 entri baru**. Templat surat 192, singkatan 108, resep 100, peribahasa 67, kuliner 49, nama bayi 45, dan sisanya mengikuti jumlah yang bisa diverifikasi. Sinonim hanya 26 pasangan setelah pasangan identik dibuang.
+- Target 1000 per dataset tidak dipaksakan. Dataset fakta seperti tokoh, sejarah, gunung, dan lagu daerah hanya berisi entri yang lazim dikenal. Tidak ada entri karangan untuk mengejar angka.
+- `.dataindeks` menampilkan jumlah, kelas, sumber, dan status validasi tiap dataset.
+
+### Perintah data
+
+- 8 perintah pengelola dataset: `.dataindeks`, `.datasumber`, `.datavalidasi`, `.datakelas`, `.dataekspor`, `.datacontoh`, `.datacarilintas`, dan `.datarekomendasi`.
+- 14 perintah turunan data: `.katakaharian`, `.tebakperibahasa`, `.kuisbudaya`, `.tebakgunung`, `.tebakdanau`, `.tebaksungai`, `.tebakdatajawab`, `.resepacak`, `.namabayicari`, `.sejarahhariini`, `.sinonimcari`, `.antonimcari`, `.singkatancari`, dan `.flashcarddata`.
+
+### Indeks menu
+
+- `.menu` tanpa argumen menampilkan indeks kategori lebih dulu, lalu template menu.
+- `.menu list` dan `.menu indeks` menampilkan indeks saja.
+- `.allmenu` menyisipkan ringkasan kategori di awal.
+- `bangunIndeksMenu()` di `lib/menu-builder.js` membaca kategori langsung dari registry.
+
+### Audit
+
+- 4 tes unit baru di `test/v23.test.js`. Total **244 tes lolos**.
+- `npm run check` lolos (272 file).
+- Coverage: 91,91 persen baris, 75,82 persen cabang, 90,64 persen fungsi.
+- Audit router: 1186 case, 911 perintah menu, nol duplikat, nol menu tanpa case.
+- Audit menu: 911 perintah, 14 kategori, nol kategori asing.
+
+### Batas
+
+- Tidak menambah kategori di luar 14 kategori baku.
+- Tidak mengarang tokoh, tanggal, gunung, sungai, atau budaya.
+- Review independen menemukan sepuluh masalah, semuanya diperbaiki sebelum rilis, termasuk pasangan sinonim identik, dataset peribahasa yang belum terdaftar, indeks `allmenu` yang belum dipanggil, dan state tebak yang bocor.
+- Tidak menambah dependency berat.
+
 ## v22.0.0
 
 ﻿## v22.0.0
