@@ -48,18 +48,40 @@ test("round robin mendukung seri", () => {
 
 test("double elimination memiliki upper, lower, dan final", () => {
 	const s = buatKejuaraan({ mode: "double", peserta: ["A", "B", "C", "D"] });
-	assert.equal(s.upper.length, 1);
+	assert.equal(s.upper.length, 2);
 	assert.ok(catatHasil(s, { a: "A", b: "B", pemenang: "A" }).ok);
 	assert.ok(catatHasil(s, { a: "C", b: "D", pemenang: "C" }).ok);
+	assert.ok(catatHasil(s, { a: "A", b: "C", pemenang: "A" }).ok);
 	assert.ok(s.final.a);
 	assert.ok(s.lower.length >= 1);
 	assert.ok(pertandinganTersedia(s).length > 0);
+});
+
+test("double elimination mencapai juara untuk 2 sampai 8 peserta", () => {
+	for (const n of [2, 3, 4, 8]) {
+		const peserta = Array.from({ length: n }, (_, i) => String.fromCharCode(65 + i));
+		const s = buatKejuaraan({ mode: "double", peserta });
+		let putaran = 0;
+		while (!s.selesai && putaran++ < 200) {
+			const m = pertandinganTersedia(s)[0];
+			assert.ok(m, `turnamen ${n} peserta macet`);
+			assert.ok(catatHasil(s, { a: m.a, b: m.b, pemenang: m.a }).ok);
+		}
+		assert.equal(s.selesai, true);
+		assert.equal(s.juara, "A");
+	}
+});
+
+test("eliminasi menolak seri", () => {
+	const s = buatKejuaraan({ mode: "single", peserta: ["A", "B"] });
+	assert.equal(catatHasil(s, { a: "A", b: "B", pemenang: "seri" }).ok, false);
 });
 
 test("seed dipakai sebagai urutan awal", () => {
 	const s = buatKejuaraan({ mode: "single", peserta: ["A", "B", "C", "D"], seed: ["D", "C"] });
 	assert.equal(s.bracket[0].pertandingan[0].a, "D");
 	assert.equal(s.bracket[0].pertandingan[0].b, "C");
+	assert.deepEqual(buatKejuaraan({ peserta: ["A", "B"], seed: ["X"] }).seed, []);
 });
 
 test("jadwal dan format ringkas", () => {

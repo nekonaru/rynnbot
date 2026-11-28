@@ -29,15 +29,16 @@ Perintah turnamen lama tetap bekerja.
 
 ### Audit
 
-- 8 tes unit baru di `test/v19.test.js`. Total **220 tes lolos**.
+- 8 tes unit baru di `test/v19.test.js`. Total **222 tes lolos**.
 - `npm run check` lolos (258 file).
-- Coverage: 91,40 persen baris, 75,02 persen cabang, 89,80 persen fungsi.
+- Coverage: 91,41 persen baris, 75,42 persen cabang, 89,95 persen fungsi.
 - Audit router: 1087 case, 812 perintah menu, nol duplikat, nol menu tanpa case.
 
 ### Batas
 
 - Tidak menambah kategori perintah, fitur waktu, kesehatan, atau Islami.
 - Hasil dan skor adalah data simulasi bot.
+- Review independen menemukan sembilan masalah, semuanya diperbaiki sebelum rilis, termasuk double elimination yang tidak bisa mencapai juara, upper dan lower bracket yang dibuang, seri yang menciptakan peserta hantu, seed yang tidak dikirim dari perintah, dan state turnamen yang bocor.
 - Tidak menambah dependency berat.
 
 ## v18.0.0
