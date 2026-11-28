@@ -6260,15 +6260,10 @@ Select Bot Settings:
 						} else m.reply(`Template Menu:\n- 1 (Button Menu)\n- 2 (List Menu)\n- 3 (Document Menu)\n- 4 (Location Menu)\n\nExample: ${prefix + command} set 1`);
 					} else if (args[0]) {
 						const k = args[0].toLowerCase();
-						const peta = {
-							bot: "botmenu", grup: "groupmenu", group: "groupmenu", search: "searchmenu",
-							download: "downloadmenu", quotes: "quotesmenu", tools: "toolsmenu", ai: "aimenu",
-							random: "randommenu", stalker: "stalkermenu", anime: "animemenu", game: "gamemenu",
-							fun: "funmenu", edukasi: "edukasimenu", pendidikan: "edukasimenu", owner: "ownermenu", author: "authormenu",
-						};
 						const submenu = kategoriDariNama(k);
 						const teks = submenu ? bangunMenu(submenu, setv, prefix) : null;
-						return teks ? m.reply(teks) : m.reply(`Kategori tidak ditemukan. Pilihan: ${Object.keys(peta).join(", ")}`);
+						const pilihan = daftarKategoriCommand().map((x) => x.kategori.toLowerCase()).join(", ");
+						return teks ? m.reply(teks) : m.reply(`Kategori tidak ditemukan. Pilihan: ${pilihan}`);
 					} else
 						await templateMenu(sock, set.template, m, prefix, setv, db, {
 							locale_day,
@@ -6311,500 +6306,116 @@ Select Bot Settings:
 ├ *Day* : ${locale_day}
 ├ *Time* : ${date_time}
 ╰──────❍
-╭──❍「 *BOT* 」❍
+╭──❍「 *UMUM* 」❍
 │${setv} ${prefix}profile
-│${setv} ${prefix}claim
-│${setv} ${prefix}buy [item] (nominal)
-│${setv} ${prefix}transfer
-│${setv} ${prefix}leaderboard
-│${setv} ${prefix}request (text)
-│${setv} ${prefix}react (emoji)
-│${setv} ${prefix}tagme
-│${setv} ${prefix}runtime
-│${setv} ${prefix}totalfitur
-│${setv} ${prefix}speed
-│${setv} ${prefix}ping
 │${setv} ${prefix}afk
 │${setv} ${prefix}rvo (reply pesan viewone)
 │${setv} ${prefix}remind
 │${setv} ${prefix}notes
-│${setv} ${prefix}poll (judul | opsi1 | opsi2)
-│${setv} ${prefix}gempa
-│${setv} ${prefix}kurs
-│${setv} ${prefix}hariini
-│${setv} ${prefix}waktu
-│${setv} ${prefix}ekonomi
-│${setv} ${prefix}gameinfo
 │${setv} ${prefix}panduan
-│${setv} ${prefix}explore
 │${setv} ${prefix}randomcmd
 │${setv} ${prefix}riwayat
 │${setv} ${prefix}shortcut
-│${setv} ${prefix}pintasan
 │${setv} ${prefix}todo
-│${setv} ${prefix}peraturan
-│${setv} ${prefix}icebreak
-│${setv} ${prefix}dompet
-│${setv} ${prefix}topuang
-│${setv} ${prefix}toplimit
-│${setv} ${prefix}hadiah
-│${setv} ${prefix}questmingguan
-│${setv} ${prefix}dailykalender
-│${setv} ${prefix}papanperingkat
-│${setv} ${prefix}trivia
-│${setv} ${prefix}dataset
-│${setv} ${prefix}rekomendasi
-│${setv} ${prefix}tabel
-│${setv} ${prefix}bagi <anggota> <kelompok>
-│${setv} ${prefix}ringkas
-│${setv} ${prefix}ide
-│${setv} ${prefix}paragraf
-│${setv} ${prefix}judulkan
-│${setv} ${prefix}tanya
-│${setv} ${prefix}terjemah
-│${setv} ${prefix}teks
-│${setv} ${prefix}kalender
-│${setv} ${prefix}jadwal
-│${setv} ${prefix}notifikasi
-│${setv} ${prefix}diam
-│${setv} ${prefix}ownerlist
-│${setv} ${prefix}sesihapus
-│${setv} ${prefix}akseswarisan
-│${setv} ${prefix}tabungtarget
-│${setv} ${prefix}bungapinjam
-│${setv} ${prefix}hadiahevent
-│${setv} ${prefix}topbulanan
-│${setv} ${prefix}transferbatch
-│${setv} ${prefix}uanglog
-│${setv} ${prefix}quizberuntun
-│${setv} ${prefix}quizjawab
-│${setv} ${prefix}tebakjawab
-│${setv} ${prefix}rankmingguan
-│${setv} ${prefix}statistiklanjut
-│${setv} ${prefix}matriks3
-│${setv} ${prefix}turunan
-│${setv} ${prefix}integral
-│${setv} ${prefix}koordinat
-│${setv} ${prefix}datasetpenuh
-│${setv} ${prefix}presensi
-│${setv} ${prefix}kuorum
-│${setv} ${prefix}rapat
-│${setv} ${prefix}notulen
-│${setv} ${prefix}laporgrup
-│${setv} ${prefix}moderasi
-│${setv} ${prefix}koleksi
-│${setv} ${prefix}gacha
-│${setv} ${prefix}achievement
-│${setv} ${prefix}level
-│${setv} ${prefix}levelboard
-│${setv} ${prefix}investasi
-│${setv} ${prefix}deposito
-│${setv} ${prefix}asuransi
-│${setv} ${prefix}keuangannilai
-│${setv} ${prefix}transferterjadwal
-│${setv} ${prefix}sapaanpribadi
-│${setv} ${prefix}pujian
-│${setv} ${prefix}semangat
-│${setv} ${prefix}ceritapendek
-│${setv} ${prefix}mood
-│${setv} ${prefix}moodrekap
-│${setv} ${prefix}teman
-│${setv} ${prefix}autoreply
-│${setv} ${prefix}autotag
-│${setv} ${prefix}autosalam
-│${setv} ${prefix}wordle
-│${setv} ${prefix}wordlejawab
-│${setv} ${prefix}scramble
-│${setv} ${prefix}bingo
-│${setv} ${prefix}lotre
-│${setv} ${prefix}tebakwarna
-│${setv} ${prefix}gameskor
-│${setv} ${prefix}markdown
-│${setv} ${prefix}tabel2
-│${setv} ${prefix}diagram
-│${setv} ${prefix}hitungpanjang
-│${setv} ${prefix}indeksdata
-│${setv} ${prefix}contohdata
 │${setv} ${prefix}bantuansaya
-│${setv} ${prefix}code
-│${setv} ${prefix}dialog
-│${setv} ${prefix}brainstorm
-│${setv} ${prefix}kritik
-│${setv} ${prefix}translateid
-│${setv} ${prefix}airiwayat
-│${setv} ${prefix}restartnow
-│${setv} ${prefix}updatenow
-│${setv} ${prefix}logunduh
-│${setv} ${prefix}pengguna
-│${setv} ${prefix}daftargroup
-│${setv} ${prefix}databaseinfo
-│${setv} ${prefix}maintenancewhy
-│${setv} ${prefix}laporharian
-│${setv} ${prefix}lapormingguan
-│${setv} ${prefix}statistikgrup
-│${setv} ${prefix}statistikpengguna
-│${setv} ${prefix}statistikperintah
-│${setv} ${prefix}statistikkinerja
 │${setv} ${prefix}bantuanku
-│${setv} ${prefix}bantuangrup
-│${setv} ${prefix}carifitur
 │${setv} ${prefix}coba
-│${setv} ${prefix}singkatan
-│${setv} ${prefix}aksesku
 │${setv} ${prefix}riwayatperintah
-│${setv} ${prefix}turnamen2
-│${setv} ${prefix}liga2
-│${setv} ${prefix}juaraboards
-│${setv} ${prefix}bagiacak
-│${setv} ${prefix}bagiseimbang
-│${setv} ${prefix}baginama
-│${setv} ${prefix}teamseimbang
-│${setv} ${prefix}teamrotasi
-│${setv} ${prefix}teamlist
-│${setv} ${prefix}teamhapus
-│${setv} ${prefix}kelompokrekap
-│${setv} ${prefix}investasihari
-│${setv} ${prefix}tabunggrafik
-│${setv} ${prefix}utangjadwal
-│${setv} ${prefix}dompetriwayat
-│${setv} ${prefix}pasarsimulasi
-│${setv} ${prefix}sisaanggaran
-│${setv} ${prefix}topdompet
-│${setv} ${prefix}flashcardharian
-│${setv} ${prefix}kuisadaptif
-│${setv} ${prefix}kuisskor
-│${setv} ${prefix}materipeta
-│${setv} ${prefix}catattopik
-│${setv} ${prefix}rangkumcatatan
-│${setv} ${prefix}hafalanstreak
-│${setv} ${prefix}agendaminggu
-│${setv} ${prefix}absengrafik
-│${setv} ${prefix}pollhasil
-│${setv} ${prefix}rapatringkas
-│${setv} ${prefix}notulencari
-│${setv} ${prefix}tugastambah
-│${setv} ${prefix}tugasselesai
-│${setv} ${prefix}tugaslist
-│${setv} ${prefix}peraturanversi
-│${setv} ${prefix}peringatan
-│${setv} ${prefix}peringatanlist
-│${setv} ${prefix}moderasiskor
-│${setv} ${prefix}laporstatus
-│${setv} ${prefix}adminlog
-│${setv} ${prefix}kartuwarna
-│${setv} ${prefix}posterteks
-│${setv} ${prefix}kartuucapan
-│${setv} ${prefix}komikpendek
-│${setv} ${prefix}galeri
-│${setv} ${prefix}stikeranimasi
-│${setv} ${prefix}aigaya
-│${setv} ${prefix}aitopik
 │${setv} ${prefix}aicontoh
-│${setv} ${prefix}aibatalkan
-│${setv} ${prefix}aikuota
-│${setv} ${prefix}aibandingkan
-│${setv} ${prefix}health
-│${setv} ${prefix}metrik
-│${setv} ${prefix}logringkas
-│${setv} ${prefix}auditcari
-│${setv} ${prefix}diagnosapenuh
-│${setv} ${prefix}modehemat
-│${setv} ${prefix}cacheinfo
-│${setv} ${prefix}memori
-│${setv} ${prefix}dashboardbuka
-│${setv} ${prefix}dashboardtutup
-│${setv} ${prefix}profilkartu
-│${setv} ${prefix}bio
-│${setv} ${prefix}xp
-│${setv} ${prefix}xptop
-│${setv} ${prefix}badge
-│${setv} ${prefix}badgeberi
-│${setv} ${prefix}badgehapus
-│${setv} ${prefix}identitas
-│${setv} ${prefix}rekening
-│${setv} ${prefix}arisan
-│${setv} ${prefix}kreditskor
-│${setv} ${prefix}asuransiklaim
-│${setv} ${prefix}pajaksimulasi
-│${setv} ${prefix}grafikpengeluaran
-│${setv} ${prefix}pendapatanharian
-│${setv} ${prefix}donasikampanye
-│${setv} ${prefix}guild
-│${setv} ${prefix}temanrekomendasi
-│${setv} ${prefix}perkenalan
-│${setv} ${prefix}sapagrup
-│${setv} ${prefix}icekartu
-│${setv} ${prefix}komunitasstatistik
-│${setv} ${prefix}sudoku
-│${setv} ${prefix}game2048
-│${setv} ${prefix}kartuingatan
-│${setv} ${prefix}tebaktokoh
-│${setv} ${prefix}tebaktokohjawab
-│${setv} ${prefix}tebaklagu
-│${setv} ${prefix}tebaklagujawab
-│${setv} ${prefix}riddleai
-│${setv} ${prefix}riddlejawab
-│${setv} ${prefix}gameharian
-│${setv} ${prefix}gamepass
-│${setv} ${prefix}quizturnamen
-│${setv} ${prefix}rekapgame
-│${setv} ${prefix}kosakataharian
-│${setv} ${prefix}kosakatacari
-│${setv} ${prefix}ejaan
-│${setv} ${prefix}tatabahasa
-│${setv} ${prefix}pantunbuat
-│${setv} ${prefix}puisibuat
-│${setv} ${prefix}terjemahbalik
-│${setv} ${prefix}resepcari
-│${setv} ${prefix}sejarahharian
-│${setv} ${prefix}rumustantangan
-│${setv} ${prefix}target
-│${setv} ${prefix}proyek
-│${setv} ${prefix}catatcari
-│${setv} ${prefix}cattag
-│${setv} ${prefix}agendaekspor
-│${setv} ${prefix}absenbulanan
-│${setv} ${prefix}admindaftar
-│${setv} ${prefix}admintambah
-│${setv} ${prefix}peraturankategori
-│${setv} ${prefix}peraturansemua
-│${setv} ${prefix}linkaman
-│${setv} ${prefix}spamdeteksi
-│${setv} ${prefix}grupkartu
-│${setv} ${prefix}grupaktivitas
-│${setv} ${prefix}lapordetail
-│${setv} ${prefix}stikerteks
-│${setv} ${prefix}stikerkartu
-│${setv} ${prefix}stickergambar
-│${setv} ${prefix}fotoprofil
-│${setv} ${prefix}kartuundangan
-│${setv} ${prefix}posterucapan
-│${setv} ${prefix}diagramlingkaran
-│${setv} ${prefix}tabeldua
-│${setv} ${prefix}aimemori
-│${setv} ${prefix}ailupa
-│${setv} ${prefix}aipersona
-│${setv} ${prefix}aidebat
-│${setv} ${prefix}airangkum
-│${setv} ${prefix}aireviewkode
-│${setv} ${prefix}airencana
-│${setv} ${prefix}aibatas
-│${setv} ${prefix}relaystatus
-│${setv} ${prefix}deploystatus
-│${setv} ${prefix}backupverifikasi
-│${setv} ${prefix}restorediff
-│${setv} ${prefix}sesilist
-│${setv} ${prefix}databasemigrasi
-│${setv} ${prefix}databaseinfopenuh
-│${setv} ${prefix}logekspor
-│${setv} ${prefix}ratelimit
-│${setv} ${prefix}domainblokir
-│${setv} ${prefix}maintenancealasan
-│${setv} ${prefix}auditekspor
-│${setv} ${prefix}privasi
-│${setv} ${prefix}auditaku
-│${setv} ${prefix}tiket
-│${setv} ${prefix}faq
-│${setv} ${prefix}faqcari
-│${setv} ${prefix}faqtambah
-│${setv} ${prefix}aset
-│${setv} ${prefix}konten
-│${setv} ${prefix}siaran
-│${setv} ${prefix}laporanbulanan
-│${setv} ${prefix}laporantren
-│${setv} ${prefix}laporanbanding
-│${setv} ${prefix}statistikanggota
-│${setv} ${prefix}statistikjam
-│${setv} ${prefix}statistikrespons
-│${setv} ${prefix}trenperintah
-│${setv} ${prefix}ringkasanbot
-│${setv} ${prefix}apresiasi
-│${setv} ${prefix}apresiasipapan
-│${setv} ${prefix}salam
-│${setv} ${prefix}tanyakomunitas
-│${setv} ${prefix}ceritalanjut
-│${setv} ${prefix}ceritabaca
-│${setv} ${prefix}ceritareset
-│${setv} ${prefix}rekomendasiperintah
-│${setv} ${prefix}namamerek
-│${setv} ${prefix}namagrup
-│${setv} ${prefix}caption
-│${setv} ${prefix}hashtag
-│${setv} ${prefix}tagline
-│${setv} ${prefix}judulalternatif
-│${setv} ${prefix}dialogpendek
-│${setv} ${prefix}suratpendek
-│${setv} ${prefix}glosarium
-│${setv} ${prefix}peribahasaarti
-│${setv} ${prefix}latihanhitung
-│${setv} ${prefix}teorisingkat
-│${setv} ${prefix}petarumus
-│${setv} ${prefix}soalkategori
-│${setv} ${prefix}hafalancek
-│${setv} ${prefix}rangkumpelajaran
-│${setv} ${prefix}portofolio
-│${setv} ${prefix}dividen
-│${setv} ${prefix}obligasi
-│${setv} ${prefix}emassimulasi
-│${setv} ${prefix}sahamsimulasi
-│${setv} ${prefix}kurssimulasi
-│${setv} ${prefix}inflasisimulasi
-│${setv} ${prefix}warisansimulasi
-│${setv} ${prefix}wordleturnamen
-│${setv} ${prefix}rankinggame
-│${setv} ${prefix}gametim
-│${setv} ${prefix}tebakurutan
-│${setv} ${prefix}tebakurutanjawab
-│${setv} ${prefix}kartutaruhan
-│${setv} ${prefix}papanskorharian
-│${setv} ${prefix}bootinfo
-│${setv} ${prefix}stateinfo
-│${setv} ${prefix}cachebersih
-│${setv} ${prefix}backupinkremental
-│${setv} ${prefix}dbekspor
-│${setv} ${prefix}dbimpor
-│${setv} ${prefix}loglevel
-│${setv} ${prefix}debugmode
-│${setv} ${prefix}ketersediaan
 │${setv} ${prefix}cobacmd
 │${setv} ${prefix}aliasperintah
-│${setv} ${prefix}aturan
-│${setv} ${prefix}filter
-│${setv} ${prefix}poin
-│${setv} ${prefix}hadiahpoin
-│${setv} ${prefix}toko
-│${setv} ${prefix}lelang
-│${setv} ${prefix}reputasi
-│${setv} ${prefix}tepercaya
-│${setv} ${prefix}kursus
-│${setv} ${prefix}materi
-│${setv} ${prefix}keputusan
-│${setv} ${prefix}notulenversi
-│${setv} ${prefix}proyekgrup
-│${setv} ${prefix}arsip
-│${setv} ${prefix}cadangan
-│${setv} ${prefix}teksrapi
-│${setv} ${prefix}teksbalik
-│${setv} ${prefix}teksulang
-│${setv} ${prefix}tekspotong
-│${setv} ${prefix}teksbersih
-│${setv} ${prefix}teksheksa
-│${setv} ${prefix}teksdariheksa
-│${setv} ${prefix}teksbanding
-│${setv} ${prefix}kunci
-│${setv} ${prefix}verifikasi
-│${setv} ${prefix}akunaman
-│${setv} ${prefix}logkeamanan
-│${setv} ${prefix}stikerpaket
-│${setv} ${prefix}wallpaperteks
-│${setv} ${prefix}kartupos
-│${setv} ${prefix}penggunaaktif
-│${setv} ${prefix}grupaktif
-│${setv} ${prefix}perintahmati
-│${setv} ${prefix}cooldownlist
-│${setv} ${prefix}akseslist
-│${setv} ${prefix}whitelisttambah
-│${setv} ${prefix}blacklistalasan
-│${setv} ${prefix}rollback
-│${setv} ${prefix}paket
-│${setv} ${prefix}undang
-│${setv} ${prefix}referral
-│${setv} ${prefix}artikel
-│${setv} ${prefix}seri
-│${setv} ${prefix}survei
-│${setv} ${prefix}koperasi
-│${setv} ${prefix}inventaris
-│${setv} ${prefix}avatar
-│${setv} ${prefix}papan
-│${setv} ${prefix}pindah
-│${setv} ${prefix}datasehat
 │${setv} ${prefix}modedebot
 │${setv} ${prefix}fitur
-│${setv} ${prefix}konstitusi
-│${setv} ${prefix}tandatangan
-│${setv} ${prefix}ownerringkas
-│${setv} ${prefix}aksesmatriks
-│${setv} ${prefix}limitatur
-│${setv} ${prefix}limitlihat
-│${setv} ${prefix}statebersih
-│${setv} ${prefix}memoripeta
-│${setv} ${prefix}eventlog
-│${setv} ${prefix}jadwalkerja
-│${setv} ${prefix}anggaran
-│${setv} ${prefix}pengeluaran
-│${setv} ${prefix}pemasukan
-│${setv} ${prefix}laporanuang
-│${setv} ${prefix}flashcard
-│${setv} ${prefix}flashcardjawab
-│${setv} ${prefix}kuisharian
-│${setv} ${prefix}kuisjawab
-│${setv} ${prefix}skorbelajar
-│${setv} ${prefix}modul
-│${setv} ${prefix}absen
-│${setv} ${prefix}acara
-│${setv} ${prefix}acararsvp
-│${setv} ${prefix}liga
-│${setv} ${prefix}klasemen
-│${setv} ${prefix}bendera
-│${setv} ${prefix}umurdetail
-│${setv} ${prefix}grafik
-│${setv} ${prefix}pilihberat
-│${setv} ${prefix}acakurutan
-│${setv} ${prefix}aksesgrup
-│${setv} ${prefix}pemeliharaan
-│${setv} ${prefix}team <game> <pemain>
-│${setv} ${prefix}turnamen buat
 │${setv} ${prefix}jelajah
 │${setv} ${prefix}cmdbaru
 │${setv} ${prefix}peta
 │${setv} ${prefix}aliasglobal
-│${setv} ${prefix}statcmd
-│${setv} ${prefix}catat
-│${setv} ${prefix}agenda
-│${setv} ${prefix}ceklis
-│${setv} ${prefix}template
-│${setv} ${prefix}audit
-│${setv} ${prefix}backup
-│${setv} ${prefix}aksesdefault
-│${setv} ${prefix}blacklist
-│${setv} ${prefix}whitelistcmd
-│${setv} ${prefix}system
-│${setv} ${prefix}bank
-│${setv} ${prefix}tabung
-│${setv} ${prefix}tarik
-│${setv} ${prefix}pinjam
-│${setv} ${prefix}lunas
-│${setv} ${prefix}top
-│${setv} ${prefix}dompetgrafik
-│${setv} ${prefix}turnamen
-│${setv} ${prefix}tebak
 │${setv} ${prefix}data
-│${setv} ${prefix}streak
-│${setv} ${prefix}quest
-│${setv} ${prefix}rankgame
-│${setv} ${prefix}cari
 │${setv} ${prefix}bantuan
 │${setv} ${prefix}kategori
 │${setv} ${prefix}menu <kategori>
-│${setv} ${prefix}statistikbot
 │${setv} ${prefix}help
 │${setv} ${prefix}cmdlist
 │${setv} ${prefix}saran
 │${setv} ${prefix}stats
 │${setv} ${prefix}menfes (62xxx|fake name)
 │${setv} ${prefix}confes (62xxx|fake name)
-│${setv} ${prefix}roomai
-│${setv} ${prefix}jadibot 🔸️
-│${setv} ${prefix}stopjadibot
-│${setv} ${prefix}stopclonebot
-│${setv} ${prefix}listjadibot
-│${setv} ${prefix}listclonebot
-│${setv} ${prefix}donasi
-│${setv} ${prefix}addsewa
-│${setv} ${prefix}delsewa
-│${setv} ${prefix}listsewa
+│${setv} ${prefix}robot (reply audio)
+│${setv} ${prefix}coba
+│${setv} ${prefix}bot [set]
+│${setv} ${prefix}bot --settings
+│${setv} ${prefix}bot settings
+│${setv} ${prefix}botmenu
+│${setv} ${prefix}groupmenu / ${prefix}grupmenu
+│${setv} ${prefix}toolsmenu
+│${setv} ${prefix}aimenu
+│${setv} ${prefix}randommenu
+│${setv} ${prefix}funmenu
+│${setv} ${prefix}edukasimenu
+│${setv} ${prefix}ownermenu
+│${setv} ${prefix}authormenu
 ╰─┬────❍
-╭─┴❍「 *GROUP* 」❍
+╭─┴❍「 *BOT* 」❍
+│${setv} ${prefix}speed
+│${setv} ${prefix}tabel
+│${setv} ${prefix}bagi <anggota> <kelompok>
+│${setv} ${prefix}notifikasi
+│${setv} ${prefix}diam
+│${setv} ${prefix}markdown
+│${setv} ${prefix}tabel2
+│${setv} ${prefix}diagram
+│${setv} ${prefix}logunduh
+│${setv} ${prefix}pengguna
+│${setv} ${prefix}linkaman
+│${setv} ${prefix}diagramlingkaran
+│${setv} ${prefix}tabeldua
+│${setv} ${prefix}skorbelajar
+│${setv} ${prefix}agenda
+│${setv} ${prefix}get (url) 🔸️
+│${setv} ${prefix}fat (reply audio)
+│${setv} ${prefix}fast (reply audio)
+│${setv} ${prefix}slow (reply audio)
+│${setv} ${prefix}deep (reply audio)
+│${setv} ${prefix}blown (reply audio)
+│${setv} ${prefix}reverse (reply audio)
+│${setv} ${prefix}smooth (reply audio)
+│${setv} ${prefix}earrape (reply audio)
+│${setv} ${prefix}nightcore (reply audio)
+│${setv} ${prefix}surat
+│${setv} ${prefix}terbilang
+│${setv} ${prefix}cekkhodam (nama lu)
+╰─┬────❍
+╭─┴❍「 *GRUP* 」❍
+│${setv} ${prefix}react (emoji)
+│${setv} ${prefix}tagme
+│${setv} ${prefix}presensi
+│${setv} ${prefix}kuorum
+│${setv} ${prefix}moderasi
+│${setv} ${prefix}autoreply
+│${setv} ${prefix}autotag
+│${setv} ${prefix}daftargroup
+│${setv} ${prefix}agendaminggu
+│${setv} ${prefix}tugastambah
+│${setv} ${prefix}tugaslist
+│${setv} ${prefix}peringatan
+│${setv} ${prefix}peringatanlist
+│${setv} ${prefix}moderasiskor
+│${setv} ${prefix}adminlog
+│${setv} ${prefix}sapagrup
+│${setv} ${prefix}cattag
+│${setv} ${prefix}agendaekspor
+│${setv} ${prefix}absenbulanan
+│${setv} ${prefix}admindaftar
+│${setv} ${prefix}admintambah
+│${setv} ${prefix}grupaktivitas
+│${setv} ${prefix}namagrup
+│${setv} ${prefix}grupaktif
+│${setv} ${prefix}absen
+│${setv} ${prefix}acara
+│${setv} ${prefix}acararsvp
+│${setv} ${prefix}catat
+│${setv} ${prefix}ceklis
+│${setv} ${prefix}template
 │${setv} ${prefix}add (62xxx)
 │${setv} ${prefix}kick (@tag/62xxx)
 │${setv} ${prefix}promote (@tag/62xxx)
@@ -6818,40 +6429,149 @@ Select Bot Settings:
 │${setv} ${prefix}linkgrup
 │${setv} ${prefix}revoke
 │${setv} ${prefix}tagall
-│${setv} ${prefix}pin
-│${setv} ${prefix}unpin
-│${setv} ${prefix}hidetag
 │${setv} ${prefix}totag (reply pesan)
 │${setv} ${prefix}listonline
 │${setv} ${prefix}group set
 │${setv} ${prefix}group (khusus admin)
+│${setv} ${prefix}warna
+│${setv} ${prefix}setppbot
+│${setv} ${prefix}join
+│${setv} ${prefix}leave
+│${setv} ${prefix}block
+│${setv} ${prefix}listblock
+│${setv} ${prefix}openblock
+│${setv} ${prefix}listpc
+│${setv} ${prefix}listgc
+│${setv} ${prefix}ban
+│${setv} ${prefix}unban
+│${setv} ${prefix}mute
+│${setv} ${prefix}unmute
+│${setv} ${prefix}creategc
+│${setv} ${prefix}clearchat
+│${setv} ${prefix}setlocale
+│${setv} ${prefix}settimezone
+│${setv} ${prefix}addprefix
+│${setv} ${prefix}delprefix
+│${setv} ${prefix}addbadword
+│${setv} ${prefix}delbadword
+│${setv} ${prefix}getmsgstore
+│${setv} ${prefix}getsession
+│${setv} ${prefix}delsession
+│${setv} ${prefix}delsampah
+│${setv} ${prefix}upsw
+│${setv} ${prefix}kickall
+│${setv} ${prefix}matikan
+│${setv} ${prefix}hidupkan
+│${setv} ${prefix}envstatus
+│${setv} ${prefix}setmotd
 ╰─┬────❍
-╭─┴❍「 *SEARCH* 」❍
-│${setv} ${prefix}ytsearch (query)
-│${setv} ${prefix}spotify (query)
-│${setv} ${prefix}pixiv (query)
-│${setv} ${prefix}pinterest (query)
-│${setv} ${prefix}wallpaper (query)
-│${setv} ${prefix}ringtone (query)
-│${setv} ${prefix}google (query)
-│${setv} ${prefix}gimage (query)
-│${setv} ${prefix}npm (query)
-│${setv} ${prefix}style (query)
-│${setv} ${prefix}cuaca (kota)
-│${setv} ${prefix}tenor (query)
-│${setv} ${prefix}urban (query)
+╭─┴❍「 *EKONOMI* 」❍
+│${setv} ${prefix}claim
+│${setv} ${prefix}buy [item] (nominal)
+│${setv} ${prefix}transfer
+│${setv} ${prefix}kurs
+│${setv} ${prefix}ekonomi
+│${setv} ${prefix}dompet
+│${setv} ${prefix}topuang
+│${setv} ${prefix}toplimit
+│${setv} ${prefix}hadiah
+│${setv} ${prefix}tabungtarget
+│${setv} ${prefix}uanglog
+│${setv} ${prefix}investasi
+│${setv} ${prefix}deposito
+│${setv} ${prefix}asuransi
+│${setv} ${prefix}keuangannilai
+│${setv} ${prefix}transferterjadwal
+│${setv} ${prefix}bantuangrup
+│${setv} ${prefix}investasihari
+│${setv} ${prefix}tabunggrafik
+│${setv} ${prefix}utangjadwal
+│${setv} ${prefix}dompetriwayat
+│${setv} ${prefix}pasarsimulasi
+│${setv} ${prefix}sisaanggaran
+│${setv} ${prefix}topdompet
+│${setv} ${prefix}rekening
+│${setv} ${prefix}arisan
+│${setv} ${prefix}kreditskor
+│${setv} ${prefix}asuransiklaim
+│${setv} ${prefix}pajaksimulasi
+│${setv} ${prefix}grafikpengeluaran
+│${setv} ${prefix}pendapatanharian
+│${setv} ${prefix}donasikampanye
+│${setv} ${prefix}tebaktokoh
+│${setv} ${prefix}tebaktokohjawab
+│${setv} ${prefix}portofolio
+│${setv} ${prefix}dividen
+│${setv} ${prefix}obligasi
+│${setv} ${prefix}emassimulasi
+│${setv} ${prefix}sahamsimulasi
+│${setv} ${prefix}kurssimulasi
+│${setv} ${prefix}inflasisimulasi
+│${setv} ${prefix}warisansimulasi
+│${setv} ${prefix}hadiahpoin
+│${setv} ${prefix}toko
+│${setv} ${prefix}lelang
+│${setv} ${prefix}kursus
+│${setv} ${prefix}koperasi
+│${setv} ${prefix}anggaran
+│${setv} ${prefix}pengeluaran
+│${setv} ${prefix}pemasukan
+│${setv} ${prefix}laporanuang
+│${setv} ${prefix}bank
+│${setv} ${prefix}tabung
+│${setv} ${prefix}tarik
+│${setv} ${prefix}lunas
+│${setv} ${prefix}dompetgrafik
+│${setv} ${prefix}donasi
+│${setv} ${prefix}tokoh
+│${setv} ${prefix}matauang
+│${setv} ${prefix}adduang
 ╰─┬────❍
-╭─┴❍「 *DOWNLOAD* 」❍
-│${setv} ${prefix}ytmp3 (url)
-│${setv} ${prefix}ytmp4 (url)
-│${setv} ${prefix}instagram (url)
-│${setv} ${prefix}tiktok (url)
-│${setv} ${prefix}tiktokmp3 (url)
-│${setv} ${prefix}facebook (url)
-│${setv} ${prefix}spotifydl (url)
-│${setv} ${prefix}mediafire (url)
-╰─┬────❍
-╭─┴❍「 *QUOTES* 」❍
+╭─┴❍「 *GAME* 」❍
+│${setv} ${prefix}gameinfo
+│${setv} ${prefix}trivia
+│${setv} ${prefix}quizberuntun
+│${setv} ${prefix}quizjawab
+│${setv} ${prefix}tebakjawab
+│${setv} ${prefix}gacha
+│${setv} ${prefix}wordle
+│${setv} ${prefix}wordlejawab
+│${setv} ${prefix}scramble
+│${setv} ${prefix}bingo
+│${setv} ${prefix}lotre
+│${setv} ${prefix}tebakwarna
+│${setv} ${prefix}gameskor
+│${setv} ${prefix}kuisadaptif
+│${setv} ${prefix}kuisskor
+│${setv} ${prefix}kartuwarna
+│${setv} ${prefix}kartuucapan
+│${setv} ${prefix}profilkartu
+│${setv} ${prefix}icekartu
+│${setv} ${prefix}sudoku
+│${setv} ${prefix}game2048
+│${setv} ${prefix}kartuingatan
+│${setv} ${prefix}tebaklagu
+│${setv} ${prefix}tebaklagujawab
+│${setv} ${prefix}riddleai
+│${setv} ${prefix}riddlejawab
+│${setv} ${prefix}gameharian
+│${setv} ${prefix}gamepass
+│${setv} ${prefix}rekapgame
+│${setv} ${prefix}grupkartu
+│${setv} ${prefix}stikerkartu
+│${setv} ${prefix}stickergambar
+│${setv} ${prefix}kartuundangan
+│${setv} ${prefix}soalkategori
+│${setv} ${prefix}rankinggame
+│${setv} ${prefix}tebakurutan
+│${setv} ${prefix}tebakurutanjawab
+│${setv} ${prefix}kartutaruhan
+│${setv} ${prefix}kartupos
+│${setv} ${prefix}kuisharian
+│${setv} ${prefix}kuisjawab
+│${setv} ${prefix}pilihberat
+│${setv} ${prefix}tebak
+│${setv} ${prefix}rankgame
 │${setv} ${prefix}motivasi
 │${setv} ${prefix}quotes
 │${setv} ${prefix}truth
@@ -6859,71 +6579,12 @@ Select Bot Settings:
 │${setv} ${prefix}dare
 │${setv} ${prefix}bucin
 │${setv} ${prefix}renungan
-╰─┬────❍
-╭─┴❍「 *TOOLS* 」❍
-│${setv} ${prefix}get (url) 🔸️
-│${setv} ${prefix}hd (reply pesan)
-│${setv} ${prefix}toaudio (reply pesan)
-│${setv} ${prefix}tomp3 (reply pesan)
-│${setv} ${prefix}tovn (reply pesan)
-│${setv} ${prefix}toimage (reply pesan)
-│${setv} ${prefix}toptv (reply pesan)
-│${setv} ${prefix}tourl (reply pesan)
-│${setv} ${prefix}tts (textnya)
-│${setv} ${prefix}toqr (textnya)
-│${setv} ${prefix}brat (textnya)
-│${setv} ${prefix}bratvid (textnya)
-│${setv} ${prefix}ssweb (url) 🔸️
 │${setv} ${prefix}sticker (send/reply img)
-│${setv} ${prefix}colong (reply stiker)
-│${setv} ${prefix}smeme (send/reply img)
-│${setv} ${prefix}dehaze (send/reply img)
-│${setv} ${prefix}colorize (send/reply img)
-│${setv} ${prefix}hitamkan (send/reply img)
-│${setv} ${prefix}emojimix 🙃+💀
-│${setv} ${prefix}nulis
-│${setv} ${prefix}readmore text1|text2
-│${setv} ${prefix}qc (pesannya)
-│${setv} ${prefix}translate
-│${setv} ${prefix}wasted (send/reply img)
-│${setv} ${prefix}triggered (send/reply img)
-│${setv} ${prefix}shorturl (urlnya)
-│${setv} ${prefix}gitclone (urlnya)
-│${setv} ${prefix}fat (reply audio)
-│${setv} ${prefix}fast (reply audio)
-│${setv} ${prefix}bass (reply audio)
-│${setv} ${prefix}slow (reply audio)
-│${setv} ${prefix}tupai (reply audio)
-│${setv} ${prefix}deep (reply audio)
-│${setv} ${prefix}robot (reply audio)
-│${setv} ${prefix}blown (reply audio)
-│${setv} ${prefix}reverse (reply audio)
-│${setv} ${prefix}smooth (reply audio)
-│${setv} ${prefix}earrape (reply audio)
-│${setv} ${prefix}nightcore (reply audio)
-│${setv} ${prefix}getexif (reply sticker)
-│${setv} ${prefix}password
-│${setv} ${prefix}uuid
-│${setv} ${prefix}surat
-╰─┬────❍
-╭─┴❍「 *AI* 」❍
-│${setv} ${prefix}ai (query)
-│${setv} ${prefix}gemini (query)
-│${setv} ${prefix}glm (query)
-│${setv} ${prefix}grok (query)
-│${setv} ${prefix}claude (query)
-│${setv} ${prefix}archipelago (query)
-│${setv} ${prefix}deepseek (query)
-╰─┬────❍
-╭─┴❍「 *ANIME* 」❍
 │${setv} ${prefix}waifu
 │${setv} ${prefix}neko
-╰─┬────❍
-╭─┴❍「 *GAME* 」❍
 │${setv} ${prefix}tictactoe
 │${setv} ${prefix}suit
 │${setv} ${prefix}slot
-│${setv} ${prefix}math (level)
 │${setv} ${prefix}begal
 │${setv} ${prefix}ulartangga
 │${setv} ${prefix}cangkulan
@@ -6935,7 +6596,6 @@ Select Bot Settings:
 │${setv} ${prefix}tebaklirik
 │${setv} ${prefix}tebakkata
 │${setv} ${prefix}tebakbom
-│${setv} ${prefix}susunkata
 │${setv} ${prefix}colorblind
 │${setv} ${prefix}tebakkimia
 │${setv} ${prefix}caklontong
@@ -6944,18 +6604,110 @@ Select Bot Settings:
 │${setv} ${prefix}tebakgambar
 │${setv} ${prefix}tebakbendera
 │${setv} ${prefix}quiz
+│${setv} ${prefix}hangman
+│${setv} ${prefix}mbti
+│${setv} ${prefix}soal
+│${setv} ${prefix}soalmtk
+│${setv} ${prefix}soalipa
+│${setv} ${prefix}soalips
+│${setv} ${prefix}soalbindon
+│${setv} ${prefix}soalppkn
+│${setv} ${prefix}dadu
+│${setv} ${prefix}bisakah (text)
+│${setv} ${prefix}apakah (text)
+│${setv} ${prefix}kapan (text)
+│${setv} ${prefix}siapa (text)
+│${setv} ${prefix}kerangajaib (text)
+│${setv} ${prefix}cekmati (nama lu)
+│${setv} ${prefix}ceksifat
+│${setv} ${prefix}rate (reply pesan)
+│${setv} ${prefix}jodohku
+│${setv} ${prefix}jadian
+│${setv} ${prefix}fitnah
+│${setv} ${prefix}halah (text)
+│${setv} ${prefix}hilih (text)
+│${setv} ${prefix}huluh (text)
+│${setv} ${prefix}heleh (text)
+│${setv} ${prefix}holoh (text)
+│${setv} ${prefix}pilih
+│${setv} ${prefix}angkaacak
+│${setv} ${prefix}koin
+│${setv} ${prefix}coffe
+│${setv} ${prefix}quotesmenu
+│${setv} ${prefix}gamemenu
+╰─┬────❍
+╭─┴❍「 *TURNAMEN* 」❍
+│${setv} ${prefix}papanperingkat
+│${setv} ${prefix}turnamen2
+│${setv} ${prefix}liga2
+│${setv} ${prefix}juaraboards
+│${setv} ${prefix}bagiacak
+│${setv} ${prefix}bagiseimbang
+│${setv} ${prefix}baginama
+│${setv} ${prefix}teamseimbang
+│${setv} ${prefix}teamrotasi
+│${setv} ${prefix}teamlist
+│${setv} ${prefix}teamhapus
+│${setv} ${prefix}kelompokrekap
+│${setv} ${prefix}quizturnamen
+│${setv} ${prefix}wordleturnamen
+│${setv} ${prefix}gametim
+│${setv} ${prefix}liga
+│${setv} ${prefix}klasemen
+│${setv} ${prefix}team <game> <pemain>
+│${setv} ${prefix}turnamen buat
+│${setv} ${prefix}turnamen
 │${setv} ${prefix}team <n>
 │${setv} ${prefix}pair
-│${setv} ${prefix}hangman
-╰──────❍
+╰─┬────❍
 ╭─┴❍「 *EDUKASI* 」❍
+│${setv} ${prefix}gempa
+│${setv} ${prefix}hariini
+│${setv} ${prefix}waktu
+│${setv} ${prefix}dailykalender
+│${setv} ${prefix}kalender
+│${setv} ${prefix}jadwal
+│${setv} ${prefix}matriks3
+│${setv} ${prefix}turunan
+│${setv} ${prefix}integral
+│${setv} ${prefix}koordinat
+│${setv} ${prefix}hitungpanjang
+│${setv} ${prefix}singkatan
+│${setv} ${prefix}flashcardharian
+│${setv} ${prefix}materipeta
+│${setv} ${prefix}hafalanstreak
+│${setv} ${prefix}absengrafik
+│${setv} ${prefix}kosakataharian
+│${setv} ${prefix}ejaan
+│${setv} ${prefix}tatabahasa
+│${setv} ${prefix}pantunbuat
+│${setv} ${prefix}puisibuat
+│${setv} ${prefix}sejarahharian
+│${setv} ${prefix}rumustantangan
+│${setv} ${prefix}glosarium
+│${setv} ${prefix}peribahasaarti
+│${setv} ${prefix}latihanhitung
+│${setv} ${prefix}teorisingkat
+│${setv} ${prefix}petarumus
+│${setv} ${prefix}hafalancek
+│${setv} ${prefix}materi
+│${setv} ${prefix}artikel
+│${setv} ${prefix}flashcard
+│${setv} ${prefix}flashcardjawab
+│${setv} ${prefix}modul
+│${setv} ${prefix}bendera
+│${setv} ${prefix}umurdetail
+│${setv} ${prefix}grafik
+│${setv} ${prefix}acakurutan
+│${setv} ${prefix}cuaca (kota)
+│${setv} ${prefix}uuid
+│${setv} ${prefix}susunkata
 │${setv} ${prefix}rumus
 │${setv} ${prefix}hitung
 │${setv} ${prefix}suku
 │${setv} ${prefix}kuliner
 │${setv} ${prefix}hitungmundur
 │${setv} ${prefix}umur
-│${setv} ${prefix}terbilang
 │${setv} ${prefix}roman
 │${setv} ${prefix}konversi
 │${setv} ${prefix}morse
@@ -6968,7 +6720,6 @@ Select Bot Settings:
 │${setv} ${prefix}wisata
 │${setv} ${prefix}resep
 │${setv} ${prefix}provinsi
-│${setv} ${prefix}mbti
 │${setv} ${prefix}lirik
 │${setv} ${prefix}fakta
 │${setv} ${prefix}puisi
@@ -6978,12 +6729,6 @@ Select Bot Settings:
 │${setv} ${prefix}planet
 │${setv} ${prefix}balik
 │${setv} ${prefix}hitungkata
-│${setv} ${prefix}soal
-│${setv} ${prefix}soalmtk
-│${setv} ${prefix}soalipa
-│${setv} ${prefix}soalips
-│${setv} ${prefix}soalbindon
-│${setv} ${prefix}soalppkn
 │${setv} ${prefix}namabayi
 │${setv} ${prefix}peribahasa
 │${setv} ${prefix}kpk
@@ -7002,23 +6747,16 @@ Select Bot Settings:
 │${setv} ${prefix}danau
 │${setv} ${prefix}gunung
 │${setv} ${prefix}pulau
-│${setv} ${prefix}sungai
 │${setv} ${prefix}haribersejarah
-│${setv} ${prefix}statistikdata
 │${setv} ${prefix}selisihhari
 │${setv} ${prefix}fibonacci
 │${setv} ${prefix}primaantara
-│${setv} ${prefix}statistik
 │${setv} ${prefix}pecahan
-│${setv} ${prefix}progress
 │${setv} ${prefix}terbilang2
 │${setv} ${prefix}hurufke
-│${setv} ${prefix}sapaan
 │${setv} ${prefix}format
 │${setv} ${prefix}potong
-│${setv} ${prefix}hitungteks
 │${setv} ${prefix}hash
-│${setv} ${prefix}urlcode
 │${setv} ${prefix}json
 │${setv} ${prefix}luas
 │${setv} ${prefix}volume
@@ -7032,79 +6770,373 @@ Select Bot Settings:
 │${setv} ${prefix}hewan
 │${setv} ${prefix}tumbuhan
 │${setv} ${prefix}sejarah
-│${setv} ${prefix}tokoh
 │${setv} ${prefix}olahraga
 │${setv} ${prefix}singkatan
 │${setv} ${prefix}sinonim
 │${setv} ${prefix}antonim
 │${setv} ${prefix}kamus
-│${setv} ${prefix}matauang
 │${setv} ${prefix}budaya
 │${setv} ${prefix}tarian
 │${setv} ${prefix}rumahadat
 │${setv} ${prefix}alatmusik
 │${setv} ${prefix}batik
-│${setv} ${prefix}diagnosa
 │${setv} ${prefix}basis
 │${setv} ${prefix}durasi
 │${setv} ${prefix}slug
 │${setv} ${prefix}base64
-╰─┬────❍
-╭─┴❍「 *FUN* 」❍
-│${setv} ${prefix}coba
-│${setv} ${prefix}dadu
-│${setv} ${prefix}bisakah (text)
-│${setv} ${prefix}apakah (text)
-│${setv} ${prefix}kapan (text)
-│${setv} ${prefix}siapa (text)
-│${setv} ${prefix}kerangajaib (text)
-│${setv} ${prefix}cekmati (nama lu)
-│${setv} ${prefix}ceksifat
-│${setv} ${prefix}cekkhodam (nama lu)
-│${setv} ${prefix}rate (reply pesan)
-│${setv} ${prefix}jodohku
-│${setv} ${prefix}jadian
-│${setv} ${prefix}fitnah
-│${setv} ${prefix}halah (text)
-│${setv} ${prefix}hilih (text)
-│${setv} ${prefix}huluh (text)
-│${setv} ${prefix}heleh (text)
-│${setv} ${prefix}holoh (text)
-│${setv} ${prefix}pilih
-│${setv} ${prefix}angkaacak
-│${setv} ${prefix}warna
-│${setv} ${prefix}koin
 │${setv} ${prefix}acakkata
 ╰─┬────❍
-╭─┴❍「 *RANDOM* 」❍
-│${setv} ${prefix}coffe
+╭─┴❍「 *AI* 」❍
+│${setv} ${prefix}ringkas
+│${setv} ${prefix}ide
+│${setv} ${prefix}paragraf
+│${setv} ${prefix}judulkan
+│${setv} ${prefix}tanya
+│${setv} ${prefix}terjemah
+│${setv} ${prefix}teks
+│${setv} ${prefix}code
+│${setv} ${prefix}dialog
+│${setv} ${prefix}brainstorm
+│${setv} ${prefix}kritik
+│${setv} ${prefix}translateid
+│${setv} ${prefix}airiwayat
+│${setv} ${prefix}catattopik
+│${setv} ${prefix}rangkumcatatan
+│${setv} ${prefix}rapatringkas
+│${setv} ${prefix}tugasselesai
+│${setv} ${prefix}posterteks
+│${setv} ${prefix}aigaya
+│${setv} ${prefix}aitopik
+│${setv} ${prefix}aibatalkan
+│${setv} ${prefix}aikuota
+│${setv} ${prefix}aibandingkan
+│${setv} ${prefix}logringkas
+│${setv} ${prefix}memori
+│${setv} ${prefix}identitas
+│${setv} ${prefix}terjemahbalik
+│${setv} ${prefix}spamdeteksi
+│${setv} ${prefix}stikerteks
+│${setv} ${prefix}aimemori
+│${setv} ${prefix}ailupa
+│${setv} ${prefix}aipersona
+│${setv} ${prefix}aidebat
+│${setv} ${prefix}airangkum
+│${setv} ${prefix}aireviewkode
+│${setv} ${prefix}airencana
+│${setv} ${prefix}aibatas
+│${setv} ${prefix}ringkasanbot
+│${setv} ${prefix}tanyakomunitas
+│${setv} ${prefix}dialogpendek
+│${setv} ${prefix}rangkumpelajaran
+│${setv} ${prefix}teksrapi
+│${setv} ${prefix}teksbalik
+│${setv} ${prefix}teksulang
+│${setv} ${prefix}tekspotong
+│${setv} ${prefix}teksbersih
+│${setv} ${prefix}teksheksa
+│${setv} ${prefix}teksdariheksa
+│${setv} ${prefix}teksbanding
+│${setv} ${prefix}wallpaperteks
+│${setv} ${prefix}ownerringkas
+│${setv} ${prefix}memoripeta
+│${setv} ${prefix}roomai
+│${setv} ${prefix}hidetag
+│${setv} ${prefix}translate
+│${setv} ${prefix}tupai (reply audio)
+│${setv} ${prefix}ai (query)
+│${setv} ${prefix}gemini (query)
+│${setv} ${prefix}glm (query)
+│${setv} ${prefix}grok (query)
+│${setv} ${prefix}claude (query)
+│${setv} ${prefix}archipelago (query)
+│${setv} ${prefix}deepseek (query)
+│${setv} ${prefix}math (level)
+│${setv} ${prefix}sungai
+│${setv} ${prefix}hitungteks
+│${setv} ${prefix}urlcode
 ╰─┬────❍
-╭─┴❍「 *STALKER* 」❍
+╭─┴❍「 *MEDIA* 」❍
+│${setv} ${prefix}contohdata
+│${setv} ${prefix}komikpendek
+│${setv} ${prefix}galeri
+│${setv} ${prefix}stikeranimasi
+│${setv} ${prefix}fotoprofil
+│${setv} ${prefix}posterucapan
+│${setv} ${prefix}faqcari
+│${setv} ${prefix}namamerek
+│${setv} ${prefix}caption
+│${setv} ${prefix}hashtag
+│${setv} ${prefix}tagline
+│${setv} ${prefix}judulalternatif
+│${setv} ${prefix}suratpendek
+│${setv} ${prefix}stikerpaket
+│${setv} ${prefix}paket
+│${setv} ${prefix}spotify (query)
+│${setv} ${prefix}pixiv (query)
+│${setv} ${prefix}wallpaper (query)
+│${setv} ${prefix}ringtone (query)
+│${setv} ${prefix}gimage (query)
+│${setv} ${prefix}style (query)
+│${setv} ${prefix}tenor (query)
+│${setv} ${prefix}ytmp3 (url)
+│${setv} ${prefix}ytmp4 (url)
+│${setv} ${prefix}instagram (url)
+│${setv} ${prefix}tiktok (url)
+│${setv} ${prefix}tiktokmp3 (url)
+│${setv} ${prefix}facebook (url)
+│${setv} ${prefix}spotifydl (url)
+│${setv} ${prefix}mediafire (url)
+│${setv} ${prefix}hd (reply pesan)
+│${setv} ${prefix}toaudio (reply pesan)
+│${setv} ${prefix}tomp3 (reply pesan)
+│${setv} ${prefix}tovn (reply pesan)
+│${setv} ${prefix}toimage (reply pesan)
+│${setv} ${prefix}toptv (reply pesan)
+│${setv} ${prefix}tourl (reply pesan)
+│${setv} ${prefix}tts (textnya)
+│${setv} ${prefix}toqr (textnya)
+│${setv} ${prefix}brat (textnya)
+│${setv} ${prefix}bratvid (textnya)
+│${setv} ${prefix}ssweb (url) 🔸️
+│${setv} ${prefix}colong (reply stiker)
+│${setv} ${prefix}smeme (send/reply img)
+│${setv} ${prefix}dehaze (send/reply img)
+│${setv} ${prefix}colorize (send/reply img)
+│${setv} ${prefix}hitamkan (send/reply img)
+│${setv} ${prefix}emojimix 🙃+💀
+│${setv} ${prefix}nulis
+│${setv} ${prefix}readmore text1|text2
+│${setv} ${prefix}qc (pesannya)
+│${setv} ${prefix}wasted (send/reply img)
+│${setv} ${prefix}triggered (send/reply img)
+│${setv} ${prefix}gitclone (urlnya)
+│${setv} ${prefix}bass (reply audio)
+│${setv} ${prefix}getexif (reply sticker)
+│${setv} ${prefix}progress
+│${setv} ${prefix}downloadmenu
+│${setv} ${prefix}animemenu
+╰─┬────❍
+╭─┴❍「 *PENCARIAN* 」❍
+│${setv} ${prefix}dataset
+│${setv} ${prefix}rekomendasi
+│${setv} ${prefix}datasetpenuh
+│${setv} ${prefix}indeksdata
+│${setv} ${prefix}carifitur
+│${setv} ${prefix}notulencari
+│${setv} ${prefix}temanrekomendasi
+│${setv} ${prefix}kosakatacari
+│${setv} ${prefix}resepcari
+│${setv} ${prefix}catatcari
+│${setv} ${prefix}rekomendasiperintah
+│${setv} ${prefix}cari
+│${setv} ${prefix}ytsearch (query)
+│${setv} ${prefix}google (query)
+│${setv} ${prefix}npm (query)
+│${setv} ${prefix}urban (query)
+│${setv} ${prefix}shorturl (urlnya)
 │${setv} ${prefix}wastalk
 │${setv} ${prefix}githubstalk
+│${setv} ${prefix}searchmenu
+│${setv} ${prefix}stalkermenu
+╰─┬────❍
+╭─┴❍「 *KOMUNITAS* 」❍
+│${setv} ${prefix}request (text)
+│${setv} ${prefix}poll (judul | opsi1 | opsi2)
+│${setv} ${prefix}explore
+│${setv} ${prefix}peraturan
+│${setv} ${prefix}icebreak
+│${setv} ${prefix}questmingguan
+│${setv} ${prefix}rapat
+│${setv} ${prefix}notulen
+│${setv} ${prefix}koleksi
+│${setv} ${prefix}achievement
+│${setv} ${prefix}level
+│${setv} ${prefix}levelboard
+│${setv} ${prefix}sapaanpribadi
+│${setv} ${prefix}pujian
+│${setv} ${prefix}semangat
+│${setv} ${prefix}ceritapendek
+│${setv} ${prefix}mood
+│${setv} ${prefix}moodrekap
+│${setv} ${prefix}teman
+│${setv} ${prefix}autosalam
+│${setv} ${prefix}pollhasil
+│${setv} ${prefix}peraturanversi
+│${setv} ${prefix}bio
+│${setv} ${prefix}xp
+│${setv} ${prefix}badge
+│${setv} ${prefix}badgeberi
+│${setv} ${prefix}badgehapus
+│${setv} ${prefix}guild
+│${setv} ${prefix}perkenalan
+│${setv} ${prefix}target
+│${setv} ${prefix}proyek
+│${setv} ${prefix}peraturansemua
+│${setv} ${prefix}tiket
+│${setv} ${prefix}faq
+│${setv} ${prefix}faqtambah
+│${setv} ${prefix}aset
+│${setv} ${prefix}konten
+│${setv} ${prefix}siaran
+│${setv} ${prefix}apresiasi
+│${setv} ${prefix}salam
+│${setv} ${prefix}ceritalanjut
+│${setv} ${prefix}ceritabaca
+│${setv} ${prefix}ceritareset
+│${setv} ${prefix}aturan
+│${setv} ${prefix}filter
+│${setv} ${prefix}poin
+│${setv} ${prefix}reputasi
+│${setv} ${prefix}tepercaya
+│${setv} ${prefix}keputusan
+│${setv} ${prefix}notulenversi
+│${setv} ${prefix}proyekgrup
+│${setv} ${prefix}arsip
+│${setv} ${prefix}cadangan
+│${setv} ${prefix}undang
+│${setv} ${prefix}referral
+│${setv} ${prefix}seri
+│${setv} ${prefix}survei
+│${setv} ${prefix}inventaris
+│${setv} ${prefix}avatar
+│${setv} ${prefix}konstitusi
+│${setv} ${prefix}streak
+│${setv} ${prefix}quest
+│${setv} ${prefix}sapaan
+│${setv} ${prefix}setbio
+╰─┬────❍
+╭─┴❍「 *STATISTIK* 」❍
+│${setv} ${prefix}leaderboard
+│${setv} ${prefix}runtime
+│${setv} ${prefix}totalfitur
+│${setv} ${prefix}rankmingguan
+│${setv} ${prefix}statistiklanjut
+│${setv} ${prefix}laporgrup
+│${setv} ${prefix}laporharian
+│${setv} ${prefix}lapormingguan
+│${setv} ${prefix}statistikgrup
+│${setv} ${prefix}statistikpengguna
+│${setv} ${prefix}statistikperintah
+│${setv} ${prefix}statistikkinerja
+│${setv} ${prefix}laporstatus
+│${setv} ${prefix}health
+│${setv} ${prefix}metrik
+│${setv} ${prefix}diagnosapenuh
+│${setv} ${prefix}xptop
+│${setv} ${prefix}komunitasstatistik
+│${setv} ${prefix}peraturankategori
+│${setv} ${prefix}lapordetail
+│${setv} ${prefix}laporanbulanan
+│${setv} ${prefix}laporantren
+│${setv} ${prefix}laporanbanding
+│${setv} ${prefix}statistikanggota
+│${setv} ${prefix}statistikjam
+│${setv} ${prefix}statistikrespons
+│${setv} ${prefix}trenperintah
+│${setv} ${prefix}apresiasipapan
+│${setv} ${prefix}papanskorharian
+│${setv} ${prefix}papan
+│${setv} ${prefix}statcmd
+│${setv} ${prefix}system
+│${setv} ${prefix}top
+│${setv} ${prefix}statistikbot
+│${setv} ${prefix}statistikdata
+│${setv} ${prefix}statistik
+│${setv} ${prefix}diagnosa
+╰─┬────❍
+╭─┴❍「 *KEAMANAN* 」❍
+│${setv} ${prefix}ping
+│${setv} ${prefix}pintasan
+│${setv} ${prefix}sesihapus
+│${setv} ${prefix}akseswarisan
+│${setv} ${prefix}bungapinjam
+│${setv} ${prefix}aksesku
+│${setv} ${prefix}auditcari
+│${setv} ${prefix}backupverifikasi
+│${setv} ${prefix}ratelimit
+│${setv} ${prefix}domainblokir
+│${setv} ${prefix}auditekspor
+│${setv} ${prefix}privasi
+│${setv} ${prefix}auditaku
+│${setv} ${prefix}backupinkremental
+│${setv} ${prefix}kunci
+│${setv} ${prefix}verifikasi
+│${setv} ${prefix}akunaman
+│${setv} ${prefix}logkeamanan
+│${setv} ${prefix}cooldownlist
+│${setv} ${prefix}akseslist
+│${setv} ${prefix}whitelisttambah
+│${setv} ${prefix}blacklistalasan
+│${setv} ${prefix}pindah
+│${setv} ${prefix}aksesmatriks
+│${setv} ${prefix}aksesgrup
+│${setv} ${prefix}audit
+│${setv} ${prefix}aksesdefault
+│${setv} ${prefix}blacklist
+│${setv} ${prefix}whitelistcmd
+│${setv} ${prefix}pinjam
+│${setv} ${prefix}pin
+│${setv} ${prefix}unpin
+│${setv} ${prefix}pinterest (query)
+│${setv} ${prefix}password
+│${setv} ${prefix}whitelist
+│${setv} ${prefix}akses
+│${setv} ${prefix}cooldown
+│${setv} ${prefix}logaudit
 ╰─┬────❍
 ╭─┴❍「 *OWNER* 」❍
-│${setv} ${prefix}bot [set]
-│${setv} ${prefix}setbio
-│${setv} ${prefix}setppbot
-│${setv} ${prefix}join
-│${setv} ${prefix}leave
-│${setv} ${prefix}block
-│${setv} ${prefix}listblock
-│${setv} ${prefix}openblock
-│${setv} ${prefix}listpc
-│${setv} ${prefix}listgc
-│${setv} ${prefix}ban
-│${setv} ${prefix}unban
-│${setv} ${prefix}mute
-│${setv} ${prefix}unmute
-│${setv} ${prefix}creategc
-│${setv} ${prefix}clearchat
+│${setv} ${prefix}ownerlist
+│${setv} ${prefix}hadiahevent
+│${setv} ${prefix}topbulanan
+│${setv} ${prefix}transferbatch
+│${setv} ${prefix}restartnow
+│${setv} ${prefix}updatenow
+│${setv} ${prefix}databaseinfo
+│${setv} ${prefix}maintenancewhy
+│${setv} ${prefix}modehemat
+│${setv} ${prefix}cacheinfo
+│${setv} ${prefix}dashboardbuka
+│${setv} ${prefix}dashboardtutup
+│${setv} ${prefix}relaystatus
+│${setv} ${prefix}deploystatus
+│${setv} ${prefix}restorediff
+│${setv} ${prefix}sesilist
+│${setv} ${prefix}databasemigrasi
+│${setv} ${prefix}databaseinfopenuh
+│${setv} ${prefix}logekspor
+│${setv} ${prefix}maintenancealasan
+│${setv} ${prefix}bootinfo
+│${setv} ${prefix}stateinfo
+│${setv} ${prefix}cachebersih
+│${setv} ${prefix}dbekspor
+│${setv} ${prefix}dbimpor
+│${setv} ${prefix}loglevel
+│${setv} ${prefix}debugmode
+│${setv} ${prefix}ketersediaan
+│${setv} ${prefix}penggunaaktif
+│${setv} ${prefix}perintahmati
+│${setv} ${prefix}rollback
+│${setv} ${prefix}datasehat
+│${setv} ${prefix}tandatangan
+│${setv} ${prefix}limitatur
+│${setv} ${prefix}limitlihat
+│${setv} ${prefix}statebersih
+│${setv} ${prefix}eventlog
+│${setv} ${prefix}jadwalkerja
+│${setv} ${prefix}pemeliharaan
+│${setv} ${prefix}backup
+│${setv} ${prefix}jadibot 🔸️
+│${setv} ${prefix}stopjadibot
+│${setv} ${prefix}stopclonebot
+│${setv} ${prefix}listjadibot
+│${setv} ${prefix}listclonebot
+│${setv} ${prefix}addsewa
+│${setv} ${prefix}delsewa
+│${setv} ${prefix}listsewa
 │${setv} ${prefix}addprem
 │${setv} ${prefix}delprem
 │${setv} ${prefix}listprem
 │${setv} ${prefix}addlimit
-│${setv} ${prefix}adduang
 │${setv} ${prefix}setbotmessages
 │${setv} ${prefix}setbotauthor
 │${setv} ${prefix}setbotname
@@ -7112,57 +7144,16 @@ Select Bot Settings:
 │${setv} ${prefix}setapikey
 │${setv} ${prefix}setbotlimit
 │${setv} ${prefix}setbotmoney
-│${setv} ${prefix}setlocale
-│${setv} ${prefix}settimezone
-│${setv} ${prefix}addprefix
-│${setv} ${prefix}delprefix
-│${setv} ${prefix}addbadword
-│${setv} ${prefix}delbadword
 │${setv} ${prefix}addowner
 │${setv} ${prefix}delowner
-│${setv} ${prefix}whitelist
-│${setv} ${prefix}getmsgstore
-│${setv} ${prefix}bot --settings
-│${setv} ${prefix}bot settings
-│${setv} ${prefix}getsession
-│${setv} ${prefix}delsession
-│${setv} ${prefix}delsampah
-│${setv} ${prefix}upsw
-│${setv} ${prefix}kickall
 │${setv} ${prefix}update
 │${setv} ${prefix}backup
-│${setv} ${prefix}akses
-│${setv} ${prefix}matikan
-│${setv} ${prefix}hidupkan
-│${setv} ${prefix}cooldown
-│${setv} ${prefix}envstatus
 │${setv} ${prefix}backuplist
 │${setv} ${prefix}sesi
-│${setv} ${prefix}setmotd
 │${setv} ${prefix}broadcast
-│${setv} ${prefix}logaudit
 │${setv} ${prefix}restore
 │${setv} ${prefix}maintenance
-│${setv} $
-│${setv} >
-│${setv} <
-╰─┬────❍
-╭─┴❍「 *SUBMENU* 」❍
-│${setv} ${prefix}botmenu
-│${setv} ${prefix}groupmenu / ${prefix}grupmenu
-│${setv} ${prefix}searchmenu
-│${setv} ${prefix}downloadmenu
-│${setv} ${prefix}quotesmenu
-│${setv} ${prefix}toolsmenu
-│${setv} ${prefix}aimenu
-│${setv} ${prefix}randommenu
-│${setv} ${prefix}stalkermenu
-│${setv} ${prefix}animemenu
-│${setv} ${prefix}gamemenu
-│${setv} ${prefix}funmenu
-│${setv} ${prefix}edukasimenu
-│${setv} ${prefix}ownermenu
-│${setv} ${prefix}authormenu
+╰──────❍
 ╰──────❍`;
 					await sock.sendMessageV3(m.chat, {
 						text: menunya,

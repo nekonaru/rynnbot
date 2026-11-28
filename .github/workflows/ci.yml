@@ -36,6 +36,9 @@ jobs:
       - name: State audit
         run: npm run audit:state
 
+      - name: Menu audit
+        run: npm run audit:menu
+
       - name: Audit dependencies
         run: npm audit --omit=dev --audit-level=high
         continue-on-error: true
