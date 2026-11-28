@@ -2,7 +2,7 @@
 
 Dokumen ini dihasilkan otomatis dari registry perintah. Jangan disunting manual.
 
-Total 962 perintah dalam 14 kategori.
+Total 1075 perintah dalam 14 kategori.
 
 ## AI
 
@@ -114,6 +114,20 @@ Total 962 perintah dalam 14 kategori.
 
 | Perintah | Contoh | Role | Biaya limit |
 |---|---|---|---|
+| `.belajarjalur` | `.belajarjalur(Jalur belajar)` | semua | 0 |
+| `.belajarharian` | `.belajarharian(Materi harian)` | semua | 0 |
+| `.belajarujian` | `.belajarujian([kategori] [jawaban] Ujian)` | semua | 0 |
+| `.belajarnilai` | `.belajarnilai(Nilai belajar)` | semua | 0 |
+| `.belajarsertifikat` | `.belajarsertifikat(Sertifikat belajar)` | semua | 0 |
+| `.kartubuat` | `.kartubuat([kategori] Buat kartu)` | semua | 0 |
+| `.kartuulang` | `.kartuulang(Ulang kartu salah)` | semua | 0 |
+| `.kartukategori` | `.kartukategori(Kategori kartu)` | semua | 0 |
+| `.kartustatistik` | `.kartustatistik(Statistik kartu)` | semua | 0 |
+| `.kartuhapus` | `.kartuhapus([kategori] Hapus kartu)` | semua | 0 |
+| `.kuiskategori` | `.kuiskategori([kategori] Kuis data)` | semua | 0 |
+| `.kuisturnamen` | `.kuisturnamen([nama] Buat turnamen kuis)` | semua | 0 |
+| `.kuispapan` | `.kuispapan(Papan kuis)` | semua | 0 |
+| `.kuishadiah` | `.kuishadiah([poin] Hadiah kuis)` | semua | 0 |
 | `.dataindeks` | `.dataindeks` | semua | 0 |
 | `.datasumber` | `.datasumber` | semua | 0 |
 | `.datavalidasi` | `.datavalidasi` | semua | 0 |
@@ -265,6 +279,37 @@ Total 962 perintah dalam 14 kategori.
 
 | Perintah | Contoh | Role | Biaya limit |
 |---|---|---|---|
+| `.dompetringkas` | `.dompetringkas(Ringkas dompet)` | semua | 0 |
+| `.dompetrincian` | `.dompetrincian([field] Rincian saldo)` | semua | 0 |
+| `.dompetpindah` | `.dompetpindah([dari] [ke] [nominal] Pindah saldo)` | semua | 0 |
+| `.dompetrekap` | `.dompetrekap([field] Rekap transaksi)` | semua | 0 |
+| `.dompetlog` | `.dompetlog([field] Riwayat transaksi)` | semua | 0 |
+| `.dompetrekonsiliasi` | `.dompetrekonsiliasi(Rekonsiliasi saldo)` | semua | 0 |
+| `.anggaranbuat` | `.anggaranbuat([nama] [nominal] Buat anggaran)` | semua | 0 |
+| `.anggaranisi` | `.anggaranisi([nama] [nominal] Isi anggaran)` | semua | 0 |
+| `.anggaranpakai` | `.anggaranpakai([nama] [nominal] Pakai anggaran)` | semua | 0 |
+| `.anggaransisa` | `.anggaransisa([nama] Sisa anggaran)` | semua | 0 |
+| `.anggaranlaporan` | `.anggaranlaporan(Laporan anggaran)` | semua | 0 |
+| `.anggaranhapus` | `.anggaranhapus([nama] Hapus anggaran)` | semua | 0 |
+| `.utangcatat` | `.utangcatat([nama] [nominal] Catat utang)` | semua | 0 |
+| `.utangbayar` | `.utangbayar([nama] [nominal] Bayar utang)` | semua | 0 |
+| `.utangtagih` | `.utangtagih([nama] Tagih utang)` | semua | 0 |
+| `.utangdaftar` | `.utangdaftar(Daftar utang)` | semua | 0 |
+| `.utanghapus` | `.utanghapus([nama] Hapus utang)` | semua | 0 |
+| `.koperasisimpan` | `.koperasisimpan([nama] [nominal] Simpan modal)` | semua | 0 |
+| `.koperasitarik` | `.koperasitarik([nama] [nominal] Tarik modal)` | semua | 0 |
+| `.koperasidividen` | `.koperasidividen([nama] Hitung dividen)` | semua | 0 |
+| `.koperasianggota` | `.koperasianggota([nama] Daftar anggota)` | semua | 0 |
+| `.koperasirapat` | `.koperasirapat([nama] Ringkasan koperasi)` | semua | 0 |
+| `.koperasitutup` | `.koperasitutup([nama] Tutup koperasi)` | semua | 0 |
+| `.tokostok` | `.tokostok([nama] Stok toko)` | semua | 0 |
+| `.tokorestok` | `.tokorestok([nama] [jumlah] Restok)` | semua | 0 |
+| `.tokoharga` | `.tokoharga([nama] [nominal] Atur harga)` | semua | 0 |
+| `.tokodiskon` | `.tokodiskon([nama] [persen] Atur diskon)` | semua | 0 |
+| `.tokobeli` | `.tokobeli([nama] [jumlah] Beli barang)` | semua | 0 |
+| `.tokobjual` | `.tokobjual([nama] [jumlah] Jual barang)` | semua | 0 |
+| `.tokohlaporan` | `.tokohlaporan(Laporan toko)` | semua | 0 |
+| `.tokoktutup` | `.tokoktutup([nama] Tutup toko)` | semua | 0 |
 | `.kebunbuat` | `.kebunbuat` | semua | 0 |
 | `.kebunlihat` | `.kebunlihat` | semua | 0 |
 | `.kebunbenih` | `.kebunbenih` | semua | 0 |
@@ -371,6 +416,21 @@ Total 962 perintah dalam 14 kategori.
 
 | Perintah | Contoh | Role | Biaya limit |
 |---|---|---|---|
+| `.petbantukebun` | `.petbantukebun(Bantu kebun)` | semua | 0 |
+| `.petpakaipesul` | `.petpakaipesul(Pakai hasil kebun)` | semua | 0 |
+| `.pethadiahpanen` | `.pethadiahpanen(Hadiah panen)` | semua | 0 |
+| `.petprestasilintas` | `.petprestasilintas(Prestasi lintas)` | semua | 0 |
+| `.kebunkompos` | `.kebunkompos(Pakai kompos)` | semua | 0 |
+| `.kebunkirimtoko` | `.kebunkirimtoko([barang] [jumlah] Kirim ke toko)` | semua | 0 |
+| `.kebunpesanan` | `.kebunpesanan([barang] [jumlah] Buat pesanan)` | semua | 0 |
+| `.kebunpengiriman` | `.kebunpengiriman(Status pesanan)` | semua | 0 |
+| `.kargajidompet` | `.kargajidompet([nominal] Gaji ke dompet)` | semua | 0 |
+| `.kardandakebun` | `.kardandakebun([nominal] Dana ke kebun)` | semua | 0 |
+| `.karkinerjapet` | `.karkinerjapet(Kinerja dan hewan)` | semua | 0 |
+| `.karsertifikat` | `.karsertifikat(Sertifikat karir)` | semua | 0 |
+| `.rantaistatus` | `.rantaistatus(Status rantai)` | semua | 0 |
+| `.rantaipapan` | `.rantaipapan(Papan rantai)` | semua | 0 |
+| `.rantaihadiah` | `.rantaihadiah(Hadiah rantai)` | semua | 0 |
 | `.petadopsi` | `.petadopsi` | semua | 0 |
 | `.petnama` | `.petnama` | semua | 0 |
 | `.petganti` | `.petganti` | semua | 0 |
@@ -626,6 +686,24 @@ Total 962 perintah dalam 14 kategori.
 
 | Perintah | Contoh | Role | Biaya limit |
 |---|---|---|---|
+| `.gruppipapan` | `.gruppipapan(Papan grup)` | semua | 0 |
+| `.gruppianggota` | `.gruppianggota(Anggota grup)` | semua | 0 |
+| `.gruppiperan` | `.gruppiperan(Peran grup)` | semua | 0 |
+| `.gruppiaturan` | `.gruppiaturan(Aturan grup)` | semua | 0 |
+| `.gruppinotifikasi` | `.gruppinotifikasi(Notifikasi grup)` | semua | 0 |
+| `.proyektugas` | `.proyektugas([nama] [teks] Tugas proyek)` | semua | 0 |
+| `.proyekprogres` | `.proyekprogres([nama] Progres proyek)` | semua | 0 |
+| `.proyekanggota` | `.proyekanggota([nama] Anggota proyek)` | semua | 0 |
+| `.proyektenggat` | `.proyektenggat([nama] [tanggal] Atur tenggat)` | semua | 0 |
+| `.proyekarsip` | `.proyekarsip([nama] Arsip proyek)` | semua | 0 |
+| `.surveibuat` | `.surveibuat([judul] Buat survei)` | semua | 0 |
+| `.surveipilih` | `.surveipilih([id] [opsi] Pilih opsi)` | semua | 0 |
+| `.surveihasil` | `.surveihasil([id] Hasil survei)` | semua | 0 |
+| `.surveitutup` | `.surveitutup([id] Tutup survei)` | semua | 0 |
+| `.reputasilihat` | `.reputasilihat(Lihat reputasi)` | semua | 0 |
+| `.reputasiberi` | `.reputasiberi([jid] [jumlah] Beri reputasi)` | semua | 0 |
+| `.reputasipapan` | `.reputasipapan(Papan reputasi)` | semua | 0 |
+| `.reputasiaturan` | `.reputasiaturan(Aturan reputasi)` | semua | 0 |
 | `.request` | `.request(text)` | semua | 0 |
 | `.poll` | `.poll(judul | opsi1 | opsi2)` | grup | 0 |
 | `.explore` | `.explore` | semua | 0 |
@@ -695,6 +773,14 @@ Total 962 perintah dalam 14 kategori.
 
 | Perintah | Contoh | Role | Biaya limit |
 |---|---|---|---|
+| `.studiodaftar` | `.studiodaftar(Daftar studio)` | semua | 0 |
+| `.studiobuat` | `.studiobuat([jenis] Buat karya)` | semua | 0 |
+| `.studioisi` | `.studioisi([id] [teks] Isi karya)` | semua | 0 |
+| `.studiagaya` | `.studiagaya([id] [gaya] Ubah gaya)` | semua | 0 |
+| `.studiojadwalkan` | `.studiojadwalkan([id] Jadwalkan)` | semua | 0 |
+| `.studioterbit` | `.studioterbit([id] Terbitkan)` | semua | 0 |
+| `.studioarsip` | `.studioarsip([id] Arsipkan)` | semua | 0 |
+| `.studiolaporan` | `.studiolaporan(Laporan studio)` | semua | 0 |
 | `.contohdata` | `.contohdata` | semua | 0 |
 | `.komikpendek` | `.komikpendek` | semua | 0 |
 | `.galeri` | `.galeri` | semua | 0 |
@@ -759,6 +845,18 @@ Total 962 perintah dalam 14 kategori.
 
 | Perintah | Contoh | Role | Biaya limit |
 |---|---|---|---|
+| `.kesehatanskor` | `.kesehatanskor(Skor kesehatan)` | owner | 0 |
+| `.kesehatanrincian` | `.kesehatanrincian(Rincian kesehatan)` | owner | 0 |
+| `.kesehatansejarah` | `.kesehatansejarah(Riwayat kesehatan)` | owner | 0 |
+| `.aksesaudit` | `.aksesaudit(Audit akses)` | owner | 0 |
+| `.aksesuji` | `.aksesuji([perintah] Uji akses)` | owner | 0 |
+| `.aksespulihkan` | `.aksespulihkan(Pulihkan akses)` | owner | 0 |
+| `.backupjadwal` | `.backupjadwal(Jadwal backup)` | owner | 0 |
+| `.backupuji` | `.backupuji(Uji backup)` | owner | 0 |
+| `.backuppulihkan` | `.backuppulihkan([berkas] Pulihkan backup)` | owner | 0 |
+| `.pengawaslaporan` | `.pengawaslaporan(Laporan pengawas)` | owner | 0 |
+| `.pengawasambang` | `.pengawasambang([kunci] [nilai] Atur ambang)` | owner | 0 |
+| `.pengawashentikan` | `.pengawashentikan(Hentikan pengawas)` | owner | 0 |
 | `.tugasdaftar` | `.tugasdaftar(Tugas internal)` | owner | 0 |
 | `.tugasinfo` | `.tugasinfo(Detail tugas)` | owner | 0 |
 | `.tugasstatus` | `.tugasstatus(Status tugas)` | owner | 0 |
@@ -950,6 +1048,21 @@ Total 962 perintah dalam 14 kategori.
 
 | Perintah | Contoh | Role | Biaya limit |
 |---|---|---|---|
+| `.skortotal` | `.skortotal(Total skor game)` | semua | 0 |
+| `.skorrincian` | `.skorrincian(Rincian skor)` | semua | 0 |
+| `.skorpapan` | `.skorpapan(Papan skor)` | semua | 0 |
+| `.skormusim` | `.skormusim(Ringkasan musim)` | semua | 0 |
+| `.skorarsip` | `.skorarsip(Arsip skor)` | semua | 0 |
+| `.turnamenjadwal` | `.turnamenjadwal(Jadwal turnamen)` | semua | 0 |
+| `.turnamenpeserta` | `.turnamenpeserta(Peserta turnamen)` | semua | 0 |
+| `.turnamenunggulan` | `.turnamenunggulan(Unggulan turnamen)` | semua | 0 |
+| `.turnamenbracket` | `.turnamenbracket(Bracket turnamen)` | semua | 0 |
+| `.turnamenhasil` | `.turnamenhasil([a] [b] [pemenang] Catat hasil)` | semua | 0 |
+| `.turnamenpoin` | `.turnamenpoin([jid] [poin] Beri poin)` | semua | 0 |
+| `.turnamenarsip` | `.turnamenarsip(Arsip turnamen)` | semua | 0 |
+| `.lagacari` | `.lagacari([nama] Cari laga)` | semua | 0 |
+| `.lagajadwal` | `.lagajadwal([nama] Jadwal laga)` | semua | 0 |
+| `.lagapapan` | `.lagapapan(Papan laga)` | semua | 0 |
 | `.papanperingkat` | `.papanperingkat` | semua | 0 |
 | `.turnamen2` | `.turnamen2` | owner | 0 |
 | `.liga2` | `.liga2` | owner | 0 |

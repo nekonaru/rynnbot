@@ -1,4 +1,5 @@
 import "./settings.js";
+import { ringkasV25, statusV25, dompet as dompetV25, koperasi as koperasiV25, kompetisi as kompetisiV25, rantai as rantaiV25, pembelajaran as pembelajaranV25, komunitas as komunitasV25, pengawasan as pengawasanV25, studio as studioV25 } from "./lib/v25/indeks.js";
 import { ringkasan as otomasiRingkasan, validasi as otomasiValidasi, kering as otomasiKering, batas as otomasiBatas, izin as otomasiIzin, catatAudit as otomasiCatat, audit as otomasiAudit, hentikanSemua as otomasiHentikan, penjadwal, event as eventOtomasi, aturan as aturanOtomasi, workflow as workflowOtomasi, templat as templatOtomasi, orkestrasi, jalankanEventNyata, evaluasiAturanNyata } from "./lib/v24/indeks.js";
 import { datasetV23, ambilDataset, cariDataset, totalV23 } from "./lib/data-v23/indeks.js";
 import { daftarJenis, daftarMakanan, daftarObat, adopsi, gantiNama, beriMakan, minum, main, latih, istirahat, mandi, obat, beliBarang, evolusi, statusPet, papanPet, lepasPet } from "./lib/v22/pet.js";
@@ -6498,6 +6499,37 @@ Select Bot Settings:
 │${setv} ${prefix}setmotd
 ╰─┬────❍
 ╭─┴❍「 *EKONOMI* 」❍
+│${setv} ${prefix}dompetringkas (Ringkas dompet)
+│${setv} ${prefix}dompetrincian ([field] Rincian saldo)
+│${setv} ${prefix}dompetpindah ([dari] [ke] [nominal] Pindah saldo)
+│${setv} ${prefix}dompetrekap ([field] Rekap transaksi)
+│${setv} ${prefix}dompetlog ([field] Riwayat transaksi)
+│${setv} ${prefix}dompetrekonsiliasi (Rekonsiliasi saldo)
+│${setv} ${prefix}anggaranbuat ([nama] [nominal] Buat anggaran)
+│${setv} ${prefix}anggaranisi ([nama] [nominal] Isi anggaran)
+│${setv} ${prefix}anggaranpakai ([nama] [nominal] Pakai anggaran)
+│${setv} ${prefix}anggaransisa ([nama] Sisa anggaran)
+│${setv} ${prefix}anggaranlaporan (Laporan anggaran)
+│${setv} ${prefix}anggaranhapus ([nama] Hapus anggaran)
+│${setv} ${prefix}utangcatat ([nama] [nominal] Catat utang)
+│${setv} ${prefix}utangbayar ([nama] [nominal] Bayar utang)
+│${setv} ${prefix}utangtagih ([nama] Tagih utang)
+│${setv} ${prefix}utangdaftar (Daftar utang)
+│${setv} ${prefix}utanghapus ([nama] Hapus utang)
+│${setv} ${prefix}koperasisimpan ([nama] [nominal] Simpan modal)
+│${setv} ${prefix}koperasitarik ([nama] [nominal] Tarik modal)
+│${setv} ${prefix}koperasidividen ([nama] Hitung dividen)
+│${setv} ${prefix}koperasianggota ([nama] Daftar anggota)
+│${setv} ${prefix}koperasirapat ([nama] Ringkasan koperasi)
+│${setv} ${prefix}koperasitutup ([nama] Tutup koperasi)
+│${setv} ${prefix}tokostok ([nama] Stok toko)
+│${setv} ${prefix}tokorestok ([nama] [jumlah] Restok)
+│${setv} ${prefix}tokoharga ([nama] [nominal] Atur harga)
+│${setv} ${prefix}tokodiskon ([nama] [persen] Atur diskon)
+│${setv} ${prefix}tokobeli ([nama] [jumlah] Beli barang)
+│${setv} ${prefix}tokobjual ([nama] [jumlah] Jual barang)
+│${setv} ${prefix}tokohlaporan (Laporan toko)
+│${setv} ${prefix}tokoktutup ([nama] Tutup toko)
 │${setv} ${prefix}kebunbuat
 │${setv} ${prefix}kebunlihat
 │${setv} ${prefix}kebunbenih
@@ -6601,6 +6633,21 @@ Select Bot Settings:
 │${setv} ${prefix}adduang
 ╰─┬────❍
 ╭─┴❍「 *GAME* 」❍
+│${setv} ${prefix}petbantukebun (Bantu kebun)
+│${setv} ${prefix}petpakaipesul (Pakai hasil kebun)
+│${setv} ${prefix}pethadiahpanen (Hadiah panen)
+│${setv} ${prefix}petprestasilintas (Prestasi lintas)
+│${setv} ${prefix}kebunkompos (Pakai kompos)
+│${setv} ${prefix}kebunkirimtoko ([barang] [jumlah] Kirim ke toko)
+│${setv} ${prefix}kebunpesanan ([barang] [jumlah] Buat pesanan)
+│${setv} ${prefix}kebunpengiriman (Status pesanan)
+│${setv} ${prefix}kargajidompet ([nominal] Gaji ke dompet)
+│${setv} ${prefix}kardandakebun ([nominal] Dana ke kebun)
+│${setv} ${prefix}karkinerjapet (Kinerja dan hewan)
+│${setv} ${prefix}karsertifikat (Sertifikat karir)
+│${setv} ${prefix}rantaistatus (Status rantai)
+│${setv} ${prefix}rantaipapan (Papan rantai)
+│${setv} ${prefix}rantaihadiah (Hadiah rantai)
 │${setv} ${prefix}petadopsi
 │${setv} ${prefix}petnama
 │${setv} ${prefix}petganti
@@ -6730,6 +6777,21 @@ Select Bot Settings:
 │${setv} ${prefix}gamemenu
 ╰─┬────❍
 ╭─┴❍「 *TURNAMEN* 」❍
+│${setv} ${prefix}skortotal (Total skor game)
+│${setv} ${prefix}skorrincian (Rincian skor)
+│${setv} ${prefix}skorpapan (Papan skor)
+│${setv} ${prefix}skormusim (Ringkasan musim)
+│${setv} ${prefix}skorarsip (Arsip skor)
+│${setv} ${prefix}turnamenjadwal (Jadwal turnamen)
+│${setv} ${prefix}turnamenpeserta (Peserta turnamen)
+│${setv} ${prefix}turnamenunggulan (Unggulan turnamen)
+│${setv} ${prefix}turnamenbracket (Bracket turnamen)
+│${setv} ${prefix}turnamenhasil ([a] [b] [pemenang] Catat hasil)
+│${setv} ${prefix}turnamenpoin ([jid] [poin] Beri poin)
+│${setv} ${prefix}turnamenarsip (Arsip turnamen)
+│${setv} ${prefix}lagacari ([nama] Cari laga)
+│${setv} ${prefix}lagajadwal ([nama] Jadwal laga)
+│${setv} ${prefix}lagapapan (Papan laga)
 │${setv} ${prefix}papanperingkat
 │${setv} ${prefix}turnamen2
 │${setv} ${prefix}liga2
@@ -6754,6 +6816,20 @@ Select Bot Settings:
 │${setv} ${prefix}pair
 ╰─┬────❍
 ╭─┴❍「 *EDUKASI* 」❍
+│${setv} ${prefix}belajarjalur (Jalur belajar)
+│${setv} ${prefix}belajarharian (Materi harian)
+│${setv} ${prefix}belajarujian ([kategori] [jawaban] Ujian)
+│${setv} ${prefix}belajarnilai (Nilai belajar)
+│${setv} ${prefix}belajarsertifikat (Sertifikat belajar)
+│${setv} ${prefix}kartubuat ([kategori] Buat kartu)
+│${setv} ${prefix}kartuulang (Ulang kartu salah)
+│${setv} ${prefix}kartukategori (Kategori kartu)
+│${setv} ${prefix}kartustatistik (Statistik kartu)
+│${setv} ${prefix}kartuhapus ([kategori] Hapus kartu)
+│${setv} ${prefix}kuiskategori ([kategori] Kuis data)
+│${setv} ${prefix}kuisturnamen ([nama] Buat turnamen kuis)
+│${setv} ${prefix}kuispapan (Papan kuis)
+│${setv} ${prefix}kuishadiah ([poin] Hadiah kuis)
 │${setv} ${prefix}dataindeks
 │${setv} ${prefix}datasumber
 │${setv} ${prefix}datavalidasi
@@ -6972,6 +7048,14 @@ Select Bot Settings:
 │${setv} ${prefix}urlcode
 ╰─┬────❍
 ╭─┴❍「 *MEDIA* 」❍
+│${setv} ${prefix}studiodaftar (Daftar studio)
+│${setv} ${prefix}studiobuat ([jenis] Buat karya)
+│${setv} ${prefix}studioisi ([id] [teks] Isi karya)
+│${setv} ${prefix}studiagaya ([id] [gaya] Ubah gaya)
+│${setv} ${prefix}studiojadwalkan ([id] Jadwalkan)
+│${setv} ${prefix}studioterbit ([id] Terbitkan)
+│${setv} ${prefix}studioarsip ([id] Arsipkan)
+│${setv} ${prefix}studiolaporan (Laporan studio)
 │${setv} ${prefix}contohdata
 │${setv} ${prefix}komikpendek
 │${setv} ${prefix}galeri
@@ -7056,6 +7140,24 @@ Select Bot Settings:
 │${setv} ${prefix}stalkermenu
 ╰─┬────❍
 ╭─┴❍「 *KOMUNITAS* 」❍
+│${setv} ${prefix}gruppipapan (Papan grup)
+│${setv} ${prefix}gruppianggota (Anggota grup)
+│${setv} ${prefix}gruppiperan (Peran grup)
+│${setv} ${prefix}gruppiaturan (Aturan grup)
+│${setv} ${prefix}gruppinotifikasi (Notifikasi grup)
+│${setv} ${prefix}proyektugas ([nama] [teks] Tugas proyek)
+│${setv} ${prefix}proyekprogres ([nama] Progres proyek)
+│${setv} ${prefix}proyekanggota ([nama] Anggota proyek)
+│${setv} ${prefix}proyektenggat ([nama] [tanggal] Atur tenggat)
+│${setv} ${prefix}proyekarsip ([nama] Arsip proyek)
+│${setv} ${prefix}surveibuat ([judul] Buat survei)
+│${setv} ${prefix}surveipilih ([id] [opsi] Pilih opsi)
+│${setv} ${prefix}surveihasil ([id] Hasil survei)
+│${setv} ${prefix}surveitutup ([id] Tutup survei)
+│${setv} ${prefix}reputasilihat (Lihat reputasi)
+│${setv} ${prefix}reputasiberi ([jid] [jumlah] Beri reputasi)
+│${setv} ${prefix}reputasipapan (Papan reputasi)
+│${setv} ${prefix}reputasiaturan (Aturan reputasi)
 │${setv} ${prefix}request (text)
 │${setv} ${prefix}poll (judul | opsi1 | opsi2)
 │${setv} ${prefix}explore
@@ -7199,6 +7301,18 @@ Select Bot Settings:
 │${setv} ${prefix}logaudit
 ╰─┬────❍
 ╭─┴❍「 *OWNER* 」❍
+│${setv} ${prefix}kesehatanskor (Skor kesehatan)
+│${setv} ${prefix}kesehatanrincian (Rincian kesehatan)
+│${setv} ${prefix}kesehatansejarah (Riwayat kesehatan)
+│${setv} ${prefix}aksesaudit (Audit akses)
+│${setv} ${prefix}aksesuji ([perintah] Uji akses)
+│${setv} ${prefix}aksespulihkan (Pulihkan akses)
+│${setv} ${prefix}backupjadwal (Jadwal backup)
+│${setv} ${prefix}backupuji (Uji backup)
+│${setv} ${prefix}backuppulihkan ([berkas] Pulihkan backup)
+│${setv} ${prefix}pengawaslaporan (Laporan pengawas)
+│${setv} ${prefix}pengawasambang ([kunci] [nilai] Atur ambang)
+│${setv} ${prefix}pengawashentikan (Hentikan pengawas)
 │${setv} ${prefix}tugasdaftar (Tugas internal)
 │${setv} ${prefix}tugasinfo (Detail tugas)
 │${setv} ${prefix}tugasstatus (Status tugas)
@@ -14409,6 +14523,873 @@ Select Bot Settings:
 				{
 					if (!isCreator) return m.reply(mess.owner);
 					return kirimRespons(m, { judul: "Ketergantungan modul", isi: orkestrasi.ketergantungan().map((x) => `- ${x}`).join("\n") });
+				}
+				break;
+			case "dompetringkas":
+				{
+					const u = db.users[m.sender] || (db.users[m.sender] = {});
+					const hasil = dompetV25.ringkas(u);
+					return kirimRespons(m, { judul: "Dompet", isi: ringkasV25(hasil) || formatKosong() });
+				}
+				break;
+
+			case "dompetrincian":
+				{
+					const hasil = dompetV25.rincian(db.users[m.sender] || {}, (text || '').trim().toLowerCase());
+					return hasil === null || hasil === undefined ? m.reply("Data tidak tersedia.") : kirimRespons(m, { judul: "Saldo", isi: String(hasil) });
+				}
+				break;
+
+			case "dompetpindah":
+				{
+					const hasil = dompetV25.pindah(db, m.sender, args[0], args[1], Number(args[2]));
+					return hasil ? m.reply("Saldo dipindah.") : m.reply("Field atau nominal tidak valid.");
+				}
+				break;
+
+			case "dompetrekap":
+				{
+					const hasil = dompetV25.rekap(db, (args[0] || 'money').toLowerCase());
+					return kirimRespons(m, { judul: "Rekap dompet", isi: ringkasV25(hasil) || formatKosong() });
+				}
+				break;
+
+			case "dompetlog":
+				{
+					const hasil = dompetV25.log(db, (args[0] || 'money').toLowerCase());
+					return kirimRespons(m, { judul: "Riwayat transaksi", isi: ringkasV25(hasil) || formatKosong() });
+				}
+				break;
+
+			case "dompetrekonsiliasi":
+				{
+					const hasil = dompetV25.rekonsiliasiDompet(db);
+					return kirimRespons(m, { judul: "Rekonsiliasi", isi: ringkasV25(hasil) || formatKosong() });
+				}
+				break;
+
+			case "anggaranbuat":
+				{
+					const u = db.users[m.sender] || (db.users[m.sender] = {});
+					const hasil = dompetV25.anggaranBuat(u, args[0], Number(args[1]));
+					return hasil ? m.reply("Anggaran dibuat.") : m.reply("Anggaran gagal dibuat.");
+				}
+				break;
+
+			case "anggaranisi":
+				{
+					const u = db.users[m.sender] || (db.users[m.sender] = {});
+					const hasil = dompetV25.anggaranIsi(u, args[0], Number(args[1]));
+					return hasil ? m.reply("Anggaran ditambah.") : m.reply("Anggaran tidak ditemukan.");
+				}
+				break;
+
+			case "anggaranpakai":
+				{
+					const hasil = dompetV25.anggaranPakai(db, m.sender, args[0], Number(args[1]));
+					return hasil ? m.reply("Anggaran dipakai.") : m.reply("Anggaran atau dana tidak cukup.");
+				}
+				break;
+
+			case "anggaransisa":
+				{
+					const u = db.users[m.sender] || (db.users[m.sender] = {});
+					const hasil = dompetV25.anggaranSisa(u, args[0]);
+					return hasil === null || hasil === undefined ? m.reply("Data tidak tersedia.") : kirimRespons(m, { judul: "Sisa anggaran", isi: String(hasil) });
+				}
+				break;
+
+			case "anggaranlaporan":
+				{
+					const u = db.users[m.sender] || (db.users[m.sender] = {});
+					const hasil = dompetV25.anggaranLaporan(u);
+					return kirimRespons(m, { judul: "Anggaran", isi: ringkasV25(hasil) || formatKosong() });
+				}
+				break;
+
+			case "anggaranhapus":
+				{
+					const u = db.users[m.sender] || (db.users[m.sender] = {});
+					const mt = (text || "").trim().split(/\s+/);
+					if (mt[1] !== "confirm") return m.reply("Ketik .anggaranhapus [nama] confirm");
+					const hasil = dompetV25.anggaranHapus(u, args[0]);
+					return hasil ? m.reply("Anggaran dihapus.") : m.reply("Gagal.");
+				}
+				break;
+
+			case "utangcatat":
+				{
+					const hasil = dompetV25.utangCatat(db, m.sender, args[0], Number(args[1]));
+					return hasil ? m.reply("Utang dicatat.") : m.reply("Utang gagal dicatat.");
+				}
+				break;
+
+			case "utangbayar":
+				{
+					const hasil = dompetV25.utangBayar(db, m.sender, args[0], Number(args[1]));
+					return hasil ? m.reply("Utang dibayar.") : m.reply("Utang atau dana tidak cukup.");
+				}
+				break;
+
+			case "utangtagih":
+				{
+					const hasil = dompetV25.utangTagih(db, args[0]);
+					return kirimRespons(m, { judul: "Tagihan", isi: ringkasV25(hasil) || formatKosong() });
+				}
+				break;
+
+			case "utangdaftar":
+				{
+					const hasil = dompetV25.utangDaftar(db, m.sender);
+					return kirimRespons(m, { judul: "Utang", isi: ringkasV25(hasil) || formatKosong() });
+				}
+				break;
+
+			case "utanghapus":
+				{
+					const mt = (text || "").trim().split(/\s+/);
+					if (mt[1] !== "confirm") return m.reply("Ketik .utanghapus [nama] confirm");
+					const hasil = dompetV25.utangHapus(db, m.sender, args[0]);
+					return hasil ? m.reply("Utang dihapus.") : m.reply("Gagal.");
+				}
+				break;
+
+			case "koperasisimpan":
+				{
+					const hasil = koperasiV25.simpan(db, m.chat, args[0], m.sender, Number(args[1]));
+					return hasil ? m.reply("Modal disimpan.") : m.reply("Koperasi atau dana tidak valid.");
+				}
+				break;
+
+			case "koperasitarik":
+				{
+					const hasil = koperasiV25.tarik(db, m.chat, args[0], m.sender, Number(args[1]));
+					return hasil ? m.reply("Modal ditarik.") : m.reply("Simpanan tidak cukup.");
+				}
+				break;
+
+			case "koperasidividen":
+				{
+					const hasil = koperasiV25.dividen(db, m.chat, args[0]);
+					return kirimRespons(m, { judul: "Dividen koperasi", isi: ringkasV25(hasil) || formatKosong() });
+				}
+				break;
+
+			case "koperasianggota":
+				{
+					const hasil = koperasiV25.anggota(db, m.chat, args[0]);
+					return kirimRespons(m, { judul: "Anggota koperasi", isi: ringkasV25(hasil) || formatKosong() });
+				}
+				break;
+
+			case "koperasirapat":
+				{
+					const hasil = koperasiV25.rapat(db, m.chat, args[0]);
+					return kirimRespons(m, { judul: "Rapat koperasi", isi: ringkasV25(hasil) || formatKosong() });
+				}
+				break;
+
+			case "koperasitutup":
+				{
+					const mt = (text || "").trim().split(/\s+/);
+					if (mt[1] !== "confirm") return m.reply("Ketik .koperasitutup [nama] confirm");
+					const hasil = koperasiV25.tutup(db, m.chat, args[0]);
+					return hasil ? m.reply("Koperasi ditutup.") : m.reply("Gagal.");
+				}
+				break;
+
+			case "tokostok":
+				{
+					const hasil = koperasiV25.tokoStok(db, m.chat, args[0]);
+					return kirimRespons(m, { judul: "Stok toko", isi: ringkasV25(hasil) || formatKosong() });
+				}
+				break;
+
+			case "tokorestok":
+				{
+					if (!isCreator && !m.isAdmin) return m.reply(global.mess.admin);
+					const hasil = koperasiV25.tokoRestok(db, m.chat, args[0], Number(args[1]));
+					return hasil ? m.reply("Stok ditambah.") : m.reply("Toko tidak ditemukan.");
+				}
+				break;
+
+			case "tokoharga":
+				{
+					if (!isCreator && !m.isAdmin) return m.reply(global.mess.admin);
+					const hasil = koperasiV25.tokoHarga(db, m.chat, args[0], Number(args[1]));
+					return hasil ? m.reply("Harga diatur.") : m.reply("Toko tidak ditemukan.");
+				}
+				break;
+
+			case "tokodiskon":
+				{
+					if (!isCreator && !m.isAdmin) return m.reply(global.mess.admin);
+					const hasil = koperasiV25.tokoDiskon(db, m.chat, args[0], Number(args[1]));
+					return hasil ? m.reply("Diskon diatur.") : m.reply("Diskon tidak valid.");
+				}
+				break;
+
+			case "tokobeli":
+				{
+					const hasil = koperasiV25.tokoBeliV25(db, m.chat, m.sender, args[0], Number(args[1]));
+					return hasil ? m.reply("Barang dibeli.") : m.reply("Stok atau dana tidak cukup.");
+				}
+				break;
+
+			case "tokobjual":
+				{
+					if (!isCreator && !m.isAdmin) return m.reply(global.mess.admin);
+					const hasil = koperasiV25.tokoJual(db, m.chat, m.sender, args[0], Number(args[1]));
+					return hasil ? m.reply("Barang dijual.") : m.reply("Barang tidak tersedia.");
+				}
+				break;
+
+			case "tokohlaporan":
+				{
+					const hasil = koperasiV25.tokoLaporan(db, m.chat);
+					return kirimRespons(m, { judul: "Laporan toko", isi: ringkasV25(hasil) || formatKosong() });
+				}
+				break;
+
+			case "tokoktutup":
+				{
+					if (!isCreator && !m.isAdmin) return m.reply(global.mess.admin);
+					const mt = (text || "").trim().split(/\s+/);
+					if (mt[1] !== "confirm") return m.reply("Ketik .tokoktutup [nama] confirm");
+					const hasil = koperasiV25.tokoTutup(db, m.chat, args[0]);
+					return hasil ? m.reply("Toko ditutup.") : m.reply("Gagal.");
+				}
+				break;
+
+			case "skortotal":
+				{
+					const hasil = kompetisiV25.skorTotal(db, m.sender);
+					return hasil === null || hasil === undefined ? m.reply("Data tidak tersedia.") : kirimRespons(m, { judul: "Skor total", isi: String(hasil) });
+				}
+				break;
+
+			case "skorrincian":
+				{
+					const hasil = kompetisiV25.skorRincian(db.users[m.sender] || {});
+					return kirimRespons(m, { judul: "Rincian skor", isi: ringkasV25(hasil) || formatKosong() });
+				}
+				break;
+
+			case "skorpapan":
+				{
+					const hasil = kompetisiV25.skorPapan(db);
+					return kirimRespons(m, { judul: "Papan skor", isi: ringkasV25(hasil) || formatKosong() });
+				}
+				break;
+
+			case "skormusim":
+				{
+					const hasil = kompetisiV25.skorMusim(db);
+					return kirimRespons(m, { judul: "Musim berjalan", isi: ringkasV25(hasil) || formatKosong() });
+				}
+				break;
+
+			case "skorarsip":
+				{
+					const hasil = kompetisiV25.skorArsip(db);
+					return kirimRespons(m, { judul: "Arsip skor", isi: ringkasV25(hasil) || formatKosong() });
+				}
+				break;
+
+			case "turnamenjadwal":
+				{
+					const hasil = kompetisiV25.jadwal(db, m.chat);
+					return kirimRespons(m, { judul: "Jadwal turnamen", isi: ringkasV25(hasil) || formatKosong() });
+				}
+				break;
+
+			case "turnamenpeserta":
+				{
+					const hasil = kompetisiV25.peserta(db, m.chat);
+					return kirimRespons(m, { judul: "Peserta", isi: ringkasV25(hasil) || formatKosong() });
+				}
+				break;
+
+			case "turnamenunggulan":
+				{
+					const hasil = kompetisiV25.unggulan(db, m.chat);
+					return kirimRespons(m, { judul: "Unggulan", isi: ringkasV25(hasil) || formatKosong() });
+				}
+				break;
+
+			case "turnamenbracket":
+				{
+					const hasil = kompetisiV25.bracket(db, m.chat);
+					return kirimRespons(m, { judul: "Bracket", isi: ringkasV25(hasil) || formatKosong() });
+				}
+				break;
+
+			case "turnamenhasil":
+				{
+					const hasil = kompetisiV25.hasil(db, m.chat, args[0], args[1], args[2]);
+					return hasil ? m.reply("Hasil dicatat.") : m.reply("Turnamen tidak aktif.");
+				}
+				break;
+
+			case "turnamenpoin":
+				{
+					if (!isCreator && !m.isAdmin) return m.reply(global.mess.admin);
+					const hasil = kompetisiV25.poin(db, args[0], Number(args[1]));
+					return hasil ? m.reply("Poin diberikan.") : m.reply("Poin gagal diberikan.");
+				}
+				break;
+
+			case "turnamenarsip":
+				{
+					const hasil = kompetisiV25.arsip(db, m.chat);
+					return kirimRespons(m, { judul: "Arsip turnamen", isi: ringkasV25(hasil) || formatKosong() });
+				}
+				break;
+
+			case "lagacari":
+				{
+					const hasil = kompetisiV25.lagaCari(db, m.chat, text);
+					return kirimRespons(m, { judul: "Hasil laga", isi: ringkasV25(hasil) || formatKosong() });
+				}
+				break;
+
+			case "lagajadwal":
+				{
+					const hasil = kompetisiV25.lagaJadwal(db, m.chat, text);
+					return kirimRespons(m, { judul: "Jadwal laga", isi: ringkasV25(hasil) || formatKosong() });
+				}
+				break;
+
+			case "lagapapan":
+				{
+					const hasil = kompetisiV25.lagaPapan(db, m.chat);
+					return kirimRespons(m, { judul: "Papan laga", isi: ringkasV25(hasil) || formatKosong() });
+				}
+				break;
+
+			case "petbantukebun":
+				{
+					const u = db.users[m.sender] || (db.users[m.sender] = {});
+					const hasil = rantaiV25.bantuKebun(u, db, m.sender);
+					return hasil ? m.reply("Hewan membantu kebun.") : m.reply("Hewan atau kebun tidak ada.");
+				}
+				break;
+
+			case "petpakaipesul":
+				{
+					const u = db.users[m.sender] || (db.users[m.sender] = {});
+					const hasil = rantaiV25.pakaiHasil(u, db, m.sender);
+					return hasil ? m.reply("Hasol dipakai.") : m.reply("Hasil kebun tidak ada.");
+				}
+				break;
+
+			case "pethadiahpanen":
+				{
+					const hasil = rantaiV25.hadiahPanen(db.users[m.sender] || {}, db, m.sender);
+					return hasil === null || hasil === undefined ? m.reply("Data tidak tersedia.") : kirimRespons(m, { judul: "Hadiah panen", isi: String(hasil) });
+				}
+				break;
+
+			case "petprestasilintas":
+				{
+					const u = db.users[m.sender] || (db.users[m.sender] = {});
+					const hasil = rantaiV25.prestasiLintas(u);
+					return kirimRespons(m, { judul: "Prestasi", isi: ringkasV25(hasil) || formatKosong() });
+				}
+				break;
+
+			case "kebunkompos":
+				{
+					const u = db.users[m.sender] || (db.users[m.sender] = {});
+					const hasil = rantaiV25.kompos(u, db, m.sender);
+					return hasil ? m.reply("Kompos dipakai.") : m.reply("Kebun tidak ada.");
+				}
+				break;
+
+			case "kebunkirimtoko":
+				{
+					const hasil = rantaiV25.kirimToko(db.users[m.sender] || {}, db, m.sender, args[0], Number(args[1]));
+					return hasil ? m.reply("Hasil dikirim.") : m.reply("Hasil tidak tersedia.");
+				}
+				break;
+
+			case "kebunpesanan":
+				{
+					const u = db.users[m.sender] || (db.users[m.sender] = {});
+					const hasil = rantaiV25.pesananBuat(u, args[0], Number(args[1]));
+					return hasil ? m.reply("Pesanan dibuat.") : m.reply("Pesanan penuh.");
+				}
+				break;
+
+			case "kebunpengiriman":
+				{
+					const u = db.users[m.sender] || (db.users[m.sender] = {});
+					const hasil = rantaiV25.pengiriman(u);
+					return kirimRespons(m, { judul: "Pengiriman", isi: ringkasV25(hasil) || formatKosong() });
+				}
+				break;
+
+			case "kargajidompet":
+				{
+					const u = db.users[m.sender] || (db.users[m.sender] = {});
+					const gaji = ambilGaji(u);
+					if (!gaji) return m.reply("Gaji belum tersedia atau sudah diambil hari ini.");
+					const masuk = ubahSaldo(db, m.sender, "money", gaji, "karir:gaji");
+					return masuk ? kirimRespons(m, { judul: "Gaji masuk", isi: String(gaji) }) : m.reply("Gaji gagal dikreditkan.");
+				}
+				break;
+
+			case "kardandakebun":
+				{
+					const hasil = rantaiV25.danaKebun(db, m.sender, Number(args[0]));
+					return hasil ? m.reply("Dana masuk kebun.") : m.reply("Dana tidak cukup.");
+				}
+				break;
+
+			case "karkinerjapet":
+				{
+					const u = db.users[m.sender] || (db.users[m.sender] = {});
+					const hasil = rantaiV25.kinerjaPet(u);
+					return hasil === null || hasil === undefined ? m.reply("Data tidak tersedia.") : kirimRespons(m, { judul: "Kinerja", isi: String(hasil) });
+				}
+				break;
+
+			case "karsertifikat":
+				{
+					const u = db.users[m.sender] || (db.users[m.sender] = {});
+					const hasil = rantaiV25.sertifikatKarir(u);
+					return m.reply(hasil === null || hasil === undefined ? "Data tidak tersedia." : String(hasil));
+				}
+				break;
+
+			case "rantaistatus":
+				{
+					const u = db.users[m.sender] || (db.users[m.sender] = {});
+					const hasil = rantaiV25.statusRantai(u);
+					return kirimRespons(m, { judul: "Rantai produksi", isi: ringkasV25(hasil) || formatKosong() });
+				}
+				break;
+
+			case "rantaipapan":
+				{
+					const hasil = rantaiV25.papanRantai(db);
+					return kirimRespons(m, { judul: "Papan rantai", isi: ringkasV25(hasil) || formatKosong() });
+				}
+				break;
+
+			case "rantaihadiah":
+				{
+					const hasil = rantaiV25.hadiahRantai(db, m.sender);
+					return hasil === null || hasil === undefined ? m.reply("Data tidak tersedia.") : kirimRespons(m, { judul: "Hadiah rantai", isi: String(hasil) });
+				}
+				break;
+
+			case "belajarjalur":
+				{
+					const u = db.users[m.sender] || (db.users[m.sender] = {});
+					const hasil = pembelajaranV25.jalur(u);
+					return kirimRespons(m, { judul: "Jalur belajar", isi: ringkasV25(hasil) || formatKosong() });
+				}
+				break;
+
+			case "belajarharian":
+				{
+					const u = db.users[m.sender] || (db.users[m.sender] = {});
+					const hasil = pembelajaranV25.harian(u);
+					return kirimRespons(m, { judul: "Materi harian", isi: ringkasV25(hasil) || formatKosong() });
+				}
+				break;
+
+			case "belajarujian":
+				{
+					const u = db.users[m.sender] || (db.users[m.sender] = {});
+					const hasil = pembelajaranV25.ujian(u, args[0], args.slice(1));
+					return kirimRespons(m, { judul: "Hasil ujian", isi: ringkasV25(hasil) || formatKosong() });
+				}
+				break;
+
+			case "belajarnilai":
+				{
+					const u = db.users[m.sender] || (db.users[m.sender] = {});
+					const hasil = pembelajaranV25.nilai(u);
+					return hasil === null || hasil === undefined ? m.reply("Data tidak tersedia.") : kirimRespons(m, { judul: "Nilai", isi: String(hasil) });
+				}
+				break;
+
+			case "belajarsertifikat":
+				{
+					const u = db.users[m.sender] || (db.users[m.sender] = {});
+					const hasil = pembelajaranV25.sertifikatBelajar(u);
+					return m.reply(hasil === null || hasil === undefined ? "Data tidak tersedia." : String(hasil));
+				}
+				break;
+
+			case "kartubuat":
+				{
+					const u = db.users[m.sender] || (db.users[m.sender] = {});
+					const hasil = pembelajaranV25.kartuBuat(u, args[0]);
+					return hasil === null || hasil === undefined ? m.reply("Data tidak tersedia.") : kirimRespons(m, { judul: "Kartu dibuat", isi: String(hasil) });
+				}
+				break;
+
+			case "kartuulang":
+				{
+					const u = db.users[m.sender] || (db.users[m.sender] = {});
+					const hasil = pembelajaranV25.kartuUlang(u);
+					return kirimRespons(m, { judul: "Kartu ulang", isi: ringkasV25(hasil) || formatKosong() });
+				}
+				break;
+
+			case "kartukategori":
+				{
+					const u = db.users[m.sender] || (db.users[m.sender] = {});
+					const hasil = pembelajaranV25.kartuKategori(u);
+					return kirimRespons(m, { judul: "Kategori kartu", isi: ringkasV25(hasil) || formatKosong() });
+				}
+				break;
+
+			case "kartustatistik":
+				{
+					const u = db.users[m.sender] || (db.users[m.sender] = {});
+					const hasil = pembelajaranV25.kartuStatistik(u);
+					return kirimRespons(m, { judul: "Statistik kartu", isi: ringkasV25(hasil) || formatKosong() });
+				}
+				break;
+
+			case "kartuhapus":
+				{
+					const u = db.users[m.sender] || (db.users[m.sender] = {});
+					const mt = (text || "").trim().split(/\s+/);
+					if (mt[1] !== "confirm") return m.reply("Ketik .kartuhapus [kategori] confirm");
+					const hasil = pembelajaranV25.kartuHapus(u, args[0]);
+					return hasil ? m.reply("Kartu dihapus.") : m.reply("Gagal.");
+				}
+				break;
+
+			case "kuiskategori":
+				{
+					const hasil = pembelajaranV25.kuisKategori(args[0]);
+					return kirimRespons(m, { judul: "Soal kuis", isi: ringkasV25(hasil) || formatKosong() });
+				}
+				break;
+
+			case "kuisturnamen":
+				{
+					const hasil = pembelajaranV25.kuisTurnamen(db, m.chat, text);
+					return hasil ? m.reply("Turnamen kuis dibuat.") : m.reply("Turnamen gagal dibuat.");
+				}
+				break;
+
+			case "kuispapan":
+				{
+					const hasil = pembelajaranV25.kuisPapan(db);
+					return kirimRespons(m, { judul: "Papan kuis", isi: ringkasV25(hasil) || formatKosong() });
+				}
+				break;
+
+			case "kuishadiah":
+				{
+					const hasil = pembelajaranV25.kuisHadiah(db, m.sender, Number(args[0]));
+					return hasil === null || hasil === undefined ? m.reply("Data tidak tersedia.") : kirimRespons(m, { judul: "Poin kuis", isi: String(hasil) });
+				}
+				break;
+
+			case "gruppipapan":
+				{
+					const hasil = komunitasV25.papanGrupV25(db, m.chat);
+					return kirimRespons(m, { judul: "Papan grup", isi: ringkasV25(hasil) || formatKosong() });
+				}
+				break;
+
+			case "gruppianggota":
+				{
+					const hasil = komunitasV25.anggotaGrup(db, m.chat);
+					return kirimRespons(m, { judul: "Anggota grup", isi: ringkasV25(hasil) || formatKosong() });
+				}
+				break;
+
+			case "gruppiperan":
+				{
+					const hasil = komunitasV25.peranGrup(db, m.chat);
+					return kirimRespons(m, { judul: "Peran grup", isi: ringkasV25(hasil) || formatKosong() });
+				}
+				break;
+
+			case "gruppiaturan":
+				{
+					const hasil = komunitasV25.aturanGrup(db, m.chat);
+					return kirimRespons(m, { judul: "Aturan grup", isi: ringkasV25(hasil) || formatKosong() });
+				}
+				break;
+
+			case "gruppinotifikasi":
+				{
+					const hasil = komunitasV25.notifikasiGrup(db, m.chat);
+					return kirimRespons(m, { judul: "Notifikasi grup", isi: ringkasV25(hasil) || formatKosong() });
+				}
+				break;
+
+			case "proyektugas":
+				{
+					const hasil = komunitasV25.proyekTugasV25(db, m.chat, args[0], args.slice(1).join(' '));
+					return hasil ? m.reply("Tugas ditambah.") : m.reply("Proyek tidak ditemukan.");
+				}
+				break;
+
+			case "proyekprogres":
+				{
+					const hasil = komunitasV25.proyekProgres(db, m.chat, args[0]);
+					return kirimRespons(m, { judul: "Progres proyek", isi: ringkasV25(hasil) || formatKosong() });
+				}
+				break;
+
+			case "proyekanggota":
+				{
+					const hasil = komunitasV25.proyekAnggota(db, m.chat, args[0]);
+					return kirimRespons(m, { judul: "Anggota proyek", isi: ringkasV25(hasil) || formatKosong() });
+				}
+				break;
+
+			case "proyektenggat":
+				{
+					const hasil = komunitasV25.proyekTenggat(db, m.chat, args[0], args[1]);
+					return kirimRespons(m, { judul: "Tenggat proyek", isi: ringkasV25(hasil) || formatKosong() });
+				}
+				break;
+
+			case "proyekarsip":
+				{
+					const mt = (text || "").trim().split(/\s+/);
+					if (mt[1] !== "confirm") return m.reply("Ketik .proyekarsip [nama] confirm");
+					const hasil = komunitasV25.proyekArsipV25(db, m.chat, args[0]);
+					return hasil ? m.reply("Proyek diarsipkan.") : m.reply("Gagal.");
+				}
+				break;
+
+			case "surveibuat":
+				{
+					if (!isCreator && !m.isAdmin) return m.reply(global.mess.admin);
+					const hasil = komunitasV25.surveiBaru(db, m.chat, text);
+					return hasil ? m.reply("Survei dibuat.") : m.reply("Survei gagal dibuat.");
+				}
+				break;
+
+			case "surveipilih":
+				{
+					const hasil = komunitasV25.surveiPilih(db, args[0], args[1], m.sender);
+					return hasil ? m.reply("Pilihan dicatat.") : m.reply("Survei tidak aktif.");
+				}
+				break;
+
+			case "surveihasil":
+				{
+					const hasil = komunitasV25.surveiHasilV25(db, args[0]);
+					return kirimRespons(m, { judul: "Hasil survei", isi: ringkasV25(hasil) || formatKosong() });
+				}
+				break;
+
+			case "surveitutup":
+				{
+					if (!isCreator && !m.isAdmin) return m.reply(global.mess.admin);
+					const mt = (text || "").trim().split(/\s+/);
+					if (mt[1] !== "confirm") return m.reply("Ketik .surveitutup [id] confirm");
+					const hasil = komunitasV25.surveiTutupV25(db, args[0]);
+					return hasil ? m.reply("Survei ditutup.") : m.reply("Gagal.");
+				}
+				break;
+
+			case "reputasilihat":
+				{
+					const hasil = komunitasV25.reputasiLihat(db, m.sender);
+					return hasil === null || hasil === undefined ? m.reply("Data tidak tersedia.") : kirimRespons(m, { judul: "Reputasi", isi: String(hasil) });
+				}
+				break;
+
+			case "reputasiberi":
+				{
+					const hasil = komunitasV25.reputasiBeriV25(db, m.sender, args[0], Number(args[1]));
+					return hasil ? m.reply("Reputasi diberikan.") : m.reply("Reputasi gagal diberikan.");
+				}
+				break;
+
+			case "reputasipapan":
+				{
+					const hasil = komunitasV25.reputasiPapanV25(db);
+					return kirimRespons(m, { judul: "Papan reputasi", isi: ringkasV25(hasil) || formatKosong() });
+				}
+				break;
+
+			case "reputasiaturan":
+				{
+					const hasil = komunitasV25.reputasiAturan();
+					return kirimRespons(m, { judul: "Aturan reputasi", isi: ringkasV25(hasil) || formatKosong() });
+				}
+				break;
+
+			case "kesehatanskor":
+				{
+					if (!isCreator) return m.reply(mess.owner);
+					const hasil = pengawasanV25.skorKesehatan(db, global);
+					return hasil === null || hasil === undefined ? m.reply("Data tidak tersedia.") : kirimRespons(m, { judul: "Skor kesehatan", isi: String(hasil) });
+				}
+				break;
+
+			case "kesehatanrincian":
+				{
+					if (!isCreator) return m.reply(mess.owner);
+					const hasil = pengawasanV25.rincianKesehatan(db, global);
+					return kirimRespons(m, { judul: "Rincian kesehatan", isi: ringkasV25(hasil) || formatKosong() });
+				}
+				break;
+
+			case "kesehatansejarah":
+				{
+					if (!isCreator) return m.reply(mess.owner);
+					const hasil = pengawasanV25.sejarahKesehatan(db);
+					return kirimRespons(m, { judul: "Riwayat kesehatan", isi: ringkasV25(hasil) || formatKosong() });
+				}
+				break;
+
+			case "aksesaudit":
+				{
+					if (!isCreator) return m.reply(mess.owner);
+					const hasil = pengawasanV25.auditAkses(db);
+					return kirimRespons(m, { judul: "Audit akses", isi: ringkasV25(hasil) || formatKosong() });
+				}
+				break;
+
+			case "aksesuji":
+				{
+					if (!isCreator) return m.reply(mess.owner);
+					const hasil = pengawasanV25.ujiAkses(db, args[0]);
+					return kirimRespons(m, { judul: "Uji akses", isi: ringkasV25(hasil) || formatKosong() });
+				}
+				break;
+
+			case "aksespulihkan":
+				{
+					if (!isCreator) return m.reply(mess.owner);
+					const mt = (text || "").trim().split(/\s+/);
+					if (mt[0] !== "confirm") return m.reply("Ketik .aksespulihkan confirm");
+					const hasil = pengawasanV25.pulihkanAkses(db);
+					return hasil ? m.reply("Akses dipulihkan.") : m.reply("Gagal.");
+				}
+				break;
+
+			case "backupjadwal":
+				{
+					if (!isCreator) return m.reply(mess.owner);
+					const hasil = pengawasanV25.jadwalBackup(db);
+					return kirimRespons(m, { judul: "Jadwal backup", isi: ringkasV25(hasil) || formatKosong() });
+				}
+				break;
+
+			case "backupuji":
+				{
+					if (!isCreator) return m.reply(mess.owner);
+					const hasil = pengawasanV25.ujiBackup(db);
+					return kirimRespons(m, { judul: "Uji backup", isi: ringkasV25(hasil) || formatKosong() });
+				}
+				break;
+
+			case "backuppulihkan":
+				{
+					if (!isCreator) return m.reply(mess.owner);
+					const mt = (text || "").trim().split(/\s+/);
+					if (mt[1] !== "confirm") return m.reply("Ketik .backuppulihkan [berkas] confirm");
+					const hasil = pengawasanV25.pulihkanBackup(db, args[0]);
+					return hasil ? m.reply("Permintaan pemulihan dicatat.") : m.reply("Gagal.");
+				}
+				break;
+
+			case "pengawaslaporan":
+				{
+					if (!isCreator) return m.reply(mess.owner);
+					const hasil = pengawasanV25.laporanPengawas(db, global);
+					return kirimRespons(m, { judul: "Laporan pengawas", isi: ringkasV25(hasil) || formatKosong() });
+				}
+				break;
+
+			case "pengawasambang":
+				{
+					if (!isCreator) return m.reply(mess.owner);
+					const hasil = pengawasanV25.aturAmbang(db, args[0], Number(args[1]));
+					return kirimRespons(m, { judul: "Ambang pengawas", isi: ringkasV25(hasil) || formatKosong() });
+				}
+				break;
+
+			case "pengawashentikan":
+				{
+					if (!isCreator) return m.reply(mess.owner);
+					const mt = (text || "").trim().split(/\s+/);
+					if (mt[0] !== "confirm") return m.reply("Ketik .pengawashentikan confirm");
+					const hasil = pengawasanV25.hentikanPengawas(db);
+					return hasil ? m.reply("Pengawas dihentikan.") : m.reply("Gagal.");
+				}
+				break;
+
+			case "studiodaftar":
+				{
+					const hasil = studioV25.daftarStudio();
+					return kirimRespons(m, { judul: "Studio", isi: ringkasV25(hasil) || formatKosong() });
+				}
+				break;
+
+			case "studiobuat":
+				{
+					const u = db.users[m.sender] || (db.users[m.sender] = {});
+					const hasil = studioV25.buatStudio(u, args[0]);
+					return hasil ? m.reply("Karya dibuat.") : m.reply("Karya penuh atau jenis salah.");
+				}
+				break;
+
+			case "studioisi":
+				{
+					const u = db.users[m.sender] || (db.users[m.sender] = {});
+					const hasil = studioV25.isiStudio(u, args[0], args.slice(1).join(' '));
+					return hasil ? m.reply("Isi ditambah.") : m.reply("Karya tidak ditemukan.");
+				}
+				break;
+
+			case "studiagaya":
+				{
+					const u = db.users[m.sender] || (db.users[m.sender] = {});
+					const hasil = studioV25.gayaStudio(u, args[0], args[1]);
+					return hasil ? m.reply("Gaya diubah.") : m.reply("Karya tidak ditemukan.");
+				}
+				break;
+
+			case "studiojadwalkan":
+				{
+					const u = db.users[m.sender] || (db.users[m.sender] = {});
+					const hasil = studioV25.jadwalkanStudio(u, args[0]);
+					return hasil ? m.reply("Karya dijadwalkan.") : m.reply("Karya tidak ditemukan.");
+				}
+				break;
+
+			case "studioterbit":
+				{
+					const u = db.users[m.sender] || (db.users[m.sender] = {});
+					const hasil = studioV25.terbitStudio(u, args[0]);
+					return hasil ? m.reply("Karya diterbitkan.") : m.reply("Karya tidak ditemukan.");
+				}
+				break;
+
+			case "studioarsip":
+				{
+					const u = db.users[m.sender] || (db.users[m.sender] = {});
+					const mt = (text || "").trim().split(/\s+/);
+					if (mt[1] !== "confirm") return m.reply("Ketik .studioarsip [id] confirm");
+					const hasil = studioV25.arsipStudio(u, args[0]);
+					return hasil ? m.reply("Karya diarsipkan.") : m.reply("Gagal.");
+				}
+				break;
+
+			case "studiolaporan":
+				{
+					const u = db.users[m.sender] || (db.users[m.sender] = {});
+					const hasil = studioV25.laporanStudio(u);
+					return kirimRespons(m, { judul: "Laporan studio", isi: ringkasV25(hasil) || formatKosong() });
 				}
 				break;
 			case "bantuan":
