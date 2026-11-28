@@ -27,9 +27,9 @@ Rynn v13.0.0 menambah 88 perintah baru pada sembilan kelompok fitur, tanpa depen
 
 ### Audit
 
-- 11 tes unit baru di `test/v13.test.js`, termasuk cabang invalid. Total **161 tes lolos**.
+- 11 tes unit baru di `test/v13.test.js`, termasuk cabang invalid. Total **162 tes lolos**.
 - `npm run check` lolos (208 file). Audit menu: 958 case, 683 perintah menu unik, semua punya implementasi.
-- Coverage: 89,94 persen baris, 76,28 persen cabang, 86,67 persen fungsi.
+- Coverage: 89,96 persen baris, 76,45 persen cabang, 86,69 persen fungsi.
 - Import handler.js berhasil dengan semua named export tersedia.
 
 ### Batas

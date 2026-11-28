@@ -772,7 +772,17 @@ const sock = async (sock, m, store) => {
 			if (set.autotyping && !global.modeHemat) {
 				await ketikDulu(sock, m.chat, { teks: typeof budy === "string" ? budy : "" });
 			}
+			if (!global.db.spamDeteksi) global.db.spamDeteksi = 0;
+			if (global.rateLimitDetik > 0 && isCmd) {
+				global.rateLimitState = global.rateLimitState || new Map();
+				const kunciRate = m.chat + ":" + m.sender;
+				const terakhirRate = global.rateLimitState.get(kunciRate) || 0;
+				if (Date.now() - terakhirRate < global.rateLimitDetik * 1000) return m.reply(`Tunggu ${global.rateLimitDetik} detik sebelum perintah berikutnya.`);
+				global.rateLimitState.set(kunciRate, Date.now());
+				if (global.rateLimitState.size > 5000) global.rateLimitState.clear();
+			}
 			if (set.antispam && antiSpam.isFiltered(m.sender)) {
+				global.db.spamDeteksi++;
 				console.log(chalk.bgRed("[ SPAM ] : "), chalk.black(chalk.bgHex("#1CFFF7")(`From -> ${m.sender}`), chalk.bgHex("#E015FF")(` In ${m.isGroup ? m.chat : "Private Chat"}`)));
 				return m.reply("「 ❗ 」Beri Jeda 5 Detik Per Command Kak");
 			}
@@ -10039,6 +10049,8 @@ Select Bot Settings:
 				{
 					const n = parseInt((text || "").trim(), 10);
 					if (!Number.isInteger(n) || n < 1) return m.reply("Contoh: .asuransi 50000");
+					if (!db.users[m.sender]) db.users[m.sender] = {};
+					db.users[m.sender].danaPerlindungan = n;
 					return m.reply(`*Simulasi Dana Perlindungan*\n\nDana: ${n.toLocaleString("id-ID")}\nPremi contoh: ${Math.floor(n * 0.01).toLocaleString("id-ID")} per bulan\n\nIni simulasi bot, bukan produk asuransi nyata.`);
 				}
 				break;
@@ -11221,13 +11233,13 @@ Select Bot Settings:
 					const kunci = m.chat + ":" + m.sender;
 					global.sudokuState = global.sudokuState || {};
 					if (sub === "buat") {
-						global.sudokuState[kunci] = sudokuBuat(arg[1] || "mudah");
-						return m.reply(`*Sudoku ${arg[1] || "mudah"}*\n\n${formatSudoku(global.sudokuState[kunci])}`);
+						global.sudokuState[kunci] = { papan: sudokuBuat(arg[1] || "mudah"), at: Date.now() };
+						return m.reply(`*Sudoku ${arg[1] || "mudah"}*\n\n${formatSudoku(global.sudokuState[kunci].papan)}`);
 					}
 					if (sub === "isi") {
-						const p = sudokuIsi(global.sudokuState[kunci], arg[1], arg[2], arg[3]);
+						const p = sudokuIsi(global.sudokuState[kunci].papan || [], arg[1], arg[2], arg[3]);
 						if (!p) return m.reply("Contoh: .sudoku isi 0 0 3");
-						global.sudokuState[kunci] = p;
+						global.sudokuState[kunci] = { papan: p, at: Date.now() };
 						return m.reply(formatSudoku(p));
 					}
 					return m.reply(".sudoku buat [mudah|sedang|sulit]\n.sudoku isi <baris> <kolom> <angka>");
@@ -11238,13 +11250,13 @@ Select Bot Settings:
 					const arah = (text || "").trim().toLowerCase();
 					const kunci = m.chat + ":" + m.sender;
 					global.game2048State = global.game2048State || {};
-					if (!global.game2048State[kunci] || arah === "baru") global.game2048State[kunci] = game2048Baru();
+					if (!global.game2048State[kunci] || arah === "baru") global.game2048State[kunci] = { papan: game2048Baru(), at: Date.now() };
 					else {
-						const p = gerak2048(global.game2048State[kunci], arah);
+						const p = gerak2048(global.game2048State[kunci].papan || [], arah);
 						if (!p) return m.reply("Arah: atas, bawah, kiri, kanan. Ketik .game2048 baru untuk ulang.");
-						global.game2048State[kunci] = p;
+						global.game2048State[kunci] = { papan: p, at: Date.now() };
 					}
-					return m.reply(`*2048*\n\n${global.game2048State[kunci].map((b) => b.join("\t")).join("\n")}`);
+					return m.reply(`*2048*\n\n${global.game2048State[kunci].papan.map((b) => b.join("\t")).join("\n")}`);
 				}
 				break;
 			case "kartuingatan":
@@ -11292,7 +11304,8 @@ Select Bot Settings:
 				{
 					const daftar = ["Apa yang makin dicuci makin kotor? Air.", "Apa yang punya gigi tapi tidak menggigit? Sisir.", "Apa yang naik tapi tidak pernah turun? Umur."];
 					const r = riddleAi(daftar);
-					const [ pertanyaan, jawaban ] = r.split("? ");
+					const [ pertanyaan, jawabanMentah ] = r.split("? ");
+					const jawaban = jawabanMentah.replace(/[.!?]+$/, "");
 					global.riddleState = global.riddleState || {};
 					global.riddleState[m.sender] = { jawaban, at: Date.now() };
 					return m.reply(`*Riddle*\n\n${pertanyaan}?\nJawab: .riddlejawab <teks>`);
@@ -11311,6 +11324,10 @@ Select Bot Settings:
 				{
 					const daftar = ["quiz", "tebaktokoh", "wordle", "sudoku", "game2048"];
 					const pilih = daftar[Math.floor(Date.now() / 86400000) % daftar.length];
+					if (!db.users[m.sender]) db.users[m.sender] = {};
+					const u = db.users[m.sender];
+					const hariIni = new Date().toISOString().slice(0, 10);
+					if (u.gamePassTanggal !== hariIni) { u.gamePassTanggal = hariIni; u.gamePassHari = (u.gamePassHari || 0) + 1; }
 					return kirimRespons(m, { judul: "Game harian", isi: `Hari ini: *${pilih}*\nKetik .${pilih} untuk mulai.` });
 				}
 				break;
@@ -11499,7 +11516,7 @@ Select Bot Settings:
 				}
 				break;
 			case "spamdeteksi":
-				return kirimRespons(m, { judul: "Spam terdeteksi", isi: `${statistikSpam(global.db?.hit)} kejadian tercatat.` });
+				return kirimRespons(m, { judul: "Spam terdeteksi", isi: `${global.db?.spamDeteksi || 0} kejadian tercatat.` });
 			case "grupkartu":
 				{
 					if (!m.isGroup) return m.reply(global.mess.group);
@@ -11515,9 +11532,9 @@ Select Bot Settings:
 			case "lapordetail":
 				{
 					if (!isCreator && !m.isAdmin) return m.reply(global.mess.admin);
-					const id = (text || "").trim();
-					const list = (global.db?.laporan || []).filter((l) => String(l.id || "").includes(id));
-					return kirimRespons(m, { judul: "Detail laporan", isi: list.length ? list.map((l) => `- ${l.waktu}: ${l.alasan}`).join("\n") : formatKosong() });
+					const q = (text || "").trim().toLowerCase();
+					const list = (global.db?.laporan || []).filter((l) => l.chat === m.chat && (!q || String(l.alasan || "").toLowerCase().includes(q) || String(l.dari || "").toLowerCase().includes(q)));
+					return kirimRespons(m, { judul: "Detail laporan", isi: list.length ? list.map((l) => `- ${new Date(l.waktu).toISOString()}: @${String(l.dari || "").split("@")[0]} - ${l.alasan}`).join("\n") : formatKosong() });
 				}
 				break;
 			case "stikerteks":
@@ -11608,7 +11625,9 @@ Select Bot Settings:
 					try {
 						const hasil = await fetchApi("/ai/chat2", { query: `${personaPrompt(db.users[m.sender]?.aiPersona)}\n\n${prompt}` });
 						const jawaban = String(hasil?.result?.message || hasil?.result || "Tidak ada jawaban.").slice(0, 3500);
-						if (db.users[m.sender]?.aiMemori) tambahMemori(db.users[m.sender], isi);
+						if (!db.users[m.sender]) db.users[m.sender] = {};
+						db.users[m.sender].aiTerpakai = (db.users[m.sender].aiTerpakai || 0) + 1;
+						if (db.users[m.sender].aiMemori) tambahMemori(db.users[m.sender], isi);
 						return m.reply(jawaban);
 					} catch {
 						return m.reply("Fitur AI sedang bermasalah.");
@@ -11632,14 +11651,15 @@ Select Bot Settings:
 			case "deploystatus":
 				{
 					if (!isCreator) return m.reply(global.mess.owner);
-					const d = deployStatus({ version: "12.0.0", name: "rynnbot" });
+					const d = deployStatus(require("./package.json"));
 					return kirimRespons(m, { judul: "Deploy", isi: `- Nama: ${d.nama}\n- Versi terpasang: ${d.versi}` });
 				}
 				break;
 			case "backupverifikasi":
 				{
 					if (!isCreator) return m.reply(global.mess.owner);
-					const hasil = verifikasiBackup(fs.readdirSync("./backup").slice(0, 10).map((n) => path.join("./backup", n)), fs);
+					const berkas = fs.existsSync("./backup") ? fs.readdirSync("./backup") : [];
+					const hasil = verifikasiBackup(berkas.slice(0, 10).map((n) => path.join("./backup", n)), fs);
 					return kirimRespons(m, { judul: "Verifikasi backup", isi: hasil.map((h) => `- ${path.basename(h.nama)}: ${h.ada ? "ada" : "tidak ada"}`).join("\n") || formatKosong() });
 				}
 				break;

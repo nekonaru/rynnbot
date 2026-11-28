@@ -73,6 +73,7 @@ test("edukasi memakai data dan template aman", () => {
 	assert.match(pantunBuatan("belajar"), /belajar/);
 	assert.match(puisiBuatan("harapan"), /harapan/);
 	assert.equal(cariResep([{ nama: "nasi", bahan: "beras" }], "beras").length, 1);
+	assert.equal(cariResep({ nasigoreng: "beras dan ayam" }, "beras").length, 1);
 	assert.ok(tantanganRumus([{ id: 1 }]));
 });
 

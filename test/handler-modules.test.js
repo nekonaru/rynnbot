@@ -15,6 +15,14 @@ test("sweeper membersihkan state kedaluwarsa", () => {
 	clearInterval(g._stateSweeper);
 });
 
+test("sweeper membersihkan state objek kedaluwarsa", () => {
+	const g = { riddleState: { lama: { at: Date.now() - 3600000 }, baru: { at: Date.now() } } };
+	pasangSweeperState({ globalObj: g, batasMenit: 15, intervalMenit: 600 });
+	assert.equal("lama" in g.riddleState, false);
+	assert.equal("baru" in g.riddleState, true);
+	clearInterval(g._stateSweeper);
+});
+
 test("progres menghitung level dan pencapaian", () => {
 	const u = { skorBelajar: 5, soal: { benar: 2 }, koleksi: ["a", "b", "c", "d", "e"] };
 	assert.deepEqual(hitungLevel(u), { skor: 12, level: 3 });
