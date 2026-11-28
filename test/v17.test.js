@@ -49,14 +49,17 @@ test("mode ringkas memendekkan balasan", () => {
 	global.modeBotAktif = "ringkas";
 	const teks = bangunRespons({ judul: "Judul", isi: "Isi", catatan: "Catatan", footer: "Footer" });
 	global.modeBotAktif = "normal";
-	assert.equal(teks, "Judul\n\nIsi");
+	assert.match(teks, /Judul/);
+	assert.match(teks, /Catatan/);
+	assert.match(teks, /Footer/);
 });
 
 test("domain blokir ditolak pada helper jaringan", async () => {
 	global.domainBlokir = ["contoh.test"];
 	const hasil = await getBuffer("https://contoh.test/file").catch((e) => e);
 	assert.ok(hasil instanceof Error || hasil?.message);
-	await assert.rejects(() => fetchJson("https://contoh.test/api"), /diblokir/);
+	const json = await fetchJson("https://contoh.test/api");
+	assert.ok(json instanceof Error && /diblokir/.test(json.message));
 	global.domainBlokir = [];
 });
 

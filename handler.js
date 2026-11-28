@@ -86,7 +86,7 @@ import { parseBulat, fpb, kpk, faktorPrima, isPrima, pembagiTerkecil, isPalindro
 import { kataBilangan, ucapanWaktu, hurufKe, angkaKeHuruf } from "./lib/bilangan.js";
 import { bilah, formatTanggal, formatWaktu, potongTeks, hitungKata } from "./lib/teks.js";
 import { bagiKelompok, bagiTim, ukuranTimGame, formatPembagian } from "./lib/pembagian.js";
-import { buatBracket, catatMenang, formatBracket } from "./lib/turnamen.js";
+import { buatBracket, catatMenang, formatBracket, buatBracketDouble, formatBracketDouble } from "./lib/turnamen.js";
 import { denganCache, bersihkanCache } from "./lib/cache.js";
 import { hashTeks, urlEncode, urlDecode, validasiJson } from "./lib/devutils.js";
 import { luasBangun, volumeBangun, akarKuadrat } from "./lib/geometri.js";
@@ -5302,7 +5302,7 @@ Select Bot Settings:
 					sock.sendMessage(m.chat, { text: teks2 }, { quoted: ftelo });
 				}
 				break;
-			case "cobahoki":
+			case "coba":
 				{
 					let anu = ["Aku Monyet", "Aku Kera", "Aku Tolol", "Aku Kaya", "Aku Dewa", "Aku Anjing", "Aku Dongo", "Aku Raja", "Aku Sultan", "Aku Baik", "Aku Hitam", "Aku Suki"];
 					await sock.sendButtonMsg(m.chat, {
@@ -6661,8 +6661,8 @@ Select Bot Settings:
 │${setv} ${prefix}loglevel
 │${setv} ${prefix}debugmode
 │${setv} ${prefix}ketersediaan
-│${setv} ${prefix}cobahoki
-│${setv} ${prefix}artisingkatan
+│${setv} ${prefix}cobacmd
+│${setv} ${prefix}aliasperintah
 │${setv} ${prefix}aturan
 │${setv} ${prefix}filter
 │${setv} ${prefix}poin
@@ -9401,7 +9401,7 @@ Select Bot Settings:
 					return found.length ? m.reply(found.map((o) => `- *${o}*`).join("\n")) : m.reply("Cabang olahraga tidak ditemukan.");
 				}
 				break;
-			case "artisingkatan":
+			case "singkatan":
 				{
 					const q = (text || "").trim().toUpperCase();
 					if (!q) return m.reply(`*Singkatan Umum (${SINGKATAN.length})*\n\nKetik .singkatan KTP\nKetik .singkatan cari kesehatan`);
@@ -9718,7 +9718,11 @@ Select Bot Settings:
 						const berhasil = [];
 						for (const tujuan of pending.target) {
 							const masuk = ubahSaldo(db, tujuan, "money", pending.nominal, "transferbatch");
-							if (!masuk) { ubahSaldo(db, m.sender, "money", total, "transferbatch:rollback"); return m.reply("Transfer gagal, saldo dikembalikan."); }
+							if (!masuk) {
+								for (const tujuan of berhasil) ubahSaldo(db, tujuan, "money", -pending.nominal, "transferbatch:rollback");
+								ubahSaldo(db, m.sender, "money", total, "transferbatch:rollback");
+								return m.reply("Transfer gagal, saldo dikembalikan.");
+							}
 							berhasil.push(tujuan);
 						}
 						peta.delete(m.sender);
@@ -10645,7 +10649,7 @@ Select Bot Settings:
 					});
 				}
 				break;
-			case "coba":
+			case "cobacmd":
 				{
 					const q = (text || "").trim().toLowerCase().replace(/^\./, "");
 					if (!q) return m.reply("Contoh: .coba rumus");
@@ -10657,7 +10661,7 @@ Select Bot Settings:
 					}) : m.reply("Perintah tidak ditemukan.");
 				}
 				break;
-			case "singkatan":
+			case "aliasperintah":
 				{
 					const q = (text || "").trim().toLowerCase().replace(/^\./, "");
 					const info = infoCommand(q);
@@ -10694,7 +10698,7 @@ Select Bot Settings:
 						const mode = ["single", "double"].includes(sisa[sisa.length - 1]) ? sisa[sisa.length - 1] : "single";
 						const namaTurnamen = (mode === "single" ? sisa : sisa.slice(0, -1)).join(" ") || "Turnamen";
 						const t = buatTurnamen(db, m.chat, namaTurnamen, mode);
-						return kirimRespons(m, { judul: "Turnamen dibuat", isi: formatTurnamen(t, (x) => x) });
+						return kirimRespons(m, { judul: "Turnamen dibuat", isi: formatTurnamen(t, (x) => x) + (t.bracket ? "\n\n" + formatBracketDouble(t.bracket) : "") });
 					}
 					if (sub === "daftar" || sub === "peserta") {
 						const t = turnamenAktif(db, m.chat);
@@ -10711,6 +10715,7 @@ Select Bot Settings:
 						const t = turnamenAktif(db, m.chat);
 						if (!t) return m.reply("Belum ada turnamen.");
 						t.seed = [...new Set(sisa.map((x) => x.replace(/^@/, "")))].slice(0, 32);
+						if (t.mode === "double") t.bracket = buatBracketDouble(t.seed);
 						return m.reply(`Seed disimpan: ${t.seed.length} peserta.`);
 					}
 					if (sub === "hasil") {

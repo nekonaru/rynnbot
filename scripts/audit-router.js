@@ -21,5 +21,6 @@ const hasil = {
 	tanpaCase,
 };
 
+console.log("Audit router utama (case pada indentasi tiga tab, bukan switch bersarang)");
 console.log(JSON.stringify(hasil, null, 2));
 if (duplikat.length || tanpaCase.length) process.exit(1);

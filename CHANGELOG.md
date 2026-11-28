@@ -30,12 +30,13 @@ Rynn v17.0.0 adalah rilis pendalaman dan perapian fitur yang sudah ada. Tidak ad
 ### Kinerja dan pengujian
 
 - 7 tes unit baru di `test/v17.test.js`. Total **207 tes lolos**.
-- `npm run check` lolos (251 file).
-- Coverage: 91,27 persen baris, 75,22 persen cabang, 89,61 persen fungsi.
+- `npm run check` lolos (252 file).
+- Coverage: 91,26 persen baris, 75,03 persen cabang, 89,61 persen fungsi.
 
 ### Batas
 
 - Tidak menambah kategori perintah, fitur waktu, kesehatan, atau Islami.
+- Review independen menemukan delapan masalah, semuanya diperbaiki sebelum rilis, termasuk pemulihan perilaku `.coba` dan `.singkatan`, mode ringkas yang membuang instruksi, bracket double tanpa peserta, dan rollback transferbatch yang tidak membatalkan kredit.
 - Tidak menambah dependency berat.
 
 ## v16.0.0
