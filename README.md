@@ -58,6 +58,7 @@ Berbasis Hitori Bot karya [Nazedev](https://github.com/nazedev/hitori), yang dir
 |----------|-------|-----------|
 | Menu & Umum | **Otomasi v24** | Penjadwalan internal, event, aturan, workflow, templat, dan orkestrasi modul untuk owner |
 | Menu & Umum | **Pendalaman v25** | Dompet, koperasi, turnamen, rantai produksi, pembelajaran, komunitas, pengawasan, dan studio konten |
+| Menu & Umum | **Pendalaman v26** | AI, laporan, pencarian, game, moderasi, media, profil, dan diagnostik bot |
 | Menu & Umum | **Menu dan bantuan** | Menu berkategori, daftar perintah, info bot, ping |
 | Menu & Umum | **CLI interaktif** | Wizard setup pertama, manajer pengaturan, dashboard status, pembaca log |
 | Menu & Umum | **Navigasi v8** | `.jelajah`, `.cmdbaru`, `.peta`, `.aliasglobal`, `.statcmd` |

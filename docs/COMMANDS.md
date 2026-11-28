@@ -2,12 +2,22 @@
 
 Dokumen ini dihasilkan otomatis dari registry perintah. Jangan disunting manual.
 
-Total 1075 perintah dalam 14 kategori.
+Total 1141 perintah dalam 14 kategori.
 
 ## AI
 
 | Perintah | Contoh | Role | Biaya limit |
 |---|---|---|---|
+| `.ailaporandompet` | `.ailaporandompet(Ringkas transaksi)` | semua | 0 |
+| `.aipet` | `.aipet(Saran hewan)` | semua | 0 |
+| `.aikebun` | `.aikebun(Saran kebun)` | semua | 0 |
+| `.aikarir` | `.aikarir(Saran karir)` | semua | 0 |
+| `.aibelajar` | `.aibelajar(Saran belajar)` | semua | 0 |
+| `.aigame` | `.aigame(Ulas game)` | semua | 0 |
+| `.aigrup` | `.aigrup(Ringkas grup)` | semua | 0 |
+| `.aikarya` | `.aikarya(Ulas karya)` | semua | 0 |
+| `.aikodeulas` | `.aikodeulas([kode] Ulas kode)` | semua | 0 |
+| `.airingkasfitur` | `.airingkasfitur([nama] Ringkas fitur)` | semua | 0 |
 | `.ringkas` | `.ringkas` | semua | 0 |
 | `.ide` | `.ide` | semua | 0 |
 | `.paragraf` | `.paragraf` | semua | 0 |
@@ -303,13 +313,13 @@ Total 1075 perintah dalam 14 kategori.
 | `.koperasirapat` | `.koperasirapat([nama] Ringkasan koperasi)` | semua | 0 |
 | `.koperasitutup` | `.koperasitutup([nama] Tutup koperasi)` | semua | 0 |
 | `.tokostok` | `.tokostok([nama] Stok toko)` | semua | 0 |
-| `.tokorestok` | `.tokorestok([nama] [jumlah] Restok)` | semua | 0 |
-| `.tokoharga` | `.tokoharga([nama] [nominal] Atur harga)` | semua | 0 |
-| `.tokodiskon` | `.tokodiskon([nama] [persen] Atur diskon)` | semua | 0 |
+| `.tokorestok` | `.tokorestok([nama] [jumlah] Restok)` | owner | 0 |
+| `.tokoharga` | `.tokoharga([nama] [nominal] Atur harga)` | owner | 0 |
+| `.tokodiskon` | `.tokodiskon([nama] [persen] Atur diskon)` | owner | 0 |
 | `.tokobeli` | `.tokobeli([nama] [jumlah] Beli barang)` | semua | 0 |
-| `.tokobjual` | `.tokobjual([nama] [jumlah] Jual barang)` | semua | 0 |
+| `.tokobjual` | `.tokobjual([nama] [jumlah] Jual barang)` | owner | 0 |
 | `.tokohlaporan` | `.tokohlaporan(Laporan toko)` | semua | 0 |
-| `.tokoktutup` | `.tokoktutup([nama] Tutup toko)` | semua | 0 |
+| `.tokoktutup` | `.tokoktutup([nama] Tutup toko)` | owner | 0 |
 | `.kebunbuat` | `.kebunbuat` | semua | 0 |
 | `.kebunlihat` | `.kebunlihat` | semua | 0 |
 | `.kebunbenih` | `.kebunbenih` | semua | 0 |
@@ -416,6 +426,14 @@ Total 1075 perintah dalam 14 kategori.
 
 | Perintah | Contoh | Role | Biaya limit |
 |---|---|---|---|
+| `.gamiharian` | `.gamiharian(Tantangan harian)` | semua | 0 |
+| `.gametantangan` | `.gametantangan(Tantangan acak)` | semua | 0 |
+| `.gameturnamen` | `.gameturnamen(Game turnamen)` | semua | 0 |
+| `.gamerekor` | `.gamerekor(Rekor pribadi)` | semua | 0 |
+| `.gamematihan` | `.gamematihan([nama] Mode latihan)` | semua | 0 |
+| `.gamepapan` | `.gamepapan(Papan game)` | semua | 0 |
+| `.gamehadiah` | `.gamehadiah([poin] Tukar poin)` | semua | 0 |
+| `.gamemberi` | `.gamemberi([jid] [jumlah] Beri poin)` | semua | 0 |
 | `.petbantukebun` | `.petbantukebun(Bantu kebun)` | semua | 0 |
 | `.petpakaipesul` | `.petpakaipesul(Pakai hasil kebun)` | semua | 0 |
 | `.pethadiahpanen` | `.pethadiahpanen(Hadiah panen)` | semua | 0 |
@@ -645,6 +663,14 @@ Total 1075 perintah dalam 14 kategori.
 
 | Perintah | Contoh | Role | Biaya limit |
 |---|---|---|---|
+| `.moderatoraturan` | `.moderatoraturan(Aturan grup)` | owner | 0 |
+| `.moderasipingatan` | `.moderasipingatan([jid] [alasan] Peringatan)` | owner | 0 |
+| `.moderatemute` | `.moderatemute([jid] [menit] Mute)` | owner | 0 |
+| `.moderasiunmute` | `.moderasiunmute([jid] Unmute)` | owner | 0 |
+| `.moderasilog` | `.moderasilog(Log moderasi)` | owner | 0 |
+| `.moderasistatistik` | `.moderasistatistik(Statistik moderasi)` | owner | 0 |
+| `.moderasiauto` | `.moderasiauto([on|off] Moderasi otomatis)` | owner | 0 |
+| `.moderasiuji` | `.moderasiuji([teks] Uji aturan)` | owner | 0 |
 | `.sesihapus` | `.sesihapus` | owner | 0 |
 | `.akseswarisan` | `.akseswarisan` | owner | 0 |
 | `.bungapinjam` | `.bungapinjam` | owner | 0 |
@@ -696,10 +722,10 @@ Total 1075 perintah dalam 14 kategori.
 | `.proyekanggota` | `.proyekanggota([nama] Anggota proyek)` | semua | 0 |
 | `.proyektenggat` | `.proyektenggat([nama] [tanggal] Atur tenggat)` | semua | 0 |
 | `.proyekarsip` | `.proyekarsip([nama] Arsip proyek)` | semua | 0 |
-| `.surveibuat` | `.surveibuat([judul] Buat survei)` | semua | 0 |
+| `.surveibuat` | `.surveibuat([judul] Buat survei)` | owner | 0 |
 | `.surveipilih` | `.surveipilih([id] [opsi] Pilih opsi)` | semua | 0 |
 | `.surveihasil` | `.surveihasil([id] Hasil survei)` | semua | 0 |
-| `.surveitutup` | `.surveitutup([id] Tutup survei)` | semua | 0 |
+| `.surveitutup` | `.surveitutup([id] Tutup survei)` | owner | 0 |
 | `.reputasilihat` | `.reputasilihat(Lihat reputasi)` | semua | 0 |
 | `.reputasiberi` | `.reputasiberi([jid] [jumlah] Beri reputasi)` | semua | 0 |
 | `.reputasipapan` | `.reputasipapan(Papan reputasi)` | semua | 0 |
@@ -773,6 +799,14 @@ Total 1075 perintah dalam 14 kategori.
 
 | Perintah | Contoh | Role | Biaya limit |
 |---|---|---|---|
+| `.mediakartu` | `.mediakartu([judul] [isi] Kartu)` | semua | 0 |
+| `.mediaposter` | `.mediaposter([judul] [isi] Poster)` | semua | 0 |
+| `.mediastiker` | `.mediastiker([teks] Stiker)` | semua | 0 |
+| `.mediagaleri` | `.mediagaleri(Galeri)` | semua | 0 |
+| `.mediaanimasi` | `.mediaanimasi([nama] [frame] Animasi)` | semua | 0 |
+| `.mediameta` | `.mediameta([teks] Metadata)` | semua | 0 |
+| `.mediauji` | `.mediauji([teks] Uji media)` | semua | 0 |
+| `.mediahapus` | `.mediahapus([id] Hapus media)` | semua | 0 |
 | `.studiodaftar` | `.studiodaftar(Daftar studio)` | semua | 0 |
 | `.studiobuat` | `.studiobuat([jenis] Buat karya)` | semua | 0 |
 | `.studioisi` | `.studioisi([id] [teks] Isi karya)` | semua | 0 |
@@ -845,6 +879,14 @@ Total 1075 perintah dalam 14 kategori.
 
 | Perintah | Contoh | Role | Biaya limit |
 |---|---|---|---|
+| `.botdiagnosis` | `.botdiagnosis(Diagnosis bot)` | owner | 0 |
+| `.botmetrik` | `.botmetrik(Metrik bot)` | owner | 0 |
+| `.botpanas` | `.botpanas(State terberat)` | owner | 0 |
+| `.botbeban` | `.botbeban(Beban bot)` | owner | 0 |
+| `.botcache` | `.botcache(Cache bot)` | owner | 0 |
+| `.botuji` | `.botuji([nama] Uji modul)` | owner | 0 |
+| `.bothentikan` | `.bothentikan([nama] Hentikan layanan)` | owner | 0 |
+| `.botjadwal` | `.botjadwal(Jadwal bot)` | owner | 0 |
 | `.kesehatanskor` | `.kesehatanskor(Skor kesehatan)` | owner | 0 |
 | `.kesehatanrincian` | `.kesehatanrincian(Rincian kesehatan)` | owner | 0 |
 | `.kesehatansejarah` | `.kesehatansejarah(Riwayat kesehatan)` | owner | 0 |
@@ -980,6 +1022,14 @@ Total 1075 perintah dalam 14 kategori.
 
 | Perintah | Contoh | Role | Biaya limit |
 |---|---|---|---|
+| `.carilintasfitur` | `.carilintasfitur([kata] Cari lintas)` | semua | 0 |
+| `.cariperintah` | `.cariperintah([kata] Cari perintah)` | semua | 0 |
+| `.caridata` | `.caridata([kata] Cari data)` | semua | 0 |
+| `.caripengguna` | `.caripengguna([kata] Cari pengguna)` | semua | 0 |
+| `.carigrup` | `.carigrup([kata] Cari grup)` | semua | 0 |
+| `.caririwayat` | `.caririwayat([kata] Cari riwayat)` | semua | 0 |
+| `.caritersimpan` | `.caritersimpan([kata] Simpan)` | semua | 0 |
+| `.carihapus` | `.carihapus([kata] Hapus tersimpan)` | semua | 0 |
 | `.dataset` | `.dataset` | semua | 0 |
 | `.rekomendasi` | `.rekomendasi` | semua | 0 |
 | `.datasetpenuh` | `.datasetpenuh` | semua | 0 |
@@ -1006,6 +1056,14 @@ Total 1075 perintah dalam 14 kategori.
 
 | Perintah | Contoh | Role | Biaya limit |
 |---|---|---|---|
+| `.laporanharian` | `.laporanharian(Laporan harian)` | semua | 0 |
+| `.laporanmingguan` | `.laporanmingguan(Laporan mingguan)` | semua | 0 |
+| `.laporanbulan` | `.laporanbulan(Laporan bulanan)` | semua | 0 |
+| `.laporanpertumbuhan` | `.laporanpertumbuhan(Pertumbuhan)` | semua | 0 |
+| `.laporanperbandingan` | `.laporanperbandingan([a] [b] Bandingkan)` | semua | 0 |
+| `.laporanekspor` | `.laporanekspor(Ekspor laporan)` | semua | 0 |
+| `.laporanjadwalkan` | `.laporanjadwalkan([interval] Jadwalkan)` | semua | 0 |
+| `.laporanberhenti` | `.laporanberhenti(Hentikan jadwal)` | semua | 0 |
 | `.leaderboard` | `.leaderboard` | semua | 0 |
 | `.runtime` | `.runtime` | owner | 0 |
 | `.totalfitur` | `.totalfitur` | semua | 0 |
@@ -1058,7 +1116,7 @@ Total 1075 perintah dalam 14 kategori.
 | `.turnamenunggulan` | `.turnamenunggulan(Unggulan turnamen)` | semua | 0 |
 | `.turnamenbracket` | `.turnamenbracket(Bracket turnamen)` | semua | 0 |
 | `.turnamenhasil` | `.turnamenhasil([a] [b] [pemenang] Catat hasil)` | semua | 0 |
-| `.turnamenpoin` | `.turnamenpoin([jid] [poin] Beri poin)` | semua | 0 |
+| `.turnamenpoin` | `.turnamenpoin([jid] [poin] Beri poin)` | owner | 0 |
 | `.turnamenarsip` | `.turnamenarsip(Arsip turnamen)` | semua | 0 |
 | `.lagacari` | `.lagacari([nama] Cari laga)` | semua | 0 |
 | `.lagajadwal` | `.lagajadwal([nama] Jadwal laga)` | semua | 0 |
@@ -1088,6 +1146,14 @@ Total 1075 perintah dalam 14 kategori.
 
 | Perintah | Contoh | Role | Biaya limit |
 |---|---|---|---|
+| `.profillengkap` | `.profillengkap(Profil lengkap)` | semua | 0 |
+| `.profilpencapaian` | `.profilpencapaian(Pencapaian)` | semua | 0 |
+| `.profilriwayat` | `.profilriwayat(Riwayat)` | semua | 0 |
+| `.profilpengaturan` | `.profilpengaturan([kunci] [nilai] Pengaturan)` | semua | 0 |
+| `.profilmode` | `.profilmode([nama] Mode)` | semua | 0 |
+| `.profilbahasa` | `.profilbahasa([id|en] Bahasa)` | semua | 0 |
+| `.profilcadangan` | `.profilcadangan(Cadangkan profil)` | semua | 0 |
+| `.profilpulihkan` | `.profilpulihkan([kode] Pulihkan)` | semua | 0 |
 | `.pengumumanbuat` | `.pengumumanbuat` | owner | 0 |
 | `.pengumumanisi` | `.pengumumanisi` | owner | 0 |
 | `.pengumumankategori` | `.pengumumankategori` | owner | 0 |

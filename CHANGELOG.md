@@ -1,6 +1,50 @@
 # Changelog
 
-﻿## v25.0.0
+﻿## v26.0.0
+
+Rynn v26.0.0 memperdalam fitur yang sudah ada di luar area yang dikembangkan v25. Tidak ada keluarga fitur baru yang ditambahkan.
+
+### AI untuk fitur existing
+
+- 10 perintah AI untuk merangkum dompet, grup, dan karya, serta memberi saran hewan, kebun, karir, belajar, dan game.
+- `.aikodeulas` hanya menghitung ciri teks. Kode dari user tidak pernah dieksekusi.
+
+### Laporan dan pencarian
+
+- 8 perintah laporan harian, mingguan, bulanan, pertumbuhan, perbandingan, ekspor, dan penjadwalan.
+- 8 perintah pencarian lintas fitur, perintah, data, pengguna, grup, riwayat, serta penyimpanan hasil.
+
+### Game dan moderasi
+
+- 8 perintah game untuk tantangan harian, rekor, latihan tanpa hadiah, papan, dan transfer poin lewat transaksi.
+- 8 perintah moderasi untuk aturan, peringatan, mute, log, statistik, dan uji aturan. Semua memakai gate admin.
+
+### Media, profil, dan bot
+
+- 8 perintah media untuk kartu, poster, stiker, galeri, animasi, metadata, dan uji konversi.
+- 8 perintah profil untuk ringkasan, pencapaian, riwayat, pengaturan, mode, bahasa, cadangan, dan pemulihan.
+- 8 perintah bot untuk diagnosis, metrik, beban, cache, uji modul, dan penjadwalan. Semua memakai gate owner.
+
+### Arsitektur
+
+- Delapan modul murni di `lib/v26/` plus `indeks.js` sebagai registi.
+- Modul memanggil API existing, bukan menyalin logika. Perubahan poin dan uang tetap lewat `lib/transaksi.js`.
+- Semua state baru berbatas ukuran.
+
+### Audit
+
+- 10 tes unit baru di `test/v26.test.js`. Total **276 tes lolos**.
+- `npm run check` lolos (304 file).
+- Coverage: 92,57 persen baris, 75,08 persen cabang, 90,34 persen fungsi.
+- Audit router: 1416 case, 1141 perintah menu, nol duplikat, nol menu tanpa case.
+- Audit menu: 1141 perintah, 14 kategori, nol kategori asing.
+
+### Batas
+
+- Tidak menambah kategori di luar 14 kategori baku.
+- Tidak menambah dependency berat. Perintah lama dan alias tetap bekerja.
+
+## v25.0.0
 
 Rynn v25.0.0 memperdalam fitur yang sudah ada. Tidak ada keluarga fitur baru yang ditambahkan.
 

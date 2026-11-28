@@ -163,6 +163,6 @@ test("perintah v24 terdaftar sebagai owner", () => {
 	const baru = nama.map((c) => daftar.find((e) => e.command === c));
 	assert.equal(baru.filter(Boolean).length, 51);
 	assert.equal(baru.every((e) => e?.role === "owner" && e?.kategori === "OWNER"), true);
-	assert.equal(jumlahCase(), 1350);
+	assert.equal(jumlahCase(), 1416);
 	assert.match(bangunIndeksMenu(), /owner/i);
 });
