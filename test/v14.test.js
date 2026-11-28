@@ -8,7 +8,7 @@ import { laporanBulanan, trenPerintah, statistikAnggota, statistikJam, ringkasan
 import { apresiasiTambah, apresiasiPapan, salamPersonal, ceritaLanjut, ceritaBaca, ceritaReset, rekomendasiPerintah } from "../lib/v14/sosial.js";
 import { namaMerek, namaGrup, caption, hashtag, tagline, judulAlternatif, dialogPendek, suratPendek } from "../lib/v14/kreatif.js";
 import { glosarium, artiPeribahasa, latihanHitung, teoriSingkat, petaRumus, hafalanCek, rangkumPelajaran } from "../lib/v14/edukasi.js";
-import { portofolio, dividen, obligasi, emasSimulasi, sahamSimulasi, kursSimulasi, inflasi, warisanSimulasi } from "../lib/v14/ekonomi.js";
+import { portofolio, dividen, obligasi, emasSimulasi, sahamSimulasi, kursSimulasi, infoMataUang, inflasi, warisanSimulasi } from "../lib/v14/ekonomi.js";
 import { timBuat, timGabung, skorTim, tebakUrutan, cocokanUrutan, kartuTaruhan, papanSkorHarian } from "../lib/v14/game.js";
 import { bootInfo, stateInfo, formatBoot, backupInkremental, dbEkspor, dbImprInfo, logLevel, ketersediaan } from "../lib/v14/owner.js";
 
@@ -165,6 +165,21 @@ test("cabang invalid dan batas ditangani", () => {
 	assert.deepEqual(papanSkorHarian({}), []);
 	assert.equal(stateInfo(5).jumlah, 0);
 	assert.equal(logLevel("x"), null);
+});
+
+test("perbaikan review: validasi, total, privasi, dan mata uang", () => {
+	assert.equal(kartuTaruhan({ money: 100 }, NaN), null);
+	const hit = {};
+	for (let i = 1; i <= 20; i++) hit["rumus" + i] = 1;
+	assert.equal(laporanBulanan(hit).total, 20);
+	const u = { aset: { a: {} }, flashcard: [1], rekening: { b: 2 }, investasi: { pokok: 1 }, emasGram: 1, sahamLot: 1 };
+	const e = eksporData(u);
+	assert.equal(Object.keys(e.aset).length, 1);
+	assert.equal(e.flashcard.length, 1);
+	hapusDataPribadi(u);
+	assert.equal(u.aset, undefined);
+	const m = infoMataUang("USD", [["USD", "Dolar", "$", "Amerika"]]);
+	assert.equal(m.nama, "Dolar");
 });
 
 test("owner menghasilkan ringkasan tanpa secret", () => {

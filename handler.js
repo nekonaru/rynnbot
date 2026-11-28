@@ -7,7 +7,7 @@ import { laporanBulanan, trenPerintah, statistikAnggota, statistikJam, ringkasan
 import { apresiasiTambah, apresiasiPapan, salamPersonal, ceritaLanjut, ceritaBaca, ceritaReset, rekomendasiPerintah } from "./lib/v14/sosial.js";
 import { namaMerek, namaGrup, caption, hashtag, tagline, judulAlternatif, dialogPendek, suratPendek } from "./lib/v14/kreatif.js";
 import { glosarium, artiPeribahasa, latihanHitung, teoriSingkat, petaRumus, hafalanCek, rangkumPelajaran } from "./lib/v14/edukasi.js";
-import { portofolio, dividen, obligasi, emasSimulasi, sahamSimulasi, kursSimulasi, inflasi, warisanSimulasi } from "./lib/v14/ekonomi.js";
+import { portofolio, dividen, obligasi, emasSimulasi, sahamSimulasi, kursSimulasi, infoMataUang, inflasi, warisanSimulasi } from "./lib/v14/ekonomi.js";
 import { timBuat, timGabung, skorTim, tebakUrutan, cocokanUrutan, kartuTaruhan, papanSkorHarian } from "./lib/v14/game.js";
 import { bootInfo, stateInfo, formatBoot, backupInkremental, dbEkspor, dbImprInfo, logLevel, ketersediaan } from "./lib/v14/owner.js";
 import { xpDari, progresLevel, kartuProfil, beriBadge, hapusBadge } from "./lib/v13/akun.js";
@@ -807,6 +807,7 @@ const sock = async (sock, m, store) => {
 				cmdAdd(db.hit);
 				cmdAddHit(db.hit, command);
 				if (!db.users[m.sender]) db.users[m.sender] = {};
+				if (db.users[m.sender]?.opsiPrivasi?.riwayat === false) return;
 				const riwayat = db.users[m.sender].riwayat || [];
 				riwayat.push(command);
 				db.users[m.sender].riwayat = riwayat.slice(-20);
@@ -11858,8 +11859,10 @@ Select Bot Settings:
 					}
 					if (sub === "tutup") {
 						if (mt[2] !== "confirm") return m.reply("Ketik .tiket tutup <id> confirm");
-						const t = tiketTutup(tiketAmbil(db, mt[1]));
-						return t ? m.reply(`Tiket ${t.id} ditutup.`) : m.reply("Tiket tidak ditemukan.");
+						const ada = tiketAmbil(db, mt[1]);
+						if (!ada || (ada.dari !== m.sender && !isCreator && !m.isAdmin)) return m.reply("Tiket tidak ditemukan atau bukan milik kamu.");
+						const t = tiketTutup(ada);
+						return m.reply(`Tiket ${t.id} ditutup.`);
 					}
 					return m.reply(".tiket buat <judul>\n.tiket status <id>\n.tiket list\n.tiket balas <id> <teks>\n.tiket tutup <id> confirm");
 				}
@@ -12092,7 +12095,7 @@ Select Bot Settings:
 				break;
 			case "glosarium":
 				{
-					const daftar = Object.entries(SINONIM || {}).slice(0, 100).map(([k, v]) => ({ kata: k, arti: Array.isArray(v) ? v[0] : v }));
+					const daftar = (Array.isArray(SINONIM) ? SINONIM : Object.entries(SINONIM)).slice(0, 100).map((x) => Array.isArray(x) ? { kata: x[0], arti: x[1] } : { kata: x, arti: "" });
 					const hasil = glosarium(daftar, text);
 					return kirimRespons(m, { judul: "Glosarium", isi: hasil.map((x) => `- ${x.kata}: ${x.arti}`).join("\n") || formatKosong() });
 				}
@@ -12100,20 +12103,23 @@ Select Bot Settings:
 			case "peribahasaarti":
 				{
 					const hasil = artiPeribahasa(PERIBAHASA, text);
-					return kirimRespons(m, { judul: "Arti peribahasa", isi: hasil.map((p) => `- ${p.pepatah}: ${p.arti || ""}`).join("\n") || formatKosong() });
+					return kirimRespons(m, { judul: "Arti peribahasa", isi: hasil.map((p) => `- ${p.pepatah}: ${p.makna || p.arti || ""}`).join("\n") || formatKosong() });
 				}
 				break;
 			case "latihanhitung":
 				{
 					const s = latihanHitung(SOAL.matematika || []);
-					return s ? m.reply(`*Latihan*\n\n${s.q}\n\nJawab: .quizjawab <a-d>`) : m.reply("Belum ada soal.");
+					if (!s) return m.reply("Belum ada soal.");
+					global.quizBeruntunState = global.quizBeruntunState || new Map();
+					global.quizBeruntunState.set(m.sender, { soal: s, benar: 0, at: Date.now() });
+					return m.reply(`*Latihan*\n\n${s.q}\n\nJawab: .quizjawab <a-d>`);
 				}
 				break;
 			case "teorisingkat":
 				return m.reply(teoriSingkat(text));
 			case "petarumus":
 				{
-					const list = petaRumus(semuaRumus(), text);
+					const list = petaRumus(semuaRumus(text), text);
 					return kirimRespons(m, { judul: `Peta rumus ${text}`, isi: list.map((r) => `- ${r.nama}`).join("\n") || formatKosong() });
 				}
 				break;
@@ -12170,8 +12176,8 @@ Select Bot Settings:
 				break;
 			case "kurssimulasi":
 				{
-					const k = kursSimulasi((text || "").trim(), MATAUANG || {});
-					return k ? kirimRespons(m, { judul: "Kurs contoh", isi: `- ${k.mataUang}: ${k.nilai}`, catatan: "Bukan nilai tukar resmi." }) : m.reply("Mata uang tidak ditemukan dalam data lokal.");
+					const k = infoMataUang((text || "").trim(), MATAUANG || []);
+					return k ? kirimRespons(m, { judul: "Mata uang", isi: `- Kode: ${k.kode}\n- Nama: ${k.nama}\n- Simbol: ${k.simbol || "-"}\n- Negara: ${k.negara || "-"}`, catatan: "Data lokal tidak memuat angka kurs resmi." }) : m.reply("Mata uang tidak ditemukan dalam data lokal.");
 				}
 				break;
 			case "inflasisimulasi":
@@ -12235,7 +12241,8 @@ Select Bot Settings:
 			case "tebakurutanjawab":
 				{
 					const s = global.tebakUrutanState?.[m.sender];
-					if (!s || Date.now() - s.at > 300000) return m.reply("Belum ada tebak urutan aktif.");
+					if (!s) return m.reply("Belum ada tebak urutan aktif.");
+					if (Date.now() - s.at > 300000) { delete global.tebakUrutanState[m.sender]; return m.reply("Tebak urutan kedaluwarsa. Ketik .tebakurutan"); }
 					const benar = cocokanUrutan(text, s.jawaban);
 					delete global.tebakUrutanState[m.sender];
 					return benar ? m.reply("Benar!") : m.reply(`Salah. Urutannya ${s.jawaban.join("")}.`);

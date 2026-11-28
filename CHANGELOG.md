@@ -28,9 +28,9 @@ Rynn v14.0.0 menambah 65 perintah baru pada sebelas kelompok fitur, tanpa depend
 
 ### Audit
 
-- 12 tes unit baru di `test/v14.test.js`, termasuk cabang invalid. Total **174 tes lolos**.
+- 12 tes unit baru di `test/v14.test.js`, termasuk cabang invalid. Total **175 tes lolos**.
 - `npm run check` lolos (220 file). Audit menu: 1023 case, 748 perintah menu unik, semua punya implementasi.
-- Coverage: 90,41 persen baris, 75,47 persen cabang, 87,84 persen fungsi.
+- Coverage: 90,42 persen baris, 75,62 persen cabang, 87,88 persen fungsi.
 
 ### Batas
 
