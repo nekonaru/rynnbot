@@ -1,4 +1,6 @@
 import "./settings.js";
+import { cocokJawaban } from "./lib/game-jawaban.js";
+import { ubahSaldo, pindahSaldo, riwayatTransaksi, rekonsiliasi } from "./lib/transaksi.js";
 import { daftarPaket, pilihPaket, paketAktif, bandingPaket, batasPaket } from "./lib/v16/paket.js";
 import { undangBuat, undangPakai, undangMilik, referralPapan, hadiahReferral } from "./lib/v16/undang.js";
 import { artikelBuat, artikelAmbil, artikelIsi, artikelHapus, artikelCari, seriLanjut } from "./lib/v16/artikel.js";
@@ -5300,7 +5302,7 @@ Select Bot Settings:
 					sock.sendMessage(m.chat, { text: teks2 }, { quoted: ftelo });
 				}
 				break;
-			case "coba":
+			case "cobahoki":
 				{
 					let anu = ["Aku Monyet", "Aku Kera", "Aku Tolol", "Aku Kaya", "Aku Dewa", "Aku Anjing", "Aku Dongo", "Aku Raja", "Aku Sultan", "Aku Baik", "Aku Hitam", "Aku Suki"];
 					await sock.sendButtonMsg(m.chat, {
@@ -6659,6 +6661,8 @@ Select Bot Settings:
 │${setv} ${prefix}loglevel
 │${setv} ${prefix}debugmode
 │${setv} ${prefix}ketersediaan
+│${setv} ${prefix}cobahoki
+│${setv} ${prefix}artisingkatan
 │${setv} ${prefix}aturan
 │${setv} ${prefix}filter
 │${setv} ${prefix}poin
@@ -9397,7 +9401,7 @@ Select Bot Settings:
 					return found.length ? m.reply(found.map((o) => `- *${o}*`).join("\n")) : m.reply("Cabang olahraga tidak ditemukan.");
 				}
 				break;
-			case "singkatan":
+			case "artisingkatan":
 				{
 					const q = (text || "").trim().toUpperCase();
 					if (!q) return m.reply(`*Singkatan Umum (${SINGKATAN.length})*\n\nKetik .singkatan KTP\nKetik .singkatan cari kesehatan`);
@@ -9709,12 +9713,13 @@ Select Bot Settings:
 						const pending = peta.get(m.sender);
 						if (!pending || pending.token !== konfirmasi[1] || Date.now() - pending.at > 300000) return m.reply("Token konfirmasi tidak valid atau sudah kedaluwarsa.");
 						const total = pending.nominal * pending.target.length;
-						const u = db.users[m.sender] || {};
-						if ((u.money || 0) < total) return m.reply(`Saldo kurang. Butuh ${total.toLocaleString("id-ID")}.`);
-						u.money -= total;
+						const keluar = ubahSaldo(db, m.sender, "money", -total, "transferbatch");
+						if (!keluar) return m.reply(`Saldo kurang. Butuh ${total.toLocaleString("id-ID")}.`);
+						const berhasil = [];
 						for (const tujuan of pending.target) {
-							if (!db.users[tujuan]) db.users[tujuan] = { limit: 0, money: 0 };
-							db.users[tujuan].money = (db.users[tujuan].money || 0) + pending.nominal;
+							const masuk = ubahSaldo(db, tujuan, "money", pending.nominal, "transferbatch");
+							if (!masuk) { ubahSaldo(db, m.sender, "money", total, "transferbatch:rollback"); return m.reply("Transfer gagal, saldo dikembalikan."); }
+							berhasil.push(tujuan);
 						}
 						peta.delete(m.sender);
 						return m.reply(`Transfer ${total.toLocaleString("id-ID")} ke ${pending.target.length} target berhasil.`);
@@ -11466,7 +11471,7 @@ Select Bot Settings:
 					if (!s || Date.now() - s.at > 300000) return m.reply("Belum ada tebak tokoh aktif.");
 					const j = (text || "").trim().toLowerCase();
 					delete global.tebakTokohState[m.sender];
-					return j === s.jawaban.toLowerCase() ? m.reply(`Benar! *${s.jawaban}*`) : m.reply(`Salah. Jawabannya *${s.jawaban}*.`);
+					return cocokJawaban(j, s.jawaban) ? m.reply(`Benar! *${s.jawaban}*`) : m.reply(`Salah. Jawabannya *${s.jawaban}*.`);
 				}
 				break;
 			case "tebaklagu":
@@ -11484,7 +11489,7 @@ Select Bot Settings:
 					if (!s || Date.now() - s.at > 300000) return m.reply("Belum ada tebak lagu aktif.");
 					const j = (text || "").trim().toLowerCase();
 					delete global.tebakLaguState[m.sender];
-					return j.includes(s.judul.split(" ").pop()) ? m.reply("Benar!") : m.reply(`Belum tepat. Petunjuknya: ${s.judul}`);
+					return cocokJawaban(j, s.judul) ? m.reply("Benar!") : m.reply(`Belum tepat. Petunjuknya: ${s.judul}`);
 				}
 				break;
 			case "riddleai":
@@ -11504,7 +11509,7 @@ Select Bot Settings:
 					if (!s || Date.now() - s.at > 300000) return m.reply("Belum ada riddle aktif.");
 					const j = (text || "").trim().toLowerCase();
 					delete global.riddleState[m.sender];
-					return j === s.jawaban.toLowerCase() ? m.reply("Benar!") : m.reply(`Salah. Jawabannya *${s.jawaban}*.`);
+					return cocokJawaban(j, s.jawaban) ? m.reply("Benar!") : m.reply(`Salah. Jawabannya *${s.jawaban}*.`);
 				}
 				break;
 			case "gameharian":
