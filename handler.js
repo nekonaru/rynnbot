@@ -1,4 +1,5 @@
 import "./settings.js";
+import { normJid, catatJuara, papanJuara, beriPoinJuara, klasemenLigaDariMesin, skorGameTerpadu, aktivitasTerpadu, formatJadwal, ringkasanJuara } from "./lib/v20/integrasi.js";
 import { buatKejuaraan, catatHasil as catatHasilMesin, klasemen as klasemenMesin, jadwalkan as jadwalkanMesin, formatRingkas as formatRingkasMesin, formatKlasemen as formatKlasemenMesin, pertandinganTersedia } from "./lib/turnamen-mesin.js";
 import { catatLog } from "./lib/log-terstruktur.js";
 import { aman as pathAman, daftarAman } from "./lib/path-aman.js";
@@ -10717,7 +10718,12 @@ Select Bot Settings:
 							if (!isCreator && !m.isAdmin) return m.reply(global.mess.admin);
 							if (!sisa[3]) return m.reply("Contoh: .turnamen2 mesin hasil A B A");
 							const hasil = catatHasilMesin(kejuaraan, { a: sisa[1], b: sisa[2], pemenang: sisa[3] });
-							if (hasil.selesai) delete global.turnamenMesin[m.chat];
+							if (hasil.selesai) {
+							const jidJuara = normJid(kejuaraan.juara);
+							catatJuara(db, kejuaraan, jidJuara, m.chat);
+							beriPoinJuara(db, jidJuara);
+							delete global.turnamenMesin[m.chat];
+						}
 							return hasil.ok ? m.reply(hasil.selesai ? `Turnamen selesai. Juara: *${kejuaraan.juara}*` : "Hasil dicatat.") : m.reply(hasil.alasan);
 						}
 						if (aksi === "klasemen") return kirimRespons(m, { judul: "Klasemen", isi: formatKlasemenMesin(kejuaraan) });
@@ -10725,7 +10731,7 @@ Select Bot Settings:
 							const j = jadwalkanMesin(kejuaraan, sisa[1], sisa[2], sisa.slice(3).join(" "));
 							return j ? m.reply(`Jadwal ${sisa[1]} vs ${sisa[2]} dicatat.`) : m.reply("Contoh: .turnamen2 mesin jadwal A B 19:00");
 						}
-						if (aksi === "lihat") return kirimRespons(m, { judul: "Turnamen mesin", isi: formatRingkasMesin(kejuaraan), catatan: `Jadwal: ${kejuaraan.jadwal.length} entri` });
+						if (aksi === "lihat") return kirimRespons(m, { judul: "Turnamen mesin", isi: formatRingkasMesin(kejuaraan), catatan: formatJadwal(kejuaraan) });
 						const tersedia = pertandinganTersedia(kejuaraan);
 						return kirimRespons(m, {
 							judul: "Pertandingan berikutnya",
@@ -10811,15 +10817,17 @@ Select Bot Settings:
 						return x ? m.reply(`Jadwal melawan ${sisa[0]} dicatat.`) : m.reply("Gagal mencatat jadwal.");
 					}
 					if (sub === "skor" || sub === "klasemen") {
-						return kirimRespons(m, { judul: `Klasemen ${l.nama}`, isi: formatKlasemen(l) });
+						const mesin = global.turnamenMesin?.[m.chat];
+						const mesinLiga = mesin && l.nama && String(mesin.nama || "").toLowerCase().includes(String(l.nama).toLowerCase());
+						return mesinLiga ? kirimRespons(m, { judul: `Klasemen ${l.nama}`, isi: klasemenLigaDariMesin(mesin) }) : kirimRespons(m, { judul: `Klasemen ${l.nama}`, isi: formatKlasemen(l) });
 					}
 					return m.reply(".liga2 buat [nama]\n.liga2 anggota @nama\n.liga2 transfer @dari @ke @pemain\n.liga2 jadwal <lawan> <waktu>\n.liga2 skor");
 				}
 				break;
 			case "juaraboards":
 				{
-					const a = arsipTurnamen(db, m.chat);
-					return kirimRespons(m, { judul: "Papan juara", isi: a.length ? a.map((x, i) => `${i + 1}. ${x.nama}: @${x.juara}`).join("\n") : formatKosong() });
+					const a = papanJuara(db).filter((x) => !m.isGroup || x.chat === m.chat);
+					return kirimRespons(m, { judul: "Papan juara", isi: ringkasanJuara(a) });
 				}
 				break;
 			case "bagiacak":
@@ -11296,7 +11304,7 @@ Select Bot Settings:
 					const role = isCreator ? "owner" : m.isAdmin ? "admin" : isVip ? "vip" : isPremium ? "premium" : "free";
 					return kirimRespons(m, {
 						judul: "Identitas",
-						isi: `- Nama: @${m.sender.split("@")[0]}\n- Role: ${role}\n- Bio: ${u.bio || "(kosong)"}\n- Level: ${progresLevel(xpDari(u)).level}\n- Lencana: ${(u.badge || []).length}`,
+						isi: `- Nama: @${m.sender.split("@")[0]}\n- Role: ${role}\n- Bio: ${u.bio || "(kosong)"}\n- Level: ${progresLevel(xpDari(u)).level}\n- Lencana: ${aktivitasTerpadu(u).badge}`,
 					});
 				}
 				break;
@@ -11578,15 +11586,18 @@ Select Bot Settings:
 			case "quizturnamen":
 				{
 					if (!m.isGroup) return m.reply(global.mess.group);
-					const t = buatTurnamen(db, m.chat, "Turnamen Kuis", "single", []);
-					return m.reply(`Turnamen kuis *${t.id}* dibuat. Gunakan .turnamen2 tambah @nama untuk daftar.`);
+					const peserta = (m.mentionedJid || []).map((j) => "@" + j.split("@")[0]);
+					const kejuaraan = buatKejuaraan({ nama: "Turnamen Kuis", mode: "roundrobin", peserta });
+					if (!kejuaraan) return m.reply("Tag minimal dua peserta.");
+					global.turnamenMesin = global.turnamenMesin || {};
+					global.turnamenMesin[m.chat + ":quiz"] = kejuaraan;
+					return m.reply(`Turnamen kuis *${kejuaraan.id}* dibuat. Gunakan .turnamen2 mesin lanjut.`);
 				}
 				break;
 			case "rekapgame":
 				{
 					const hit = global.db?.hit || {};
-					const daftar = ["quiz", "soal", "hangman", "slot", "turnamen", "wordle", "sudoku", "game2048"];
-					return kirimRespons(m, { judul: "Rekap game", isi: daftar.map((g) => `- .${g}: ${(hit[g] || 0).toLocaleString("id-ID")}x`).join("\n") });
+					return kirimRespons(m, { judul: "Rekap game", isi: skorGameTerpadu(hit).map((g) => `- .${g.nama}: ${g.jumlah.toLocaleString("id-ID")}x`).join("\n") || formatKosong() });
 				}
 				break;
 			case "kosakataharian":
@@ -12357,8 +12368,12 @@ Select Bot Settings:
 			case "wordleturnamen":
 				{
 					if (!m.isGroup) return m.reply(global.mess.group);
-					const t = buatTurnamen(db, m.chat, "Turnamen Wordle", "single", []);
-					return m.reply(`Turnamen Wordle *${t.id}* dibuat. Tambah peserta lewat .turnamen2 tambah @nama.`);
+					const peserta = (m.mentionedJid || []).map((j) => "@" + j.split("@")[0]);
+					const kejuaraan = buatKejuaraan({ nama: "Turnamen Wordle", mode: "single", peserta });
+					if (!kejuaraan) return m.reply("Tag minimal dua peserta.");
+					global.turnamenMesin = global.turnamenMesin || {};
+					global.turnamenMesin[m.chat + ":wordle"] = kejuaraan;
+					return m.reply(`Turnamen Wordle *${kejuaraan.id}* dibuat. Gunakan .turnamen2 mesin lanjut.`);
 				}
 				break;
 			case "rankinggame":

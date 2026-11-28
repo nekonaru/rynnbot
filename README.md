@@ -130,6 +130,7 @@ Berbasis Hitori Bot karya [Nazedev](https://github.com/nazedev/hitori), yang dir
 | Menu & Umum | **Pendalaman v17** | Audit router dan state di CI, transaksi uang terpusat, bracket double elimination, jawaban game seragam, domain blokir di semua jalur jaringan |
 | Menu & Umum | **Dokumentasi otomatis v18** | `docs/COMMANDS.md` dihasilkan dari registry lewat `npm run docs:gen` |
 | Menu & Umum | **Mesin turnamen v19** | `.turnamen2 mesin buat\|lanjut\|hasil\|klasemen\|jadwal\|lihat` dengan single, double, dan round robin |
+| Menu & Umum | **Penyatuan v20** | Liga, kuis, dan wordle memakai mesin turnamen yang sama; juara dan poin tercatat otomatis |
 | Menu & Umum | **Audit dan optimalisasi v11.2** | Antrean per user, state game tanpa kebocoran, konfirmasi transfer batch, akses alias, import berat ditunda, Levenshtein dua baris, cache statistik rumus, dan ffmpeg non-blokir |
 | Menu & Umum | **Eksplorasi perintah** | `.explore`, `.randomcmd`, `.riwayat`, `.shortcut`, `.pintasan`, `.dataset`, `.rekomendasi` |
 | Menu & Umum | **Produktivitas chat** | `.todo` (tugas pribadi), `.catatancari`, `.peraturan`, `.icebreak`, `.tabel` |
@@ -618,6 +619,10 @@ Semua perintah memakai prefix default `.` `!` atau `+` (atur di `settings.js`).
 | `.ekonomi` | Ringkasan harga limit, hadiah, dan saldo |
 | `.gameinfo` | Cooldown dan aturan game (daily, rampok, begal, slot, casino, samgong) |
 | `.panduan` | Panduan singkat mulai pakai Rynn |
+| `.liga2 skor` | Klasemen liga dari mesin turnamen |
+| `.quizturnamen` / `.wordleturnamen` | Turnamen memakai mesin yang sama |
+| `.juaraboards` | Papan juara terpusat |
+| `.rekapgame` / `.identitas` | Skor dan aktivitas dari satu sumber |
 | `.turnamen2 mesin buat roundrobin Liga` (tag peserta) | Buat turnamen dengan mesin baru |
 | `.turnamen2 mesin lanjut` | Lihat pertandingan berikutnya |
 | `.turnamen2 mesin hasil A B A` | Catat hasil dan lanjutkan bracket |

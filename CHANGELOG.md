@@ -1,5 +1,37 @@
 # Changelog
 
+## v20.0.0
+
+﻿## v20.0.0
+
+Rynn v20.0.0 menyatukan fitur yang sudah ada di bawah satu sumber data. Tidak ada kategori perintah baru. Mesin turnamen dari v19 kini dipakai juga oleh liga, kuis, dan wordle.
+
+### Penyatuan
+
+- `lib/v20/integrasi.js` menjadi jembatan antara turnamen, liga, kuis, wordle, poin, lencana, dan papan juara.
+- `.liga2 skor` memakai klasemen mesin turnamen bila turnamen mesin aktif di grup.
+- `.quizturnamen` memakai mode round robin pada mesin yang sama.
+- `.wordleturnamen` memakai mode single pada mesin yang sama.
+- `.juaraboards` menampilkan juara dari catatan terpusat lengkap dengan mode dan jumlah peserta.
+- `.rekapgame` memakai satu sumber skor game yang sama dengan pencatatan kemenangan.
+- `.identitas` menampilkan ringkasan aktivitas dari poin, skor belajar, koleksi, lencana, dan riwayat.
+- `.turnamen2 mesin lihat` menampilkan jadwal pertandingan yang tercatat.
+- Saat turnamen selesai, juara dan poin dicatat otomatis, lalu state grup dibersihkan.
+
+### Audit
+
+- 5 tes unit baru di `test/v20.test.js`. Total **228 tes lolos**.
+- `npm run check` lolos (260 file).
+- Coverage: 91,46 persen baris, 75,21 persen cabang, 90,08 persen fungsi.
+- Audit router: 1087 case, 812 perintah menu, nol duplikat, nol menu tanpa case.
+
+### Batas
+
+- Tidak menambah kategori perintah, fitur waktu, kesehatan, atau Islami.
+- Skor dan hadiah adalah simulasi bot.
+- Review independen menemukan lima masalah, semuanya diperbaiki sebelum rilis, termasuk juara berupa nomor polos yang tidak cocok dengan kunci JID, turnamen kuis dan wordle yang menimpa state turnamen aktif, serta papan juara yang menampilkan entri lintas grup.
+- Tidak menambah dependency berat.
+
 ## v19.0.0
 
 ﻿## v19.0.0
