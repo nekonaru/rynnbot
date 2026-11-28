@@ -93,6 +93,8 @@ test("orkestrasi membaca manifest dan registry", async () => {
 	const s = orkestrasi.statusModul();
 	assert.equal(s.sehat, s.total);
 	assert.equal(orkestrasi.ambilModul("penjadwal").berkas, "lib/v24/penjadwal.js");
+	assert.equal(orkestrasi.ambilModul("penjadwal").jumlahPerintah, 10);
+	assert.equal(orkestrasi.ambilModul("orkestrasi").jumlahPerintah, 6);
 	assert.equal(orkestrasi.urutanModul().length, semua.length);
 	assert.ok(orkestrasi.ketergantungan().some((x) => x.includes("registry")));
 	assert.ok(orkestrasi.ringkasModul().every((x) => x.startsWith("- ")));
@@ -118,6 +120,41 @@ test("indeks otomasi menggabungkan seluruh subsystem", () => {
 	const h = indeks.hentikanSemua(db);
 	assert.equal(h.tugas, 4);
 	assert.equal(aturan.ambil(db, a.nama).aktif, false);
+});
+
+test("batas jumlah aturan workflow dan templat ditegakkan", () => {
+	const db = {};
+	for (let i = 0; i < 35; i++) aturan.buat(db, "aturan-" + i);
+	assert.equal(Object.keys(db.aturanOtomasi).length, 30);
+	assert.equal(aturan.daftar(db).length, 30);
+	assert.equal(aturan.buat(db, "lebih"), null);
+	for (let i = 0; i < 35; i++) workflow.buat(db, "workflow-" + i);
+	assert.equal(workflow.daftar(db).length, 30);
+	assert.equal(templat.simpanTemplat(db, "tidak-ada", "cleanup-state"), null);
+	aturan.hapus(db, "aturan-0");
+	const a = aturan.buat(db, "sumber-templat");
+	aturan.aturSyarat(db, a.nama, "peristiwa", "sama", "pesan");
+	aturan.aturAksi(db, a.nama, "catat_log", "satu");
+	assert.equal(templat.simpanTemplat(db, a.nama, "cleanup-state"), null);
+	assert.ok(templat.simpanTemplat(db, a.nama, "buatan"));
+	assert.equal(templat.simpanTemplat(db, a.nama, "buatan"), null);
+	assert.equal(templat.hapusTemplat(db, "cleanup-state"), false);
+	assert.ok(templat.hapusTemplat(db, "buatan"));
+});
+
+test("eksekutor otomasi mencatat aksi nyata", () => {
+	const db = {};
+	event.pasang(db, "user_baru", "catat_log", "sambut");
+	assert.equal(indeks.jalankanEventNyata(db, "user_baru").length, 1);
+	assert.equal(db.eventRiwayat.length, 1);
+	assert.equal(db.otomasiLog.length, 1);
+	const a = aturan.buat(db, "tanda");
+	aturan.aturSyarat(db, "tanda", "peristiwa", "sama", "pesan");
+	aturan.aturAksi(db, "tanda", "tandai_user", "ditandai");
+	assert.equal(indeks.evaluasiAturanNyata(db, { peristiwa: "pesan", sender: "1@s.whatsapp.net" }).length, 0);
+	aturan.setAktif(db, "tanda", true);
+	assert.equal(indeks.evaluasiAturanNyata(db, { peristiwa: "pesan", sender: "1@s.whatsapp.net" }).length, 1);
+	assert.equal(db.users["1@s.whatsapp.net"].tandaOtomasi, true);
 });
 
 test("perintah v24 terdaftar sebagai owner", () => {

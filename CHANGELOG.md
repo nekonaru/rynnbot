@@ -15,6 +15,7 @@ Rynn v24.0.0 menambahkan sistem otomasi internal untuk owner. Kelompok fitur lai
 - 8 perintah event untuk memasang, melihat, melepas, mematikan, mengaktifkan, menguji, dan melihat riwayat aksi.
 - 8 perintah aturan dengan operator sama, mengandung, diawali, lebih, dan kurang. Aksi berasal dari daftar tertutup, tanpa eksekusi kode bebas.
 - `.aturanuji` dan `.eventuji` berjalan dalam mode kering tanpa efek samping.
+- Eksekusi nyata dipasang pada pesan masuk, perintah dikenal, user baru masuk grup, dan tugas selesai. Aksi tetap berasal dari daftar tertutup.
 
 ### Workflow dan templat
 
@@ -29,16 +30,20 @@ Rynn v24.0.0 menambahkan sistem otomasi internal untuk owner. Kelompok fitur lai
 
 ### Arsitektur
 
-- Enam modul murni baru di `lib/v24/`: penjadwal, event, aturan, workflow, templat, orkestrasi, plus indeks otomasi.
+- Delapan berkas modul murni di `lib/v24/`: penjadwal, event, aturan, workflow, templat, orkestrasi, eksekutor, dan indeks otomasi.
 - Semua state dibatasi ukurannya. Audit dibatasi 100 entri, riwayat tugas 20, dan daftar aturan serta workflow 30.
 
 ### Audit
 
-- 8 tes unit baru di `test/v24.test.js`. Total **252 tes lolos**.
-- `npm run check` lolos (279 file).
-- Coverage: 92,10 persen baris, 75,28 persen cabang, 90,59 persen fungsi.
+- 8 tes unit baru di `test/v24.test.js`. Total **254 tes lolos**.
+- `npm run check` lolos (281 file).
+- Coverage: 92,13 persen baris, 75,49 persen cabang, 90,64 persen fungsi.
 - Audit router: 1237 case, 962 perintah menu, nol duplikat, nol menu tanpa case.
 - Audit menu: 962 perintah, 14 kategori, nol kategori asing.
+
+### Review
+
+Review independen menemukan enam masalah, semuanya diperbaiki sebelum rilis, termasuk batas 30 aturan yang tidak ditegakkan, event yang belum dieksekusi pada peristiwa nyata, dan templat buatan yang menimpa templat bawaan.
 
 ### Batas
 

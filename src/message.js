@@ -1,5 +1,6 @@
 import "../settings.js";
 import { jalankanBerkunci } from "../lib/antrian.js";
+import { jalankanEventNyata } from "../lib/v24/indeks.js";
 import fs from "fs";
 import path from "path";
 import chalk from "chalk";
@@ -484,6 +485,10 @@ async function GroupParticipantsUpdate(sock, update, store) {
 
 			let messageText;
 			if (action === "add") {
+				if (global.db) {
+					const otomasi = jalankanEventNyata(global.db, "user_baru", { sender: displayJids[0] || jids[0], chat: id });
+					for (const a of otomasi) if (a.tipe === "balas") await sock.sendMessageV3(id, { text: a.teks }).catch(() => {});
+				}
 				if (global.db.groups[id]?.welcome) messageText = global.db.groups[id]?.text?.setwelcome || `Welcome to ${metadata.subject}\n@`;
 				const hasMissingParticipant = jids.some((jid) => !metadata.participants.find((a) => a.id == jidNormalizedUser(jid)));
 				if (hasMissingParticipant) {

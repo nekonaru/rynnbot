@@ -1,5 +1,5 @@
 import "./settings.js";
-import { ringkasan as otomasiRingkasan, validasi as otomasiValidasi, kering as otomasiKering, batas as otomasiBatas, izin as otomasiIzin, catatAudit as otomasiCatat, audit as otomasiAudit, hentikanSemua as otomasiHentikan, penjadwal, event as eventOtomasi, aturan as aturanOtomasi, workflow as workflowOtomasi, templat as templatOtomasi, orkestrasi } from "./lib/v24/indeks.js";
+import { ringkasan as otomasiRingkasan, validasi as otomasiValidasi, kering as otomasiKering, batas as otomasiBatas, izin as otomasiIzin, catatAudit as otomasiCatat, audit as otomasiAudit, hentikanSemua as otomasiHentikan, penjadwal, event as eventOtomasi, aturan as aturanOtomasi, workflow as workflowOtomasi, templat as templatOtomasi, orkestrasi, jalankanEventNyata, evaluasiAturanNyata } from "./lib/v24/indeks.js";
 import { datasetV23, ambilDataset, cariDataset, totalV23 } from "./lib/data-v23/indeks.js";
 import { daftarJenis, daftarMakanan, daftarObat, adopsi, gantiNama, beriMakan, minum, main, latih, istirahat, mandi, obat, beliBarang, evolusi, statusPet, papanPet, lepasPet } from "./lib/v22/pet.js";
 import { daftarBenih, daftarHasil, buatKebun, beliBenih, tanam, rawat, cekHama, panen, jualHasil, olah, perluas, ternak, panenTernak, statusKebun, papanKebun, bongkar } from "./lib/v22/kebun.js";
@@ -480,6 +480,11 @@ const sock = async (sock, m, store) => {
 
 		const quoted = m.quoted ? m.quoted : m;
 		const text = (global.q = args.join(" "));
+		const otomasiHasil = [
+			...jalankanEventNyata(db, isCmd ? "perintah" : "pesan", { sender: m.sender, chat: m.chat }),
+			...evaluasiAturanNyata(db, { peristiwa: isCmd ? "perintah" : "pesan", command, role: isCreator ? "owner" : "semua", teks: budy, pengirim: m.sender, grup: m.chat }),
+		];
+		for (const a of otomasiHasil) if (a.tipe === "balas") m.reply(a.teks);
 		const mime = (quoted.msg || quoted).mimetype || "";
 		const qmsg = quoted.msg || quoted;
 		const author = (set.author = global.author || "Nekonaruu");
@@ -14051,6 +14056,8 @@ Select Bot Settings:
 					const t = penjadwal.catatJalan(db, mt[0], true);
 					if (!t) return m.reply("Tugas tidak ditemukan.");
 					otomasiCatat(db, "jalankan-tugas", t.nama);
+					const selesai = jalankanEventNyata(db, "tugas_selesai", { sender: m.sender, chat: m.chat });
+					for (const a of selesai) if (a.tipe === "balas") m.reply(a.teks);
 					return m.reply(`Eksekusi tugas *${t.nama}* dicatat.`);
 				}
 				break;
