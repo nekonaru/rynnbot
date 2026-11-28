@@ -15587,7 +15587,7 @@ Select Bot Settings:
 			case "laporanberhenti":
 				{
 					const mt = (text || "").trim().split(/\s+/);
-					if (mt[1] !== "confirm") return m.reply("Ketik .laporanberhenti  confirm");
+					if (args[0] !== "confirm") return m.reply("Ketik .laporanberhenti confirm");
 					const hasil = laporanV26.berhenti(db, m.sender);
 					return hasil ? m.reply("Jadwal laporan dihentikan.") : m.reply("Gagal.");
 				}
@@ -15699,7 +15699,7 @@ Select Bot Settings:
 
 			case "gamehadiah":
 				{
-					const hasil = gameV26.hadiah(db, m.sender, Number(args[0]));
+					const hasil = gameV26.hadiah(db, m.sender);
 					return hasil === null || hasil === undefined ? m.reply("Data tidak tersedia.") : kirimRespons(m, { judul: "Hadiah game", isi: String(hasil) });
 				}
 				break;
@@ -15707,7 +15707,7 @@ Select Bot Settings:
 			case "gamemberi":
 				{
 					const mt = (text || "").trim().split(/\s+/);
-					if (mt[1] !== "confirm") return m.reply("Ketik .gamemberi [jid] [jumlah] confirm");
+					if (args[2] !== "confirm") return m.reply("Ketik .gamemberi [jid] [jumlah] confirm");
 					const hasil = gameV26.beri(db, m.sender, args[0], Number(args[1]));
 					return hasil ? m.reply("Poin diberikan.") : m.reply("Gagal.");
 				}
@@ -15781,22 +15781,28 @@ Select Bot Settings:
 
 			case "mediakartu":
 				{
+					const u = db.users[m.sender] || (db.users[m.sender] = {});
 					const hasil = mediaV26.kartu(args[0], args.slice(1).join(' '));
-					return m.reply(hasil === null || hasil === undefined ? "Data tidak tersedia." : String(hasil));
+					const simpan = mediaV26.simpan(u, 'kartu', hasil);
+					return m.reply(`${String(hasil)}\n\nID: ${simpan?.id || '-'}`);
 				}
 				break;
 
 			case "mediaposter":
 				{
+					const u = db.users[m.sender] || (db.users[m.sender] = {});
 					const hasil = mediaV26.poster(args[0], args.slice(1).join(' '), 'ungu');
-					return m.reply(hasil === null || hasil === undefined ? "Data tidak tersedia." : String(hasil));
+					const simpan = mediaV26.simpan(u, 'poster', hasil);
+					return m.reply(`${String(hasil)}\n\nID: ${simpan?.id || '-'}`);
 				}
 				break;
 
 			case "mediastiker":
 				{
+					const u = db.users[m.sender] || (db.users[m.sender] = {});
 					const hasil = mediaV26.stiker(text);
-					return kirimRespons(m, { judul: "Stiker", isi: ringkasV26(hasil) || formatKosong() });
+					const simpan = mediaV26.simpan(u, 'stiker', JSON.stringify(hasil));
+					return kirimRespons(m, { judul: "Stiker", isi: ringkasV26(hasil) || formatKosong(), footer: `ID: ${simpan?.id || '-'}` });
 				}
 				break;
 
@@ -15810,8 +15816,10 @@ Select Bot Settings:
 
 			case "mediaanimasi":
 				{
+					const u = db.users[m.sender] || (db.users[m.sender] = {});
 					const hasil = mediaV26.animasi(args[0], Number(args[1]));
-					return kirimRespons(m, { judul: "Animasi", isi: ringkasV26(hasil) || formatKosong() });
+					const simpan = mediaV26.simpan(u, 'animasi', JSON.stringify(hasil));
+					return kirimRespons(m, { judul: "Animasi", isi: ringkasV26(hasil) || formatKosong(), footer: `ID: ${simpan?.id || '-'}` });
 				}
 				break;
 

@@ -54,12 +54,13 @@ test("game moderasi dan media membatasi state", () => {
 	assert.equal(Array.isArray(game.rekor(db.users.a)), true);
 	game.latihan(db.users.a, "catur");
 	assert.equal(Array.isArray(game.papan(db)), true);
-	assert.ok(game.hadiah(db, "a", 5));
+	assert.ok(game.hadiah(db, "a"));
+	assert.equal(game.hadiah(db, "a"), null, "hadiah game cukup sekali sehari");
 	assert.ok(game.beri(db, "a", "b", 3));
 
 	assert.equal(typeof moderasi.aturan(db, "c"), "string");
 	assert.ok(moderasi.peringatan(db, "c", "b", "spam"));
-	assert.ok(moderasi.mute(db, "c", "b", 5));
+	assert.ok(moderasi.mute({ ...db, groups: { c: {} } }, "c", "b", 5));
 	assert.equal(moderasi.unmute(db, "c", "b"), true);
 	assert.equal(Array.isArray(moderasi.log(db, "c")), true);
 	assert.equal(typeof moderasi.statistik(db, "c"), "object");
@@ -87,6 +88,9 @@ test("profil dan bot aman", () => {
 	assert.equal(typeof profil.bahasa(u, "id"), "string");
 	const cad = profil.cadangan(u);
 	assert.equal(typeof cad, "object");
+	u.money = 0;
+	assert.equal(profil.pulihkan(u, cad.kode || Object.keys(u.cadanganV26 || {})[0]), true);
+	assert.equal(u.money, 0, "pemulihan tidak boleh mengembalikan saldo");
 	assert.equal(typeof bot.diagnosis(globalThis, db), "object");
 	assert.equal(Array.isArray(bot.metrik(db)), true);
 	assert.equal(Array.isArray(bot.panas(db)), true);
@@ -140,7 +144,7 @@ test("jalan alternatif modul v26 tidak melempar", () => {
 		game.rekor(null);
 		game.latihan({}, "");
 		game.papan({});
-		game.hadiah({}, "a", 0);
+		game.hadiah({}, "a");
 		game.beri({}, "a", "b", 0);
 	});
 	assert.doesNotThrow(() => {
@@ -203,10 +207,13 @@ test("bentuk data alternatif v26", () => {
 	assert.equal(game.rekor({ rekorGame: [{ game: "x", skor: 2 }] }).length, 1);
 	const papan = game.papan({ users: { a: { skorGameTerpadu: [{ jumlah: 9 }] }, b: { skor: "5" }, c: { skorGameTerpadu: { x: 4 } } } });
 	assert.equal(papan.length >= 2, true);
-	assert.equal(game.hadiah({ users: { a: {} } }, "a", -1), null);
+	assert.equal(game.hadiah({ users: { a: {} } }, "a").nominal, 50);
 
 	const galeri = { mediaV26: [{ id: "A" }, { id: "B" }] };
 	assert.equal(media.galeri(galeri).length > 0, true);
+	assert.ok(media.simpan(galeri, "poster", "isi"));
+	assert.equal(media.simpan(null, "x", "y"), null);
+	assert.equal(media.simpan({}, "x", "y").jenis, "x");
 	assert.equal(media.hapus(galeri, "A"), true);
 	const peta = { mediaV26: { C: { id: "C" } } };
 	assert.equal(media.hapus(peta, "C"), true);

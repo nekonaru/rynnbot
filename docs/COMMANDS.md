@@ -313,13 +313,13 @@ Total 1141 perintah dalam 14 kategori.
 | `.koperasirapat` | `.koperasirapat([nama] Ringkasan koperasi)` | semua | 0 |
 | `.koperasitutup` | `.koperasitutup([nama] Tutup koperasi)` | semua | 0 |
 | `.tokostok` | `.tokostok([nama] Stok toko)` | semua | 0 |
-| `.tokorestok` | `.tokorestok([nama] [jumlah] Restok)` | owner | 0 |
-| `.tokoharga` | `.tokoharga([nama] [nominal] Atur harga)` | owner | 0 |
-| `.tokodiskon` | `.tokodiskon([nama] [persen] Atur diskon)` | owner | 0 |
+| `.tokorestok` | `.tokorestok([nama] [jumlah] Restok)` | admin | 0 |
+| `.tokoharga` | `.tokoharga([nama] [nominal] Atur harga)` | admin | 0 |
+| `.tokodiskon` | `.tokodiskon([nama] [persen] Atur diskon)` | admin | 0 |
 | `.tokobeli` | `.tokobeli([nama] [jumlah] Beli barang)` | semua | 0 |
-| `.tokobjual` | `.tokobjual([nama] [jumlah] Jual barang)` | owner | 0 |
+| `.tokobjual` | `.tokobjual([nama] [jumlah] Jual barang)` | admin | 0 |
 | `.tokohlaporan` | `.tokohlaporan(Laporan toko)` | semua | 0 |
-| `.tokoktutup` | `.tokoktutup([nama] Tutup toko)` | owner | 0 |
+| `.tokoktutup` | `.tokoktutup([nama] Tutup toko)` | admin | 0 |
 | `.kebunbuat` | `.kebunbuat` | semua | 0 |
 | `.kebunlihat` | `.kebunlihat` | semua | 0 |
 | `.kebunbenih` | `.kebunbenih` | semua | 0 |
@@ -386,13 +386,13 @@ Total 1141 perintah dalam 14 kategori.
 | `.sisaanggaran` | `.sisaanggaran` | semua | 0 |
 | `.topdompet` | `.topdompet` | semua | 0 |
 | `.rekening` | `.rekening` | semua | 0 |
-| `.arisan` | `.arisan` | owner | 0 |
+| `.arisan` | `.arisan` | admin | 0 |
 | `.kreditskor` | `.kreditskor` | semua | 0 |
 | `.asuransiklaim` | `.asuransiklaim` | semua | 0 |
 | `.pajaksimulasi` | `.pajaksimulasi` | semua | 0 |
 | `.grafikpengeluaran` | `.grafikpengeluaran` | semua | 0 |
 | `.pendapatanharian` | `.pendapatanharian` | semua | 0 |
-| `.donasikampanye` | `.donasikampanye` | owner | 0 |
+| `.donasikampanye` | `.donasikampanye` | admin | 0 |
 | `.tebaktokoh` | `.tebaktokoh` | semua | 0 |
 | `.tebaktokohjawab` | `.tebaktokohjawab` | semua | 0 |
 | `.portofolio` | `.portofolio` | semua | 0 |
@@ -404,9 +404,9 @@ Total 1141 perintah dalam 14 kategori.
 | `.inflasisimulasi` | `.inflasisimulasi` | semua | 0 |
 | `.warisansimulasi` | `.warisansimulasi` | semua | 0 |
 | `.hadiahpoin` | `.hadiahpoin` | owner | 0 |
-| `.toko` | `.toko` | owner | 0 |
-| `.lelang` | `.lelang` | owner | 0 |
-| `.kursus` | `.kursus` | owner | 0 |
+| `.toko` | `.toko` | admin | 0 |
+| `.lelang` | `.lelang` | admin | 0 |
+| `.kursus` | `.kursus` | admin | 0 |
 | `.koperasi` | `.koperasi` | grup | 0 |
 | `.anggaran` | `.anggaran` | semua | 0 |
 | `.pengeluaran` | `.pengeluaran` | semua | 0 |
@@ -586,8 +586,8 @@ Total 1141 perintah dalam 14 kategori.
 | `.presensi` | `.presensi` | grup | 0 |
 | `.kuorum` | `.kuorum` | grup | 0 |
 | `.moderasi` | `.moderasi` | grup | 0 |
-| `.autoreply` | `.autoreply` | owner | 0 |
-| `.autotag` | `.autotag` | owner | 0 |
+| `.autoreply` | `.autoreply` | admin | 0 |
+| `.autotag` | `.autotag` | admin | 0 |
 | `.daftargroup` | `.daftargroup` | owner | 0 |
 | `.agendaminggu` | `.agendaminggu` | semua | 0 |
 | `.tugastambah` | `.tugastambah` | semua | 0 |
@@ -595,8 +595,8 @@ Total 1141 perintah dalam 14 kategori.
 | `.peringatan` | `.peringatan` | semua | 0 |
 | `.peringatanlist` | `.peringatanlist` | semua | 0 |
 | `.moderasiskor` | `.moderasiskor` | semua | 0 |
-| `.adminlog` | `.adminlog` | owner | 0 |
-| `.sapagrup` | `.sapagrup` | owner | 0 |
+| `.adminlog` | `.adminlog` | admin | 0 |
+| `.sapagrup` | `.sapagrup` | admin | 0 |
 | `.cattag` | `.cattag` | semua | 0 |
 | `.agendaekspor` | `.agendaekspor` | semua | 0 |
 | `.absenbulanan` | `.absenbulanan` | semua | 0 |
@@ -654,8 +654,8 @@ Total 1141 perintah dalam 14 kategori.
 | `.delsampah` | `.delsampah` | owner | 0 |
 | `.upsw` | `.upsw` | owner | 0 |
 | `.kickall` | `.kickall` | owner | 0 |
-| `.matikan` | `.matikan` | owner | 0 |
-| `.hidupkan` | `.hidupkan` | owner | 0 |
+| `.matikan` | `.matikan` | admin | 0 |
+| `.hidupkan` | `.hidupkan` | admin | 0 |
 | `.envstatus` | `.envstatus` | owner | 0 |
 | `.setmotd` | `.setmotd` | owner | 0 |
 
@@ -663,14 +663,14 @@ Total 1141 perintah dalam 14 kategori.
 
 | Perintah | Contoh | Role | Biaya limit |
 |---|---|---|---|
-| `.moderatoraturan` | `.moderatoraturan(Aturan grup)` | owner | 0 |
-| `.moderasipingatan` | `.moderasipingatan([jid] [alasan] Peringatan)` | owner | 0 |
-| `.moderatemute` | `.moderatemute([jid] [menit] Mute)` | owner | 0 |
-| `.moderasiunmute` | `.moderasiunmute([jid] Unmute)` | owner | 0 |
-| `.moderasilog` | `.moderasilog(Log moderasi)` | owner | 0 |
-| `.moderasistatistik` | `.moderasistatistik(Statistik moderasi)` | owner | 0 |
-| `.moderasiauto` | `.moderasiauto([on|off] Moderasi otomatis)` | owner | 0 |
-| `.moderasiuji` | `.moderasiuji([teks] Uji aturan)` | owner | 0 |
+| `.moderatoraturan` | `.moderatoraturan(Aturan grup)` | admin | 0 |
+| `.moderasipingatan` | `.moderasipingatan([jid] [alasan] Peringatan)` | admin | 0 |
+| `.moderatemute` | `.moderatemute([jid] [menit] Mute)` | admin | 0 |
+| `.moderasiunmute` | `.moderasiunmute([jid] Unmute)` | admin | 0 |
+| `.moderasilog` | `.moderasilog(Log moderasi)` | admin | 0 |
+| `.moderasistatistik` | `.moderasistatistik(Statistik moderasi)` | admin | 0 |
+| `.moderasiauto` | `.moderasiauto([on|off] Moderasi otomatis)` | admin | 0 |
+| `.moderasiuji` | `.moderasiuji([teks] Uji aturan)` | admin | 0 |
 | `.sesihapus` | `.sesihapus` | owner | 0 |
 | `.akseswarisan` | `.akseswarisan` | owner | 0 |
 | `.bungapinjam` | `.bungapinjam` | owner | 0 |
@@ -722,10 +722,10 @@ Total 1141 perintah dalam 14 kategori.
 | `.proyekanggota` | `.proyekanggota([nama] Anggota proyek)` | semua | 0 |
 | `.proyektenggat` | `.proyektenggat([nama] [tanggal] Atur tenggat)` | semua | 0 |
 | `.proyekarsip` | `.proyekarsip([nama] Arsip proyek)` | semua | 0 |
-| `.surveibuat` | `.surveibuat([judul] Buat survei)` | owner | 0 |
+| `.surveibuat` | `.surveibuat([judul] Buat survei)` | admin | 0 |
 | `.surveipilih` | `.surveipilih([id] [opsi] Pilih opsi)` | semua | 0 |
 | `.surveihasil` | `.surveihasil([id] Hasil survei)` | semua | 0 |
-| `.surveitutup` | `.surveitutup([id] Tutup survei)` | owner | 0 |
+| `.surveitutup` | `.surveitutup([id] Tutup survei)` | admin | 0 |
 | `.reputasilihat` | `.reputasilihat(Lihat reputasi)` | semua | 0 |
 | `.reputasiberi` | `.reputasiberi([jid] [jumlah] Beri reputasi)` | semua | 0 |
 | `.reputasipapan` | `.reputasipapan(Papan reputasi)` | semua | 0 |
@@ -733,7 +733,7 @@ Total 1141 perintah dalam 14 kategori.
 | `.request` | `.request(text)` | semua | 0 |
 | `.poll` | `.poll(judul | opsi1 | opsi2)` | grup | 0 |
 | `.explore` | `.explore` | semua | 0 |
-| `.peraturan` | `.peraturan` | owner | 0 |
+| `.peraturan` | `.peraturan` | admin | 0 |
 | `.icebreak` | `.icebreak` | semua | 0 |
 | `.questmingguan` | `.questmingguan` | semua | 0 |
 | `.rapat` | `.rapat` | owner | 0 |
@@ -749,20 +749,20 @@ Total 1141 perintah dalam 14 kategori.
 | `.mood` | `.mood` | semua | 0 |
 | `.moodrekap` | `.moodrekap` | semua | 0 |
 | `.teman` | `.teman` | semua | 0 |
-| `.autosalam` | `.autosalam` | owner | 0 |
+| `.autosalam` | `.autosalam` | admin | 0 |
 | `.pollhasil` | `.pollhasil` | semua | 0 |
 | `.peraturanversi` | `.peraturanversi` | semua | 0 |
 | `.bio` | `.bio` | semua | 0 |
 | `.xp` | `.xp` | semua | 0 |
-| `.badge` | `.badge` | owner | 0 |
-| `.badgeberi` | `.badgeberi` | owner | 0 |
-| `.badgehapus` | `.badgehapus` | owner | 0 |
+| `.badge` | `.badge` | admin | 0 |
+| `.badgeberi` | `.badgeberi` | admin | 0 |
+| `.badgehapus` | `.badgehapus` | admin | 0 |
 | `.guild` | `.guild` | semua | 0 |
 | `.perkenalan` | `.perkenalan` | semua | 0 |
 | `.target` | `.target` | semua | 0 |
 | `.proyek` | `.proyek` | semua | 0 |
 | `.peraturansemua` | `.peraturansemua` | grup | 0 |
-| `.tiket` | `.tiket` | owner | 0 |
+| `.tiket` | `.tiket` | admin | 0 |
 | `.faq` | `.faq` | owner | 0 |
 | `.faqtambah` | `.faqtambah` | owner | 0 |
 | `.aset` | `.aset` | semua | 0 |
@@ -773,12 +773,12 @@ Total 1141 perintah dalam 14 kategori.
 | `.ceritalanjut` | `.ceritalanjut` | semua | 0 |
 | `.ceritabaca` | `.ceritabaca` | semua | 0 |
 | `.ceritareset` | `.ceritareset` | semua | 0 |
-| `.aturan` | `.aturan` | owner | 0 |
+| `.aturan` | `.aturan` | admin | 0 |
 | `.filter` | `.filter` | owner | 0 |
 | `.poin` | `.poin` | semua | 0 |
 | `.reputasi` | `.reputasi` | semua | 0 |
 | `.tepercaya` | `.tepercaya` | owner | 0 |
-| `.keputusan` | `.keputusan` | owner | 0 |
+| `.keputusan` | `.keputusan` | admin | 0 |
 | `.notulenversi` | `.notulenversi` | grup | 0 |
 | `.proyekgrup` | `.proyekgrup` | grup | 0 |
 | `.arsip` | `.arsip` | semua | 0 |
@@ -786,10 +786,10 @@ Total 1141 perintah dalam 14 kategori.
 | `.undang` | `.undang` | semua | 0 |
 | `.referral` | `.referral` | semua | 0 |
 | `.seri` | `.seri` | semua | 0 |
-| `.survei` | `.survei` | owner | 0 |
+| `.survei` | `.survei` | admin | 0 |
 | `.inventaris` | `.inventaris` | semua | 0 |
 | `.avatar` | `.avatar` | semua | 0 |
-| `.konstitusi` | `.konstitusi` | owner | 0 |
+| `.konstitusi` | `.konstitusi` | admin | 0 |
 | `.streak` | `.streak` | semua | 0 |
 | `.quest` | `.quest` | semua | 0 |
 | `.sapaan` | `.sapaan` | semua | 0 |
@@ -1082,8 +1082,8 @@ Total 1141 perintah dalam 14 kategori.
 | `.diagnosapenuh` | `.diagnosapenuh` | owner | 0 |
 | `.xptop` | `.xptop` | semua | 0 |
 | `.komunitasstatistik` | `.komunitasstatistik` | semua | 0 |
-| `.peraturankategori` | `.peraturankategori` | owner | 0 |
-| `.lapordetail` | `.lapordetail` | owner | 0 |
+| `.peraturankategori` | `.peraturankategori` | admin | 0 |
+| `.lapordetail` | `.lapordetail` | admin | 0 |
 | `.laporanbulanan` | `.laporanbulanan` | semua | 0 |
 | `.laporantren` | `.laporantren` | semua | 0 |
 | `.laporanbanding` | `.laporanbanding` | semua | 0 |
@@ -1116,14 +1116,14 @@ Total 1141 perintah dalam 14 kategori.
 | `.turnamenunggulan` | `.turnamenunggulan(Unggulan turnamen)` | semua | 0 |
 | `.turnamenbracket` | `.turnamenbracket(Bracket turnamen)` | semua | 0 |
 | `.turnamenhasil` | `.turnamenhasil([a] [b] [pemenang] Catat hasil)` | semua | 0 |
-| `.turnamenpoin` | `.turnamenpoin([jid] [poin] Beri poin)` | owner | 0 |
+| `.turnamenpoin` | `.turnamenpoin([jid] [poin] Beri poin)` | admin | 0 |
 | `.turnamenarsip` | `.turnamenarsip(Arsip turnamen)` | semua | 0 |
 | `.lagacari` | `.lagacari([nama] Cari laga)` | semua | 0 |
 | `.lagajadwal` | `.lagajadwal([nama] Jadwal laga)` | semua | 0 |
 | `.lagapapan` | `.lagapapan(Papan laga)` | semua | 0 |
 | `.papanperingkat` | `.papanperingkat` | semua | 0 |
-| `.turnamen2` | `.turnamen2` | owner | 0 |
-| `.liga2` | `.liga2` | owner | 0 |
+| `.turnamen2` | `.turnamen2` | admin | 0 |
+| `.liga2` | `.liga2` | admin | 0 |
 | `.juaraboards` | `.juaraboards` | grup | 0 |
 | `.bagiacak` | `.bagiacak` | semua | 0 |
 | `.bagiseimbang` | `.bagiseimbang` | semua | 0 |
@@ -1136,10 +1136,10 @@ Total 1141 perintah dalam 14 kategori.
 | `.quizturnamen` | `.quizturnamen` | grup | 0 |
 | `.wordleturnamen` | `.wordleturnamen` | grup | 0 |
 | `.gametim` | `.gametim` | semua | 0 |
-| `.liga` | `.liga` | owner | 0 |
+| `.liga` | `.liga` | admin | 0 |
 | `.klasemen` | `.klasemen` | semua | 0 |
 | `.team` | `.team` | semua | 0 |
-| `.turnamen` | `.turnamen` | owner | 0 |
+| `.turnamen` | `.turnamen` | admin | 0 |
 | `.pair` | `.pair` | grup | 0 |
 
 ## UMUM

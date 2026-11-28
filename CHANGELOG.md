@@ -33,15 +33,20 @@ Rynn v26.0.0 memperdalam fitur yang sudah ada di luar area yang dikembangkan v25
 
 ### Audit
 
-- 10 tes unit baru di `test/v26.test.js`. Total **276 tes lolos**.
-- `npm run check` lolos (304 file).
-- Coverage: 92,57 persen baris, 75,08 persen cabang, 90,34 persen fungsi.
+- 9 tes unit baru di `test/v26.test.js`. Total **276 tes lolos**.
+- `npm run check` lolos (301 file).
+- Coverage: 92,64 persen baris, 75,10 persen cabang, 90,41 persen fungsi.
 - Audit router: 1416 case, 1141 perintah menu, nol duplikat, nol menu tanpa case.
 - Audit menu: 1141 perintah, 14 kategori, nol kategori asing.
+
+### Review
+
+Review independen menemukan sepuluh masalah, semuanya diperbaiki sebelum rilis, termasuk pemulihan profil yang mengembalikan saldo tanpa transaksi, hadiah game tanpa batas, dua gerbang konfirmasi yang salah indeks, dan klasifikasi peran di registry.
 
 ### Batas
 
 - Tidak menambah kategori di luar 14 kategori baku.
+- Penjadwalan laporan, penandaan layanan, dan riwayat profil berupa catatan lokal, bukan eksekusi otomatis.
 - Tidak menambah dependency berat. Perintah lama dan alias tetap bekerja.
 
 ## v25.0.0
