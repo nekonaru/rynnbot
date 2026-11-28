@@ -18,7 +18,7 @@ Rynn v18.0.0 melanjutkan pendalaman fitur yang sudah ada. Fokusnya adalah path a
 
 - 5 tes unit baru di `test/v18.test.js`. Total **212 tes lolos**.
 - `npm run check` lolos (256 file).
-- Coverage: 91,32 persen baris, 75,15 persen cabang, 89,69 persen fungsi.
+- Coverage: 91,31 persen baris, 75,15 persen cabang, 89,72 persen fungsi.
 - Audit router: 1087 case, 812 perintah menu, nol duplikat, nol menu tanpa case.
 
 ### Batas
@@ -63,6 +63,7 @@ Rynn v17.0.0 adalah rilis pendalaman dan perapian fitur yang sudah ada. Tidak ad
 
 - Tidak menambah kategori perintah, fitur waktu, kesehatan, atau Islami.
 - Review independen menemukan delapan masalah, semuanya diperbaiki sebelum rilis, termasuk pemulihan perilaku `.coba` dan `.singkatan`, mode ringkas yang membuang instruksi, bracket double tanpa peserta, dan rollback transferbatch yang tidak membatalkan kredit.
+- Review independen menemukan lima masalah, semuanya diperbaiki sebelum rilis, termasuk transfer poin yang belum memakai transaksi, redaksi token Bearer dan secret dalam JSON, tiga baris tabel dokumen yang rusak, log yang mengabaikan opsi privasi, dan klaim path restore yang belum sesuai kode.
 - Tidak menambah dependency berat.
 
 ## v16.0.0

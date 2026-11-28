@@ -853,9 +853,9 @@ const sock = async (sock, m, store) => {
 				cmdAdd(db.hit);
 				cmdAddHit(db.hit, command);
 				catatEvent(db, command);
-				catatLog(db, { level: "info", perintah: command, pengirim: m.sender });
 				if (!db.users[m.sender]) db.users[m.sender] = {};
 				if (db.users[m.sender]?.opsiPrivasi?.riwayat === false) return;
+				catatLog(db, { level: "info", perintah: command, pengirim: m.sender });
 				const riwayat = db.users[m.sender].riwayat || [];
 				riwayat.push(command);
 				db.users[m.sender].riwayat = riwayat.slice(-20);
@@ -9077,15 +9077,15 @@ Select Bot Settings:
 						if (!p || p.token !== token || p.sender !== m.sender || Date.now() - p.at > 300000) return m.reply("Token restore tidak valid atau kedaluwarsa.");
 						global.restorePending = null;
 						if (!aman.test(p.nama)) return m.reply("Nama berkas tidak valid.");
-						const sumber = path.join("./database", p.nama);
-						if (!fs.existsSync(sumber)) return m.reply("Berkas tidak ditemukan.");
+						const sumber = pathAman(path.join("./database", p.nama));
+						if (!sumber || !fs.existsSync(sumber)) return m.reply("Berkas tidak ditemukan.");
 						fs.copyFileSync(sumber, "./database/database.json");
 						tulisAudit(db, m.sender, `restore ${p.nama}`);
 						return m.reply("Database dipulihkan. Restart bot agar data baru dipakai.");
 					}
 					if (!arg) return m.reply("Contoh: .restore database.json.bak\nLalu .restore confirm <token>");
 					if (!aman.test(arg)) return m.reply("Nama berkas tidak valid.\nGunakan nama seperti database.json.bak");
-					if (!fs.existsSync(path.join("./database", arg))) return m.reply("Berkas tidak ditemukan di ./database");
+					if (!pathAman(path.join("./database", arg)) || !fs.existsSync(path.join("./database", arg))) return m.reply("Berkas tidak ditemukan di ./database");
 					const token = Math.random().toString(36).slice(2, 8).toUpperCase();
 					global.restorePending = { sender: m.sender, nama: arg, token, at: Date.now() };
 					return m.reply(`*KONFIRMASI RESTORE*\n\nBerkas: ${arg}\nIni akan menimpa database aktif.\nKetik .restore confirm ${token} dalam 5 menit.`);
@@ -11939,7 +11939,7 @@ Select Bot Settings:
 					if (sub === "ekspor") return m.reply(formatEkspor(eksporData(u)));
 					if (sub === "hapus") {
 						if (mt[1] !== "confirm") return m.reply("Ketik .privasi hapus confirm untuk menghapus data pribadi kamu.");
-						hapusDataPribadi(u);
+						hapusDataPribadi(u, db, m.sender);
 						return m.reply("Data pribadi dihapus dari bot.");
 					}
 					if (sub === "opsi") {
@@ -12522,7 +12522,7 @@ Select Bot Settings:
 						const target = (m.mentionedJid || [])[0];
 						const jumlah = Number(mt.find((x) => /^\d+$/.test(x)));
 						if (!target || mt.at(-1) !== "confirm" || !jumlah) return m.reply("Tag target, lalu .poin transfer @user <jumlah> confirm");
-						return transferPoin(db, db.users[m.sender], target, jumlah) ? m.reply("Poin ditransfer.") : m.reply("Poin tidak mencukupi.");
+						return transferPoin(db, m.sender, target, jumlah) ? m.reply("Poin ditransfer.") : m.reply("Poin tidak mencukupi.");
 					}
 					const u = db.users[m.sender];
 					return kirimRespons(m, { judul: "Poin kamu", isi: `*${u.poin || 0}* poin`, footer: ".poin top | .poin riwayat | .poin tukar <hadiah>" });

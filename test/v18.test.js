@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
 import { aman, ada, daftarAman } from "../lib/path-aman.js";
-import { redaksi, formatLog, catatLog } from "../lib/log-terstruktur.js";
+import { redaksi, formatLog, catatLog, hapusLogPengirim } from "../lib/log-terstruktur.js";
 import { ubahSaldo } from "../lib/transaksi.js";
 import { transferPoin } from "../lib/v15/poin.js";
 
@@ -24,7 +24,12 @@ test("log terstruktur meredaksi kunci sensitif", () => {
 	assert.equal(r.pesan, "halo");
 	const l = formatLog({ perintah: "rumus", pengirim: "6281@s.whatsapp.net", pesan: "apiKey=rahasia" });
 	assert.ok(!l.includes("rahasia"));
-	assert.equal(catatLog({}, { perintah: "rumus" }).length, 1);
+	assert.ok(!formatLog({ pesan: "Authorization: Bearer sk-abc123secret" }).includes("sk-abc123secret"));
+	assert.ok(!formatLog({ pesan: '{"apiKey":"sk-live-SECRETVALUE"}' }).includes("SECRETVALUE"));
+	assert.equal(redaksi({ pwd: "x", cookie: "session=y" }).pwd, "[diredaksi]");
+	const db = {};
+	catatLog(db, { perintah: "rumus", pengirim: "a@s.whatsapp.net" });
+	assert.equal(hapusLogPengirim(db, "a@s.whatsapp.net"), 1);
 });
 
 test("transaksi membuat db.users bila belum ada", () => {
