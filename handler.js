@@ -1,4 +1,5 @@
 import "./settings.js";
+import { ringkasan as otomasiRingkasan, validasi as otomasiValidasi, kering as otomasiKering, batas as otomasiBatas, izin as otomasiIzin, catatAudit as otomasiCatat, audit as otomasiAudit, hentikanSemua as otomasiHentikan, penjadwal, event as eventOtomasi, aturan as aturanOtomasi, workflow as workflowOtomasi, templat as templatOtomasi, orkestrasi } from "./lib/v24/indeks.js";
 import { datasetV23, ambilDataset, cariDataset, totalV23 } from "./lib/data-v23/indeks.js";
 import { daftarJenis, daftarMakanan, daftarObat, adopsi, gantiNama, beriMakan, minum, main, latih, istirahat, mandi, obat, beliBarang, evolusi, statusPet, papanPet, lepasPet } from "./lib/v22/pet.js";
 import { daftarBenih, daftarHasil, buatKebun, beliBenih, tanam, rawat, cekHama, panen, jualHasil, olah, perluas, ternak, panenTernak, statusKebun, papanKebun, bongkar } from "./lib/v22/kebun.js";
@@ -7193,6 +7194,57 @@ Select Bot Settings:
 │${setv} ${prefix}logaudit
 ╰─┬────❍
 ╭─┴❍「 *OWNER* 」❍
+│${setv} ${prefix}tugasdaftar (Tugas internal)
+│${setv} ${prefix}tugasinfo (Detail tugas)
+│${setv} ${prefix}tugasstatus (Status tugas)
+│${setv} ${prefix}tugasjeda (Jeda tugas confirm)
+│${setv} ${prefix}tugaslanjut (Lanjut tugas confirm)
+│${setv} ${prefix}tugasjalankan (Jalankan tugas confirm)
+│${setv} ${prefix}tugasnonaktif (Nonaktif tugas confirm)
+│${setv} ${prefix}tugasaktifkan (Aktifkan tugas)
+│${setv} ${prefix}tugasriwayat (Riwayat tugas)
+│${setv} ${prefix}tugasgagal (Tugas gagal)
+│${setv} ${prefix}eventlist (Daftar event)
+│${setv} ${prefix}eventpasang (Pasang aksi event)
+│${setv} ${prefix}eventlihat (Lihat event)
+│${setv} ${prefix}eventlepas (Lepas aksi confirm)
+│${setv} ${prefix}eventmatikan (Matikan aksi)
+│${setv} ${prefix}eventhidupkan (Hidupkan aksi)
+│${setv} ${prefix}eventuji (Uji event)
+│${setv} ${prefix}eventriwayat (Riwayat event)
+│${setv} ${prefix}aturanbaru (Buat aturan)
+│${setv} ${prefix}aturanketika (Syarat aturan)
+│${setv} ${prefix}aturanmaka (Aksi aturan)
+│${setv} ${prefix}aturanuji (Uji aturan)
+│${setv} ${prefix}aturanaktif (Aktif aturan)
+│${setv} ${prefix}aturanlist (Daftar aturan)
+│${setv} ${prefix}aturandetail (Detail aturan)
+│${setv} ${prefix}aturanhapus (Hapus aturan confirm)
+│${setv} ${prefix}workflowbaru (Buat workflow)
+│${setv} ${prefix}workflowlangkah (Tambah langkah)
+│${setv} ${prefix}workflowurut (Urut langkah)
+│${setv} ${prefix}workflowjalankan (Jalankan workflow confirm)
+│${setv} ${prefix}workflowuji (Uji workflow)
+│${setv} ${prefix}workflowstatus (Status workflow)
+│${setv} ${prefix}workflowlist (Daftar workflow)
+│${setv} ${prefix}workflowhapus (Hapus workflow confirm)
+│${setv} ${prefix}templatlist (Daftar templat)
+│${setv} ${prefix}templatpakai (Pakai templat)
+│${setv} ${prefix}templatsimpan (Simpan templat)
+│${setv} ${prefix}templatlihat (Lihat templat)
+│${setv} ${prefix}templathapus (Hapus templat confirm)
+│${setv} ${prefix}otomasivalidasi (Validasi otomasi)
+│${setv} ${prefix}otomasikering (Otomasi kering)
+│${setv} ${prefix}otomasibatas (Batas otomasi)
+│${setv} ${prefix}otomasiizin (Aksi diizinkan)
+│${setv} ${prefix}otomasiaudit (Audit otomasi)
+│${setv} ${prefix}otomasistop (Hentikan otomasi confirm)
+│${setv} ${prefix}orkestrasistatus (Status modul)
+│${setv} ${prefix}orkestrasimodul (Daftar modul)
+│${setv} ${prefix}orkestrasiinfo (Info modul)
+│${setv} ${prefix}orkestrasiuji (Uji modul)
+│${setv} ${prefix}orkestrasiuru (Urutan modul)
+│${setv} ${prefix}orkestrasiketergantungan (Ketergantungan modul)
 │${setv} ${prefix}ownerlist
 │${setv} ${prefix}hadiahevent
 │${setv} ${prefix}topbulanan
@@ -13946,6 +13998,410 @@ Select Bot Settings:
 					if (!db.users[m.sender]) db.users[m.sender] = {};
 					db.users[m.sender].flashcardAktif = { pertanyaan: pasangan[0], jawaban: pasangan[1] };
 					return m.reply(`*Flashcard*\n\n${pasangan[0]}\n\nJawab: .flashcardjawab <jawaban>`);
+				}
+				break;
+			case "tugasdaftar":
+				{
+					if (!isCreator) return m.reply(mess.owner);
+					const daftar = penjadwal.daftarTugas(db);
+					return kirimRespons(m, { judul: "Tugas internal", isi: daftar.map((t) => `- ${t.nama}: ${t.aktif ? (t.jeda ? "jeda" : "aktif") : "nonaktif"}, jalan ${t.jalan} kali`).join("\n") || formatKosong(), footer: ".tugasinfo <nama> | .tugasjalankan <nama> confirm" });
+				}
+				break;
+			case "tugasinfo":
+				{
+					if (!isCreator) return m.reply(mess.owner);
+					const t = penjadwal.ambilTugas(db, text);
+					return t ? kirimRespons(m, { judul: `Tugas ${t.nama}`, isi: `- ${t.deskripsi}\n- Status: ${t.aktif ? (t.jeda ? "jeda" : "aktif") : "nonaktif"}\n- Jalan: ${t.jalan} kali\n- Terakhir: ${t.terakhir ? new Date(t.terakhir.at).toISOString() : "-"}` }) : m.reply("Tugas tidak ditemukan.");
+				}
+				break;
+			case "tugasstatus":
+				{
+					if (!isCreator) return m.reply(mess.owner);
+					const semua = penjadwal.daftarTugas(db);
+					return kirimRespons(m, { judul: "Status tugas", isi: `- Aktif: ${semua.filter((t) => t.aktif && !t.jeda).length}\n- Jeda: ${semua.filter((t) => t.jeda).length}\n- Nonaktif: ${semua.filter((t) => !t.aktif).length}\n- Gagal: ${penjadwal.tugasGagal(db).length}` });
+				}
+				break;
+			case "tugasjeda":
+				{
+					if (!isCreator) return m.reply(mess.owner);
+					const mt = (text || "").trim().split(/\s+/);
+					if (mt[1] !== "confirm") return m.reply(`Ketik .${command} ${mt[0] || "<nama>"} confirm`);
+					const t = penjadwal.jedaTugas(db, mt[0], true);
+					if (!t) return m.reply("Tugas tidak ditemukan.");
+					otomasiCatat(db, "jeda-tugas", t.nama);
+					return m.reply(`Tugas *${t.nama}* dijeda.`);
+				}
+				break;
+			case "tugaslanjut":
+				{
+					if (!isCreator) return m.reply(mess.owner);
+					const mt = (text || "").trim().split(/\s+/);
+					if (mt[1] !== "confirm") return m.reply(`Ketik .${command} ${mt[0] || "<nama>"} confirm`);
+					const t = penjadwal.jedaTugas(db, mt[0], false);
+					if (!t) return m.reply("Tugas tidak ditemukan.");
+					otomasiCatat(db, "lanjut-tugas", t.nama);
+					return m.reply(`Tugas *${t.nama}* dilanjutkan.`);
+				}
+				break;
+			case "tugasjalankan":
+				{
+					if (!isCreator) return m.reply(mess.owner);
+					const mt = (text || "").trim().split(/\s+/);
+					if (mt[1] !== "confirm") return m.reply(`Ketik .${command} ${mt[0] || "<nama>"} confirm`);
+					const t = penjadwal.catatJalan(db, mt[0], true);
+					if (!t) return m.reply("Tugas tidak ditemukan.");
+					otomasiCatat(db, "jalankan-tugas", t.nama);
+					return m.reply(`Eksekusi tugas *${t.nama}* dicatat.`);
+				}
+				break;
+			case "tugasnonaktif":
+				{
+					if (!isCreator) return m.reply(mess.owner);
+					const mt = (text || "").trim().split(/\s+/);
+					if (mt[1] !== "confirm") return m.reply(`Ketik .${command} ${mt[0] || "<nama>"} confirm`);
+					const t = penjadwal.aktifTugas(db, mt[0], false);
+					if (!t) return m.reply("Tugas tidak ditemukan.");
+					otomasiCatat(db, "nonaktif-tugas", t.nama);
+					return m.reply(`Tugas *${t.nama}* dinonaktifkan.`);
+				}
+				break;
+			case "tugasaktifkan":
+				{
+					if (!isCreator) return m.reply(mess.owner);
+					const t = penjadwal.aktifTugas(db, text, true);
+					if (!t) return m.reply("Tugas tidak ditemukan.");
+					otomasiCatat(db, "aktifkan-tugas", t.nama);
+					return m.reply(`Tugas *${t.nama}* diaktifkan.`);
+				}
+				break;
+			case "tugasriwayat":
+				{
+					if (!isCreator) return m.reply(mess.owner);
+					const r = penjadwal.riwayatTugas(db, text);
+					return kirimRespons(m, { judul: `Riwayat ${text}`, isi: r.length ? r.map((x) => `- ${x.sukses ? "sukses" : "gagal"} ${new Date(x.at).toISOString()}`).join("\n") : formatKosong() });
+				}
+				break;
+			case "tugasgagal":
+				{
+					if (!isCreator) return m.reply(mess.owner);
+					const g = penjadwal.tugasGagal(db);
+					return kirimRespons(m, { judul: "Tugas gagal", isi: g.map((t) => `- ${t.nama}: ${new Date(t.terakhir.at).toISOString()}`).join("\n") || formatKosong("Belum ada kegagalan.") });
+				}
+				break;
+			case "eventlist":
+				{
+					if (!isCreator) return m.reply(mess.owner);
+					const isi = eventOtomasi.daftarEvent().map((e) => `- ${e}: ${eventOtomasi.lihat(db, e).length} aksi`).join("\n");
+					return kirimRespons(m, { judul: "Event otomasi", isi, footer: `.eventpasang <event> <aksi> [nilai] | aksi: ${eventOtomasi.daftarAksi().join(", ")}` });
+				}
+				break;
+			case "eventpasang":
+				{
+					if (!isCreator) return m.reply(mess.owner);
+					const mt = (text || "").trim().split(/\s+/);
+					const e = eventOtomasi.pasang(db, mt[0], mt[1], mt.slice(2).join(" "));
+					if (!e) return m.reply(`Event: ${eventOtomasi.daftarEvent().join(", ")}\nAksi: ${eventOtomasi.daftarAksi().join(", ")}`);
+					otomasiCatat(db, "pasang-event", `${e.event}/${e.aksi}`);
+					return m.reply(`Aksi *${e.id}* dipasang pada ${e.event}.`);
+				}
+				break;
+			case "eventlihat":
+				{
+					if (!isCreator) return m.reply(mess.owner);
+					const list = eventOtomasi.lihat(db, text);
+					return kirimRespons(m, { judul: `Event ${text}`, isi: list.map((x) => `- ${x.id}: ${x.aksi} ${x.nilai} (${x.aktif ? "aktif" : "mati"})`).join("\n") || formatKosong() });
+				}
+				break;
+			case "eventlepas":
+				{
+					if (!isCreator) return m.reply(mess.owner);
+					const mt = (text || "").trim().split(/\s+/);
+					if (mt[1] !== "confirm") return m.reply(`Ketik .${command} ${mt[0] || "<id>"} confirm`);
+					if (!eventOtomasi.lepas(db, mt[0])) return m.reply("Aksi tidak ditemukan.");
+					otomasiCatat(db, "lepas-event", mt[0]);
+					return m.reply(`Aksi *${mt[0]}* dilepas.`);
+				}
+				break;
+			case "eventmatikan":
+			case "eventhidupkan":
+				{
+					if (!isCreator) return m.reply(mess.owner);
+					const e = eventOtomasi.setAktif(db, text, command === "eventhidupkan");
+					return e ? m.reply(`Aksi *${e.id}* ${command === "eventhidupkan" ? "diaktifkan" : "dimatikan"}.`) : m.reply("Aksi tidak ditemukan.");
+				}
+				break;
+			case "eventuji":
+				{
+					if (!isCreator) return m.reply(mess.owner);
+					const hasil = eventOtomasi.jalankan(db, text, true);
+					return kirimRespons(m, { judul: `Uji event ${text}`, isi: hasil.map((h) => `- ${h.id}: ${h.aksi} ${h.nilai}`).join("\n") || formatKosong("Tidak ada aksi aktif."), catatan: "Mode kering, tidak ada efek samping." });
+				}
+				break;
+			case "eventriwayat":
+				{
+					if (!isCreator) return m.reply(mess.owner);
+					const r = eventOtomasi.riwayat(db);
+					return kirimRespons(m, { judul: "Riwayat event", isi: r.map((x) => `- ${x.event}: ${x.jumlah} aksi ${new Date(x.at).toISOString()}`).join("\n") || formatKosong() });
+				}
+				break;
+			case "aturanbaru":
+				{
+					if (!isCreator) return m.reply(mess.owner);
+					const a = aturanOtomasi.buat(db, text);
+					if (!a) return m.reply("Nama aturan kosong atau sudah ada.");
+					otomasiCatat(db, "buat-aturan", a.nama);
+					return m.reply(`Aturan *${a.nama}* dibuat. Lengkapi dengan .aturanketika dan .aturanmaka.`);
+				}
+				break;
+			case "aturanketika":
+				{
+					if (!isCreator) return m.reply(mess.owner);
+					const mt = (text || "").trim().split(/\s+/);
+					const a = aturanOtomasi.aturSyarat(db, mt[0], mt[1], mt[2], mt.slice(3).join(" "));
+					return a ? m.reply(`Syarat aturan *${a.nama}* disimpan.`) : m.reply(`Operator: ${aturanOtomasi.daftarOperator().join(", ")}`);
+				}
+				break;
+			case "aturanmaka":
+				{
+					if (!isCreator) return m.reply(mess.owner);
+					const mt = (text || "").trim().split(/\s+/);
+					const a = aturanOtomasi.aturAksi(db, mt[0], mt[1], mt.slice(2).join(" "));
+					return a ? m.reply(`Aksi aturan *${a.nama}* disimpan.`) : m.reply(`Aksi: ${aturanOtomasi.daftarAksi().join(", ")}`);
+				}
+				break;
+			case "aturanuji":
+				{
+					if (!isCreator) return m.reply(mess.owner);
+					const mt = (text || "").trim().split(/\s+/);
+					const contoh = {};
+					for (const p of mt.slice(1)) {
+						const pas = p.split("=");
+						if (pas[0]) contoh[pas[0]] = pas.slice(1).join("=");
+					}
+					const h = aturanOtomasi.uji(db, mt[0], contoh);
+					return h ? kirimRespons(m, { judul: `Uji ${mt[0]}`, isi: `- Cocok: ${h.cocok ? "ya" : "tidak"}\n- Aksi: ${h.aksi}\n- Nilai: ${h.nilai}` }) : m.reply("Aturan belum lengkap.");
+				}
+				break;
+			case "aturanaktif":
+				{
+					if (!isCreator) return m.reply(mess.owner);
+					const mt = (text || "").trim().split(/\s+/);
+					const a = aturanOtomasi.setAktif(db, mt[0], mt[1] === "on");
+					return a ? m.reply(`Aturan *${a.nama}* ${mt[1] === "on" ? "diaktifkan" : "dimatikan"}.`) : m.reply("Aturan belum lengkap.");
+				}
+				break;
+			case "aturanlist":
+				{
+					if (!isCreator) return m.reply(mess.owner);
+					const list = aturanOtomasi.daftar(db);
+					return kirimRespons(m, { judul: "Aturan otomasi", isi: list.map((a) => `- ${a.nama}: ${a.aktif ? "aktif" : "mati"}`).join("\n") || formatKosong() });
+				}
+				break;
+			case "aturandetail":
+				{
+					if (!isCreator) return m.reply(mess.owner);
+					const a = aturanOtomasi.ambil(db, text);
+					if (!a) return m.reply("Aturan tidak ditemukan.");
+					const v = aturanOtomasi.validasi(db, a.nama);
+					return kirimRespons(m, { judul: `Aturan ${a.nama}`, isi: `- Syarat: ${a.syarat ? `${a.syarat.field} ${a.syarat.operator} ${a.syarat.nilai}` : "-"}\n- Aksi: ${a.aksi ? `${a.aksi.nama} ${a.aksi.nilai}` : "-"}\n- Status: ${v.alasan}` });
+				}
+				break;
+			case "aturanhapus":
+				{
+					if (!isCreator) return m.reply(mess.owner);
+					const mt = (text || "").trim().split(/\s+/);
+					if (mt[1] !== "confirm") return m.reply(`Ketik .${command} ${mt[0] || "<nama>"} confirm`);
+					if (!aturanOtomasi.hapus(db, mt[0])) return m.reply("Aturan tidak ditemukan.");
+					otomasiCatat(db, "hapus-aturan", mt[0]);
+					return m.reply(`Aturan *${mt[0]}* dihapus.`);
+				}
+				break;
+			case "workflowbaru":
+				{
+					if (!isCreator) return m.reply(mess.owner);
+					const w = workflowOtomasi.buat(db, text);
+					if (!w) return m.reply("Nama workflow kosong atau sudah ada.");
+					otomasiCatat(db, "buat-workflow", w.nama);
+					return m.reply(`Workflow *${w.nama}* dibuat. Tambah langkah dengan .workflowlangkah.`);
+				}
+				break;
+			case "workflowlangkah":
+				{
+					if (!isCreator) return m.reply(mess.owner);
+					const mt = (text || "").trim().split(/\s+/);
+					const l = workflowOtomasi.tambahLangkah(db, mt[0], mt[1], mt.slice(2).join(" "));
+					return l ? m.reply(`Langkah *${mt[1]}* ditambahkan (${l.length} langkah).`) : m.reply(`Aksi: ${workflowOtomasi.daftarAksi().join(", ")}`);
+				}
+				break;
+			case "workflowurut":
+				{
+					if (!isCreator) return m.reply(mess.owner);
+					const mt = (text || "").trim().split(/\s+/);
+					const l = workflowOtomasi.urutLangkah(db, mt[0], mt.slice(1).join(" "));
+					return l ? m.reply(`Urutan workflow *${mt[0]}* diperbarui.`) : m.reply("Urutan tidak valid. Gunakan nomor 1 sampai jumlah langkah, setiap nomor sekali.");
+				}
+				break;
+			case "workflowjalankan":
+				{
+					if (!isCreator) return m.reply(mess.owner);
+					const mt = (text || "").trim().split(/\s+/);
+					if (mt[1] !== "confirm") return m.reply(`Ketik .${command} ${mt[0] || "<nama>"} confirm`);
+					const h = workflowOtomasi.jalankan(db, mt[0], false);
+					if (!h) return m.reply("Workflow tidak ada atau belum punya langkah.");
+					otomasiCatat(db, "jalankan-workflow", mt[0]);
+					return m.reply(`Workflow *${mt[0]}* dijalankan (${h.length} langkah).`);
+				}
+				break;
+			case "workflowuji":
+				{
+					if (!isCreator) return m.reply(mess.owner);
+					const h = workflowOtomasi.jalankan(db, text, true);
+					return h ? kirimRespons(m, { judul: `Uji workflow ${text}`, isi: h.map((x) => `${x.nomor}. ${x.aksi} ${x.nilai}`).join("\n"), catatan: "Mode kering, tidak ada efek samping." }) : m.reply("Workflow tidak ada atau belum punya langkah.");
+				}
+				break;
+			case "workflowstatus":
+				{
+					if (!isCreator) return m.reply(mess.owner);
+					const s = workflowOtomasi.status(db, text);
+					return s ? kirimRespons(m, { judul: `Workflow ${text}`, isi: `- Langkah: ${s.langkah}\n- Posisi: ${s.posisi}\n- Status: ${s.aktif ? "aktif" : "mati"}` }) : m.reply("Workflow tidak ditemukan.");
+				}
+				break;
+			case "workflowlist":
+				{
+					if (!isCreator) return m.reply(mess.owner);
+					const list = workflowOtomasi.daftar(db);
+					return kirimRespons(m, { judul: "Workflow otomasi", isi: list.map((w) => `- ${w.nama}: ${w.langkah.length} langkah, posisi ${w.posisi}`).join("\n") || formatKosong() });
+				}
+				break;
+			case "workflowhapus":
+				{
+					if (!isCreator) return m.reply(mess.owner);
+					const mt = (text || "").trim().split(/\s+/);
+					if (mt[1] !== "confirm") return m.reply(`Ketik .${command} ${mt[0] || "<nama>"} confirm`);
+					if (!workflowOtomasi.hapus(db, mt[0])) return m.reply("Workflow tidak ditemukan.");
+					otomasiCatat(db, "hapus-workflow", mt[0]);
+					return m.reply(`Workflow *${mt[0]}* dihapus.`);
+				}
+				break;
+			case "templatlist":
+				{
+					if (!isCreator) return m.reply(mess.owner);
+					const list = templatOtomasi.daftarTemplat(db);
+					return kirimRespons(m, { judul: "Templat otomasi", isi: list.map((t) => `- ${t.nama}: ${t.deskripsi}`).join("\n") || formatKosong() });
+				}
+				break;
+			case "templatpakai":
+				{
+					if (!isCreator) return m.reply(mess.owner);
+					const a = templatOtomasi.pakaiTemplat(db, text);
+					return a ? m.reply(`Aturan *${a.nama}* dibuat dari templat.`) : m.reply("Templat tidak ditemukan.");
+				}
+				break;
+			case "templatsimpan":
+				{
+					if (!isCreator) return m.reply(mess.owner);
+					const mt = (text || "").trim().split(/\s+/);
+					const t = templatOtomasi.simpanTemplat(db, mt[0], mt[1]);
+					return t ? m.reply(`Templat *${t.nama}* disimpan.`) : m.reply("Aturan belum lengkap.");
+				}
+				break;
+			case "templatlihat":
+				{
+					if (!isCreator) return m.reply(mess.owner);
+					const t = templatOtomasi.ambilTemplat(db, text);
+					return t ? kirimRespons(m, { judul: `Templat ${t.nama}`, isi: `- ${t.deskripsi}\n- Syarat: ${t.syarat.field} ${t.syarat.operator} ${t.syarat.nilai}\n- Aksi: ${t.aksi.nama} ${t.aksi.nilai}` }) : m.reply("Templat tidak ditemukan.");
+				}
+				break;
+			case "templathapus":
+				{
+					if (!isCreator) return m.reply(mess.owner);
+					const mt = (text || "").trim().split(/\s+/);
+					if (mt[1] !== "confirm") return m.reply(`Ketik .${command} ${mt[0] || "<nama>"} confirm`);
+					if (!templatOtomasi.hapusTemplat(db, mt[0])) return m.reply("Templat tidak ditemukan.");
+					otomasiCatat(db, "hapus-templat", mt[0]);
+					return m.reply(`Templat *${mt[0]}* dihapus.`);
+				}
+				break;
+			case "otomasivalidasi":
+				{
+					if (!isCreator) return m.reply(mess.owner);
+					const v = otomasiValidasi(db);
+					return kirimRespons(m, { judul: "Validasi otomasi", isi: `- Aturan: ${v.aturan.length}\n- Workflow: ${v.workflow.length}\n- Masalah: ${v.masalah.length}`, catatan: v.masalah.slice(0, 8).join("\n") || "Semua aturan dan workflow lengkap." });
+				}
+				break;
+			case "otomasikering":
+				{
+					if (!isCreator) return m.reply(mess.owner);
+					const k = otomasiKering(db);
+					return kirimRespons(m, { judul: "Otomasi kering", isi: `- Event: ${k.event.length}\n- Workflow: ${k.workflow.length}\n- Total: ${k.jumlah}`, catatan: "Mode kering, tidak ada efek samping." });
+				}
+				break;
+			case "otomasibatas":
+				{
+					if (!isCreator) return m.reply(mess.owner);
+					const b = otomasiBatas();
+					return kirimRespons(m, { judul: "Batas otomasi", isi: Object.entries(b).map(([k, v]) => `- ${k}: ${v}`).join("\n") });
+				}
+				break;
+			case "otomasiizin":
+				{
+					if (!isCreator) return m.reply(mess.owner);
+					return kirimRespons(m, { judul: "Aksi diizinkan", isi: otomasiIzin().map((a) => `- ${a}`).join("\n"), catatan: "Tidak ada eksekusi kode bebas dari input user." });
+				}
+				break;
+			case "otomasiaudit":
+				{
+					if (!isCreator) return m.reply(mess.owner);
+					const a = otomasiAudit(db);
+					return kirimRespons(m, { judul: "Audit otomasi", isi: a.map((x) => `- ${x.aksi} ${x.detail} ${new Date(x.at).toISOString()}`).join("\n") || formatKosong() });
+				}
+				break;
+			case "otomasistop":
+				{
+					if (!isCreator) return m.reply(mess.owner);
+					const mt = (text || "").trim().split(/\s+/);
+					if (mt[0] !== "confirm") return m.reply(`Ketik .${command} confirm untuk menghentikan semua otomasi.`);
+					const r = otomasiHentikan(db);
+					return kirimRespons(m, { judul: "Otomasi dihentikan", isi: `- Tugas: ${r.tugas}\n- Event: ${r.event}\n- Aturan: ${r.aturan}\n- Workflow: ${r.workflow}` });
+				}
+				break;
+			case "orkestrasistatus":
+				{
+					if (!isCreator) return m.reply(mess.owner);
+					const s = orkestrasi.statusModul();
+					return kirimRespons(m, { judul: "Orkestrasi modul", isi: `- Modul: ${s.total}\n- Sehat: ${s.sehat}\n- Rusak: ${s.rusak.length}\n- Perintah: ${s.perintah}`, catatan: s.rusak.join(", ") || "Semua modul tersedia." });
+				}
+				break;
+			case "orkestrasimodul":
+				{
+					if (!isCreator) return m.reply(mess.owner);
+					return kirimRespons(m, { judul: "Daftar modul", isi: orkestrasi.ringkasModul().join("\n") });
+				}
+				break;
+			case "orkestrasiinfo":
+				{
+					if (!isCreator) return m.reply(mess.owner);
+					const mdl = orkestrasi.ambilModul(text);
+					return mdl ? kirimRespons(m, { judul: `Modul ${mdl.nama}`, isi: `- Berkas: ${mdl.berkas}\n- Kategori: ${mdl.kategori}\n- Perintah: ${mdl.jumlahPerintah}\n- Status: ${mdl.ada ? "ada" : "tidak ada"}` }) : m.reply("Modul tidak ditemukan.");
+				}
+				break;
+			case "orkestrasiuji":
+				{
+					if (!isCreator) return m.reply(mess.owner);
+					const h = await orkestrasi.ujiModul(text);
+					return h ? kirimRespons(m, { judul: `Uji modul ${h.nama}`, isi: `- Sehat: ${h.sehat ? "ya" : "tidak"}\n- Ekspor: ${h.ekspor ?? "-"}\n- Perintah: ${h.perintah ?? "-"}`, catatan: h.alasan || "Impor modul berhasil." }) : m.reply("Modul tidak ditemukan.");
+				}
+				break;
+			case "orkestrasiuru":
+				{
+					if (!isCreator) return m.reply(mess.owner);
+					return kirimRespons(m, { judul: "Urutan inisialisasi", isi: orkestrasi.urutanModul().join("\n") });
+				}
+				break;
+			case "orkestrasiketergantungan":
+				{
+					if (!isCreator) return m.reply(mess.owner);
+					return kirimRespons(m, { judul: "Ketergantungan modul", isi: orkestrasi.ketergantungan().map((x) => `- ${x}`).join("\n") });
 				}
 				break;
 			case "bantuan":

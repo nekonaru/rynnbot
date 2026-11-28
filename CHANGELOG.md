@@ -1,8 +1,54 @@
 # Changelog
 
+## v24.0.0
+
+Rynn v24.0.0 menambahkan sistem otomasi internal untuk owner. Kelompok fitur lain tidak ditambahkan. Seluruh perintah baru masuk kategori OWNER.
+
+### Penjadwalan internal
+
+- 10 perintah untuk melihat, menjeda, melanjutkan, menjalankan, menonaktifkan, dan mengaktifkan tugas internal, serta riwayat dan daftar kegagalan.
+- Tugas yang dikelola: sweeper state, cleanup temp, rotasi backup, dan sinkron database.
+- Aksi destruktif memakai konfirmasi dua langkah.
+
+### Event dan aturan
+
+- 8 perintah event untuk memasang, melihat, melepas, mematikan, mengaktifkan, menguji, dan melihat riwayat aksi.
+- 8 perintah aturan dengan operator sama, mengandung, diawali, lebih, dan kurang. Aksi berasal dari daftar tertutup, tanpa eksekusi kode bebas.
+- `.aturanuji` dan `.eventuji` berjalan dalam mode kering tanpa efek samping.
+
+### Workflow dan templat
+
+- 8 perintah workflow dengan langkah berurutan, pengubahan urutan, uji kering, dan eksekusi terkontrol.
+- 5 perintah templat otomasi dengan 4 templat bawaan: sambutan user baru, log perintah owner, cleanup state, dan pemeriksaan memori.
+
+### Validasi dan orkestrasi
+
+- 6 perintah otomasi untuk validasi, mode kering, batas, izin aksi, audit, dan penghentian seluruh otomasi.
+- 6 perintah orkestrasi untuk status modul, daftar modul, info modul, uji modul, urutan inisialisasi, dan ketergantungan.
+- Manifest modul dibaca dari registry perintah, bukan daftar manual. Log audit tidak memuat nilai sensitif.
+
+### Arsitektur
+
+- Enam modul murni baru di `lib/v24/`: penjadwal, event, aturan, workflow, templat, orkestrasi, plus indeks otomasi.
+- Semua state dibatasi ukurannya. Audit dibatasi 100 entri, riwayat tugas 20, dan daftar aturan serta workflow 30.
+
+### Audit
+
+- 8 tes unit baru di `test/v24.test.js`. Total **252 tes lolos**.
+- `npm run check` lolos (279 file).
+- Coverage: 92,10 persen baris, 75,28 persen cabang, 90,59 persen fungsi.
+- Audit router: 1237 case, 962 perintah menu, nol duplikat, nol menu tanpa case.
+- Audit menu: 962 perintah, 14 kategori, nol kategori asing.
+
+### Batas
+
+- Hanya otomasi yang dikembangkan. Fitur lain tidak ditambahkan.
+- Tidak menambah kategori di luar 14 kategori baku.
+- Tidak menambah dependency berat.
+
 ## v23.0.0
 
-﻿## v23.0.0
+## v23.0.0
 
 Rynn v23.0.0 memperbesar dataset dan menambahkan indeks kategori pada menu. Tidak ada kategori perintah baru di luar 14 kategori baku.
 
@@ -42,7 +88,7 @@ Rynn v23.0.0 memperbesar dataset dan menambahkan indeks kategori pada menu. Tida
 
 ## v22.0.0
 
-﻿## v22.0.0
+## v22.0.0
 
 Rynn v22.0.0 mengembangkan empat pilar yang diminta: hewan peliharaan, pertanian, karier, dan pengumuman. Fitur di luar keempat pilar ini tidak dikembangkan.
 
@@ -90,7 +136,7 @@ Rynn v22.0.0 mengembangkan empat pilar yang diminta: hewan peliharaan, pertanian
 
 ## v21.0.0
 
-﻿## v21.0.0
+## v21.0.0
 
 Rynn v21.0.0 merapikan struktur menu dan `allmenu`. Tidak ada perintah baru dan tidak ada perubahan perilaku perintah. Yang berubah hanya kategori tempat perintah ditampilkan.
 
@@ -128,7 +174,7 @@ Rynn v21.0.0 merapikan struktur menu dan `allmenu`. Tidak ada perintah baru dan 
 
 ## v20.0.0
 
-﻿## v20.0.0
+## v20.0.0
 
 Rynn v20.0.0 menyatukan fitur yang sudah ada di bawah satu sumber data. Tidak ada kategori perintah baru. Mesin turnamen dari v19 kini dipakai juga oleh liga, kuis, dan wordle.
 
@@ -160,7 +206,7 @@ Rynn v20.0.0 menyatukan fitur yang sudah ada di bawah satu sumber data. Tidak ad
 
 ## v19.0.0
 
-﻿## v19.0.0
+## v19.0.0
 
 Rynn v19.0.0 memperdalam turnamen dan kompetisi yang sudah ada. Tidak ada kategori perintah baru. Mesin turnamen kini dipakai oleh `.turnamen2` lewat subcommand `mesin`.
 
@@ -201,7 +247,7 @@ Perintah turnamen lama tetap bekerja.
 
 ## v18.0.0
 
-﻿## v18.0.0
+## v18.0.0
 
 Rynn v18.0.0 melanjutkan pendalaman fitur yang sudah ada. Fokusnya adalah path aman, log tanpa secret, transaksi poin, dan dokumentasi yang dihasilkan dari registry. Tidak ada kategori perintah baru.
 
@@ -227,7 +273,7 @@ Rynn v18.0.0 melanjutkan pendalaman fitur yang sudah ada. Fokusnya adalah path a
 
 ## v17.0.0
 
-﻿## v17.0.0
+## v17.0.0
 
 Rynn v17.0.0 adalah rilis pendalaman dan perapian fitur yang sudah ada. Tidak ada kategori perintah baru. Fokusnya adalah konsistensi, keamanan, dan kinerja.
 
@@ -267,7 +313,7 @@ Rynn v17.0.0 adalah rilis pendalaman dan perapian fitur yang sudah ada. Tidak ad
 
 ## v16.0.0
 
-﻿## v16.0.0
+## v16.0.0
 
 Rynn v16.0.0 menambah 24 perintah baru yang mencakup dua belas kelompok fitur melalui subcommand, tanpa dependency baru dan tanpa mengubah design system v12.
 
@@ -305,7 +351,7 @@ Rynn v16.0.0 menambah 24 perintah baru yang mencakup dua belas kelompok fitur me
 
 ## v15.0.0
 
-﻿## v15.0.0
+## v15.0.0
 
 Rynn v15.0.0 menambah 38 perintah baru pada dua belas kelompok fitur, tanpa dependency baru dan tanpa mengubah design system v12.
 
@@ -343,7 +389,7 @@ Rynn v15.0.0 menambah 38 perintah baru pada dua belas kelompok fitur, tanpa depe
 
 ## v14.0.0
 
-﻿## v14.0.0
+## v14.0.0
 
 Rynn v14.0.0 menambah 65 perintah baru pada sebelas kelompok fitur, tanpa dependency baru dan tanpa mengubah design system v12.
 
@@ -381,7 +427,7 @@ Rynn v14.0.0 menambah 65 perintah baru pada sebelas kelompok fitur, tanpa depend
 
 ## v13.0.0
 
-﻿## v13.0.0
+## v13.0.0
 
 Rynn v13.0.0 menambah 88 perintah baru pada sembilan kelompok fitur, tanpa dependency baru dan tanpa mengubah desain v12.
 
