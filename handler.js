@@ -14707,6 +14707,7 @@ Select Bot Settings:
 
 			case "tokorestok":
 				{
+					if (!isCreator && !m.isAdmin) return m.reply(global.mess.admin);
 					const hasil = koperasiV25.tokoRestok(db, m.chat, args[0], Number(args[1]));
 					return hasil ? m.reply("Stok ditambah.") : m.reply("Toko tidak ditemukan.");
 				}
@@ -14714,6 +14715,7 @@ Select Bot Settings:
 
 			case "tokoharga":
 				{
+					if (!isCreator && !m.isAdmin) return m.reply(global.mess.admin);
 					const hasil = koperasiV25.tokoHarga(db, m.chat, args[0], Number(args[1]));
 					return hasil ? m.reply("Harga diatur.") : m.reply("Toko tidak ditemukan.");
 				}
@@ -14721,6 +14723,7 @@ Select Bot Settings:
 
 			case "tokodiskon":
 				{
+					if (!isCreator && !m.isAdmin) return m.reply(global.mess.admin);
 					const hasil = koperasiV25.tokoDiskon(db, m.chat, args[0], Number(args[1]));
 					return hasil ? m.reply("Diskon diatur.") : m.reply("Diskon tidak valid.");
 				}
@@ -14735,6 +14738,7 @@ Select Bot Settings:
 
 			case "tokobjual":
 				{
+					if (!isCreator && !m.isAdmin) return m.reply(global.mess.admin);
 					const hasil = koperasiV25.tokoJual(db, m.chat, m.sender, args[0], Number(args[1]));
 					return hasil ? m.reply("Barang dijual.") : m.reply("Barang tidak tersedia.");
 				}
@@ -14749,6 +14753,7 @@ Select Bot Settings:
 
 			case "tokoktutup":
 				{
+					if (!isCreator && !m.isAdmin) return m.reply(global.mess.admin);
 					const mt = (text || "").trim().split(/\s+/);
 					if (mt[1] !== "confirm") return m.reply("Ketik .tokoktutup [nama] confirm");
 					const hasil = koperasiV25.tokoTutup(db, m.chat, args[0]);
@@ -14828,6 +14833,7 @@ Select Bot Settings:
 
 			case "turnamenpoin":
 				{
+					if (!isCreator && !m.isAdmin) return m.reply(global.mess.admin);
 					const hasil = kompetisiV25.poin(db, args[0], Number(args[1]));
 					return hasil ? m.reply("Poin diberikan.") : m.reply("Poin gagal diberikan.");
 				}
@@ -14925,8 +14931,11 @@ Select Bot Settings:
 
 			case "kargajidompet":
 				{
-					const hasil = rantaiV25.gajiDompet(db, m.sender, Number(args[0]));
-					return hasil === null || hasil === undefined ? m.reply("Data tidak tersedia.") : kirimRespons(m, { judul: "Gaji masuk", isi: String(hasil) });
+					const u = db.users[m.sender] || (db.users[m.sender] = {});
+					const gaji = ambilGaji(u);
+					if (!gaji) return m.reply("Gaji belum tersedia atau sudah diambil hari ini.");
+					const masuk = ubahSaldo(db, m.sender, "money", gaji, "karir:gaji");
+					return masuk ? kirimRespons(m, { judul: "Gaji masuk", isi: String(gaji) }) : m.reply("Gaji gagal dikreditkan.");
 				}
 				break;
 
@@ -14994,7 +15003,7 @@ Select Bot Settings:
 			case "belajarujian":
 				{
 					const u = db.users[m.sender] || (db.users[m.sender] = {});
-					const hasil = pembelajaranV25.ujian(u, args[0], args[1]);
+					const hasil = pembelajaranV25.ujian(u, args[0], args.slice(1));
 					return kirimRespons(m, { judul: "Hasil ujian", isi: ringkasV25(hasil) || formatKosong() });
 				}
 				break;
@@ -15159,6 +15168,7 @@ Select Bot Settings:
 
 			case "surveibuat":
 				{
+					if (!isCreator && !m.isAdmin) return m.reply(global.mess.admin);
 					const hasil = komunitasV25.surveiBaru(db, m.chat, text);
 					return hasil ? m.reply("Survei dibuat.") : m.reply("Survei gagal dibuat.");
 				}
@@ -15180,6 +15190,7 @@ Select Bot Settings:
 
 			case "surveitutup":
 				{
+					if (!isCreator && !m.isAdmin) return m.reply(global.mess.admin);
 					const mt = (text || "").trim().split(/\s+/);
 					if (mt[1] !== "confirm") return m.reply("Ketik .surveitutup [id] confirm");
 					const hasil = komunitasV25.surveiTutupV25(db, args[0]);
@@ -15259,7 +15270,7 @@ Select Bot Settings:
 				{
 					if (!isCreator) return m.reply(mess.owner);
 					const mt = (text || "").trim().split(/\s+/);
-					if (mt[1] !== "confirm") return m.reply("Ketik .aksespulihkan  confirm");
+					if (mt[0] !== "confirm") return m.reply("Ketik .aksespulihkan confirm");
 					const hasil = pengawasanV25.pulihkanAkses(db);
 					return hasil ? m.reply("Akses dipulihkan.") : m.reply("Gagal.");
 				}
@@ -15311,7 +15322,7 @@ Select Bot Settings:
 				{
 					if (!isCreator) return m.reply(mess.owner);
 					const mt = (text || "").trim().split(/\s+/);
-					if (mt[1] !== "confirm") return m.reply("Ketik .pengawashentikan  confirm");
+					if (mt[0] !== "confirm") return m.reply("Ketik .pengawashentikan confirm");
 					const hasil = pengawasanV25.hentikanPengawas(db);
 					return hasil ? m.reply("Pengawas dihentikan.") : m.reply("Gagal.");
 				}

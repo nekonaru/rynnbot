@@ -49,7 +49,9 @@ test("koperasi dan toko membatasi state", () => {
 	tokoTambah(tokoBuka(db, "chat", "Atk"), "buku", 10);
 	assert.equal(koperasi.tokoRestok(db, "chat", "Atk", 5), true);
 	assert.equal(koperasi.tokoStok(db, "chat", "Atk").length > 0, true);
-	assert.equal(koperasi.tokoBeliV25(db, "chat", "a", "Atk", 1) || true, true);
+	const sebelumBeli = db.users.a.money;
+	assert.equal(koperasi.tokoBeliV25(db, "chat", "a", "Atk", 1), true);
+	assert.equal(db.users.a.money < sebelumBeli, true);
 });
 
 test("kompetisi membaca skor dan turnamen", () => {
@@ -330,6 +332,45 @@ test("jalan alternatif modul v25 tidak melempar", () => {
 		studio.laporanStudio(u);
 		studio.renderStudio({ jenis: "posterTeks", isi: [], gaya: "ungu" });
 	});
+});
+
+test("regresi review v25", () => {
+	const db = { users: { a: { money: 100, skor: 12 }, b: { money: 0, skor: 30 } }, groups: {} };
+	const toko = tokoBuka(db, "c", "Toko");
+	tokoTambah(toko, "buku", 100);
+	koperasi.tokoDiskon(db, "c", "Toko", 50);
+	assert.equal(koperasi.tokoBeliV25(db, "c", "a", "Toko", 1), true);
+	assert.equal(db.users.a.money, 50, "diskon 50 persen harus dipakai");
+
+	const papan = kompetisi.skorPapan(db);
+	assert.equal(papan[0].jid, "b");
+	assert.equal(papan[0].skor, 30);
+
+	assert.ok(buatTurnamen(db, "c", "T"));
+	const t = db.turnamen?.[`c:T`] || Object.values(db.turnamen || {})[0];
+	if (t) {
+		t.hasil = [{ a: "a", b: "b", pemenang: "a" }];
+		assert.equal(kompetisi.lagaPapan(db, "c")[0].jid, "a");
+	}
+
+	const sebelumLog = (db.transaksiLog || []).filter((x) => x.field === "poin").length;
+	assert.ok(kompetisi.poin(db, "a", 5));
+	assert.equal((db.transaksiLog || []).filter((x) => x.field === "poin").length, sebelumLog + 1);
+
+	const u = db.users.a;
+	u.pet = { level: 2 };
+	u.kebun = { gudang: {} };
+	u.karir = { bidang: "dagang", jabatan: "staf", gaji: 20 };
+	const sebelumHadiah = u.money;
+	assert.ok(rantai.hadiahPanen(u, db, "a"));
+	assert.equal(rantai.hadiahPanen(u, db, "a"), null, "hadiah panen cukup sekali sehari");
+	assert.equal(u.money, sebelumHadiah + 10);
+	assert.ok(rantai.hadiahRantai(db, "a"));
+	assert.equal(rantai.hadiahRantai(db, "a"), null, "hadiah rantai cukup sekali sehari");
+
+	const hasilUjian = pembelajaran.ujian({}, "matematika", ["1"]);
+	assert.equal(hasilUjian.total, 10);
+	assert.equal(pengawasan.ujiAkses({}, "menu").ok, true);
 });
 
 test("perintah v25 terdaftar di kategori baku", () => {

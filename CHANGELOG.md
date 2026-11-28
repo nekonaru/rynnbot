@@ -45,11 +45,15 @@ Rynn v25.0.0 memperdalam fitur yang sudah ada. Tidak ada keluarga fitur baru yan
 
 ### Audit
 
-- 11 tes unit baru di `test/v25.test.js`. Total **266 tes lolos**.
-- `npm run check` lolos (295 file).
-- Coverage: 92,39 persen baris, 75,29 persen cabang, 91,15 persen fungsi.
+- 11 tes unit baru di `test/v25.test.js`. Total **267 tes lolos**.
+- `npm run check` lolos (291 file).
+- Coverage: 92,35 persen baris, 75,50 persen cabang, 91,04 persen fungsi.
 - Audit router: 1350 case, 1075 perintah menu, nol duplikat, nol menu tanpa case.
 - Audit menu: 1075 perintah, 14 kategori, nol kategori asing.
+
+### Review
+
+Review independen menemukan sepuluh masalah, semuanya diperbaiki sebelum rilis, termasuk perintah toko dan survei tanpa gate admin, gaji yang bisa dicetak tanpa batas, poin juara yang keluar dari jalur transaksi, hadiah harian yang bisa diulang, dan diskon toko yang tidak dipakai saat pembayaran.
 
 ### Batas
 
