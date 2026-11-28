@@ -1,4 +1,6 @@
 import "./settings.js";
+import { catatLog } from "./lib/log-terstruktur.js";
+import { aman as pathAman, daftarAman } from "./lib/path-aman.js";
 import { cocokJawaban } from "./lib/game-jawaban.js";
 import { ubahSaldo, pindahSaldo, riwayatTransaksi, rekonsiliasi } from "./lib/transaksi.js";
 import { daftarPaket, pilihPaket, paketAktif, bandingPaket, batasPaket } from "./lib/v16/paket.js";
@@ -853,6 +855,7 @@ const sock = async (sock, m, store) => {
 				catatEvent(db, command);
 				if (!db.users[m.sender]) db.users[m.sender] = {};
 				if (db.users[m.sender]?.opsiPrivasi?.riwayat === false) return;
+				catatLog(db, { level: "info", perintah: command, pengirim: m.sender });
 				const riwayat = db.users[m.sender].riwayat || [];
 				riwayat.push(command);
 				db.users[m.sender].riwayat = riwayat.slice(-20);
@@ -9074,15 +9077,15 @@ Select Bot Settings:
 						if (!p || p.token !== token || p.sender !== m.sender || Date.now() - p.at > 300000) return m.reply("Token restore tidak valid atau kedaluwarsa.");
 						global.restorePending = null;
 						if (!aman.test(p.nama)) return m.reply("Nama berkas tidak valid.");
-						const sumber = path.join("./database", p.nama);
-						if (!fs.existsSync(sumber)) return m.reply("Berkas tidak ditemukan.");
+						const sumber = pathAman(path.join("./database", p.nama));
+						if (!sumber || !fs.existsSync(sumber)) return m.reply("Berkas tidak ditemukan.");
 						fs.copyFileSync(sumber, "./database/database.json");
 						tulisAudit(db, m.sender, `restore ${p.nama}`);
 						return m.reply("Database dipulihkan. Restart bot agar data baru dipakai.");
 					}
 					if (!arg) return m.reply("Contoh: .restore database.json.bak\nLalu .restore confirm <token>");
 					if (!aman.test(arg)) return m.reply("Nama berkas tidak valid.\nGunakan nama seperti database.json.bak");
-					if (!fs.existsSync(path.join("./database", arg))) return m.reply("Berkas tidak ditemukan di ./database");
+					if (!pathAman(path.join("./database", arg)) || !fs.existsSync(path.join("./database", arg))) return m.reply("Berkas tidak ditemukan di ./database");
 					const token = Math.random().toString(36).slice(2, 8).toUpperCase();
 					global.restorePending = { sender: m.sender, nama: arg, token, at: Date.now() };
 					return m.reply(`*KONFIRMASI RESTORE*\n\nBerkas: ${arg}\nIni akan menimpa database aktif.\nKetik .restore confirm ${token} dalam 5 menit.`);
@@ -9651,8 +9654,8 @@ Select Bot Settings:
 					if (!isCreator) return m.reply(global.mess.owner);
 					const nama = (text || "").trim().toLowerCase().replace(/^\./, "");
 					if (!/^[a-z0-9_-]+$/.test(nama)) return m.reply("Nama sesi tidak valid.");
-					const target = path.join("./rynn-session", nama);
-					if (!fs.existsSync(target)) return m.reply("Sesi tidak ditemukan.");
+					const target = pathAman(path.join("./rynn-session", nama));
+					if (!target || !fs.existsSync(target)) return m.reply("Sesi tidak ditemukan.");
 					fs.rmSync(target, { recursive: true, force: true });
 					return m.reply(`Sesi ${nama} dihapus.`);
 				}
@@ -10675,7 +10678,7 @@ Select Bot Settings:
 				{
 					const u = db.users[m.sender] || {};
 					const role = isCreator ? "owner" : m.isAdmin ? "admin" : isVip ? "vip" : isPremium ? "premium" : "free";
-					return kirimRespons(m, { judul: "Akses kamu", isi: `- Role: ${role}\n- Limit: ${u.limit || 0}\n- Uang: ${(u.money || 0).toLocaleString("id-ID")}` });
+					return kirimRespons(m, { judul: "Akses kamu", isi: `- Role: ${role}\n- Limit: ${u.limit || 0}\n- Uang: ${(u.money || 0).toLocaleString("id-ID")}\n- Akun aman: ${u.akunAman ? "aktif" : "mati"}\n- Terverifikasi: ${(db.terverifikasi || []).includes(m.sender) ? "ya" : "tidak"}` });
 				}
 				break;
 			case "riwayatperintah":
@@ -11855,7 +11858,7 @@ Select Bot Settings:
 			case "backupverifikasi":
 				{
 					if (!isCreator) return m.reply(global.mess.owner);
-					const berkas = fs.existsSync("./backup") ? fs.readdirSync("./backup") : [];
+					const berkas = daftarAman("./backup");
 					const hasil = verifikasiBackup(berkas.slice(0, 10).map((n) => path.join("./backup", n)), fs);
 					return kirimRespons(m, { judul: "Verifikasi backup", isi: hasil.map((h) => `- ${path.basename(h.nama)}: ${h.ada ? "ada" : "tidak ada"}`).join("\n") || formatKosong() });
 				}
@@ -11936,7 +11939,7 @@ Select Bot Settings:
 					if (sub === "ekspor") return m.reply(formatEkspor(eksporData(u)));
 					if (sub === "hapus") {
 						if (mt[1] !== "confirm") return m.reply("Ketik .privasi hapus confirm untuk menghapus data pribadi kamu.");
-						hapusDataPribadi(u);
+						hapusDataPribadi(u, db, m.sender);
 						return m.reply("Data pribadi dihapus dari bot.");
 					}
 					if (sub === "opsi") {
@@ -12519,7 +12522,7 @@ Select Bot Settings:
 						const target = (m.mentionedJid || [])[0];
 						const jumlah = Number(mt.find((x) => /^\d+$/.test(x)));
 						if (!target || mt.at(-1) !== "confirm" || !jumlah) return m.reply("Tag target, lalu .poin transfer @user <jumlah> confirm");
-						return transferPoin(db, db.users[m.sender], target, jumlah) ? m.reply("Poin ditransfer.") : m.reply("Poin tidak mencukupi.");
+						return transferPoin(db, m.sender, target, jumlah) ? m.reply("Poin ditransfer.") : m.reply("Poin tidak mencukupi.");
 					}
 					const u = db.users[m.sender];
 					return kirimRespons(m, { judul: "Poin kamu", isi: `*${u.poin || 0}* poin`, footer: ".poin top | .poin riwayat | .poin tukar <hadiah>" });
