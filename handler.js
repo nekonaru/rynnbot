@@ -1,4 +1,14 @@
 import "./settings.js";
+import { xpDari, progresLevel, kartuProfil, beriBadge, hapusBadge } from "./lib/v13/akun.js";
+import { rekeningBuat, rekeningPindah, arisanBuat, arisanBayar, arisanRekap, skorKredit, klaimAsuransi, pajakSimulasi, grafikKategori } from "./lib/v13/ekonomi.js";
+import { guildBuat, guildGabung, guildKeluar, guildPapan, rekomendasiTeman, kartuPerkenalan, statistikKomunitas } from "./lib/v13/komunitas.js";
+import { sudokuBuat, sudokuIsi, formatSudoku, game2048Baru, gerak2048, kartuIngatan, tebakTokoh, riddleAi, hadiahGamePass } from "./lib/v13/game.js";
+import { kosakataHarian, cariKosakata, panduanEjaan, panduanTatabahasa, pantunBuatan, puisiBuatan, cariResep, tantanganRumus } from "./lib/v13/edukasi.js";
+import { targetBuat, targetTambah, formatTarget, proyekBuat, proyekTambah, proyekStatus, formatPapan, cariCatatan, beriTagCatatan } from "./lib/v13/produktivitas.js";
+import { daftarAdmin, tambahAdmin, aturPeraturan, formatPeraturan, tambahDomainAman, statistikSpam, kartuGrup, aktivitasGrup } from "./lib/v13/grup.js";
+import { spesifikasiStikerTeks, spesifikasiFotoProfil, kartuUndangan, posterUcapan, diagramLingkaran, tabelDua } from "./lib/v13/media.js";
+import { aturMemori, hapusMemori, tambahMemori, aturPersona, personaPrompt, promptDebat, promptRangkum, promptReviewKode, promptRencana, batasAi } from "./lib/v13/ai.js";
+import { relayStatus, deployStatus, verifikasiBackup, restoreDiff, sesiList, migrasiInfo, databaseInfoPenuh, logEkspor, aturRateLimit, blokirDomain, alasanMaintenance, auditEkspor } from "./lib/v13/owner.js";
 import { kirimRespons, formatKosong } from "./lib/respons.js";
 import { ketikDulu, tahapProgres, teksStikerAnimasi } from "./lib/animasi.js";
 import { buatTurnamen, turnamenAktif, tambahPeserta, catatHasil, tetapkanJuara, arsipTurnamen, ingatPertandingan, ligaBuat, ligaAmbil, ligaTransfer, ligaJadwal, formatTurnamen, formatKlasemen } from "./lib/v12/kompetisi.js";
@@ -6426,6 +6436,94 @@ Select Bot Settings:
 │${setv} ${prefix}memori
 │${setv} ${prefix}dashboardbuka
 │${setv} ${prefix}dashboardtutup
+│${setv} ${prefix}profilkartu
+│${setv} ${prefix}bio
+│${setv} ${prefix}xp
+│${setv} ${prefix}xptop
+│${setv} ${prefix}badge
+│${setv} ${prefix}badgeberi
+│${setv} ${prefix}badgehapus
+│${setv} ${prefix}identitas
+│${setv} ${prefix}rekening
+│${setv} ${prefix}arisan
+│${setv} ${prefix}kreditskor
+│${setv} ${prefix}asuransiklaim
+│${setv} ${prefix}pajaksimulasi
+│${setv} ${prefix}grafikpengeluaran
+│${setv} ${prefix}pendapatanharian
+│${setv} ${prefix}donasikampanye
+│${setv} ${prefix}guild
+│${setv} ${prefix}temanrekomendasi
+│${setv} ${prefix}perkenalan
+│${setv} ${prefix}sapagrup
+│${setv} ${prefix}icekartu
+│${setv} ${prefix}komunitasstatistik
+│${setv} ${prefix}sudoku
+│${setv} ${prefix}game2048
+│${setv} ${prefix}kartuingatan
+│${setv} ${prefix}tebaktokoh
+│${setv} ${prefix}tebaktokohjawab
+│${setv} ${prefix}tebaklagu
+│${setv} ${prefix}tebaklagujawab
+│${setv} ${prefix}riddleai
+│${setv} ${prefix}riddlejawab
+│${setv} ${prefix}gameharian
+│${setv} ${prefix}gamepass
+│${setv} ${prefix}quizturnamen
+│${setv} ${prefix}rekapgame
+│${setv} ${prefix}kosakataharian
+│${setv} ${prefix}kosakatacari
+│${setv} ${prefix}ejaan
+│${setv} ${prefix}tatabahasa
+│${setv} ${prefix}pantunbuat
+│${setv} ${prefix}puisibuat
+│${setv} ${prefix}terjemahbalik
+│${setv} ${prefix}resepcari
+│${setv} ${prefix}sejarahharian
+│${setv} ${prefix}rumustantangan
+│${setv} ${prefix}target
+│${setv} ${prefix}proyek
+│${setv} ${prefix}catatcari
+│${setv} ${prefix}cattag
+│${setv} ${prefix}agendaekspor
+│${setv} ${prefix}absenbulanan
+│${setv} ${prefix}admindaftar
+│${setv} ${prefix}admintambah
+│${setv} ${prefix}peraturankategori
+│${setv} ${prefix}peraturansemua
+│${setv} ${prefix}linkaman
+│${setv} ${prefix}spamdeteksi
+│${setv} ${prefix}grupkartu
+│${setv} ${prefix}grupaktivitas
+│${setv} ${prefix}lapordetail
+│${setv} ${prefix}stikerteks
+│${setv} ${prefix}stikerkartu
+│${setv} ${prefix}stickergambar
+│${setv} ${prefix}fotoprofil
+│${setv} ${prefix}kartuundangan
+│${setv} ${prefix}posterucapan
+│${setv} ${prefix}diagramlingkaran
+│${setv} ${prefix}tabeldua
+│${setv} ${prefix}aimemori
+│${setv} ${prefix}ailupa
+│${setv} ${prefix}aipersona
+│${setv} ${prefix}aidebat
+│${setv} ${prefix}airangkum
+│${setv} ${prefix}aireviewkode
+│${setv} ${prefix}airencana
+│${setv} ${prefix}aibatas
+│${setv} ${prefix}relaystatus
+│${setv} ${prefix}deploystatus
+│${setv} ${prefix}backupverifikasi
+│${setv} ${prefix}restorediff
+│${setv} ${prefix}sesilist
+│${setv} ${prefix}databasemigrasi
+│${setv} ${prefix}databaseinfopenuh
+│${setv} ${prefix}logekspor
+│${setv} ${prefix}ratelimit
+│${setv} ${prefix}domainblokir
+│${setv} ${prefix}maintenancealasan
+│${setv} ${prefix}auditekspor
 │${setv} ${prefix}anggaran
 │${setv} ${prefix}pengeluaran
 │${setv} ${prefix}pemasukan
@@ -10892,6 +10990,725 @@ Select Bot Settings:
 				}
 				break;
 
+			case "profilkartu":
+				{
+					const u = db.users[m.sender] || {};
+					const role = isCreator ? "owner" : m.isAdmin ? "admin" : isVip ? "vip" : isPremium ? "premium" : "free";
+					return m.reply(kartuProfil(u, role, u.badge || []));
+				}
+				break;
+			case "bio":
+				{
+					const arg = (text || "").trim();
+					if (!db.users[m.sender]) db.users[m.sender] = {};
+					if (!arg) return m.reply(`Bio: ${db.users[m.sender].bio || "(belum diatur)"}`);
+					db.users[m.sender].bio = arg.slice(0, 150);
+					return m.reply("Bio disimpan.");
+				}
+				break;
+			case "xp":
+				{
+					const p = progresLevel(xpDari(db.users[m.sender] || {}));
+					return kirimRespons(m, {
+						judul: "Pengalaman",
+						isi: `- Level: ${p.level}\n- XP: ${p.xp}\n- Progres: ${p.sebelumnya}/${p.berikutnya}\n- Sisa: ${p.sisa}`,
+					});
+				}
+				break;
+			case "xptop":
+				{
+					const entri = Object.entries(db.users || {}).map(([jid, u]) => [jid, xpDari(u)]).sort((a, b) => b[1] - a[1]).slice(0, 10);
+					return kirimRespons(m, { judul: "Papan XP", isi: entri.map(([jid, xp], i) => `${i + 1}. @${jid.split("@")[0]}: ${xp} XP`).join("\n") || formatKosong() });
+				}
+				break;
+			case "badge":
+			case "badgeberi":
+			case "badgehapus":
+				{
+					const target = command === "badge" ? m.sender : (m.mentionedJid || [])[0];
+					if (!target || target === m.sender && command !== "badge") return m.reply("Tag pengguna untuk memberi atau menghapus lencana.");
+					if (!db.users[target]) db.users[target] = {};
+					const u = db.users[target];
+					const nama = (text || "").trim().split(/\s+/).pop();
+					if (command === "badge") return kirimRespons(m, { judul: "Lencana", isi: (u.badge || []).join("\n") || formatKosong() });
+					if (command === "badgeberi") {
+						if (!isCreator && !m.isAdmin) return m.reply(global.mess.admin);
+						const list = beriBadge(u, nama);
+						return list ? m.reply(`Lencana *${nama}* diberikan.`) : m.reply("Lencana sudah ada atau nama tidak valid.");
+					}
+					if (!isCreator && !m.isAdmin) return m.reply(global.mess.admin);
+					const list = hapusBadge(u, nama);
+					return list ? m.reply(`Lencana *${nama}* dihapus.`) : m.reply("Lencana tidak ditemukan.");
+				}
+				break;
+			case "identitas":
+				{
+					const u = db.users[m.sender] || {};
+					const role = isCreator ? "owner" : m.isAdmin ? "admin" : isVip ? "vip" : isPremium ? "premium" : "free";
+					return kirimRespons(m, {
+						judul: "Identitas",
+						isi: `- Nama: @${m.sender.split("@")[0]}\n- Role: ${role}\n- Bio: ${u.bio || "(kosong)"}\n- Level: ${progresLevel(xpDari(u)).level}\n- Lencana: ${(u.badge || []).length}`,
+					});
+				}
+				break;
+			case "rekening":
+				{
+					if (!db.users[m.sender]) db.users[m.sender] = {};
+					const u = db.users[m.sender];
+					const arg = (text || "").trim();
+					const mt = arg.split(/\s+/);
+					const sub = (mt[0] || "list").toLowerCase();
+					if (sub === "list") {
+						const entri = Object.entries(u.rekening || {});
+						return kirimRespons(m, { judul: "Rekening simulasi", isi: entri.length ? entri.map(([k, v]) => `- ${k}: ${v.toLocaleString("id-ID")}`).join("\n") : formatKosong(".rekening buat <nama>") });
+					}
+					if (sub === "buat") {
+						const daftar = rekeningBuat(u, mt[1]);
+						return daftar ? m.reply(`Rekening *${mt[1]}* dibuat.`) : m.reply("Nama tidak valid atau sudah ada.");
+					}
+					if (sub === "pindah") {
+						const n = Number(mt[2]);
+						const daftar = rekeningPindah(u, mt[1], n);
+						return daftar ? m.reply(`Dana ${n.toLocaleString("id-ID")} dipindah ke *${mt[1]}*.`) : m.reply("Rekening tidak ada, nominal invalid, atau saldo kurang.");
+					}
+					return m.reply(".rekening buat <nama>\n.rekening pindah <nama> <nominal>\n.rekening list");
+				}
+				break;
+			case "arisan":
+				{
+					if (!m.isGroup) return m.reply(global.mess.group);
+					const arg = (text || "").trim();
+					const mt = arg.split(/\s+/);
+					const sub = (mt[0] || "bantuan").toLowerCase();
+					if (sub === "buat") {
+						if (!isCreator && !m.isAdmin) return m.reply(global.mess.admin);
+						const a = arisanBuat(db, m.chat, mt[1], Number(mt[2]));
+						return a ? m.reply(`Arisan *${a.nama}* ${a.nominal.toLocaleString("id-ID")} dibuat.`) : m.reply("Contoh: .arisan buat Kelas 50000");
+					}
+					const a = db.arisan?.[m.chat];
+					if (!a) return m.reply("Belum ada arisan.");
+					if (sub === "bayar") {
+						const x = arisanBayar(a, m.sender);
+						return x ? m.reply(`Setoran ${a.nominal.toLocaleString("id-ID")} dicatat.`) : m.reply("Gagal mencatat setoran.");
+					}
+					if (sub === "rekap") {
+						const r = arisanRekap(a, Object.keys(db.users || {}));
+						return kirimRespons(m, { judul: `Rekap arisan ${a.nama}`, isi: r.map((x) => `- @${x.jid.split("@")[0]}: ${x.bayar.toLocaleString("id-ID")}`).join("\n") });
+					}
+					return m.reply(".arisan buat <nama> <nominal>\n.arisan bayar\n.arisan rekap");
+				}
+				break;
+			case "kreditskor":
+				{
+					const s = skorKredit(db.users[m.sender] || {});
+					return kirimRespons(m, { judul: "Skor kredit simulasi", isi: `*${s}/100*`, catatan: "Simulasi bot, bukan penilaian kredit nyata." });
+				}
+				break;
+			case "asuransiklaim":
+				{
+					const u = db.users[m.sender] || {};
+					const hasil = klaimAsuransi(u.danaPerlindungan || 0, Number((text || "").trim()));
+					return hasil ? kirimRespons(m, {
+						judul: "Klaim simulasi",
+						isi: `- Kerugian: ${hasil.kerugian.toLocaleString("id-ID")}\n- Dibayar: ${hasil.dibayar.toLocaleString("id-ID")}\n- Sisa: ${hasil.sisa.toLocaleString("id-ID")}`,
+						catatan: "Simulasi bot, bukan produk asuransi.",
+					}) : m.reply("Contoh: .asuransiklaim 50000");
+				}
+				break;
+			case "pajaksimulasi":
+				{
+					const mt = (text || "").trim().split(/\s+/);
+					const h = pajakSimulasi(Number(mt[0]), Number(mt[1]) || 10);
+					return h ? kirimRespons(m, { judul: "Pajak simulasi", isi: `- Nominal: ${h.nominal.toLocaleString("id-ID")}\n- Persen: ${h.persen}\n- Pajak: ${h.pajak.toLocaleString("id-ID")}\n- Total: ${h.total.toLocaleString("id-ID")}` }) : m.reply("Contoh: .pajaksimulasi 100000 10");
+				}
+				break;
+			case "grafikpengeluaran":
+				{
+					const u = db.users[m.sender] || {};
+					const baris = grafikKategori(u.pengeluaran || []);
+					return kirimRespons(m, { judul: "Grafik pengeluaran", isi: baris.join("\n") || formatKosong(".pengeluaran <kategori> <nominal>") });
+				}
+				break;
+			case "pendapatanharian":
+				{
+					const u = db.users[m.sender] || {};
+					const masuk = (u.pemasukan || []).filter((x) => Date.now() - x.waktu < 86400000);
+					const total = masuk.reduce((n, x) => n + x.nominal, 0);
+					return kirimRespons(m, { judul: "Pendapatan harian", isi: `${masuk.length} catatan, total ${total.toLocaleString("id-ID")}.` });
+				}
+				break;
+			case "donasikampanye":
+				{
+					if (!isCreator && !m.isAdmin) return m.reply(global.mess.admin);
+					const nama = (text || "").trim();
+					if (!db.kampanye) db.kampanye = [];
+					db.kampanye.push({ nama: nama.slice(0, 80), at: Date.now() });
+					db.kampanye = db.kampanye.slice(-10);
+					return m.reply(`Kampanye *${nama}* dicatat. Tidak ada pembayaran nyata.`);
+				}
+				break;
+			case "guild":
+				{
+					const arg = (text || "").trim();
+					const mt = arg.split(/\s+/);
+					const sub = (mt[0] || "bantuan").toLowerCase();
+					if (sub === "buat") {
+						const g = guildBuat(db, mt.slice(1).join(" "), m.chat);
+						return g ? m.reply(`Guild *${g.nama}* dibuat.`) : m.reply("Nama guild tidak valid atau sudah ada.");
+					}
+					if (sub === "gabung") {
+						const g = guildGabung(db, mt.slice(1).join(" "), m.sender);
+						return g ? m.reply(`Kamu bergabung ke *${g.nama}*.`) : m.reply("Guild tidak ditemukan atau kamu sudah bergabung.");
+					}
+					if (sub === "keluar") {
+						const g = guildKeluar(db, mt.slice(1).join(" "), m.sender);
+						return g ? m.reply(`Kamu keluar dari *${g.nama}*.`) : m.reply("Guild tidak ditemukan.");
+					}
+					if (sub === "papan") {
+						const p = guildPapan(db);
+						return kirimRespons(m, { judul: "Papan guild", isi: p.map((g, i) => `${i + 1}. ${g.nama}: ${g.jumlah} anggota`).join("\n") || formatKosong() });
+					}
+					if (sub === "pesan") {
+						const g = db.guild?.[String(mt[1] || "").toLowerCase()];
+						if (!g || !g.anggota.includes(m.sender)) return m.reply("Kamu bukan anggota guild ini.");
+						g.pesan.push({ dari: m.sender, teks: mt.slice(2).join(" ").slice(0, 200), at: Date.now() });
+						g.pesan = g.pesan.slice(-20);
+						return m.reply("Pesan guild disimpan.");
+					}
+					return m.reply(".guild buat <nama>\n.guild gabung <nama>\n.guild keluar <nama>\n.guild papan\n.guild pesan <nama> <teks>");
+				}
+				break;
+			case "temanrekomendasi":
+				{
+					const r = rekomendasiTeman(Object.keys(db.users || {}), m.sender);
+					return kirimRespons(m, { judul: "Rekomendasi teman", isi: r.map((x) => `- @${x.split("@")[0]}`).join("\n") || formatKosong() });
+				}
+				break;
+			case "perkenalan":
+				{
+					const mt = (text || "").trim().match(/^(\S+)\s+([\s\S]+)$/);
+					return mt ? m.reply(kartuPerkenalan(mt[1], mt[2])) : m.reply("Contoh: .perkenalan Andi suka membaca");
+				}
+				break;
+			case "sapagrup":
+				{
+					if (!m.isGroup) return m.reply(global.mess.group);
+					if (!isCreator && !m.isAdmin) return m.reply(global.mess.admin);
+					const s = (text || "").trim();
+					if (!db.groups[m.chat]) db.groups[m.chat] = {};
+					if (!s) return m.reply(`Sapaan: ${db.groups[m.chat].sapa || "(belum diatur)"}`);
+					db.groups[m.chat].sapa = s.slice(0, 200);
+					return m.reply("Sapaan grup disimpan.");
+				}
+				break;
+			case "icekartu":
+				{
+					const cards = ["Ceritakan satu hal yang membuatmu tersenyum hari ini.", "Apa makanan yang paling kamu suka?", "Kalau bisa liburan sebentar, ke mana?", "Sebutkan satu kebiasaan baik yang ingin kamu jaga."];
+					return m.reply(cards[Math.floor(Math.random() * cards.length)]);
+				}
+				break;
+			case "komunitasstatistik":
+				{
+					const meta = m.metadata?.participants || [];
+					const s = statistikKomunitas(db, meta);
+					return kirimRespons(m, { judul: "Statistik komunitas", isi: `- Pengguna: ${s.pengguna}\n- Grup: ${s.grup}\n- Guild: ${s.guild}\n- Anggota grup ini: ${s.anggota}` });
+				}
+				break;
+			case "sudoku":
+				{
+					const arg = (text || "").trim().split(/\s+/);
+					const sub = (arg[0] || "buat").toLowerCase();
+					const kunci = m.chat + ":" + m.sender;
+					global.sudokuState = global.sudokuState || {};
+					if (sub === "buat") {
+						global.sudokuState[kunci] = sudokuBuat(arg[1] || "mudah");
+						return m.reply(`*Sudoku ${arg[1] || "mudah"}*\n\n${formatSudoku(global.sudokuState[kunci])}`);
+					}
+					if (sub === "isi") {
+						const p = sudokuIsi(global.sudokuState[kunci], arg[1], arg[2], arg[3]);
+						if (!p) return m.reply("Contoh: .sudoku isi 0 0 3");
+						global.sudokuState[kunci] = p;
+						return m.reply(formatSudoku(p));
+					}
+					return m.reply(".sudoku buat [mudah|sedang|sulit]\n.sudoku isi <baris> <kolom> <angka>");
+				}
+				break;
+			case "game2048":
+				{
+					const arah = (text || "").trim().toLowerCase();
+					const kunci = m.chat + ":" + m.sender;
+					global.game2048State = global.game2048State || {};
+					if (!global.game2048State[kunci] || arah === "baru") global.game2048State[kunci] = game2048Baru();
+					else {
+						const p = gerak2048(global.game2048State[kunci], arah);
+						if (!p) return m.reply("Arah: atas, bawah, kiri, kanan. Ketik .game2048 baru untuk ulang.");
+						global.game2048State[kunci] = p;
+					}
+					return m.reply(`*2048*\n\n${global.game2048State[kunci].map((b) => b.join("\t")).join("\n")}`);
+				}
+				break;
+			case "kartuingatan":
+				{
+					const kartu = kartuIngatan(Number((text || "").trim()) || 8);
+					return m.reply(`*Kartu Ingatan*\n\n${kartu.map((n, i) => `${i + 1}. ${n}`).join("\n")}`);
+				}
+				break;
+			case "tebaktokoh":
+				{
+					const jawaban = tebakTokoh();
+					global.tebakTokohState = global.tebakTokohState || {};
+					global.tebakTokohState[m.sender] = { jawaban, at: Date.now() };
+					return m.reply(`*Tebak Tokoh*\n\nPetunjuk: tokoh Indonesia yang namanya memiliki ${jawaban.length} huruf.\nJawab: .tebaktokohjawab <nama>`);
+				}
+				break;
+			case "tebaktokohjawab":
+				{
+					const s = global.tebakTokohState?.[m.sender];
+					if (!s || Date.now() - s.at > 300000) return m.reply("Belum ada tebak tokoh aktif.");
+					const j = (text || "").trim().toLowerCase();
+					delete global.tebakTokohState[m.sender];
+					return j === s.jawaban.toLowerCase() ? m.reply(`Benar! *${s.jawaban}*`) : m.reply(`Salah. Jawabannya *${s.jawaban}*.`);
+				}
+				break;
+			case "tebaklagu":
+				{
+					const clues = ["lagu tentang hujan dan kopi", "lagu tentang pelan-pelan berjalan", "lagu tentang bintang di malam", "lagu tentang pulang ke rumah"];
+					const pilih = clues[Math.floor(Math.random() * clues.length)];
+					global.tebakLaguState = global.tebakLaguState || {};
+					global.tebakLaguState[m.sender] = { judul: pilih, at: Date.now() };
+					return m.reply(`*Tebak Lagu*\n\nPetunjuk: ${pilih}\nJawab: .tebaklagujawab <teks>`);
+				}
+				break;
+			case "tebaklagujawab":
+				{
+					const s = global.tebakLaguState?.[m.sender];
+					if (!s || Date.now() - s.at > 300000) return m.reply("Belum ada tebak lagu aktif.");
+					const j = (text || "").trim().toLowerCase();
+					delete global.tebakLaguState[m.sender];
+					return j.includes(s.judul.split(" ").pop()) ? m.reply("Benar!") : m.reply(`Belum tepat. Petunjuknya: ${s.judul}`);
+				}
+				break;
+			case "riddleai":
+				{
+					const daftar = ["Apa yang makin dicuci makin kotor? Air.", "Apa yang punya gigi tapi tidak menggigit? Sisir.", "Apa yang naik tapi tidak pernah turun? Umur."];
+					const r = riddleAi(daftar);
+					const [ pertanyaan, jawaban ] = r.split("? ");
+					global.riddleState = global.riddleState || {};
+					global.riddleState[m.sender] = { jawaban, at: Date.now() };
+					return m.reply(`*Riddle*\n\n${pertanyaan}?\nJawab: .riddlejawab <teks>`);
+				}
+				break;
+			case "riddlejawab":
+				{
+					const s = global.riddleState?.[m.sender];
+					if (!s || Date.now() - s.at > 300000) return m.reply("Belum ada riddle aktif.");
+					const j = (text || "").trim().toLowerCase();
+					delete global.riddleState[m.sender];
+					return j === s.jawaban.toLowerCase() ? m.reply("Benar!") : m.reply(`Salah. Jawabannya *${s.jawaban}*.`);
+				}
+				break;
+			case "gameharian":
+				{
+					const daftar = ["quiz", "tebaktokoh", "wordle", "sudoku", "game2048"];
+					const pilih = daftar[Math.floor(Date.now() / 86400000) % daftar.length];
+					return kirimRespons(m, { judul: "Game harian", isi: `Hari ini: *${pilih}*\nKetik .${pilih} untuk mulai.` });
+				}
+				break;
+			case "gamepass":
+				{
+					const u = db.users[m.sender] || {};
+					const hari = u.gamePassHari || 0;
+					return kirimRespons(m, { judul: "Game pass", isi: `- Hari beruntun: ${hari}\n- Hadiah: ${hadiahGamePass(hari)}` });
+				}
+				break;
+			case "quizturnamen":
+				{
+					if (!m.isGroup) return m.reply(global.mess.group);
+					const t = buatTurnamen(db, m.chat, "Turnamen Kuis", "single", []);
+					return m.reply(`Turnamen kuis *${t.id}* dibuat. Gunakan .turnamen2 tambah @nama untuk daftar.`);
+				}
+				break;
+			case "rekapgame":
+				{
+					const hit = global.db?.hit || {};
+					const daftar = ["quiz", "soal", "hangman", "slot", "turnamen", "wordle", "sudoku", "game2048"];
+					return kirimRespons(m, { judul: "Rekap game", isi: daftar.map((g) => `- .${g}: ${(hit[g] || 0).toLocaleString("id-ID")}x`).join("\n") });
+				}
+				break;
+			case "kosakataharian":
+				{
+					const kata = Object.values(SINONIM || {}).flat().slice(0, 20);
+					const k = kosakataHarian(kata);
+					return k ? kirimRespons(m, { judul: "Kosakata harian", isi: `*${typeof k === "string" ? k : k.kata}*` }) : m.reply("Belum ada kosakata.");
+				}
+				break;
+			case "kosakatacari":
+				{
+					const kata = Object.values(SINONIM || {}).flat().slice(0, 200);
+					const hasil = cariKosakata(kata, text);
+					return kirimRespons(m, { judul: "Hasil kosakata", isi: hasil.join("\n") || formatKosong() });
+				}
+				break;
+			case "ejaan":
+				return m.reply(panduanEjaan(text));
+			case "tatabahasa":
+				return m.reply(panduanTatabahasa(text));
+			case "pantunbuat":
+				return m.reply(pantunBuatan(text));
+			case "puisibuat":
+				return m.reply(puisiBuatan(text));
+			case "terjemahbalik":
+				{
+					const isi = (text || "").trim();
+					if (!isi) return m.reply("Contoh: .terjemahbalik halo dunia");
+					try {
+						const a = await fetchApi("/translate", { teks: isi, target: "en" });
+						const hasil = await fetchApi("/translate", { teks: String(a?.result?.translated || a?.result || isi), target: "id" });
+						return m.reply(String(hasil?.result?.translated || hasil?.result || isi).slice(0, 3000));
+					} catch {
+						return m.reply("Layanan terjemah sedang bermasalah.");
+					}
+				}
+				break;
+			case "resepcari":
+				{
+					const hasil = cariResep(RESEP, text);
+					return kirimRespons(m, { judul: "Resep ditemukan", isi: hasil.length ? hasil.map((r) => `- ${r.nama || r.judul || "Resep"}`).join("\n") : formatKosong() });
+				}
+				break;
+			case "sejarahharian":
+				{
+					const s = SEJARAH[Math.floor(Date.now() / 86400000) % SEJARAH.length];
+					return s ? m.reply(`*${s.tanggal}*\n\n${s.info}`) : m.reply("Belum ada data sejarah.");
+				}
+				break;
+			case "rumustantangan":
+				{
+					const r = tantanganRumus(semuaRumus());
+					return r ? m.reply(formatRumus(r)) : m.reply("Belum ada rumus.");
+				}
+				break;
+			case "target":
+				{
+					if (!db.users[m.sender]) db.users[m.sender] = {};
+					const u = db.users[m.sender];
+					const arg = (text || "").trim();
+					const mt = arg.split(/\s+/);
+					const sub = (mt[0] || "list").toLowerCase();
+					if (sub === "buat") {
+						const t = targetBuat(u, mt[1], mt[2]);
+						return t ? m.reply(`Target *${mt[1]}* dibuat.`) : m.reply("Contoh: .target buat baca 20");
+					}
+					if (sub === "tambah") {
+						const t = targetTambah(u, mt[1], mt[2]);
+						return t ? m.reply(`Progres *${mt[1]}* sekarang ${t.progres}/${t.target}.`) : m.reply("Target tidak ditemukan.");
+					}
+					return kirimRespons(m, { judul: "Target", isi: formatTarget(u.target) });
+				}
+				break;
+			case "proyek":
+				{
+					if (!db.users[m.sender]) db.users[m.sender] = {};
+					const u = db.users[m.sender];
+					const arg = (text || "").trim();
+					const mt = arg.split(/\s+/);
+					const sub = (mt[0] || "papan").toLowerCase();
+					if (sub === "buat") {
+						const p = proyekBuat(u, mt.slice(1).join(" "));
+						return m.reply(`Proyek *${p.nama}* dibuat.`);
+					}
+					if (sub === "tambah") {
+						const p = proyekTambah(u, mt.slice(1).join(" "));
+						return p ? m.reply("Tugas ditambahkan.") : m.reply("Contoh: .proyek tambah desain kartu");
+					}
+					if (sub === "status") {
+						const t = proyekStatus(u, mt[1], mt[2]);
+						return t ? m.reply(`Tugas ${t.id} menjadi ${t.status}.`) : m.reply("Contoh: .proyek status ABC123 done");
+					}
+					return m.reply(formatPapan(u.proyek));
+				}
+				break;
+			case "catatcari":
+				{
+					const hasil = cariCatatan(db.users[m.sender]?.catatan || {}, text);
+					return kirimRespons(m, { judul: "Hasil catatan", isi: hasil.length ? hasil.map(([k, v]) => `- *${k}*: ${v}`).join("\n") : formatKosong() });
+				}
+				break;
+			case "cattag":
+				{
+					const mt = (text || "").trim().split(/\s+/);
+					const u = db.users[m.sender] || {};
+					const hasil = beriTagCatatan(u.catatan || {}, mt[0], mt[1]);
+					return hasil ? m.reply("Tag ditambahkan.") : m.reply("Catatan tidak ditemukan.");
+				}
+				break;
+			case "agendaekspor":
+				{
+					const list = global.db?.acara?.[m.chat] || [];
+					return kirimRespons(m, { judul: "Agenda grup", isi: list.map((a, i) => `${i + 1}. ${a.nama} (${a.tanggal})`).join("\n") || formatKosong() });
+				}
+				break;
+			case "absenbulanan":
+				{
+					const bulan = new Date().toISOString().slice(0, 7);
+					const entri = Object.keys(global.db?.absen || {}).filter((k) => k.startsWith(m.chat + ":") && k.includes(bulan));
+					const total = entri.reduce((n, k) => n + (global.db.absen[k]?.length || 0), 0);
+					return kirimRespons(m, { judul: `Absen ${bulan}`, isi: `${entri.length} hari tercatat, total ${total} kehadiran.` });
+				}
+				break;
+			case "admindaftar":
+				{
+					if (!m.isGroup) return m.reply(global.mess.group);
+					const list = daftarAdmin(db, m.chat, global.owner);
+					return kirimRespons(m, { judul: "Admin grup", isi: list.map((x, i) => `${i + 1}. @${String(x).split("@")[0]}`).join("\n") });
+				}
+				break;
+			case "admintambah":
+				{
+					if (!isCreator) return m.reply(global.mess.owner);
+					if (!m.isGroup) return m.reply(global.mess.group);
+					const jid = (m.mentionedJid || [])[0];
+					if (!jid) return m.reply("Tag pengguna.");
+					const list = tambahAdmin(db, m.chat, jid);
+					return list ? m.reply(`@${jid.split("@")[0]} menjadi admin bot.`) : m.reply("Sudah terdaftar.");
+				}
+				break;
+			case "peraturankategori":
+				{
+					if (!m.isGroup) return m.reply(global.mess.group);
+					if (!isCreator && !m.isAdmin) return m.reply(global.mess.admin);
+					const mt = (text || "").trim().split(/\s+/);
+					if (!mt[0]) return m.reply("Contoh: .peraturankategori link dilarang");
+					aturPeraturan(db, m.chat, mt[0], mt.slice(1).join(" "));
+					return m.reply(`Peraturan *${mt[0]}* disimpan.`);
+				}
+				break;
+			case "peraturansemua":
+				{
+					if (!m.isGroup) return m.reply(global.mess.group);
+					return kirimRespons(m, { judul: "Peraturan grup", isi: formatPeraturan(db, m.chat) });
+				}
+				break;
+			case "linkaman":
+				{
+					if (!isCreator) return m.reply(global.mess.owner);
+					const arg = (text || "").trim();
+					if (!arg || arg === "list") return kirimRespons(m, { judul: "Domain aman", isi: (db.domainAman || []).join("\n") || formatKosong() });
+					const list = tambahDomainAman(db, arg);
+					return list ? m.reply(`Domain *${arg}* diizinkan.`) : m.reply("Domain sudah ada atau tidak valid.");
+				}
+				break;
+			case "spamdeteksi":
+				return kirimRespons(m, { judul: "Spam terdeteksi", isi: `${statistikSpam(global.db?.hit)} kejadian tercatat.` });
+			case "grupkartu":
+				{
+					if (!m.isGroup) return m.reply(global.mess.group);
+					return m.reply(kartuGrup(m.chat, db, m.metadata));
+				}
+				break;
+			case "grupaktivitas":
+				{
+					const entri = aktivitasGrup(global.db?.hit);
+					return kirimRespons(m, { judul: "Aktivitas grup", isi: entri.map(([k, v], i) => `${i + 1}. .${k}: ${v}x`).join("\n") || formatKosong() });
+				}
+				break;
+			case "lapordetail":
+				{
+					if (!isCreator && !m.isAdmin) return m.reply(global.mess.admin);
+					const id = (text || "").trim();
+					const list = (global.db?.laporan || []).filter((l) => String(l.id || "").includes(id));
+					return kirimRespons(m, { judul: "Detail laporan", isi: list.length ? list.map((l) => `- ${l.waktu}: ${l.alasan}`).join("\n") : formatKosong() });
+				}
+				break;
+			case "stikerteks":
+				{
+					const s = spesifikasiStikerTeks(text);
+					if (!s.teks) return m.reply("Contoh: .stikerteks halo dunia");
+					return kirimRespons(m, { judul: "Stiker teks", isi: `*${s.teks}*`, catatan: `Warna ${s.warna}, format ${s.format}.` });
+				}
+				break;
+			case "stikerkartu":
+				{
+					const s = spesifikasiStikerTeks(text || "Rynn", "krem");
+					return kirimRespons(m, { judul: "Kartu stiker", isi: `*${s.teks}*`, catatan: "Dibuat dari identitas Rynn." });
+				}
+				break;
+			case "stickergambar":
+				{
+					const s = spesifikasiFotoProfil(text || "Rynn");
+					return kirimRespons(m, { judul: "Stiker gambar", isi: s.teks, catatan: `${s.ukuran}x${s.ukuran}, format ${s.format}.` });
+				}
+				break;
+			case "fotoprofil":
+				{
+					const s = spesifikasiFotoProfil(text || "Rynn");
+					return kirimRespons(m, { judul: "Foto profil", isi: `*${s.nama}*\n${s.teks}`, catatan: "Gambar dibuat dari template lokal." });
+				}
+				break;
+			case "kartuundangan":
+				{
+					const mt = (text || "").trim().match(/^(\S+)\s+([\s\S]+)$/);
+					return mt ? m.reply(kartuUndangan(mt[1], mt[2])) : m.reply("Contoh: .kartuundangan Rapat 2026-12-01");
+				}
+				break;
+			case "posterucapan":
+				{
+					const mt = (text || "").trim().match(/^(\S+)\s+([\s\S]+)$/);
+					return mt ? m.reply(posterUcapan(mt[1], mt[2])) : m.reply("Contoh: .posterucapan Ani Selamat");
+				}
+				break;
+			case "diagramlingkaran":
+				{
+					const baris = diagramLingkaran((text || "").trim().split(/[\s,]+/).map(Number));
+					return kirimRespons(m, { judul: "Diagram", isi: baris.join("\n") || formatKosong(".diagramlingkaran 4 6 2") });
+				}
+				break;
+			case "tabeldua":
+				{
+					const baris = tabelDua((text || "").trim().split("\n"));
+					return kirimRespons(m, { judul: "Tabel", isi: baris.join("\n") || formatKosong(".tabeldua a=1\\nb=2") });
+				}
+				break;
+			case "aimemori":
+				{
+					const a = (text || "").trim().toLowerCase();
+					if (!["on", "off"].includes(a)) return m.reply("Ketik .aimemori on atau off");
+					if (!db.users[m.sender]) db.users[m.sender] = {};
+					const aktif = aturMemori(db.users[m.sender], a === "on");
+					return m.reply(`Memori AI ${aktif ? "aktif" : "nonaktif"}. Data hanya disimpan lokal.`);
+				}
+				break;
+			case "ailupa":
+				{
+					const u = db.users[m.sender] || {};
+					hapusMemori(u);
+					return m.reply("Memori AI dihapus.");
+				}
+				break;
+			case "aipersona":
+				{
+					if (!db.users[m.sender]) db.users[m.sender] = {};
+					const p = aturPersona(db.users[m.sender], text);
+					return p ? m.reply(`Persona AI: *${p}*.`) : m.reply("Persona: netral, guru, teman, editor.");
+				}
+				break;
+			case "aidebat":
+			case "airangkum":
+			case "aireviewkode":
+			case "airencana":
+				{
+					const isi = (text || "").trim();
+					if (!isi) return m.reply(`Contoh: .${command} ${command === "aireviewkode" ? "kode di sini" : "topik"}`);
+					const prompt = {
+						aidebat: promptDebat(isi),
+						airangkum: promptRangkum(isi),
+						aireviewkode: promptReviewKode(isi),
+						airencana: promptRencana(isi),
+					}[command];
+					try {
+						const hasil = await fetchApi("/ai/chat2", { query: `${personaPrompt(db.users[m.sender]?.aiPersona)}\n\n${prompt}` });
+						const jawaban = String(hasil?.result?.message || hasil?.result || "Tidak ada jawaban.").slice(0, 3500);
+						if (db.users[m.sender]?.aiMemori) tambahMemori(db.users[m.sender], isi);
+						return m.reply(jawaban);
+					} catch {
+						return m.reply("Fitur AI sedang bermasalah.");
+					}
+				}
+				break;
+			case "aibatas":
+				{
+					const u = db.users[m.sender] || {};
+					const b = batasAi(u.aiTerpakai || 0);
+					return kirimRespons(m, { judul: "Batas AI", isi: `- Terpakai: ${b.terpakai}\n- Batas: ${b.batas}\n- Sisa: ${b.sisa}`, catatan: "Batas harian simulasi." });
+				}
+				break;
+			case "relaystatus":
+				{
+					if (!isCreator) return m.reply(global.mess.owner);
+					const s = relayStatus(process.env.DASHBOARD_ENABLED === "true");
+					return kirimRespons(m, { judul: "Relay dashboard", isi: s.keterangan });
+				}
+				break;
+			case "deploystatus":
+				{
+					if (!isCreator) return m.reply(global.mess.owner);
+					const d = deployStatus({ version: "12.0.0", name: "rynnbot" });
+					return kirimRespons(m, { judul: "Deploy", isi: `- Nama: ${d.nama}\n- Versi terpasang: ${d.versi}` });
+				}
+				break;
+			case "backupverifikasi":
+				{
+					if (!isCreator) return m.reply(global.mess.owner);
+					const hasil = verifikasiBackup(fs.readdirSync("./backup").slice(0, 10).map((n) => path.join("./backup", n)), fs);
+					return kirimRespons(m, { judul: "Verifikasi backup", isi: hasil.map((h) => `- ${path.basename(h.nama)}: ${h.ada ? "ada" : "tidak ada"}`).join("\n") || formatKosong() });
+				}
+				break;
+			case "restorediff":
+				{
+					if (!isCreator) return m.reply(global.mess.owner);
+					const d = restoreDiff(text, db);
+					return kirimRespons(m, { judul: "Pratinjau restore", isi: `- Berkas: ${d.berkas}\n- User saat ini: ${d.userSaatIni}\n- ${d.keterangan}` });
+				}
+				break;
+			case "sesilist":
+				{
+					if (!isCreator) return m.reply(global.mess.owner);
+					const list = sesiList(fs.existsSync("./rynn-session") ? fs.readdirSync("./rynn-session") : []);
+					return kirimRespons(m, { judul: "Sesi lokal", isi: list.join("\n") || formatKosong() });
+				}
+				break;
+			case "databasemigrasi":
+				{
+					if (!isCreator) return m.reply(global.mess.owner);
+					const info = migrasiInfo(db);
+					db.version = info.versiSesudah;
+					return m.reply(`Versi state naik dari ${info.versiSebelum} ke ${info.versiSesudah}.`);
+				}
+				break;
+			case "databaseinfopenuh":
+				{
+					if (!isCreator) return m.reply(global.mess.owner);
+					const d = databaseInfoPenuh(db, global);
+					return kirimRespons(m, { judul: "Database", isi: `- Tipe: ${d.tipe}\n- User: ${d.user}\n- Grup: ${d.grup}\n- Perintah: ${d.perintah}`, catatan: "Kredensial tidak ditampilkan." });
+				}
+				break;
+			case "logekspor":
+				{
+					if (!isCreator) return m.reply(global.mess.owner);
+					return kirimRespons(m, { judul: "Log", isi: logEkspor(bacaAudit(db)).join("\n") || formatKosong() });
+				}
+				break;
+			case "ratelimit":
+				{
+					if (!isCreator) return m.reply(global.mess.owner);
+					const n = aturRateLimit((text || "").trim());
+					if (n === null) return m.reply("Contoh: .ratelimit 3 (0 untuk matikan)");
+					global.rateLimitDetik = n;
+					return m.reply(`Rate limit ${n} detik disimpan.`);
+				}
+				break;
+			case "domainblokir":
+				{
+					if (!isCreator) return m.reply(global.mess.owner);
+					if (!global.domainBlokir) global.domainBlokir = [];
+					const list = blokirDomain(global.domainBlokir, text);
+					return list ? m.reply(`Domain *${text}* diblokir.`) : m.reply("Domain sudah ada atau tidak valid.");
+				}
+				break;
+			case "maintenancealasan":
+				{
+					if (!isCreator) return m.reply(global.mess.owner);
+					global.maintenanceWhy = alasanMaintenance(text);
+					return m.reply("Alasan maintenance disimpan.");
+				}
+				break;
+			case "auditekspor":
+				{
+					if (!isCreator) return m.reply(global.mess.owner);
+					const list = auditEkspor(bacaAudit(db));
+					return kirimRespons(m, { judul: "Ekspor audit", isi: list.map((a) => `- ${a.waktu}: ${a.aksi}`).join("\n") || formatKosong() });
+				}
+				break;
 			case "bantuan":
 			case "commandinfo":
 				{
